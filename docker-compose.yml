@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  onsquad-cache:
+    container_name: onsquad-cache
+    image: redis:latest
+    restart: always
+    expose:
+      - 6379
+    ports:
+      - "6379:6379"
