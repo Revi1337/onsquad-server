@@ -1,4 +1,4 @@
-package revi1337.onsquadserver;
+package revi1337.onsquad;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
