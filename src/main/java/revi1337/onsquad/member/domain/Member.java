@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.UserType;
@@ -25,12 +26,16 @@ public class Member {
     private Email email;
 
     @Embedded
+    private Address address;
+
+    @Embedded
     private Nickname nickname;
 
     @Builder
-    private Member(UserType userType, Email email, Nickname nickname) {
+    private Member(UserType userType, Email email, Address address, Nickname nickname) {
         this.userType = userType;
         this.email = email;
+        this.address = address;
         this.nickname = nickname;
     }
 

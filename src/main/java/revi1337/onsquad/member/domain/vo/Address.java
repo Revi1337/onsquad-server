@@ -17,6 +17,13 @@ public class Address {
     private String value;
 
     public Address(String value) {
+        validate(value);
         this.value = value;
+    }
+
+    private void validate(String value) {
+        if (value == null) {
+            throw new NullPointerException("주소는 null 일 수 없습니다.");
+        }
     }
 }
