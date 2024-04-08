@@ -9,7 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.application.MemberJoinService;
+import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
 import static org.mockito.BDDMockito.*;
@@ -25,7 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberJoinControllerTest {
 
     @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
     @SpyBean private MemberJoinService memberJoinService;
+    @Autowired private MemberRepository memberRepository;
 
     @DisplayName("인증코드 발송이 정상적으로 동작하는지 확인한다.")
     @Test
@@ -45,4 +49,40 @@ class MemberJoinControllerTest {
 
         verify(memberJoinService, times(1)).sendAuthCodeToEmail(testEmail);
     }
+
+    @DisplayName("닉네임 중복이 확인되면 true 를 반환한다.")
+    @Test
+    public void checkDuplicateNickname() throws Exception {
+        // given
+        Member member = MemberFactory.defaultMember().build();
+        memberRepository.save(member);
+
+        // when & then
+        mockMvc.perform(
+                        get("/api/v1/auth/check")
+                                .queryParam("nickname", "nickname")
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.duplicate").value(true));
+    }
+
+    @DisplayName("닉네임 중복이 확인되지 않으면 false 를 반환한다.")
+    @Test
+    public void checkDuplicateNickname2() throws Exception {
+        // given
+        String nickname = "nickname";
+
+        // when & then
+        mockMvc.perform(
+                        get("/api/v1/auth/check")
+                                .queryParam("nickname", nickname)
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.duplicate").value(false));
+    }
 }
+
