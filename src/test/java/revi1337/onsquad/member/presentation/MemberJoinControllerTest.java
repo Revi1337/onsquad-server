@@ -13,6 +13,9 @@ import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.redis.RedisMailRepository;
+
+import java.time.Duration;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.http.MediaType.*;
@@ -29,7 +32,11 @@ class MemberJoinControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @SpyBean private MemberJoinService memberJoinService;
+    @Autowired private RedisMailRepository redisMailRepository;
     @Autowired private MemberRepository memberRepository;
+
+    private static final String TEST_EMAIL = "test@email.com";
+    private static final String TEST_AUTH_CODE = "1111";
 
     @DisplayName("인증코드 발송이 정상적으로 동작하는지 확인한다.")
     @Test
@@ -48,6 +55,46 @@ class MemberJoinControllerTest {
                 .andExpect(status().isOk());
 
         verify(memberJoinService, times(1)).sendAuthCodeToEmail(testEmail);
+    }
+
+    @DisplayName("인증코드 검증이 성공하면 true 를 반환한다.")
+    @Test
+    public void verifyAuthCode() throws Exception {
+        // given
+        redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
+
+        // when & then
+        mockMvc.perform(
+                        get("/api/v1/auth/valid")
+                                .queryParam("email", TEST_EMAIL)
+                                .queryParam("authCode", TEST_AUTH_CODE)
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.error").doesNotExist())
+                .andExpect(jsonPath("$.data.valid").value(true));
+    }
+
+    @DisplayName("인증코드 검증에 실패하면 false 를 반환한다.")
+    @Test
+    public void verifyAuthCode2() throws Exception {
+        // given
+        redisMailRepository.saveAuthCode("another_email", TEST_AUTH_CODE, Duration.ofMinutes(5));
+
+        // when & then
+        mockMvc.perform(
+                        get("/api/v1/auth/valid")
+                                .queryParam("email", TEST_EMAIL)
+                                .queryParam("authCode", TEST_AUTH_CODE)
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.error").doesNotExist())
+                .andExpect(jsonPath("$.data.valid").value(false));
     }
 
     @DisplayName("닉네임 중복이 확인되면 true 를 반환한다.")
