@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.dto.response.DuplicateNicknameResponse;
+import revi1337.onsquad.member.dto.response.EmailValidResponse;
 
 @Validated
 @RequiredArgsConstructor
@@ -23,6 +24,18 @@ public class MemberJoinController {
             @RequestParam @Email String email
     ) {
         memberJoinService.sendAuthCodeToEmail(email);
+    }
+
+    // TODO 여기 구현해야함.
+    @GetMapping("/valid")
+    public ResponseEntity<RestResponse<EmailValidResponse>> verifyAuthCode(
+            @RequestParam @Email String email,
+            @RequestParam String authCode
+    ) {
+        if (memberJoinService.verifyAuthCode(email, authCode)) {
+            return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(true)));
+        }
+        return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(false)));
     }
 
     @GetMapping("/check")
