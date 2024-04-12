@@ -106,4 +106,34 @@ class RedisMailRepositoryTest extends TestContainerSupport {
         // then
         assertThat(canOverwrite).isFalse();
     }
+
+    @DisplayName("이메일 인증이 진행되어있는 상태면 200 을 반환한다.")
+    @Test
+    public void isValidMailStatus() {
+        // given
+        Duration minutes = Duration.ofMinutes(3);
+        MailStatus mailStatus = MailStatus.SUCCESS;
+        stringRedisTemplate.opsForValue().set(TEST_KEY_ENTRY, mailStatus.getText(), minutes);
+
+        // when
+        boolean isValidMailStatus = redisMailRepository.isValidMailStatus(TEST_EMAIL, mailStatus);
+
+        // then
+        assertThat(isValidMailStatus).isTrue();
+    }
+
+    @DisplayName("이메일 인증이 진행되어있지 않은 상태면 false 를 반환한다.")
+    @Test
+    public void isValidMailStatus2() {
+        // given
+        Duration minutes = Duration.ofMinutes(3);
+        MailStatus mailStatus = MailStatus.SUCCESS;
+        stringRedisTemplate.opsForValue().set(TEST_KEY_ENTRY, "FAIL", minutes);
+
+        // when
+        boolean isValidMailStatus = redisMailRepository.isValidMailStatus(TEST_EMAIL, mailStatus);
+
+        // then
+        assertThat(isValidMailStatus).isFalse();
+    }
 }

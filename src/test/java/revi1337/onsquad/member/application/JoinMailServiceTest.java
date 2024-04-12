@@ -86,4 +86,36 @@ public class JoinMailServiceTest {
                 .overwriteAuthCodeToStatus(TEST_EMAIL, MailStatus.SUCCESS, minutes);
         assertThat(valid).isFalse();
     }
+
+    @DisplayName("회원가입 메일 인증이 완료되어있는 상태면 true 를 반환한다.")
+    @Test
+    public void isValidMailStatus() {
+        // given
+        given(redisMailRepository.isValidMailStatus(TEST_EMAIL, MailStatus.SUCCESS))
+                .willReturn(true);
+
+        // when
+        boolean isValidMailStatus = joinMailService.isValidMailStatus(TEST_EMAIL);
+
+        // then
+        then(redisMailRepository).should(times(1))
+                .isValidMailStatus(TEST_EMAIL, MailStatus.SUCCESS);
+        assertThat(isValidMailStatus).isTrue();
+    }
+
+    @DisplayName("회원가입 메일 인증이 완료되어있지 않은 상태면 false 를 반환한다.")
+    @Test
+    public void isValidMailStatus2() {
+        // given
+        given(redisMailRepository.isValidMailStatus(any(), any()))
+                .willReturn(false);
+
+        // when
+        boolean isValidMailStatus = joinMailService.isValidMailStatus(TEST_EMAIL);
+
+        // then
+        then(redisMailRepository).should(times(1))
+                .isValidMailStatus(TEST_EMAIL, MailStatus.SUCCESS);
+        assertThat(isValidMailStatus).isFalse();
+    }
 }

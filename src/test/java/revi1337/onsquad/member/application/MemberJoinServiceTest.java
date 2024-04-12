@@ -7,12 +7,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.error.UnsatisfiedEmailAuthentication;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("회원가입 서비스 테스트")
@@ -104,5 +108,37 @@ class MemberJoinServiceTest extends TestContainerSupport {
         // then
         assertThat(exists).isFalse();
         verify(memberRepository, times(1)).existsByNickname(vo);
+    }
+
+    @DisplayName("회원가입 메일 인증이 완료되어있지 않은상태면 오류를 반환한다.")
+    @Test
+    public void joinMember() {
+        // given
+        String email = "david122123@gmail.com";
+        String nickname = "nickname";
+        MemberDto memberDto = MemberDto.builder().email(new Email(email)).nickname(new Nickname(nickname)).build();
+        given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
+        given(joinMailService.isValidMailStatus(email)).willReturn(false);
+
+        // when && then
+        assertThatThrownBy(() -> memberJoinService.joinMember(memberDto))
+                .isExactlyInstanceOf(UnsatisfiedEmailAuthentication.class)
+                .hasMessage("메일 인증이 되어있지 않은 상태");
+        then(memberRepository).should(times(0)).save(any());
+    }
+
+    @DisplayName("회원가입 메일 인증이 완료되어있으면 회원가입을 진행한다.")
+    @Test
+    public void joinMember2() {
+        // given
+        String email = "david122123@gmail.com";
+        MemberDto memberDto = MemberDto.builder().email(new Email(email)).build();
+        given(joinMailService.isValidMailStatus(email)).willReturn(true);
+
+        // when
+        memberJoinService.joinMember(memberDto);
+
+        // then
+        verify(memberRepository, times(1)).save(any());
     }
 }
