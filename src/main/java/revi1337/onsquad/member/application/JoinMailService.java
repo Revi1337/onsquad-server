@@ -35,4 +35,8 @@ public class JoinMailService {
         log.info("[MAIL CODE] EMAIL : {}, VALID : SUCCESS", email);
         return redisMailRepository.overwriteAuthCodeToStatus(email, MailStatus.SUCCESS, minutes);
     }
+
+    public boolean isValidMailStatus(String email) {
+        return redisMailRepository.isValidMailStatus(email, MailStatus.SUCCESS);
+    }
 }

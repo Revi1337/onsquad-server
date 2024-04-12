@@ -32,4 +32,11 @@ public class RedisMailRepository {
                 .opsForValue()
                 .setIfPresent(redisAuthKey, mailStatus.getText(), minutes));
     }
+
+    public boolean isValidMailStatus(String email, MailStatus mailStatus) {
+        String redisAuthKey = String.format(KEY_FORMAT, email);
+        return Objects.equals(
+                stringRedisTemplate.opsForValue().get(redisAuthKey), mailStatus.getText()
+        );
+    }
 }
