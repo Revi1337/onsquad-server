@@ -1,0 +1,3 @@
+
+include::{snippets}/error-code/errorCode/code-response-fields-beneath-data.adoc[]
+

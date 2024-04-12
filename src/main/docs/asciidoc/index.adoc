@@ -10,4 +10,6 @@
 
 include::member.adoc[]
 
+== 예외코드 및 Description
 
+include::error.adoc[]
