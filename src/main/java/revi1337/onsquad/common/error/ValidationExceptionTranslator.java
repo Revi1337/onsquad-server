@@ -3,7 +3,7 @@ package revi1337.onsquad.common.error;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindException;
-import revi1337.onsquad.common.dto.ErrorCode;
+import revi1337.onsquad.common.dto.CommonErrorCode;
 import revi1337.onsquad.common.dto.ProblemDetail;
 
 import java.util.ArrayList;
@@ -15,15 +15,15 @@ public class ValidationExceptionTranslator {
 
     private List<String> errors;
 
-    public ProblemDetail translate(ErrorCode errorCode, Exception exception) {
+    public ProblemDetail translate(CommonErrorCode commonErrorCode, Exception exception) {
         if (exception instanceof ConstraintViolationException constraintViolationException) {
             errors = extractFieldError(constraintViolationException);
-            return ProblemDetail.of(errorCode, errors);
+            return ProblemDetail.of(commonErrorCode, errors);
         }
 
         if (exception instanceof BindException bindException) {
             errors = extractFieldError(bindException);
-            return ProblemDetail.of(errorCode, errors);
+            return ProblemDetail.of(commonErrorCode, errors);
         }
 
         throw new IllegalArgumentException("unsupport exception");

@@ -21,6 +21,10 @@ public record RestResponse<T> (
         return new RestResponse<>(data);
     }
 
+    public static <T> RestResponse<T> fail(T data) {
+        return new RestResponse<>(data);
+    }
+
     public static <T extends ProblemDetail> RestResponse<T> fail(T problemDetail) {
         return new RestResponse<>(problemDetail);
     }
