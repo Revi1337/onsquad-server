@@ -8,6 +8,7 @@
 # Exclude
 src/main/resources/application-*.yml
 src/main/generated
+docker-compose-*.yml
 
 # User-specific stuff
 .idea/**/workspace.xml

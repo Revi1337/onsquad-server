@@ -50,6 +50,7 @@ dependencies {
 
 ext {
     snippetsDir = file('build/generated-snippets')
+    applicationName = 'onsquad'
 }
 
 tasks.named('test') {
@@ -76,6 +77,12 @@ task createDocument(type: Copy) {
 
 build {
     dependsOn createDocument
+}
+
+bootJar{
+    archivesBaseName = applicationName
+    archiveFileName = applicationName + '.jar'
+    archiveVersion = "0.0.1"
 }
 
 jar {
