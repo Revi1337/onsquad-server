@@ -3,7 +3,7 @@ version: "3.8"
 services:
   onsquad-cache:
     container_name: onsquad-cache
-    image: redis:latest
+    image: redis:7.0.8-alpine
     restart: always
     expose:
       - 6379
