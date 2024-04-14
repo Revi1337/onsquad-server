@@ -63,12 +63,12 @@ logging:
 
 ---
 
-spring:
-  config:
-    activate:
-      on-profile: cicd
-
-  data:
-    redis:
-      host: host.docker.internal
-      port: 6379
+#spring:
+#  config:
+#    activate:
+#      on-profile: cicd
+#
+#  data:
+#    redis:
+#      host: host.docker.internal
+#      port: 6379

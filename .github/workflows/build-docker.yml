@@ -29,16 +29,11 @@ jobs:
           echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
           echo "${{ secrets.APPLICATION_PROD }}" > ./application-prod.yml
 
-      - name: Setup Testcontainers Cloud Client
-        uses: atomicjar/testcontainers-cloud-setup-action@v1
-        with:
-          token: ${{ secrets.TC_CLOUD_TOKEN }}
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build -Pprofile=cicd
+        run: ./gradlew clean build
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
