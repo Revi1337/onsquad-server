@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.mail.MailStatus;
+import revi1337.onsquad.config.SpringActiveProfilesResolver;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.domain.Member;
@@ -35,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("회원가입 api 테스트")
 @SpringBootTest
 @Transactional
+@ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
 class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
 
     @SpyBean private MemberJoinService memberJoinService;

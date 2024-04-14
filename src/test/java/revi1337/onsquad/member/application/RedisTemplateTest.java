@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ActiveProfiles;
+import revi1337.onsquad.config.SpringActiveProfilesResolver;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;
@@ -14,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Redis 정상동작 테스트")
 @DataRedisTest
+@ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
 public class RedisTemplateTest extends TestContainerSupport {
 
     @Autowired

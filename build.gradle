@@ -53,8 +53,12 @@ ext {
     applicationName = 'onsquad'
 }
 
+def gradleProfile = project.hasProperty("profile") ?
+        project.property("profile").toString() : "test"
+
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty("spring.profiles.active", gradleProfile)
     outputs.dir snippetsDir
 }
 

@@ -21,6 +21,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'
 
       - name: Make application-dev.yml & application-prod.yml
         run: |
@@ -37,7 +38,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean build -Pprofile=cicd
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
