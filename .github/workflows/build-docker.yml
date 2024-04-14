@@ -36,7 +36,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean build            # run: ./gradlew clean build -Pprofile=ci
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

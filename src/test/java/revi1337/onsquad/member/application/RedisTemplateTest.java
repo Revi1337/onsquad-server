@@ -17,8 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Redis 정상동작 테스트")
 @DataRedisTest
 @ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
-//public class RedisTemplateTest extends TestContainerSupport {
-public class RedisTemplateTest {
+public class RedisTemplateTest extends TestContainerSupport {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;

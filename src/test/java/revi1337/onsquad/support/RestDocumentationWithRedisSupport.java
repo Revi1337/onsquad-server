@@ -16,8 +16,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 @AutoConfigureMockMvc
 @ExtendWith({RestDocumentationExtension.class})
-//public abstract class RestDocumentationWithRedisSupport extends TestContainerSupport {
-public abstract class RestDocumentationWithRedisSupport {
+public abstract class RestDocumentationWithRedisSupport extends TestContainerSupport {
 
     @Autowired protected MockMvc mockMvc;
     @Autowired protected ObjectMapper objectMapper;

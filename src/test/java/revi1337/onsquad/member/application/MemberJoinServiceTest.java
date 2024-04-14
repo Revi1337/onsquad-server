@@ -21,7 +21,6 @@ import static org.mockito.BDDMockito.*;
 
 @DisplayName("회원가입 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
-//class MemberJoinServiceTest extends TestContainerSupport {
 class MemberJoinServiceTest extends TestContainerSupport {
 
     @Mock private MemberRepository memberRepository;

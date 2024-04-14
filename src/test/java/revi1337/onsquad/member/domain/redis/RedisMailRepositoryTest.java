@@ -18,8 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(RedisMailRepository.class)
 @DataRedisTest
 @ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
-//class RedisMailRepositoryTest extends TestContainerSupport {
-class RedisMailRepositoryTest {
+class RedisMailRepositoryTest extends TestContainerSupport {
 
     @Autowired private StringRedisTemplate stringRedisTemplate;
     @Autowired private RedisMailRepository redisMailRepository;
