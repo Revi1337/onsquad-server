@@ -74,7 +74,7 @@ asciidoctor {
 }
 
 asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
+    delete file('src/main/resources/static')
 }
 
 task createDocument(type: Copy) {
@@ -83,11 +83,11 @@ task createDocument(type: Copy) {
     into file("src/main/resources/static")
 }
 
-build {
-    dependsOn createDocument
-}
-
 bootJar{
+    dependsOn createDocument
+    from("${asciidoctor.outputDir}") {
+        into 'static'
+    }
     archivesBaseName = applicationName
     archiveFileName = applicationName + '.jar'
     archiveVersion = "0.0.1"

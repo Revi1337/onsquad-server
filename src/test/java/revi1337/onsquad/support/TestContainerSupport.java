@@ -13,7 +13,7 @@ public abstract class TestContainerSupport {
     static RedisContainer redis;
 
     static {
-        redis = new RedisContainer(RedisContainer.DEFAULT_IMAGE_NAME.withTag("latest"));
+        redis = new RedisContainer(RedisContainer.DEFAULT_IMAGE_NAME.withTag("7.0.8-alpine"));
         redis.start();
     }
 
