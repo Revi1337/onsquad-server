@@ -63,7 +63,7 @@ jobs:
           echo "${{ secrets.DOCKER_COMPOSE }}" > ./docker-compose.yml
 
       - name: Delivery docker-compose.yml
-        uses: appleboy/scp-action@v0.1.3
+        uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
