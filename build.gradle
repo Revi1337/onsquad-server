@@ -64,6 +64,10 @@ tasks.named('test') {
 
 asciidoctor {
     configurations 'asciidoctorExt'
+
+    sources {
+        include('**/index.adoc')
+    }
     baseDirFollowsSourceFile()
     inputs.dir snippetsDir
     dependsOn test
@@ -76,7 +80,7 @@ asciidoctor.doFirst {
 task createDocument(type: Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
+    into file("src/main/resources/static")
 }
 
 build {
