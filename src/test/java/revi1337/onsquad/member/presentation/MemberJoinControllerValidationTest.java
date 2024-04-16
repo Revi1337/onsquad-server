@@ -122,7 +122,8 @@ class MemberJoinControllerValidationTest extends ValidationTestSupport {
                     Arguments.of(new MemberJoinRequest("test@mail.com", "", "password", "nickname", "anywhere")),
                     Arguments.of(new MemberJoinRequest("test@mail.com", "password", "", "nickname", "anywhere")),
                     Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "", "anywhere")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", ""))
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "")),
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "anywhere"))
             );
         }
     }
