@@ -308,6 +308,26 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
                     .andExpect(jsonPath("$.error.code").value("M001"))
                     .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않은 상태"));
         }
+
+        @DisplayName("이메일이 형식이 옳지 않으면 예외를 던진다.")
+        @Test
+        public void joinMember5() throws Exception {
+            // given
+            MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
+                    "invalid_email", "password", "password", "nickname", "anywhere"
+            );
+
+            // when && then
+            mockMvc.perform(
+                            post("/api/v1/auth/join")
+                                    .content(objectMapper.writeValueAsString(memberJoinRequest))
+                                    .contentType(APPLICATION_JSON)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.error.code").value("M003"))
+                    .andExpect(jsonPath("$.error.message").value("이메일 형식이 올바르지 않은 상태"));
+        }
     }
 }
 
