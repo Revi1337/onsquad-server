@@ -25,15 +25,15 @@ public class MemberJoinController {
 
     @GetMapping("/send")
     public void sendAuthCodeToEmail(
-            @RequestParam @Email String email
+            @RequestParam @Email @NotEmpty String email
     ) {
         memberJoinService.sendAuthCodeToEmail(email);
     }
 
     @GetMapping("/valid")
     public ResponseEntity<RestResponse<EmailValidResponse>> verifyAuthCode(
-            @RequestParam @Email String email,
-            @RequestParam String authCode
+            @RequestParam @Email @NotEmpty String email,
+            @RequestParam @NotEmpty String authCode
     ) {
         if (memberJoinService.verifyAuthCode(email, authCode)) {
             return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(true)));
