@@ -6,8 +6,9 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import revi1337.onsquad.member.error.InvalidEmailFormat;
+import revi1337.onsquad.member.error.MemberErrorCode;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Getter
@@ -31,7 +32,7 @@ public class Email {
             throw new NullPointerException("이메일은 null 일 수 없습니다.");
         }
         if (invalidEmailFormat(value)) {
-            throw new IllegalArgumentException("이메일 형식이 일치하지 않습니다.");
+            throw new InvalidEmailFormat(MemberErrorCode.INVALID_EMAIL_FORMAT);
         }
     }
 
