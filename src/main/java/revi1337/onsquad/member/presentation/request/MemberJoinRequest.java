@@ -1,9 +1,9 @@
-package revi1337.onsquad.member.dto.request;
+package revi1337.onsquad.member.presentation.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.application.dto.MemberDto;
 import revi1337.onsquad.member.presentation.validator.StringComparator;
 import revi1337.onsquad.member.presentation.validator.StringValidator;
 

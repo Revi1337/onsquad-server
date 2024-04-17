@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.dto;
+package revi1337.onsquad.member.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;
