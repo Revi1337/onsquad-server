@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.UnsatisfiedNicknameLength;
+import revi1337.onsquad.member.error.exception.UnsatisfiedNicknameLength;
 
 @Getter
 @EqualsAndHashCode

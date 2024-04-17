@@ -10,7 +10,7 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.dto.MemberDto;
-import revi1337.onsquad.member.error.UnsatisfiedEmailAuthentication;
+import revi1337.onsquad.member.error.exception.UnsatisfiedEmailAuthentication;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;

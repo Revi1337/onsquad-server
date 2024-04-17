@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
-import revi1337.onsquad.member.error.*;
+import revi1337.onsquad.member.error.exception.MemberException;
 
 @RestControllerAdvice
 public class MemberExceptionHandler {

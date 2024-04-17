@@ -6,7 +6,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import revi1337.onsquad.member.error.InvalidEmailFormat;
+import revi1337.onsquad.member.error.exception.InvalidEmailFormat;
 import revi1337.onsquad.member.error.MemberErrorCode;
 
 import java.util.regex.Pattern;

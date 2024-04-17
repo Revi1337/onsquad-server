@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.error;
+package revi1337.onsquad.member.error.exception;
 
 import revi1337.onsquad.common.error.ErrorCode;
 

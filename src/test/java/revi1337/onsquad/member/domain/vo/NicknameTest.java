@@ -2,7 +2,7 @@ package revi1337.onsquad.member.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.error.UnsatisfiedNicknameLength;
+import revi1337.onsquad.member.error.exception.UnsatisfiedNicknameLength;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
