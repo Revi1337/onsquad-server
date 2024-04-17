@@ -19,7 +19,7 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.redis.RedisMailRepository;
 import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.presentation.request.MemberJoinRequest;
+import revi1337.onsquad.member.dto.request.MemberJoinRequest;
 import revi1337.onsquad.support.RestDocumentationWithRedisSupport;
 
 import java.time.Duration;

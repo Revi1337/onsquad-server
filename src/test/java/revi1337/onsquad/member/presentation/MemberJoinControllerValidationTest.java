@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.member.application.MemberJoinService;
-import revi1337.onsquad.member.presentation.request.MemberJoinRequest;
+import revi1337.onsquad.member.dto.request.MemberJoinRequest;
 import revi1337.onsquad.support.ValidationTestSupport;
 
 import java.util.stream.Stream;

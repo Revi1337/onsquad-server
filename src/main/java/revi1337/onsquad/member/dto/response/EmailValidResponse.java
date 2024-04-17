@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.presentation.response;
+package revi1337.onsquad.member.dto.response;
 
 public record EmailValidResponse(
         boolean valid

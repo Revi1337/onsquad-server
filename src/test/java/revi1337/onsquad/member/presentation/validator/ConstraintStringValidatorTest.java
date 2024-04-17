@@ -6,7 +6,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.presentation.request.MemberJoinRequest;
+import revi1337.onsquad.member.dto.request.MemberJoinRequest;
 
 import java.util.Arrays;
 import java.util.List;

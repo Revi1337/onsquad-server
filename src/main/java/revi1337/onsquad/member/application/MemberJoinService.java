@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.application.dto.MemberDto;
+import revi1337.onsquad.member.dto.MemberDto;
 import revi1337.onsquad.member.error.DuplicateNickname;
 import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.UnsatisfiedEmailAuthentication;

@@ -9,9 +9,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberJoinService;
-import revi1337.onsquad.member.presentation.request.MemberJoinRequest;
-import revi1337.onsquad.member.presentation.response.DuplicateNicknameResponse;
-import revi1337.onsquad.member.presentation.response.EmailValidResponse;
+import revi1337.onsquad.member.dto.request.MemberJoinRequest;
+import revi1337.onsquad.member.dto.response.DuplicateNicknameResponse;
+import revi1337.onsquad.member.dto.response.EmailValidResponse;
 
 import static org.springframework.http.HttpStatus.*;
 
