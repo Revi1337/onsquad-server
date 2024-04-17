@@ -2,6 +2,7 @@ package revi1337.onsquad.member.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import revi1337.onsquad.member.error.UnsatisfiedNicknameLength;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -38,8 +39,8 @@ class NicknameTest {
 
         // when & then
         assertThatThrownBy(() -> new Nickname(value))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("닉네임은 2자 이상 8자 이하여야 합니다.");
+                .isInstanceOf(UnsatisfiedNicknameLength.class)
+                .hasMessage("닉네임 길이가 올바르지 않은 상태");
     }
 
     @DisplayName("닉네임은 8자 초과이면 안된다.")
@@ -50,8 +51,8 @@ class NicknameTest {
 
         // when & then
         assertThatThrownBy(() -> new Nickname(value))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("닉네임은 2자 이상 8자 이하여야 합니다.");
+                .isInstanceOf(UnsatisfiedNicknameLength.class)
+                .hasMessage("닉네임 길이가 올바르지 않은 상태");
     }
 
 }
