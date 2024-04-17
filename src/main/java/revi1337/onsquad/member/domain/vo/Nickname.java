@@ -2,10 +2,9 @@ package revi1337.onsquad.member.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import revi1337.onsquad.member.error.MemberErrorCode;
+import revi1337.onsquad.member.error.UnsatisfiedNicknameLength;
 
 @Getter
 @EqualsAndHashCode
@@ -29,7 +28,7 @@ public class Nickname {
             throw new NullPointerException("닉네임은 null 일 수 없습니다.");
         }
         if (value.length() > MAX_LENGTH || value.length() < MIN_LENGTH) {
-            throw new IllegalArgumentException("닉네임은 2자 이상 8자 이하여야 합니다.");
+            throw new UnsatisfiedNicknameLength(MemberErrorCode.INVALID_NICKNAME_LENGTH);
         }
     }
 }
