@@ -1,6 +1,8 @@
 name: ci/cd
 
 on:
+  push:
+    branches: ['main']
   workflow_dispatch:
 
 env:
@@ -13,7 +15,7 @@ jobs:
 
       - name: Checkout to project
         uses: actions/checkout@v3
-          
+
       - name: Start containers
         run: docker-compose -f "docker-compose.yml" up -d
 
@@ -36,48 +38,32 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build            # run: ./gradlew clean build -Pprofile=ci
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          file: ./Dockerfile
-          context: .
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PROJECT_NAME }}
-
-      - name: Make Docker-Compose.yml
-        run: |
-          echo "${{ secrets.DOCKER_COMPOSE }}" > ./docker-compose.yml
-
-      - name: Delivery docker-compose.yml
+      - name: Delivery Executable JAR
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
-          source: 'docker-compose.yml'
-          target: 'onsquad'
+          source: 'build/libs/*.jar'
+          target: ${{ env.PROJECT_NAME }}
           rm: true
 
-      - name: Execute docker-compose
+      - name: Execute Jar
         uses: appleboy/ssh-action@master
         with:
           username: ${{ secrets.USERNAME }}
           host: ${{ secrets.HOST }}
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            cd ~/${{ env.PROJECT_NAME }}
-            sudo docker-compose up -d
+            SOURCE_DIR=$(echo $HOME)/${{ env.PROJECT_NAME }}
+            EXECUTABLE_SPRING_JAR_PATH=$(find $SOURCE_DIR -name '*.jar' 2>/dev/null)
+            PROCESS_ID=$(ps aux | grep -i 'java -jar' | grep -v grep | tr ' ' '\n' | sed -e '/^$/d' | head -2 | tail -1)
+            if [[ -z $PROCESS_ID ]]; then
+                echo "Nothing Process Running"
+            else
+                echo "Another Process Running"
+                kill -9 $PROCESS_ID
+            fi
+            nohup java -jar -Duser.timezone=Asia/Seoul -Dspring.profiles.active=${{ secrets.SPRING_PROFILE }} $EXECUTABLE_SPRING_JAR_PATH > $SOURCE_DIR/build/libs/output.log 2>&1 &
             sleep 1
