@@ -5,14 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.mail.MailStatus;
-import revi1337.onsquad.config.SpringActiveProfilesResolver;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.domain.Member;
@@ -21,33 +16,21 @@ import revi1337.onsquad.member.domain.redis.RedisMailRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.dto.request.MemberJoinRequest;
-import revi1337.onsquad.support.RestDocumentationWithRedisSupport;
+import revi1337.onsquad.support.IntegrationTestSupport;
 
 import java.time.Duration;
 
 import static org.mockito.BDDMockito.*;
 import static org.springframework.http.MediaType.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("회원가입 api 테스트")
-@SpringBootTest
-@Transactional
-@ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
-class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
+class MemberJoinControllerTest extends IntegrationTestSupport {
 
     @SpyBean private MemberJoinService memberJoinService;
     @Autowired private RedisMailRepository redisMailRepository;
     @Autowired private MemberRepository memberRepository;
-
-    private static final String TEST_EMAIL = "test@email.com";
-    private static final String TEST_AUTH_CODE = "1111";
-    private static final String TEST_NICKNAME = "nickname";
 
     @DisplayName("인증코드 발송을 진행한다.")
     @Nested
@@ -68,19 +51,9 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
             );
 
             // then
-            verify(memberJoinService, times(1)).sendAuthCodeToEmail(testEmail);
             resultActions
-                    .andExpect(status().isOk())
-                    .andDo(
-                            document(
-                                    "member-join-controller/sendEmail",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    queryParameters(
-                                            parameterWithName("email").description("이메일")
-                                    )
-                            )
-                    );
+                    .andExpect(status().isOk());
+            then(memberJoinService).should(times(1)).sendAuthCodeToEmail(testEmail);
         }
     }
 
@@ -94,31 +67,17 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
             // given
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
 
-            // when
-            ResultActions resultActions = mockMvc.perform(
-                    get("/api/v1/auth/valid")
-                            .queryParam("email", TEST_EMAIL)
-                            .queryParam("authCode", TEST_AUTH_CODE)
-                            .contentType(APPLICATION_JSON)
-            );
-
-            // then
-            resultActions
+            // when & then
+            mockMvc.perform(
+                            get("/api/v1/auth/valid")
+                                    .queryParam("email", TEST_EMAIL)
+                                    .queryParam("authCode", TEST_AUTH_CODE)
+                                    .contentType(APPLICATION_JSON)
+                    )
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.error").doesNotExist())
-                    .andExpect(jsonPath("$.data.valid").value(true))
-                    .andDo(
-                            document(
-                                    "member-join-controller/verifyEmail",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    queryParameters(
-                                            parameterWithName("email").description("이메일"),
-                                            parameterWithName("authCode").description("이메일 인증코드")
-                                    )
-                            )
-                    );
+                    .andExpect(jsonPath("$.data.valid").value(true));
         }
 
         @DisplayName("인증코드 검증에 실패하면 false 를 반환한다.")
@@ -157,27 +116,14 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
             Member member = MemberFactory.defaultMember().build();
             memberRepository.save(member);
 
-            // when
-            ResultActions resultActions = mockMvc.perform(
-                    get("/api/v1/auth/check")
-                            .queryParam("nickname", "nickname")
-                            .contentType(APPLICATION_JSON)
-            );
-
-            // then
-            resultActions
+            // when & then
+            mockMvc.perform(
+                            get("/api/v1/auth/check")
+                                    .queryParam("nickname", "nickname")
+                                    .contentType(APPLICATION_JSON)
+                    )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.duplicate").value(true))
-                    .andDo(
-                            document(
-                                    "member-join-controller/duplicateEmail",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    queryParameters(
-                                            parameterWithName("nickname").description("닉네임")
-                                    )
-                            )
-                    );
+                    .andExpect(jsonPath("$.data.duplicate").value(true));
         }
 
         @DisplayName("닉네임 중복이 확인되지 않으면 false 를 반환한다.")
@@ -216,30 +162,13 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
                     TEST_EMAIL, "password", "password", "nickname", "어딘가"
             );
 
-            // when
-            ResultActions resultActions = mockMvc.perform(
-                    post("/api/v1/auth/join")
-                            .content(objectMapper.writeValueAsString(memberJoinRequest))
-                            .contentType(APPLICATION_JSON)
-            );
-
-            // then
-            resultActions
-                    .andExpect(status().isCreated())
-                    .andDo(
-                            document(
-                                    "member-join-controller/joinMember",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestFields(
-                                            fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-                                            fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
-                                            fieldWithPath("passwordConfirm").type(JsonFieldType.STRING).description("비밀번호 확인"),
-                                            fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
-                                            fieldWithPath("address").type(JsonFieldType.STRING).description("주소")
-                                    )
-                            )
-                    );
+            // when & then
+            mockMvc.perform(
+                            post("/api/v1/auth/join")
+                                    .content(objectMapper.writeValueAsString(memberJoinRequest))
+                                    .contentType(APPLICATION_JSON)
+                    )
+                    .andExpect(status().isCreated());
         }
 
         @DisplayName("메일인증이 진행되어있지 않으면 회원가입에 실패한다.")
@@ -350,4 +279,3 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
         }
     }
 }
-
