@@ -12,8 +12,8 @@ import revi1337.onsquad.member.error.exception.UnsatisfiedNicknameLength;
 @Embeddable
 public class Nickname {
 
-    public static final int MIN_LENGTH = 2;
-    public static final int MAX_LENGTH = 8;
+    private static final int MIN_LENGTH = 2;
+    private static final int MAX_LENGTH = 8;
 
     @Column(name = "nickname", length = MAX_LENGTH * 3, nullable = false)
     private String value;

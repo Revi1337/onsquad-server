@@ -51,7 +51,7 @@ public class RestErrorHandlerDocumentationTest extends RestDocumentationSupport 
                 );
     }
 
-    public static CodeResponseFieldsSnippet codeResponseFields(String type,
+    private static CodeResponseFieldsSnippet codeResponseFields(String type,
                                                                PayloadSubsectionExtractor<?> subsectionExtractor,
                                                                Map<String, Object> attributes,
                                                                FieldDescriptor... descriptors) {
@@ -72,7 +72,7 @@ public class RestErrorHandlerDocumentationTest extends RestDocumentationSupport 
                 .toArray(FieldDescriptor[]::new);
     }
 
-    public List<ErrorCode> retrieveErrorCodeConstants(Class<?> clazz) {
+    private List<ErrorCode> retrieveErrorCodeConstants(Class<?> clazz) {
         ClassPathScanningCandidateComponentProvider classPathScanningCandidateComponentProvider =
                 new ClassPathScanningCandidateComponentProvider(false);
         TypeFilter typeFilter = new AssignableTypeFilter(clazz);

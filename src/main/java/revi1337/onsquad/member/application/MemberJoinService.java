@@ -37,19 +37,22 @@ public class MemberJoinService {
     }
 
     public void joinMember(MemberDto memberDto) {
-        Email email = memberDto.getEmail();
+        if (verifyAttribute(memberDto)) {
+            memberRepository.save(memberDto.toEntity());
+        }
+    }
+
+    private boolean verifyAttribute(MemberDto memberDto) {
         if (memberRepository.existsByNickname(memberDto.getNickname())) {
             throw new DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
         }
-
+        Email email = memberDto.getEmail();
         if (!joinMailService.isValidMailStatus(email.getValue())) {
             throw new UnsatisfiedEmailAuthentication(MemberErrorCode.NON_AUTHENTICATE_EMAIL);
         }
-
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateMember(MemberErrorCode.DUPLICATE_MEMBER);
         }
-
-        memberRepository.save(memberDto.toEntity());
+        return true;
     }
 }

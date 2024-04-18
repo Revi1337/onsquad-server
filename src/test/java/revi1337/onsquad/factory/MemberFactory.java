@@ -8,10 +8,10 @@ import revi1337.onsquad.member.domain.vo.UserType;
 
 public class MemberFactory {
 
-    public static final Nickname NICKNAME = new Nickname("nickname");
-    public static final Email EMAIL = new Email("test@email.com");
-    public static final Address ADDRESS = new Address("어딘가");
-    public static final UserType USER_TYPE = UserType.GENERAL;
+    private static final Nickname NICKNAME = new Nickname("nickname");
+    private static final Email EMAIL = new Email("test@email.com");
+    private static final Address ADDRESS = new Address("어딘가");
+    private static final UserType USER_TYPE = UserType.GENERAL;
 
     public static Member withNickname(Nickname nickname) {
         return defaultMember().nickname(nickname).build();

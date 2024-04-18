@@ -13,9 +13,9 @@ import java.util.Objects;
 
 public class ConstraintStringValidator implements ConstraintValidator<StringValidator, StringComparator> {
 
-    public static final String MESSAGE_TEMPLATE = "string does not match";
-    public static final String UNSUPPORTED_CLASS = "unsupported class for validation";
-    public static final String UNEXPECTED_FIELD = "unexpected record field";
+    private static final String MESSAGE_TEMPLATE = "string does not match";
+    private static final String UNSUPPORTED_CLASS = "unsupported class for validation";
+    private static final String UNEXPECTED_FIELD = "unexpected record field";
 
     @Override
     public boolean isValid(StringComparator comparator, ConstraintValidatorContext context) {

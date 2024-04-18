@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class RandomCodeGenerator {
 
-    public static final String CODE_BOOK = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final String CODE_BOOK = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     public String generate() {
         StringBuilder stringBuilder = new StringBuilder();
