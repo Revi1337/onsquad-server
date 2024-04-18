@@ -8,10 +8,11 @@ import revi1337.onsquad.common.error.ErrorCode;
 @RequiredArgsConstructor
 public enum MemberErrorCode implements ErrorCode {
 
-    NON_AUTHENTICATE_EMAIL(401, "M001", "메일 인증이 되어있지 않은 상태"),
-    DUPLICATE_NICKNAME(400, "M002", "닉네임이 중복된 상태"),
-    INVALID_EMAIL_FORMAT(400, "M003", "이메일 형식이 올바르지 않은 상태"),
-    INVALID_NICKNAME_LENGTH(400, "M004", "닉네임 길이가 올바르지 않은 상태");
+    INVALID_EMAIL_FORMAT(400, "M001", "이메일 형식이 올바르지 않은 상태"),
+    INVALID_NICKNAME_LENGTH(400, "M002", "닉네임 길이가 올바르지 않은 상태"),
+    DUPLICATE_NICKNAME(401, "M003", "닉네임이 중복된 상태"),
+    NON_AUTHENTICATE_EMAIL(401, "M004", "메일 인증이 되어있지 않은 상태"),
+    DUPLICATE_MEMBER(401, "M005", "이미 회원가입이 되어있는 사용자");
 
     private final int status;
     private final String code;

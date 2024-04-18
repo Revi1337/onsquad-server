@@ -7,6 +7,7 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.error.DuplicateMember;
 import revi1337.onsquad.member.error.exception.DuplicateNickname;
 import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.UnsatisfiedEmailAuthentication;
@@ -43,6 +44,10 @@ public class MemberJoinService {
 
         if (!joinMailService.isValidMailStatus(email.getValue())) {
             throw new UnsatisfiedEmailAuthentication(MemberErrorCode.NON_AUTHENTICATE_EMAIL);
+        }
+
+        if (memberRepository.existsByEmail(email)) {
+            throw new DuplicateMember(MemberErrorCode.DUPLICATE_MEMBER);
         }
 
         memberRepository.save(memberDto.toEntity());
