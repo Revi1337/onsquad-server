@@ -18,6 +18,7 @@ import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.redis.RedisMailRepository;
+import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.dto.request.MemberJoinRequest;
 import revi1337.onsquad.support.RestDocumentationWithRedisSupport;
@@ -46,6 +47,7 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
 
     private static final String TEST_EMAIL = "test@email.com";
     private static final String TEST_AUTH_CODE = "1111";
+    private static final String TEST_NICKNAME = "nickname";
 
     @DisplayName("인증코드 발송을 진행한다.")
     @Nested
@@ -182,7 +184,7 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
         @Test
         public void checkDuplicateNickname2() throws Exception {
             // given
-            String nickname = "nickname";
+            String nickname = TEST_NICKNAME;
 
             // when & then
             mockMvc.perform(
@@ -257,7 +259,7 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M001"))
+                    .andExpect(jsonPath("$.error.code").value("M004"))
                     .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않은 상태"));
         }
 
@@ -265,12 +267,11 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
         @Test
         public void joinMember3() throws Exception {
             // given
-            String nickname = "nickname";
-            Member member = MemberFactory.withNickname(new Nickname(nickname));
+            Member member = MemberFactory.withNickname(new Nickname(TEST_NICKNAME));
             memberRepository.save(member);
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, "password", "password", nickname, "어딘가"
+                    TEST_EMAIL, "password", "password", TEST_NICKNAME, "어딘가"
             );
 
             // when & then
@@ -279,20 +280,19 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M002"))
+                    .andExpect(jsonPath("$.error.code").value("M003"))
                     .andExpect(jsonPath("$.error.message").value("닉네임이 중복된 상태"));
         }
 
-        @DisplayName("닉네임이 중복되지 않지만 메일인증이 되어있지 않으면 회원가입에 실패한다.")
+        @DisplayName("이메일이 중복되면 회원가입에 실패한다.")
         @Test
         public void joinMember4() throws Exception {
             // given
-            String nickname = "nickname";
-            Member member = MemberFactory.withNickname(new Nickname(nickname));
-            memberRepository.save(member);
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
+            redisMailRepository.overwriteAuthCodeToStatus(TEST_EMAIL, MailStatus.SUCCESS, Duration.ofMinutes(5));
+            memberRepository.save(MemberFactory.withEmail(new Email(TEST_EMAIL)));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
                     TEST_EMAIL, "password", "password", "nick", "어딘가"
             );
@@ -305,8 +305,8 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M001"))
-                    .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않은 상태"));
+                    .andExpect(jsonPath("$.error.code").value("M005"))
+                    .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자"));
         }
 
         @DisplayName("이메일이 형식이 옳지 않으면 회원가입에 실패한다.")
@@ -325,7 +325,7 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M003"))
+                    .andExpect(jsonPath("$.error.code").value("M001"))
                     .andExpect(jsonPath("$.error.message").value("이메일 형식이 올바르지 않은 상태"));
         }
 
@@ -345,7 +345,7 @@ class MemberJoinControllerTest extends RestDocumentationWithRedisSupport {
                     )
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M004"))
+                    .andExpect(jsonPath("$.error.code").value("M002"))
                     .andExpect(jsonPath("$.error.message").value("닉네임 길이가 올바르지 않은 상태"));
         }
     }

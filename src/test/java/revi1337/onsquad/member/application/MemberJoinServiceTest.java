@@ -10,6 +10,8 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.error.DuplicateMember;
+import revi1337.onsquad.member.error.exception.DuplicateNickname;
 import revi1337.onsquad.member.error.exception.UnsatisfiedEmailAuthentication;
 import revi1337.onsquad.support.TestContainerSupport;
 
@@ -23,6 +25,10 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class MemberJoinServiceTest extends TestContainerSupport {
 
+    private static final String TEST_EMAIL = "test@email.com";
+    private static final String TEST_NICKNAME = "nickname";
+    private static final String TEST_AUTH_CODE = "1111";
+
     @Mock private MemberRepository memberRepository;
     @Mock private JoinMailService joinMailService;
     @InjectMocks private MemberJoinService memberJoinService;
@@ -31,32 +37,30 @@ class MemberJoinServiceTest extends TestContainerSupport {
     @Test
     public void sendAuthCodeToEmail() {
         // given
-        String email = "david122123@gmail.com";
-        willDoNothing().given(joinMailService).sendAuthCodeToEmail(eq(email), anyString());
+        willDoNothing().given(joinMailService).sendAuthCodeToEmail(eq(TEST_EMAIL), anyString());
 
         // when
-        memberJoinService.sendAuthCodeToEmail(email);
+        memberJoinService.sendAuthCodeToEmail(TEST_EMAIL);
 
         // then
-        verify(joinMailService, times(1))
-                .sendAuthCodeToEmail(eq(email), anyString());
+        then(joinMailService).should(times(1))
+                .sendAuthCodeToEmail(eq(TEST_EMAIL), anyString());
     }
 
     @DisplayName("이메일 인증에 실패하면 true 를 반환한다.")
     @Test
     public void verifyAuthCode() {
         // given
-        String email = "david122123@gmail.com";
-        String authCode = "1111";
         Duration minutes = Duration.ofMinutes(5);
-        given(joinMailService.verifyAuthCode(email, authCode, minutes)).willReturn(true);
+        given(joinMailService.verifyAuthCode(TEST_EMAIL, TEST_AUTH_CODE, minutes))
+                .willReturn(true);
 
         // when
-        boolean success = memberJoinService.verifyAuthCode(email, authCode);
+        boolean success = memberJoinService.verifyAuthCode(TEST_EMAIL, TEST_AUTH_CODE);
 
         // then
-        verify(joinMailService, times(1))
-                .verifyAuthCode(eq(email), eq(authCode), eq(minutes));
+        then(joinMailService).should(times(1))
+                .verifyAuthCode(eq(TEST_EMAIL), eq(TEST_AUTH_CODE), eq(minutes));
         assertThat(success).isTrue();
     }
 
@@ -64,17 +68,16 @@ class MemberJoinServiceTest extends TestContainerSupport {
     @Test
     public void verifyAuthCode2() {
         // given
-        String email = "david122123@gmail.com";
-        String authCode = "1111";
         Duration minutes = Duration.ofMinutes(5);
-        given(joinMailService.verifyAuthCode(email, authCode, minutes)).willReturn(false);
+        given(joinMailService.verifyAuthCode(TEST_EMAIL, TEST_AUTH_CODE, minutes))
+                .willReturn(false);
 
         // when
-        boolean success = memberJoinService.verifyAuthCode(email, authCode);
+        boolean success = memberJoinService.verifyAuthCode(TEST_EMAIL, TEST_AUTH_CODE);
 
         // then
-        verify(joinMailService, times(1))
-                .verifyAuthCode(eq(email), eq(authCode), eq(minutes));
+        then(joinMailService).should(times(1))
+                .verifyAuthCode(eq(TEST_EMAIL), eq(TEST_AUTH_CODE), eq(minutes));
         assertThat(success).isFalse();
     }
 
@@ -82,43 +85,55 @@ class MemberJoinServiceTest extends TestContainerSupport {
     @Test
     public void checkDuplicateNickname() {
         // given
-        String nickname = "nickname";
-        Nickname vo = new Nickname(nickname);
-        given(memberRepository.existsByNickname(vo)).willReturn(true);
+        Nickname nickname = new Nickname(TEST_NICKNAME);
+        given(memberRepository.existsByNickname(nickname)).willReturn(true);
 
         // when
-        boolean exists = memberJoinService.checkDuplicateNickname(nickname);
+        boolean exists = memberJoinService.checkDuplicateNickname(TEST_NICKNAME);
 
         // then
+        then(memberRepository).should(times(1))
+                .existsByNickname(nickname);
         assertThat(exists).isTrue();
-        verify(memberRepository, times(1)).existsByNickname(vo);
     }
 
     @DisplayName("중복되는 닉네임이 없으면 false 를 반환한다.")
     @Test
     public void checkDuplicateNickname2() {
         // given
-        String nickname = "nickname";
-        Nickname vo = new Nickname(nickname);
-        given(memberRepository.existsByNickname(vo)).willReturn(false);
+        Nickname nickname = new Nickname(TEST_NICKNAME);
+        given(memberRepository.existsByNickname(nickname)).willReturn(false);
 
         // when
-        boolean exists = memberJoinService.checkDuplicateNickname(nickname);
+        boolean exists = memberJoinService.checkDuplicateNickname(TEST_NICKNAME);
 
         // then
+        then(memberRepository).should(times(1))
+                .existsByNickname(nickname);
         assertThat(exists).isFalse();
-        verify(memberRepository, times(1)).existsByNickname(vo);
     }
 
-    @DisplayName("회원가입 메일 인증이 완료되어있지 않은상태면 오류를 반환한다.")
+    @DisplayName("닉네임이 중복되면 회원가입을 진행할 수 없다.")
     @Test
-    public void joinMember() {
+    public void joinMember1() {
         // given
-        String email = "david122123@gmail.com";
-        String nickname = "nickname";
-        MemberDto memberDto = MemberDto.builder().email(new Email(email)).nickname(new Nickname(nickname)).build();
+        MemberDto memberDto = MemberDto.builder().nickname(new Nickname(TEST_NICKNAME)).build();
+        given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(true);
+
+        // when && then
+        assertThatThrownBy(() -> memberJoinService.joinMember(memberDto))
+                .isExactlyInstanceOf(DuplicateNickname.class)
+                .hasMessage("닉네임이 중복된 상태");
+        then(memberRepository).should(times(0)).save(any());
+    }
+
+    @DisplayName("메일 인증이 완료되어있지 않으면 회원가입을 진행할 수 없다.")
+    @Test
+    public void joinMember2() {
+        // given
+        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).nickname(new Nickname(TEST_NICKNAME)).build();
         given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
-        given(joinMailService.isValidMailStatus(email)).willReturn(false);
+        given(joinMailService.isValidMailStatus(TEST_EMAIL)).willReturn(false);
 
         // when && then
         assertThatThrownBy(() -> memberJoinService.joinMember(memberDto))
@@ -127,18 +142,35 @@ class MemberJoinServiceTest extends TestContainerSupport {
         then(memberRepository).should(times(0)).save(any());
     }
 
-    @DisplayName("회원가입 메일 인증이 완료되어있으면 회원가입을 진행한다.")
+    @DisplayName("이메일이 중복되면 회원가입을 진행할 수 없다.")
     @Test
-    public void joinMember2() {
+    public void joinMember3() {
         // given
-        String email = "david122123@gmail.com";
-        MemberDto memberDto = MemberDto.builder().email(new Email(email)).build();
-        given(joinMailService.isValidMailStatus(email)).willReturn(true);
+        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).nickname(new Nickname(TEST_NICKNAME)).build();
+        given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
+        given(joinMailService.isValidMailStatus(TEST_EMAIL)).willReturn(true);
+        given(memberRepository.existsByEmail(memberDto.getEmail())).willReturn(true);
+
+        // when && then
+        assertThatThrownBy(() -> memberJoinService.joinMember(memberDto))
+                .isExactlyInstanceOf(DuplicateMember.class)
+                .hasMessage("이미 회원가입이 되어있는 사용자");
+        then(memberRepository).should(times(0)).save(any());
+    }
+
+    @DisplayName("회원가입에 성공한다.")
+    @Test
+    public void joinMember4() {
+        // given
+        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).build();
+        given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
+        given(joinMailService.isValidMailStatus(TEST_EMAIL)).willReturn(true);
+        given(memberRepository.existsByEmail(memberDto.getEmail())).willReturn(false);
 
         // when
         memberJoinService.joinMember(memberDto);
 
         // then
-        verify(memberRepository, times(1)).save(any());
+        then(memberRepository).should(times(1)).save(any());
     }
 }
