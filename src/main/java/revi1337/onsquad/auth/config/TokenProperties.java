@@ -8,31 +8,31 @@ import java.time.Duration;
 
 @ConfigurationProperties("onsquad.token")
 public record TokenProperties(
-        @NestedConfigurationProperty AccessToken accessToken,
-        @NestedConfigurationProperty RefreshToken refreshToken
+        @NestedConfigurationProperty AccessTokenAttributes accessTokenAttributes,
+        @NestedConfigurationProperty RefreshTokenAttributes refreshTokenAttributes
 ) {
     public TokenProperties(
-            @DefaultValue AccessToken accessToken,
-            @DefaultValue RefreshToken refreshToken
+            @DefaultValue AccessTokenAttributes accessTokenAttributes,
+            @DefaultValue RefreshTokenAttributes refreshTokenAttributes
     ) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+        this.accessTokenAttributes = accessTokenAttributes;
+        this.refreshTokenAttributes = refreshTokenAttributes;
     }
 
-    public record AccessToken(
+    public record AccessTokenAttributes(
             @NestedConfigurationProperty TokenAttributes tokenAttributes
     ) {
-        public AccessToken(
+        public AccessTokenAttributes(
                 @DefaultValue TokenAttributes tokenAttributes
         ) {
             this.tokenAttributes = tokenAttributes;
         }
     }
 
-    public record RefreshToken(
+    public record RefreshTokenAttributes(
             @NestedConfigurationProperty TokenAttributes tokenAttributes
     ) {
-        public RefreshToken(
+        public RefreshTokenAttributes(
                 @DefaultValue TokenAttributes tokenAttributes
         ) {
             this.tokenAttributes = tokenAttributes;

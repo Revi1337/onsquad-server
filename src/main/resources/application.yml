@@ -1,6 +1,6 @@
 spring:
   application:
-    name: onsquad-server
+    name: onsquad
   profiles:
     default: local
 
