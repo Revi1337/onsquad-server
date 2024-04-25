@@ -3,10 +3,7 @@ package revi1337.onsquad.member.dto;
 import lombok.Builder;
 import lombok.Getter;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.vo.UserType;
+import revi1337.onsquad.member.domain.vo.*;
 
 @Getter
 public class MemberDto {
@@ -16,14 +13,27 @@ public class MemberDto {
     private Email email;
     private Address address;
     private Nickname nickname;
+    private Password password;
 
     @Builder
-    private MemberDto(Long id, UserType userType, Email email, Address address, Nickname nickname) {
+    private MemberDto(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {
         this.id = id;
         this.userType = userType;
         this.email = email;
         this.address = address;
         this.nickname = nickname;
+        this.password = password;
+    }
+
+    public static MemberDto from(Member member) {
+        return MemberDto.builder()
+                .id(member.getId())
+                .userType(member.getUserType())
+                .email(member.getEmail())
+                .address(member.getAddress())
+                .nickname(member.getNickname())
+                .password(member.getPassword())
+                .build();
     }
 
     public Member toEntity() {
@@ -32,6 +42,7 @@ public class MemberDto {
                 .email(email)
                 .address(address)
                 .nickname(nickname)
+                .password(password)
                 .build();
     }
 }

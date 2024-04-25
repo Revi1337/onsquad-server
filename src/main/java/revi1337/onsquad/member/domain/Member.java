@@ -5,10 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.vo.UserType;
+import revi1337.onsquad.member.domain.vo.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,12 +28,16 @@ public class Member {
     @Embedded
     private Nickname nickname;
 
+    @Embedded
+    private Password password;
+
     @Builder
-    private Member(UserType userType, Email email, Address address, Nickname nickname) {
+    private Member(UserType userType, Email email, Address address, Nickname nickname, Password password) {
         this.userType = userType;
         this.email = email;
         this.address = address;
         this.nickname = nickname;
+        this.password = password;
     }
 
 }
