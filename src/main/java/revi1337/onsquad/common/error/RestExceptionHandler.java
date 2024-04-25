@@ -37,13 +37,13 @@ public class RestExceptionHandler {
     public ResponseEntity<RestResponse<ProblemDetail>> handleServletException(
             Exception exception
     ) {
-        CommonErrorCode commonErrorCode;
+        CommonErrorCode commonErrorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
         if (exception instanceof MethodArgumentTypeMismatchException) {
             commonErrorCode = CommonErrorCode.PARAMETER_TYPE_MISMATCH;
         } else if (exception instanceof MissingServletRequestParameterException) {
             commonErrorCode = CommonErrorCode.MISSING_PARAMETER;
-        } else {
-            commonErrorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
+        } else if (exception instanceof HttpRequestMethodNotSupportedException){
+            commonErrorCode = CommonErrorCode.METHOD_NOT_SUPPORT;
         }
         return ResponseEntity.status(commonErrorCode.getStatus())
                 .body(RestResponse.fail(ProblemDetail.of(commonErrorCode)));
