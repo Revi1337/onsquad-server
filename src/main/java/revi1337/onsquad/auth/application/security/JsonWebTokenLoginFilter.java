@@ -28,7 +28,9 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
 
     private final ObjectMapper objectMapper;
 
-    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/api/v1/auth/login", "POST");
+    private static final String DEFAULT_LOGIN_URL = "/api/v1/auth/login";
+    private static final String ALLOW_HTTP_METHOD = "POST";
+    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher(DEFAULT_LOGIN_URL, ALLOW_HTTP_METHOD);
 
     public JsonWebTokenLoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);

@@ -16,13 +16,14 @@ public class JsonWebTokenAuthenticationProvider implements AuthenticationProvide
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
-    // TODO 기존의 password 를 암호화하여 저장하는것으로 리팩토링해야 한다.
+    private static final String BAD_CREDENTIALS = "invalid user credentials";
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String emailPrincipal = authentication.getPrincipal().toString();
         AuthenticatedMember authenticatedMember = (AuthenticatedMember) userDetailsService.loadUserByUsername(emailPrincipal);
-        if (!passwordEncoder.matches(authentication.getCredentials().toString(), passwordEncoder.encode(authenticatedMember.getPassword()))) {
-            throw new BadCredentialsException("invalid user credentials");
+        if (!passwordEncoder.matches(authentication.getCredentials().toString(), authenticatedMember.getPassword())) {
+            throw new BadCredentialsException(BAD_CREDENTIALS);
         }
         return UsernamePasswordAuthenticationToken.authenticated(
                 authenticatedMember, authenticatedMember.getPassword(), authenticatedMember.getAuthorities()

@@ -40,4 +40,8 @@ public class Member {
         this.password = password;
     }
 
+    public void changePassword(Password encodedPassword) {
+        this.password = encodedPassword;
+    }
+
 }
