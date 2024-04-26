@@ -57,11 +57,15 @@ ext {
     applicationName = 'onsquad'
 }
 
+String ENABLE_PREVIEW = "--enable-preview"
+String PARAMETERS = "-parameters"
+
 def gradleProfile = project.hasProperty("profile") ?
         project.property("profile").toString() : "test"
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs(ENABLE_PREVIEW)
     systemProperty("spring.profiles.active", gradleProfile)
     outputs.dir snippetsDir
 }
@@ -102,5 +106,6 @@ jar {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs.add("-parameters")
+    options.compilerArgs.add(ENABLE_PREVIEW)
+    options.compilerArgs.add(PARAMETERS)
 }
