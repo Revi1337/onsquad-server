@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class MemberTestJoinControllerValidationTest extends ValidationWithRestDocsTestSupport {
 
     private static final String TEST_EMAIL = "test@email.com";
+    private static final String TEST_PASSWORD = "12345!@asa";
     private static final String TEST_AUTH_CODE = "1111";
     private static final String TEST_NICKNAME = "nickname";
 
@@ -236,7 +237,7 @@ class MemberTestJoinControllerValidationTest extends ValidationWithRestDocsTestS
         public void joinMemberDocTest() throws Exception {
             // given
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, "password", "password", "nickname", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가"
             );
             willDoNothing().given(memberJoinService).joinMember(memberJoinRequest.toDto());
 

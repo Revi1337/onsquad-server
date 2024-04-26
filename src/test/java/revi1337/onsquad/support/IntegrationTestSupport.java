@@ -23,6 +23,7 @@ public abstract class IntegrationTestSupport extends TestContainerSupport {
     protected static final String TEST_EMAIL = "test@email.com";
     protected static final String TEST_AUTH_CODE = "1111";
     protected static final String TEST_NICKNAME = "nickname";
+    protected static final String TEST_PASSWORD = "12345!@asa";
 
     @Autowired protected MockMvc mockMvc;
     @Autowired protected ObjectMapper objectMapper;
