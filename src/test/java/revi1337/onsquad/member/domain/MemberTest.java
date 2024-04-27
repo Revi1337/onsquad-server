@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.vo.Password;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayName("영속성객체 Member 테스트")
@@ -18,20 +18,19 @@ class MemberTest {
 
     @DisplayName("Member 의 비밀번호를 변경한다.")
     @Test
-    public void changePassword() {
+    public void updatePassword() {
         // given
         Password prevPassword = new Password(TEST_PASSWORD);
         Member member = MemberFactory.withPassword(prevPassword);
-        String rawPassword = TEST_PASSWORD + "TRASH";
-        Password encodedPassword = new Password(rawPassword);
+        String encodedPassword = TEST_PASSWORD + "TRASH";
 
         // when
-        member.changePassword(encodedPassword);
-        
+        member.updatePassword(encodedPassword);
+
         // then
         assertSoftly(softly -> {
-            assertThat(member.getPassword()).isEqualTo(encodedPassword);
-            assertThat(member.getPassword()).isNotEqualTo(prevPassword);
+            assertThat(member.getPassword().getValue()).isNotEqualTo(TEST_PASSWORD);
+            assertThat(member.getPassword().getValue()).isEqualTo(encodedPassword);
         });
     }
 }
