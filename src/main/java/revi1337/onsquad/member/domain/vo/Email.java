@@ -31,6 +31,7 @@ public class Email {
         if (value == null) {
             throw new NullPointerException("이메일은 null 일 수 없습니다.");
         }
+
         if (invalidEmailFormat(value)) {
             throw new InvalidEmailFormat(MemberErrorCode.INVALID_EMAIL_FORMAT);
         }

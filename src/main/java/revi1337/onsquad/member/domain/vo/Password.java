@@ -2,10 +2,7 @@ package revi1337.onsquad.member.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.InvalidPasswordFormat;
 
@@ -25,6 +22,7 @@ public class Password {
     private String value;
 
     public Password(String rawPassword) {
+
         validate(rawPassword);
         this.value = rawPassword;
     }
@@ -34,33 +32,41 @@ public class Password {
         if (invalidBcryptFormat(encodedPassword)) {
             throw new IllegalArgumentException("암호화된 비밀번호는 bcrypt 포맷이어야 합니다.");
         }
+
         this.value = encodedPassword.toString();
     }
 
-    private void validate(String value) {
+    private void validate(CharSequence value) {
         validateNull(value);
         if (invalidPassword(value)) {
             throw new InvalidPasswordFormat(MemberErrorCode.INVALID_PASSWORD_FORMAT);
         }
     }
 
-    private void validateNull(Object value) {
+    private void validateNull(CharSequence value) {
         if (value == null) {
             throw new NullPointerException("비밀번호는 null 일 수 없습니다.");
         }
     }
 
-    private boolean invalidPassword(String value) {
+    private boolean invalidPassword(CharSequence value) {
         return !Pattern.matches(PASSWORD_REGEX, value);
     }
 
     private boolean invalidBcryptFormat(CharSequence encodedPassword) {
         String encodedPasswordString = encodedPassword.toString();
-        String prefix = encodedPasswordString.substring(0, 8);
-        if (!prefix.equals(BCRYPT_PREFIX)) {
+        if (!encodedPasswordString.startsWith(BCRYPT_PREFIX)) {
             return false;
         }
-        String bcrypt = encodedPasswordString.substring(8);
-        return !Pattern.matches(BCRYPT_REGEX, bcrypt);
+
+        return !Pattern.matches(BCRYPT_REGEX, encodedPasswordString.substring(8));
+    }
+
+    public Password update(CharSequence password) {
+        if (password instanceof String castedPassword) {
+            return new Password((CharSequence) castedPassword);
+        }
+
+        return new Password(password);
     }
 }

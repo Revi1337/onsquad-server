@@ -12,7 +12,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import revi1337.onsquad.auth.dto.request.LoginRequest;
@@ -39,6 +41,10 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
 
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        if (!PatternMatchUtils.simpleMatch(DEFAULT_LOGIN_URL, request.getRequestURI())) {
+            return false;
+        }
+
         boolean matches = DEFAULT_ANT_PATH_REQUEST_MATCHER.matches(request);
         if (!matches && !response.isCommitted()) {
             try {
@@ -53,6 +59,7 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
             } catch (ServletException | IOException ignored) {
             }
         }
+
         return matches;
     }
 

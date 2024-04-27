@@ -27,6 +27,7 @@ public class Nickname {
         if (value == null) {
             throw new NullPointerException("닉네임은 null 일 수 없습니다.");
         }
+
         if (value.length() > MAX_LENGTH || value.length() < MIN_LENGTH) {
             throw new UnsatisfiedNicknameLength(MemberErrorCode.INVALID_NICKNAME_LENGTH);
         }

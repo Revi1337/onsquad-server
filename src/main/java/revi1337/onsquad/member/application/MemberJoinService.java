@@ -8,7 +8,6 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.dto.MemberDto;
 import revi1337.onsquad.member.error.DuplicateMember;
 import revi1337.onsquad.member.error.exception.DuplicateNickname;
@@ -43,9 +42,9 @@ public class MemberJoinService {
     public void joinMember(MemberDto memberDto) {
         if (verifyAttribute(memberDto)) {
             Member member = memberDto.toEntity();
-            CharSequence encodedPassword = passwordEncoder.encode(memberDto.getPassword().getValue());
-            member.changePassword(new Password(encodedPassword));
-            memberRepository.save(memberDto.toEntity());
+            member.updatePassword(passwordEncoder.encode(memberDto.getPassword().getValue()));
+
+            memberRepository.save(member);
         }
     }
 
@@ -53,13 +52,16 @@ public class MemberJoinService {
         if (memberRepository.existsByNickname(memberDto.getNickname())) {
             throw new DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
         }
+
         Email email = memberDto.getEmail();
         if (!joinMailService.isValidMailStatus(email.getValue())) {
             throw new UnsatisfiedEmailAuthentication(MemberErrorCode.NON_AUTHENTICATE_EMAIL);
         }
+
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateMember(MemberErrorCode.DUPLICATE_MEMBER);
         }
+
         return true;
     }
 }
