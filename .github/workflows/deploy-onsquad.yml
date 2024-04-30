@@ -65,5 +65,5 @@ jobs:
                 echo "Another Process Running"
                 kill -9 $PROCESS_ID
             fi
-            nohup java -jar -Duser.timezone=Asia/Seoul -Dspring.profiles.active=${{ secrets.SPRING_PROFILE }} $EXECUTABLE_SPRING_JAR_PATH > $SOURCE_DIR/build/libs/output.log 2>&1 &
+            nohup java --enable-preview -jar -Duser.timezone=Asia/Seoul -Dspring.profiles.active=${{ secrets.SPRING_PROFILE }} $EXECUTABLE_SPRING_JAR_PATH > $SOURCE_DIR/build/libs/output.log 2>&1 &
             sleep 1
