@@ -33,7 +33,7 @@ public class LoginControllerTest extends IntegrationTestSupport {
         // given
         Member member = MemberFactory.defaultMember().email(new Email(TEST_EMAIL)).password(new Password(TEST_BCRYPT_PASSWORD)).build();
         memberRepository.save(member);
-        LoginRequest loginRequest = LoginRequest.of(TEST_EMAIL, "12345");
+        LoginRequest loginRequest = LoginRequest.of(TEST_EMAIL, TEST_PASSWORD);
 
         // when
         ResultActions resultActions = mockMvc.perform(

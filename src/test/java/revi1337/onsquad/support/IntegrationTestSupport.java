@@ -31,7 +31,7 @@ public abstract class IntegrationTestSupport extends TestContainerSupport {
     protected static final String TEST_AUTH_CODE = "1111";
     protected static final String TEST_NICKNAME = "nickname";
     protected static final String TEST_PASSWORD = "12345!@asa";
-    protected static final CharSequence TEST_BCRYPT_PASSWORD = "{bcrypt}$2a$10$RIWcAfMxZ1E9BsL60OcMVOiEsSumcCDqx0snDp6q8lNuxQI2XcSbi";
+    protected static final CharSequence TEST_BCRYPT_PASSWORD = "{bcrypt}$2a$10$xCazQzTNODXcf.6Gj83v5.hcFiW0o/zO4YCyj5ZHUzUQUPZdm4H6m";
 
     @Autowired protected MockMvc mockMvc;
     @Autowired protected ObjectMapper objectMapper;
