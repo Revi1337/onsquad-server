@@ -4,50 +4,61 @@
 
 ==== 이메일 인증코드 발송
 
-===== [black]#HTTP Request#
+[black]#HTTP Request#
 include::{snippets}/member-join-controller/sendEmail/http-request.adoc[]
 
-===== [black]#Query Parameters#
+[black]#Query Parameters#
 include::{snippets}/member-join-controller/sendEmail/query-parameters.adoc[]
 
-===== [black]#HTTP Response#
+[black]#HTTP Response#
 include::{snippets}/member-join-controller/sendEmail/http-response.adoc[]
 
 ---
 
 ==== 이메일 인증코드 검증
 
-===== [black]#HTTP Request#
+[black]#HTTP Request#
 include::{snippets}/member-join-controller/verifyEmail/http-request.adoc[]
 
-===== [black]#Query Parameters#
+[black]#Query Parameters#
 include::{snippets}/member-join-controller/verifyEmail/query-parameters.adoc[]
 
-===== [black]#HTTP Response#
+[black]#HTTP Response#
 include::{snippets}/member-join-controller/verifyEmail/http-response.adoc[]
 
 ---
 
 ==== 닉네임 중복 검사
 
-===== [black]#HTTP Request#
+[black]#HTTP Request#
 include::{snippets}/member-join-controller/duplicateEmail/http-request.adoc[]
 
-===== [black]#Query Parameters#
+[black]#Query Parameters#
 include::{snippets}/member-join-controller/duplicateEmail/query-parameters.adoc[]
 
-===== [black]#HTTP Response#
+[black]#HTTP Response#
 include::{snippets}/member-join-controller/duplicateEmail/http-response.adoc[]
 
 ---
 
 ==== 회원가입
 
-===== [black]#HTTP Request#
+[black]#HTTP Request#
 include::{snippets}/member-join-controller/joinMember/http-request.adoc[]
 
-===== [black]#HTTP Body#
+[black]#HTTP Body#
 include::{snippets}/member-join-controller/joinMember/request-fields.adoc[]
 
-===== [black]#HTTP Response#
+[black]#HTTP Response#
 include::{snippets}/member-join-controller/joinMember/http-response.adoc[]
+
+=== 로그인
+
+[black]#HTTP Request#
+include::{snippets}/login-controller/login/http-request.adoc[]
+
+[black]#HTTP Body#
+include::{snippets}/login-controller/login/request-fields.adoc[]
+
+[black]#HTTP Response#
+include::{snippets}/login-controller/login/http-response.adoc[]
