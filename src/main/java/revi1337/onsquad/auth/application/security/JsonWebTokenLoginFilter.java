@@ -19,6 +19,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import revi1337.onsquad.auth.dto.request.LoginRequest;
 import revi1337.onsquad.auth.error.AuthErrorCode;
 import revi1337.onsquad.auth.error.exception.UnsupportedLoginUrlMethod;
+import revi1337.onsquad.common.dto.CommonErrorCode;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -49,7 +50,7 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
             try {
                 getFailureHandler().onAuthenticationFailure(request, response,
                         new UnsupportedLoginUrlMethod(
-                                AuthErrorCode.UNSUPPORTED_LOGIN_METHOD,
+                                CommonErrorCode.METHOD_NOT_SUPPORT,
                                 new HttpRequestMethodNotSupportedException(
                                         request.getMethod(), Collections.singleton(HttpMethod.POST.name())
                                 )
