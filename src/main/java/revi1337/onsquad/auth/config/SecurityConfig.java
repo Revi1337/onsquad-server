@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import revi1337.onsquad.auth.application.JsonWebTokenService;
 import revi1337.onsquad.auth.application.security.*;
 import revi1337.onsquad.member.domain.MemberRepository;
 
@@ -28,6 +29,8 @@ import revi1337.onsquad.member.domain.MemberRepository;
 public class SecurityConfig {
 
     private final MemberRepository memberRepository;
+    private final ObjectMapper objectMapper;
+    private final JsonWebTokenService jsonWebTokenService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -59,7 +62,7 @@ public class SecurityConfig {
     @Bean
     public AbstractAuthenticationProcessingFilter loginFilter() {
         JsonWebTokenLoginFilter jsonWebTokenFilter =
-                new JsonWebTokenLoginFilter(authenticationManager(), new ObjectMapper());
+                new JsonWebTokenLoginFilter(authenticationManager(), objectMapper);
         jsonWebTokenFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         jsonWebTokenFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         return jsonWebTokenFilter;
@@ -67,7 +70,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new JsonWebTokenSuccessHandler();
+        return new JsonWebTokenSuccessHandler(jsonWebTokenService, objectMapper);
     }
 
     @Bean

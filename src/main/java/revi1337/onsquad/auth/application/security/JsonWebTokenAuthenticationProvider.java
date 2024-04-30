@@ -25,6 +25,7 @@ public class JsonWebTokenAuthenticationProvider implements AuthenticationProvide
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), authenticatedMember.getPassword())) {
             throw new BadCredentialsException(BAD_CREDENTIALS);
         }
+
         return UsernamePasswordAuthenticationToken.authenticated(
                 authenticatedMember, authenticatedMember.getPassword(), authenticatedMember.getAuthorities()
         );

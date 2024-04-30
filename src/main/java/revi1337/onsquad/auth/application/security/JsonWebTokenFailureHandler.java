@@ -29,6 +29,7 @@ public class JsonWebTokenFailureHandler implements AuthenticationFailureHandler 
             handlerExceptionResolver.resolveException(request, response, null, (Exception) unsupportedLoginUrlMethod.getCause());
             return;
         }
+
         log.info("{} --> onAuthenticationFailure", getClass().getSimpleName());
         handlerExceptionResolver.resolveException(request, response, null, exception);
     }

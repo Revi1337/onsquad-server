@@ -38,6 +38,7 @@ public class MemberDto {
 
     public Member toEntity() {
         return Member.builder()
+                .id(id)
                 .userType(userType)
                 .email(email)
                 .address(address)

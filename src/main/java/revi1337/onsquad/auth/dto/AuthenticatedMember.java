@@ -18,7 +18,6 @@ public record AuthenticatedMember(
         Password password,
         Collection<? extends GrantedAuthority> authorities
 ) implements UserDetails {
-
     // TODO 권한이 도입되면 리팩토링 필요.
     public static AuthenticatedMember of(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {
         Set<SimpleGrantedAuthority> roles = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
@@ -31,6 +30,17 @@ public record AuthenticatedMember(
                 password,
                 roles
         );
+    }
+
+    public MemberDto toDto() {
+        return MemberDto.builder()
+                .id(id)
+                .userType(userType)
+                .email(email)
+                .address(address)
+                .nickname(nickname)
+                .password(password)
+                .build();
     }
 
     public static AuthenticatedMember from(MemberDto memberDto) {
