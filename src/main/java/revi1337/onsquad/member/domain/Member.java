@@ -1,15 +1,11 @@
 package revi1337.onsquad.member.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.vo.UserType;
+import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import revi1337.onsquad.member.domain.vo.*;
 
+@DynamicUpdate
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -31,12 +27,20 @@ public class Member {
     @Embedded
     private Nickname nickname;
 
+    @Embedded
+    private Password password;
+
     @Builder
-    private Member(UserType userType, Email email, Address address, Nickname nickname) {
-        this.userType = userType;
+    private Member(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {
+        this.id = id;
+        this.userType = userType == null ? UserType.GENERAL : userType;
         this.email = email;
         this.address = address;
         this.nickname = nickname;
+        this.password = password;
     }
 
+    public void updatePassword(CharSequence encodedPassword) {
+        this.password = password.update(encodedPassword);
+    }
 }

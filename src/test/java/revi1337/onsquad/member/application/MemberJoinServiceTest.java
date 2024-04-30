@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.dto.MemberDto;
 import revi1337.onsquad.member.error.DuplicateMember;
 import revi1337.onsquad.member.error.exception.DuplicateNickname;
@@ -17,8 +20,7 @@ import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("회원가입 서비스 테스트")
@@ -26,10 +28,12 @@ import static org.mockito.BDDMockito.*;
 class MemberJoinServiceTest extends TestContainerSupport {
 
     private static final String TEST_EMAIL = "test@email.com";
+    private static final String TEST_PASSWORD = "12345!@asa";
     private static final String TEST_NICKNAME = "nickname";
     private static final String TEST_AUTH_CODE = "1111";
 
     @Mock private MemberRepository memberRepository;
+    @Mock private PasswordEncoder passwordEncoder;
     @Mock private JoinMailService joinMailService;
     @InjectMocks private MemberJoinService memberJoinService;
 
@@ -162,10 +166,11 @@ class MemberJoinServiceTest extends TestContainerSupport {
     @Test
     public void joinMember4() {
         // given
-        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).build();
+        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).password(new Password(TEST_PASSWORD)).build();
         given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
         given(joinMailService.isValidMailStatus(TEST_EMAIL)).willReturn(true);
         given(memberRepository.existsByEmail(memberDto.getEmail())).willReturn(false);
+        given(passwordEncoder.encode(memberDto.getPassword().getValue())).willReturn(TEST_PASSWORD);
 
         // when
         memberJoinService.joinMember(memberDto);

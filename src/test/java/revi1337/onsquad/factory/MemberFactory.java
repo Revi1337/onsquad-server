@@ -1,15 +1,13 @@
 package revi1337.onsquad.factory;
 
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.vo.UserType;
+import revi1337.onsquad.member.domain.vo.*;
 
 public class MemberFactory {
 
     private static final Nickname NICKNAME = new Nickname("nickname");
     private static final Email EMAIL = new Email("test@email.com");
+    private static final Password PASSWORD = new Password("12345!@asa");
     private static final Address ADDRESS = new Address("어딘가");
     private static final UserType USER_TYPE = UserType.GENERAL;
 
@@ -19,6 +17,10 @@ public class MemberFactory {
 
     public static Member withEmail(Email email) {
         return defaultMember().email(email).build();
+    }
+
+    public static Member withPassword(Password password) {
+        return defaultMember().password(password).build();
     }
 
     public static Member withAddress(Address address) {
@@ -34,6 +36,7 @@ public class MemberFactory {
                 .nickname(NICKNAME)
                 .address(ADDRESS)
                 .email(EMAIL)
+                .password(PASSWORD)
                 .userType(USER_TYPE);
     }
 }

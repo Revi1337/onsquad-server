@@ -1,8 +1,10 @@
 package revi1337.onsquad.member.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
@@ -21,6 +23,7 @@ public class MemberJoinService {
 
     private final MemberRepository memberRepository;
     private final JoinMailService joinMailService;
+    private final PasswordEncoder passwordEncoder;
 
     public boolean checkDuplicateNickname(String nickname) {
         return memberRepository.existsByNickname(new Nickname(nickname));
@@ -38,7 +41,10 @@ public class MemberJoinService {
 
     public void joinMember(MemberDto memberDto) {
         if (verifyAttribute(memberDto)) {
-            memberRepository.save(memberDto.toEntity());
+            Member member = memberDto.toEntity();
+            member.updatePassword(passwordEncoder.encode(memberDto.getPassword().getValue()));
+
+            memberRepository.save(member);
         }
     }
 
@@ -46,13 +52,16 @@ public class MemberJoinService {
         if (memberRepository.existsByNickname(memberDto.getNickname())) {
             throw new DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
         }
+
         Email email = memberDto.getEmail();
         if (!joinMailService.isValidMailStatus(email.getValue())) {
             throw new UnsatisfiedEmailAuthentication(MemberErrorCode.NON_AUTHENTICATE_EMAIL);
         }
+
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateMember(MemberErrorCode.DUPLICATE_MEMBER);
         }
+
         return true;
     }
 }
