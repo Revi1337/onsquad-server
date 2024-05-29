@@ -15,7 +15,7 @@ public class MemberDto {
     private Nickname nickname;
     private Password password;
 
-    @Builder
+    @Builder(builderClassName = "MemberDtoBuilder")
     private MemberDto(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {
         this.id = id;
         this.userType = userType;
@@ -23,6 +23,16 @@ public class MemberDto {
         this.address = address;
         this.nickname = nickname;
         this.password = password;
+    }
+
+    @Builder(builderClassName = "MemberDtoValueBuilder", builderMethodName = "create")
+    private MemberDto(Long id, String userType, String email, String address, String nickname, String password) {
+        this.id = id;
+        this.userType = userType == null ? UserType.GENERAL : UserType.valueOf(userType);
+        this.email = new Email(email);
+        this.address = new Address(address);
+        this.nickname = new Nickname(nickname);
+        this.password = new Password(password);
     }
 
     public static MemberDto from(Member member) {
