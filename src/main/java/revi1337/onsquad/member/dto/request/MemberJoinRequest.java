@@ -1,9 +1,6 @@
 package revi1337.onsquad.member.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.dto.MemberDto;
 import revi1337.onsquad.member.presentation.validator.StringComparator;
 import revi1337.onsquad.member.presentation.validator.StringValidator;
@@ -21,11 +18,11 @@ public record MemberJoinRequest(
 ) implements StringComparator {
 
     public MemberDto toDto() {
-        return MemberDto.builder()
-                .email(new revi1337.onsquad.member.domain.vo.Email(email))
-                .password(new Password(password))
-                .nickname(new Nickname(nickname))
-                .address(new Address(address))
+        return MemberDto.create()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .address(address)
                 .build();
     }
 
