@@ -9,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.auth.config.TokenProperties;
+import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
 
 import java.util.HashMap;
