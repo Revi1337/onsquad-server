@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.config;
+package revi1337.onsquad.auth.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
