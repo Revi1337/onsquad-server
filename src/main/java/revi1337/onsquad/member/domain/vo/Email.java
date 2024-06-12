@@ -2,15 +2,13 @@ package revi1337.onsquad.member.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import revi1337.onsquad.member.error.exception.InvalidEmailFormat;
 import revi1337.onsquad.member.error.MemberErrorCode;
 
 import java.util.regex.Pattern;
 
+@ToString
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -8,6 +8,7 @@ import revi1337.onsquad.member.error.exception.InvalidPasswordFormat;
 
 import java.util.regex.Pattern;
 
+@ToString
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,7 +23,6 @@ public class Password {
     private String value;
 
     public Password(String rawPassword) {
-
         validate(rawPassword);
         this.value = rawPassword;
     }

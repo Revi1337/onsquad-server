@@ -2,11 +2,9 @@ package revi1337.onsquad.member.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@ToString
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,6 +13,14 @@ public class Address {
 
     @Column(name = "address")
     private String value;
+
+    @Column(name = "address_detail")
+    private String detail;
+
+    public Address(String value, String detail) {
+        this(value);
+        this.detail = detail;
+    }
 
     public Address(String value) {
         validate(value);
