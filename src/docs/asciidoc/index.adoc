@@ -10,6 +10,12 @@
 
 include::member.adoc[]
 
+== 스쿼드 API
+
+include::squad.adoc[]
+
 == 예외코드 및 Description
 
 include::error.adoc[]
+
+
