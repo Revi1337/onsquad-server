@@ -159,7 +159,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
             redisMailRepository.overwriteAuthCodeToStatus(TEST_EMAIL, MailStatus.SUCCESS, Duration.ofMinutes(5));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -177,7 +177,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             // given
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -200,7 +200,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             memberRepository.save(member);
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, TEST_NICKNAME, "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, TEST_NICKNAME, "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -223,7 +223,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             redisMailRepository.overwriteAuthCodeToStatus(TEST_EMAIL, MailStatus.SUCCESS, Duration.ofMinutes(5));
             memberRepository.save(MemberFactory.withEmail(new Email(TEST_EMAIL)));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nick", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nick", "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -243,7 +243,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
         public void joinMember5() throws Exception {
             // given
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    "invalid_email", TEST_PASSWORD, TEST_PASSWORD, "nickname", "anywhere"
+                    "invalid_email", TEST_PASSWORD, TEST_PASSWORD, "nickname", "anywhere", "우장산 롯데캐슬"
             );
 
             // when && then
@@ -263,7 +263,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
         public void joinMember6() throws Exception {
             // given
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "a", "anywhere"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "a", "anywhere", "우장산 롯데캐슬"
             );
 
             // when && then

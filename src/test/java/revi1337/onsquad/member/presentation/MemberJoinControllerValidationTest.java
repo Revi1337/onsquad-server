@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("회원가입 api Validation 테스트")
 @WebMvcTest(MemberJoinController.class)
-class MemberTestJoinControllerValidationTest extends ValidationWithRestDocsTestSupport {
+class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSupport {
 
     private static final String TEST_EMAIL = "test@email.com";
     private static final String TEST_PASSWORD = "12345!@asa";
@@ -224,11 +224,12 @@ class MemberTestJoinControllerValidationTest extends ValidationWithRestDocsTestS
 
         static Stream<Arguments> parameterizedJoinMemberArguments() {
             return Stream.of(
-                    Arguments.of(new MemberJoinRequest("", "password", "password", "nickname", "anywhere")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "", "password", "nickname", "anywhere")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "", "nickname", "anywhere")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "", "anywhere")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", ""))
+                    Arguments.of(new MemberJoinRequest("", "password", "password", "nickname", "anywhere", "우장산 롯데캐슬")),
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "", "password", "nickname", "anywhere", "우장산 롯데캐슬")),
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "", "nickname", "anywhere", "우장산 롯데캐슬")),
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "", "anywhere", "우장산 롯데캐슬")),
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "anywhere", null)),
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "", "우장산 롯데캐슬"))
             );
         }
 
@@ -237,7 +238,8 @@ class MemberTestJoinControllerValidationTest extends ValidationWithRestDocsTestS
         public void joinMemberDocTest() throws Exception {
             // given
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가", "우장산 롯데캐슬"
+
             );
             willDoNothing().given(memberJoinService).joinMember(memberJoinRequest.toDto());
 
@@ -261,7 +263,8 @@ class MemberTestJoinControllerValidationTest extends ValidationWithRestDocsTestS
                                             fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
                                             fieldWithPath("passwordConfirm").type(JsonFieldType.STRING).description("비밀번호 확인"),
                                             fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
-                                            fieldWithPath("address").type(JsonFieldType.STRING).description("주소")
+                                            fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
+                                            fieldWithPath("addressDetail").type(JsonFieldType.STRING).description("상세 주소").optional()
                                     )
                             )
                     );

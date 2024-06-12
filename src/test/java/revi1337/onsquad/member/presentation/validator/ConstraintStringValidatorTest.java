@@ -22,7 +22,7 @@ class ConstraintStringValidatorTest {
     public void validateWhenRecord() {
         // given
         MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                "test@mail.com", "password", "passwordNotSame", "nickname", "anywhere"
+                "test@mail.com", "password", "passwordNotSame", "nickname", "서울시 강서구", "우장산 롯데캐슬"
         );
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
