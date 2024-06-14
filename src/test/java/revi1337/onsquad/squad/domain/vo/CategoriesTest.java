@@ -43,7 +43,7 @@ class CategoriesTest {
         // given & when & then
         assertThatThrownBy(() -> new Categories(BASEBALL, BADMINTON, FISHING, BASKETBALL, HIKING, FUTSAL))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("너무 많은 카테고리가 포함되어 있습니다.");
+                .hasMessage("카테고리는 1 ~ 5 개수여야 합니다.");
     }
 
     @Test
@@ -52,6 +52,6 @@ class CategoriesTest {
         // given & when & then
         assertThatThrownBy(() -> new Categories(BASEBALL.getText(), BADMINTON.getText(), FISHING.getText(), BASKETBALL.getText(), HIKING.getText(), FUTSAL.getText()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("너무 많은 카테고리가 포함되어 있습니다.");
+                .hasMessage("카테고리는 1 ~ 5 개수여야 합니다.");
     }
 }
