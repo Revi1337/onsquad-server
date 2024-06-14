@@ -3,7 +3,6 @@ package revi1337.onsquad.squad.domain.vo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,6 +10,8 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public enum Category {
+
+    ALL("전체"),
 
     GAME("게임"), BADMINTON("배드민턴"), TENNIS("테니스"),
     FUTSAL("풋살"), SOCCER("축구"), PINGPONG("탁구"),
@@ -43,5 +44,12 @@ public enum Category {
 
     public static boolean contains(String targetCategory) {
         return categoryTextValues().contains(targetCategory);
+    }
+
+    public static Category fromText(String text) {
+        return defaultEnumSet().stream()
+                .filter(category -> category.getText().equals(text))
+                .findFirst()
+                .orElse(Category.ALL);
     }
 }

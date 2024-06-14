@@ -9,7 +9,6 @@ import revi1337.onsquad.member.domain.vo.*;
 
 import java.util.Objects;
 
-@ToString
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -19,7 +18,6 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
     private Long id;
 
     @ColumnDefault("'GENERAL'")

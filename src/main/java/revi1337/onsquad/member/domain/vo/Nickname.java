@@ -6,7 +6,6 @@ import lombok.*;
 import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.UnsatisfiedNicknameLength;
 
-@ToString
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -8,7 +8,6 @@ import revi1337.onsquad.member.error.MemberErrorCode;
 
 import java.util.regex.Pattern;
 
-@ToString
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
