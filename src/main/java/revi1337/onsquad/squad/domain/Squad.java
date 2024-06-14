@@ -2,6 +2,7 @@ package revi1337.onsquad.squad.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.squad.domain.vo.Capacity;
@@ -11,7 +12,8 @@ import revi1337.onsquad.squad.domain.vo.Title;
 
 import java.util.Objects;
 
-@ToString
+import static jakarta.persistence.CascadeType.*;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -19,7 +21,6 @@ public class Squad {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "squad_id")
     private Long id;
 
     @Embedded
@@ -41,9 +42,13 @@ public class Squad {
 
     private String discordLink;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = PERSIST)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crew_id")
+    private Crew crew;
 
     @Builder
     private Squad(Long id, Title title, Content content, Capacity capacity, Categories categories, Address address, String kakaoLink, String discordLink, Member member) {
