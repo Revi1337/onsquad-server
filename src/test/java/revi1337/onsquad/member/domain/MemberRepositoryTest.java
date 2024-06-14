@@ -4,12 +4,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import revi1337.onsquad.config.TestJpaAuditingConfig;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.factory.MemberFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
+@Import(TestJpaAuditingConfig.class)
 @DisplayName("멤버 리포지토리 테스트")
 @DataJpaTest(showSql = false)
 class MemberRepositoryTest {
