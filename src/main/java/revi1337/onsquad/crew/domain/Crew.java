@@ -2,6 +2,7 @@ package revi1337.onsquad.crew.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
@@ -13,7 +14,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Crew {
+public class Crew extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.squad.domain.Squad;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class SquadMember {
+public class SquadMember extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

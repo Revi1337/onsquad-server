@@ -2,6 +2,7 @@ package revi1337.onsquad.squad.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.vo.Address;
@@ -17,7 +18,7 @@ import static jakarta.persistence.CascadeType.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Squad {
+public class Squad extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
