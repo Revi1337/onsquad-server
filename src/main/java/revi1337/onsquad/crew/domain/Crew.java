@@ -8,12 +8,19 @@ import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.image.domain.Image;
+import revi1337.onsquad.member.domain.Member;
 
 import java.util.Objects;
+
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "name", columnNames = "name")
+        }
+)
 public class Crew extends BaseEntity {
 
     @Id
@@ -34,14 +41,16 @@ public class Crew extends BaseEntity {
 
     private String kakaoLink;
 
-    private String discordLink;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "image_id", nullable = false)
     private Image image;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     @Builder
-    private Crew(Long id, Name name, Introduce introduce, Detail detail, HashTags hashTags, Image image, String kakaoLink, String discordLink) {
+    private Crew(Long id, Name name, Introduce introduce, Detail detail, HashTags hashTags, Image image, String kakaoLink, Member member) {
         this.id = id;
         this.name = name;
         this.introduce = introduce;
@@ -49,7 +58,7 @@ public class Crew extends BaseEntity {
         this.hashTags = hashTags;
         this.image = image;
         this.kakaoLink = kakaoLink;
-        this.discordLink = discordLink;
+        this.member = member;
     }
 
     @Override
