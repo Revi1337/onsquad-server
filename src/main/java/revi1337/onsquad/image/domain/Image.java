@@ -21,16 +21,16 @@ public class Image {
     private Long id;
 
     @Lob
-    @Column(name = "image", nullable = false)
-    private byte[] image;
+    @Column(name = "data", nullable = false)
+    private byte[] data;
 
     public Image() {
-        this.image = DEFAULT_IMAGE;
+        this.data = DEFAULT_IMAGE;
     }
 
     public Image(byte[] binary) {
         validate(binary);
-        this.image = binary;
+        this.data = binary;
     }
 
     public void validate(byte[] binary) {
@@ -57,8 +57,8 @@ public class Image {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Image image)) return false;
-        return id != null && Objects.equals(getId(), image.getId());
+        if (!(o instanceof Image data)) return false;
+        return id != null && Objects.equals(getId(), data.getId());
     }
 
     @Override
