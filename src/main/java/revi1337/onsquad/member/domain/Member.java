@@ -48,6 +48,25 @@ public class Member extends BaseEntity {
         this.password = password;
     }
 
+    public static Member of(Email email, Address address, Nickname nickname, Password password) {
+        return Member.builder()
+                .email(email)
+                .address(address)
+                .nickname(nickname)
+                .password(password)
+                .build();
+    }
+
+    public static Member of(UserType userType, Email email, Address address, Nickname nickname, Password password) {
+        return Member.builder()
+                .userType(userType)
+                .email(email)
+                .address(address)
+                .nickname(nickname)
+                .password(password)
+                .build();
+    }
+
     public void updatePassword(CharSequence encodedPassword) {
         this.password = password.update(encodedPassword);
     }
