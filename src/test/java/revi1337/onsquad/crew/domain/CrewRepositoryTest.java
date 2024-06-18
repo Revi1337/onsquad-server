@@ -10,6 +10,7 @@ import revi1337.onsquad.config.TestJpaAuditingConfig;
 import revi1337.onsquad.config.TestQueryDslConfig;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
+import revi1337.onsquad.crew.dto.OwnedCrewsDto;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
@@ -109,8 +110,28 @@ class CrewRepositoryTest {
     }
     
     @Test
-    @DisplayName("현재 사용자가 생성한 Crew 들을 조회한다.")
+    @DisplayName("특정 사용자가 생성한 Crew 들을 조회한다.")
     public void findAllByMemberId() {
-        List<Crew> findAllByMemberId = crewRepository.findAllByMemberId(1L);
+        // given
+        Member member1 = MemberFactory.defaultMember().build();
+        Member member2 = MemberFactory.defaultMember().build();
+        Image image1 = ImageFactory.defaultImage();
+        Image image2 = ImageFactory.defaultImage();
+        Image image3 = ImageFactory.defaultImage();
+        Image image4 = ImageFactory.defaultImage();
+        Image image5 = ImageFactory.defaultImage();
+        Crew crew1 = CrewFactory.defaultCrew().name(new Name("크루 이름 1")).image(image1).member(member1).build();
+        Crew crew2 = CrewFactory.defaultCrew().name(new Name("크루 이름 2")).image(image2).member(member1).build();
+        Crew crew3 = CrewFactory.defaultCrew().name(new Name("크루 이름 3")).image(image3).member(member2).build();
+        Crew crew4 = CrewFactory.defaultCrew().name(new Name("크루 이름 4")).image(image4).member(member2).build();
+        Crew crew5 = CrewFactory.defaultCrew().name(new Name("크루 이름 5")).image(image5).member(member2).build();
+        memberRepository.saveAll(List.of(member1, member2));
+        crewRepository.saveAll(List.of(crew1, crew2, crew3, crew4, crew5));
+
+        // when
+        List<OwnedCrewsDto> ownedCrews = crewRepository.findOwnedCrews(member2.getId());
+
+        // then
+        assertThat(ownedCrews.size()).isEqualTo(3);
     }
 }
