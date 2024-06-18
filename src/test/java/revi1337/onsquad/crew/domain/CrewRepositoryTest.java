@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.config.TestJpaAuditingConfig;
 import revi1337.onsquad.config.TestQueryDslConfig;
+import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImage;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
@@ -63,7 +64,7 @@ class CrewRepositoryTest {
 
     @Test
     @DisplayName("Crew 이름으로 Crew 단일 게시글을 조회한다.")
-    public void findByCrewName() {
+    public void findCrewByName() {
         // given
         Member member = MemberFactory.defaultMember().build();
         Image image = ImageFactory.defaultImage();
@@ -79,6 +80,32 @@ class CrewRepositoryTest {
             assertThat(crewWithMemberAndImage.crewName()).isEqualTo(CrewFactory.NAME);
             assertThat(crewWithMemberAndImage.crewDetail()).isEqualTo(CrewFactory.DETAIL);
         });
+    }
+
+    @Test
+    @DisplayName("생성된 모든 Crew 들을 조회한다.")
+    public void findCrewsByName() {
+        // given
+        Member member1 = MemberFactory.defaultMember().build();
+        Member member2 = MemberFactory.defaultMember().build();
+        Image image1 = ImageFactory.defaultImage();
+        Image image2 = ImageFactory.defaultImage();
+        Image image3 = ImageFactory.defaultImage();
+        Image image4 = ImageFactory.defaultImage();
+        Image image5 = ImageFactory.defaultImage();
+        Crew crew1 = CrewFactory.defaultCrew().name(new Name("크루 이름 1")).image(image1).member(member1).build();
+        Crew crew2 = CrewFactory.defaultCrew().name(new Name("크루 이름 2")).image(image2).member(member1).build();
+        Crew crew3 = CrewFactory.defaultCrew().name(new Name("크루 이름 3")).image(image3).member(member2).build();
+        Crew crew4 = CrewFactory.defaultCrew().name(new Name("크루 이름 4")).image(image4).member(member2).build();
+        Crew crew5 = CrewFactory.defaultCrew().name(new Name("크루 이름 5")).image(image5).member(member2).build();
+        memberRepository.saveAll(List.of(member1, member2));
+        crewRepository.saveAll(List.of(crew1, crew2, crew3, crew4, crew5));
+
+        // when
+        List<CrewWithMemberAndImage> crewWithMemberAndImageList = crewRepository.findCrewsByName();
+
+        // then
+        assertThat(crewWithMemberAndImageList.size()).isEqualTo(5);
     }
     
     @Test
