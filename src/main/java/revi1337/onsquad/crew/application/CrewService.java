@@ -11,6 +11,8 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.member.domain.MemberRepository;
 
+import java.util.List;
+
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -38,6 +40,10 @@ public class CrewService {
     public CrewWithMemberAndImage findCrewByName(String crewName) {
         return crewRepository.findCrewByName(new Name(crewName))
                 .orElseThrow(() -> new IllegalArgumentException("해당 이름의 크루가 존재하지 않습니다.")); // TODO 커스텀 익셉션 필요
+    }
+
+    public List<CrewWithMemberAndImage> findCrewsByName() {
+        return crewRepository.findCrewsByName();
     }
 
     @Transactional

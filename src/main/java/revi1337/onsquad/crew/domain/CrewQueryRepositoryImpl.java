@@ -6,6 +6,7 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImage;
 import revi1337.onsquad.crew.dto.QCrewWithMemberAndImage;
 
+import java.util.List;
 import java.util.Optional;
 
 import static revi1337.onsquad.crew.domain.QCrew.*;
@@ -34,5 +35,21 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
                         .where(crew.name.eq(name))
                         .fetchOne()
         );
+    }
+
+    @Override
+    public List<CrewWithMemberAndImage> findCrewsByName() {
+        return jpaQueryFactory
+                .select(new QCrewWithMemberAndImage(
+                        crew.name,
+                        crew.detail,
+                        crew.hashTags,
+                        member.nickname,
+                        image.data
+                ))
+                .from(crew)
+                .innerJoin(crew.image, image)
+                .innerJoin(crew.member, member)
+                .fetch();
     }
 }

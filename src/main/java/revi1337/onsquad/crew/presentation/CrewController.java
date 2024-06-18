@@ -15,11 +15,12 @@ import revi1337.onsquad.crew.dto.response.CrewWithMemberAndImageResponse;
 import revi1337.onsquad.crew.dto.response.DuplicateCrewNameResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/crew")
+@RequestMapping("/api/v1")
 @RestController
 public class CrewController {
 
@@ -28,7 +29,7 @@ public class CrewController {
     /**
      * 크루명 중복확인
      */
-    @GetMapping(value = "/check")
+    @GetMapping(value = "/crew/check")
     public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkCrewNameDuplicate(
             @RequestParam String crewName
     ) {
@@ -42,7 +43,7 @@ public class CrewController {
     /**
      * 새로운 Crew 생성
      */
-    @PostMapping(value = "/new")
+    @PostMapping(value = "/crew/new")
     public ResponseEntity<Void> createNewCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
             @RequestPart MultipartFile file,
@@ -56,7 +57,7 @@ public class CrewController {
     /**
      * Crew 게시글 단일 조회
      */
-    @GetMapping("")
+    @GetMapping("/crew")
     public ResponseEntity<RestResponse<CrewWithMemberAndImageResponse>> findCrew(
             @RequestParam String crewName
     ) {
@@ -67,9 +68,21 @@ public class CrewController {
     }
 
     /**
+     * Crew 게시글들 조회
+     */
+    @GetMapping("/crews")
+    public ResponseEntity<RestResponse<List<CrewWithMemberAndImageResponse>>> findCrews() {
+        List<CrewWithMemberAndImageResponse> crewWithMemberAndImageResponses = crewService.findCrewsByName()
+                .stream()
+                .map(CrewWithMemberAndImageResponse::from).toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(crewWithMemberAndImageResponses));
+    }
+
+    /**
      * Crew 참가 신청
      */
-    @PostMapping("/join")
+    @PostMapping("/crew/join")
     public ResponseEntity<Void> joinCrew(
             @Valid @RequestBody CrewJoinRequest crewJoinRequest,
             @Authenticate AuthenticatedMember authenticatedMember

@@ -23,7 +23,7 @@ public class CrewConfigController {
     /**
      * 사용자가 개설한 Crew 들
      */
-    @GetMapping("/crews")
+    @GetMapping("/crewsaa") // TODO HandlerMethod 의 경로를 바꿔주어야 한다.
     public ResponseEntity<RestResponse<List<OwnedCrewsResponse>>> findOwnedCrews(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
