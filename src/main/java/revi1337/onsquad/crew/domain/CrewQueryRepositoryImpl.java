@@ -1,10 +1,13 @@
 package revi1337.onsquad.crew.domain;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
-import revi1337.onsquad.crew.dto.QCrewWithMemberAndImage;
+import revi1337.onsquad.crew.dto.OwnedCrewsDto;
+import revi1337.onsquad.crew.dto.QCrewWithMemberAndImageDto;
+import revi1337.onsquad.crew.dto.QOwnedCrewsDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,26 +24,35 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     @Override
     public Optional<CrewWithMemberAndImageDto> findCrewByName(Name name) {
         return Optional.ofNullable(
-                jpaQueryFactory
-                        .select(new QCrewWithMemberAndImage(
-                                crew.name,
-                                crew.detail,
-                                crew.hashTags,
-                                member.nickname,
-                                image.data
-                        ))
-                        .from(crew)
-                        .innerJoin(crew.image, image)
-                        .innerJoin(crew.member, member)
-                        .where(crew.name.eq(name))
+                queryForFindCrewByName()
                         .fetchOne()
         );
     }
 
     @Override
     public List<CrewWithMemberAndImageDto> findCrewsByName() {
+        return queryForFindCrewByName()
+                .fetch();
+    }
+
+    @Override
+    public List<OwnedCrewsDto> findOwnedCrews(Long memberId) {
         return jpaQueryFactory
-                .select(new QCrewWithMemberAndImage(
+                .select(new QOwnedCrewsDto(
+                        crew.name,
+                        crew.detail,
+                        crew.hashTags,
+                        member.nickname
+                ))
+                .from(crew)
+                .innerJoin(crew.member, member)
+                .where(member.id.eq(memberId))
+                .fetch();
+    }
+
+    private JPAQuery<CrewWithMemberAndImageDto> queryForFindCrewByName() {
+        return jpaQueryFactory
+                .select(new QCrewWithMemberAndImageDto(
                         crew.name,
                         crew.detail,
                         crew.hashTags,
@@ -49,7 +61,6 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
                 ))
                 .from(crew)
                 .innerJoin(crew.image, image)
-                .innerJoin(crew.member, member)
-                .fetch();
+                .innerJoin(crew.member, member);
     }
 }

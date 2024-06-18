@@ -1,23 +1,23 @@
 package revi1337.onsquad.crew.dto.response;
 
-import revi1337.onsquad.crew.dto.CrewDto;
+import revi1337.onsquad.crew.dto.OwnedCrewsDto;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public record OwnedCrewsResponse(
-        Long id,
-        String name,
-        String introduce,
-        String detail,
-        String hashTags,
-        String kakaoLink
+        String crewName,
+        String crewDetail,
+        List<String> hashTags,
+        String crewOwner
 ) {
-    public static OwnedCrewsResponse from(CrewDto crewDto) {
+    public static OwnedCrewsResponse from(OwnedCrewsDto ownedCrewsDto) {
         return new OwnedCrewsResponse(
-                crewDto.getId(),
-                crewDto.getName().getValue(),
-                crewDto.getIntroduce().getValue(),
-                crewDto.getDetail().getValue(),
-                crewDto.getHashTags().getValue(),
-                crewDto.getKakaoLink()
+                ownedCrewsDto.crewName().getValue(),
+                ownedCrewsDto.crewDetail().getValue(),
+                ownedCrewsDto.hashTags() == null ? new ArrayList<>() : Arrays.stream(ownedCrewsDto.hashTags().getValue().split(",")).toList(),
+                ownedCrewsDto.crewOwner().getValue()
         );
     }
 }

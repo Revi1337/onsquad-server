@@ -14,7 +14,7 @@ import revi1337.onsquad.crew.dto.response.OwnedCrewsResponse;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/config")
 @RestController
 public class CrewConfigController {
 
@@ -23,7 +23,7 @@ public class CrewConfigController {
     /**
      * 사용자가 개설한 Crew 들
      */
-    @GetMapping("/crewsaa") // TODO HandlerMethod 의 경로를 바꿔주어야 한다.
+    @GetMapping("/crews")
     public ResponseEntity<RestResponse<List<OwnedCrewsResponse>>> findOwnedCrews(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
