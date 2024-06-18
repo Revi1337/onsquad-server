@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewDto;
+import revi1337.onsquad.crew.dto.CrewWithMemberAndImage;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -34,9 +35,8 @@ public class CrewService {
                 );
     }
 
-    public CrewDto findCrewByName(String crewName) {
+    public CrewWithMemberAndImage findCrewByName(String crewName) {
         return crewRepository.findCrewByName(new Name(crewName))
-                .map(CrewDto::from)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이름의 크루가 존재하지 않습니다.")); // TODO 커스텀 익셉션 필요
     }
 

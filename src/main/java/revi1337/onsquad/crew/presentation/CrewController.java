@@ -9,10 +9,10 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewService;
-import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
-import revi1337.onsquad.crew.presentation.dto.request.CrewJoinRequest;
-import revi1337.onsquad.crew.presentation.dto.response.CrewResponse;
-import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
+import revi1337.onsquad.crew.dto.request.CrewCreateRequest;
+import revi1337.onsquad.crew.dto.request.CrewJoinRequest;
+import revi1337.onsquad.crew.dto.response.CrewWithMemberAndImageResponse;
+import revi1337.onsquad.crew.dto.response.DuplicateCrewNameResponse;
 
 import java.io.IOException;
 
@@ -57,10 +57,11 @@ public class CrewController {
      * Crew 게시글 단일 조회
      */
     @GetMapping("")
-    public ResponseEntity<RestResponse<CrewResponse>> findCrew(
+    public ResponseEntity<RestResponse<CrewWithMemberAndImageResponse>> findCrew(
             @RequestParam String crewName
     ) {
-        CrewResponse crewResponse = CrewResponse.from(crewService.findCrewByName(crewName));
+        CrewWithMemberAndImageResponse crewResponse =
+                CrewWithMemberAndImageResponse.from(crewService.findCrewByName(crewName));
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
