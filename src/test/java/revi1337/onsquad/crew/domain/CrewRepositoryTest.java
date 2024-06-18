@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.config.TestJpaAuditingConfig;
 import revi1337.onsquad.config.TestQueryDslConfig;
+import revi1337.onsquad.crew.dto.CrewWithMemberAndImage;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
@@ -28,7 +29,7 @@ class CrewRepositoryTest {
 
     @Autowired private CrewRepository crewRepository;
     @Autowired private MemberRepository memberRepository;
-    
+
     @Test
     @DisplayName("Crew 이름으로 Crew 명이 중복되는지 확인한다. (1)")
     public void existsByName() {
@@ -71,12 +72,12 @@ class CrewRepositoryTest {
         crewRepository.save(crew);
 
         // when
-        Crew findCrew = crewRepository.findCrewByName(CrewFactory.NAME).get();
+        CrewWithMemberAndImage crewWithMemberAndImage = crewRepository.findCrewByName(CrewFactory.NAME).get();
 
         // then
         assertSoftly(softly -> {
-            assertThat(findCrew.getId()).isEqualTo(1L);
-            assertThat(findCrew.getName()).isEqualTo(CrewFactory.NAME);
+            assertThat(crewWithMemberAndImage.crewName()).isEqualTo(CrewFactory.NAME);
+            assertThat(crewWithMemberAndImage.crewDetail()).isEqualTo(CrewFactory.DETAIL);
         });
     }
     
