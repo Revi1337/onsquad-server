@@ -6,7 +6,7 @@ import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.member.domain.vo.Nickname;
 
-public record CrewWithMemberAndImage(
+public record CrewWithMemberAndImageDto(
         Name crewName,
         Detail crewDetail,
         HashTags hashTags,
@@ -14,7 +14,7 @@ public record CrewWithMemberAndImage(
         byte[] image
 ) {
     @QueryProjection
-    public CrewWithMemberAndImage(Name crewName, Detail crewDetail, HashTags hashTags, Nickname crewOwner, byte[] image) {
+    public CrewWithMemberAndImageDto(Name crewName, Detail crewDetail, HashTags hashTags, Nickname crewOwner, byte[] image) {
         this.crewName = crewName;
         this.crewDetail = crewDetail;
         this.hashTags = hashTags;

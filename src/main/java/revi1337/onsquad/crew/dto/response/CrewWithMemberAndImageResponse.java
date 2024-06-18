@@ -1,6 +1,6 @@
 package revi1337.onsquad.crew.dto.response;
 
-import revi1337.onsquad.crew.dto.CrewWithMemberAndImage;
+import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,13 +13,13 @@ public record CrewWithMemberAndImageResponse(
         String crewOwner,
         byte[] image
 ) {
-    public static CrewWithMemberAndImageResponse from(CrewWithMemberAndImage crewWithMemberAndImage) {
+    public static CrewWithMemberAndImageResponse from(CrewWithMemberAndImageDto crewWithMemberAndImageDto) {
         return new CrewWithMemberAndImageResponse(
-                crewWithMemberAndImage.crewName().getValue() + "크루장",
-                crewWithMemberAndImage.crewDetail().getValue(),
-                crewWithMemberAndImage.hashTags() == null ? new ArrayList<>() : Arrays.stream(crewWithMemberAndImage.hashTags().getValue().split(",")).toList(),
-                crewWithMemberAndImage.crewOwner().getValue(),
-                crewWithMemberAndImage.image()
+                crewWithMemberAndImageDto.crewName().getValue() + "크루장",
+                crewWithMemberAndImageDto.crewDetail().getValue(),
+                crewWithMemberAndImageDto.hashTags() == null ? new ArrayList<>() : Arrays.stream(crewWithMemberAndImageDto.hashTags().getValue().split(",")).toList(),
+                crewWithMemberAndImageDto.crewOwner().getValue(),
+                crewWithMemberAndImageDto.image()
         );
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import revi1337.onsquad.config.TestJpaAuditingConfig;
 import revi1337.onsquad.config.TestQueryDslConfig;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewWithMemberAndImage;
+import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
@@ -73,12 +73,12 @@ class CrewRepositoryTest {
         crewRepository.save(crew);
 
         // when
-        CrewWithMemberAndImage crewWithMemberAndImage = crewRepository.findCrewByName(CrewFactory.NAME).get();
+        CrewWithMemberAndImageDto crewWithMemberAndImageDto = crewRepository.findCrewByName(CrewFactory.NAME).get();
 
         // then
         assertSoftly(softly -> {
-            assertThat(crewWithMemberAndImage.crewName()).isEqualTo(CrewFactory.NAME);
-            assertThat(crewWithMemberAndImage.crewDetail()).isEqualTo(CrewFactory.DETAIL);
+            assertThat(crewWithMemberAndImageDto.crewName()).isEqualTo(CrewFactory.NAME);
+            assertThat(crewWithMemberAndImageDto.crewDetail()).isEqualTo(CrewFactory.DETAIL);
         });
     }
 
@@ -102,10 +102,10 @@ class CrewRepositoryTest {
         crewRepository.saveAll(List.of(crew1, crew2, crew3, crew4, crew5));
 
         // when
-        List<CrewWithMemberAndImage> crewWithMemberAndImageList = crewRepository.findCrewsByName();
+        List<CrewWithMemberAndImageDto> crewWithMemberAndImageDtoList = crewRepository.findCrewsByName();
 
         // then
-        assertThat(crewWithMemberAndImageList.size()).isEqualTo(5);
+        assertThat(crewWithMemberAndImageDtoList.size()).isEqualTo(5);
     }
     
     @Test

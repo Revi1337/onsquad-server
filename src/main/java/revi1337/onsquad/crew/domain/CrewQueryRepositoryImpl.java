@@ -3,7 +3,7 @@ package revi1337.onsquad.crew.domain;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewWithMemberAndImage;
+import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
 import revi1337.onsquad.crew.dto.QCrewWithMemberAndImage;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<CrewWithMemberAndImage> findCrewByName(Name name) {
+    public Optional<CrewWithMemberAndImageDto> findCrewByName(Name name) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .select(new QCrewWithMemberAndImage(
@@ -38,7 +38,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     }
 
     @Override
-    public List<CrewWithMemberAndImage> findCrewsByName() {
+    public List<CrewWithMemberAndImageDto> findCrewsByName() {
         return jpaQueryFactory
                 .select(new QCrewWithMemberAndImage(
                         crew.name,
