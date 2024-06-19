@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class CrewRepositoryTest extends PersistenceLayerTestSupport {
@@ -129,7 +130,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
-    @DisplayName("Crew 정보 업데이트를 성공한다.")
+    @DisplayName("Crew 정보 업데이트를 성공적으로 진행한다. with image (1)")
     public void updateCrewTest() {
         // given
         Member member = MemberFactory.defaultMember().build();
@@ -139,7 +140,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
         crewRepository.save(crew);
 
         // when
-        crew.updateCrew("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("해시태그1", "해시태그2"), "변경 카카오 링크", ImageFactory.IMAGE_DATA);
+        crew.updateCrew("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("해시태그1", "해시태그2"), "변경 카카오 링크", ImageFactory.PNG_IMAGE);
         crewRepository.saveAndFlush(crew);
 
         // then
@@ -149,6 +150,32 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
             assertThat(crew.getDetail().getValue()).isEqualTo("변경 크루 디테일");
             assertThat(crew.getHashTags().getValue()).isEqualTo("해시태그1,해시태그2");
             assertThat(crew.getKakaoLink()).isEqualTo("변경 카카오 링크");
+            assertArrayEquals(crew.getImage().getData(), ImageFactory.PNG_IMAGE);
+        });
+    }
+
+    @Test
+    @DisplayName("Crew 정보 업데이트를 성공적으로 진행한다. without image (2)")
+    public void updateCrewTest2() {
+        // given
+        Member member = MemberFactory.defaultMember().build();
+        Image image = ImageFactory.defaultImage();
+        Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
+        memberRepository.save(member);
+        crewRepository.save(crew);
+
+        // when
+        crew.updateCrew("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("해시태그1", "해시태그2"), "변경 카카오 링크", null);
+        crewRepository.saveAndFlush(crew);
+
+        // then
+        assertSoftly(softly -> {
+            assertThat(crew.getName().getValue()).isEqualTo("변경 크루 이름");
+            assertThat(crew.getIntroduce().getValue()).isEqualTo("변경 크루 소개");
+            assertThat(crew.getDetail().getValue()).isEqualTo("변경 크루 디테일");
+            assertThat(crew.getHashTags().getValue()).isEqualTo("해시태그1,해시태그2");
+            assertThat(crew.getKakaoLink()).isEqualTo("변경 카카오 링크");
+            assertArrayEquals(crew.getImage().getData(), ImageFactory.JPG_IMAGE);
         });
     }
 }
