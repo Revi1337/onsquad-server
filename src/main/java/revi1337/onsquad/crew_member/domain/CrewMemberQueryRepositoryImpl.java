@@ -1,7 +1,12 @@
 package revi1337.onsquad.crew_member.domain;
 
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
+import revi1337.onsquad.crew_member.dto.QEnrolledCrewMemberDto;
 
 import java.util.List;
 
@@ -21,6 +26,7 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
                 .innerJoin(crewMember.member, member).fetchJoin()
                 .innerJoin(crewMember.crew, crew).fetchJoin()
                 .where(member.id.eq(memberId))
+                .where(member.id.eq(memberId))
                 .fetch();
     }
 
@@ -34,5 +40,25 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
                 .fetchFirst();
 
         return fetchOne != null;
+    }
+
+    @Override
+    public List<EnrolledCrewMemberDto> findMembersForSpecifiedCrew(Name crewName, Long memberId) {
+        return jpaQueryFactory
+                .select(new QEnrolledCrewMemberDto(
+                        crew.name,
+                        member.nickname,
+                        member.email,
+                        crewMember.status,
+                        crewMember.createdAt
+                ))
+                .from(crewMember)
+                .innerJoin(crewMember.member, member)
+                .innerJoin(crewMember.crew, crew)
+                .where(
+                        member.id.eq(memberId),
+                        crew.name.eq(crewName)
+                )
+                .fetch();
     }
 }

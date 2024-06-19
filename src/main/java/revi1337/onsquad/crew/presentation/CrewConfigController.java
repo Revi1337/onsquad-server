@@ -10,6 +10,7 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewConfigService;
 import revi1337.onsquad.crew.dto.request.CrewAcceptRequest;
 import revi1337.onsquad.crew.dto.response.OwnedCrewsResponse;
+import revi1337.onsquad.crew_member.dto.response.EnrolledCrewMemberResponse;
 
 import java.util.List;
 
@@ -33,6 +34,22 @@ public class CrewConfigController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(ownedCrewsResponses));
+    }
+
+    /**
+     * 사용자가 생성한 Crew 에 속한 CrewMember 들 조회
+     */
+    @GetMapping("/crew/members")
+    public ResponseEntity<RestResponse<List<EnrolledCrewMemberResponse>>> findMembersForSpecifiedCrew(
+            @RequestParam String crewName,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        List<EnrolledCrewMemberResponse> enrolledCrewMemberResponses = crewConfigService.findMembersForSpecifiedCrew(crewName, authenticatedMember.toDto().getId())
+                .stream()
+                .map(EnrolledCrewMemberResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(enrolledCrewMemberResponses));
     }
 
     /**
