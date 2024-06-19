@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew.dto.CrewCreateDto;
 import revi1337.onsquad.crew.dto.CrewDto;
+import revi1337.onsquad.crew.dto.CrewJoinDto;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.MemberRepository;
 
 import java.util.List;
@@ -27,11 +30,11 @@ public class CrewService {
     }
 
     @Transactional
-    public void createNewCrew(CrewDto crewDto) {
-        memberRepository.findById(crewDto.getMemberDto().getId())
-                .ifPresent(member -> crewRepository.findByName(crewDto.getName())
+    public void createNewCrew(CrewCreateDto crewCreateDto, Long memberId, byte[] image) {
+        memberRepository.findById(memberId)
+                .ifPresent(member -> crewRepository.findByName(new Name(crewCreateDto.name()))
                         .ifPresentOrElse(
-                                crew -> crewRepository.save(crewDto.toEntity(crewDto.getImageDto().toEntity(), member)),
+                                crew -> crewRepository.save(crewCreateDto.toEntity(new Image(image), member)),
                                 () -> { throw new IllegalArgumentException("크루명이 이미 존재합니다."); } // TODO 커스텀 익셉션 필요.
                         )
                 );
@@ -47,9 +50,9 @@ public class CrewService {
     }
 
     @Transactional
-    public void joinCrew(CrewDto crewDto) {
-        memberRepository.findById(crewDto.getMemberDto().getId())
-                .ifPresent(member -> crewRepository.findByName(crewDto.getName())
+    public void joinCrew(CrewJoinDto crewJoinDto, Long memberId) {
+        memberRepository.findById(memberId)
+                .ifPresent(member -> crewRepository.findByName(new Name(crewJoinDto.crewName()))
                         .ifPresentOrElse(
                                 crew -> {
                                     if (crewMemberRepository.existsCrewMember(member.getId()))

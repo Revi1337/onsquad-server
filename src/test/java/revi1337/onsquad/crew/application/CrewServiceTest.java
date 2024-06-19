@@ -9,12 +9,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewDto;
+import revi1337.onsquad.crew.dto.CrewJoinDto;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.member.dto.MemberDto;
 
 import java.util.Optional;
 
@@ -83,15 +83,14 @@ class CrewServiceTest {
         // given
         Long memberId = 1L;
         Member member = Member.builder().id(memberId).build();
-        Crew crew = Crew.builder().member(member).build();
-        MemberDto memberDto = MemberDto.builder().id(memberId).build();
-        CrewDto crewDto = CrewDto.of("크룸 이름", memberDto);
+        Crew crew = Crew.builder().name(CrewFactory.NAME).member(member).build();
+        CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
         given(memberRepository.findById(eq(memberId))).willReturn(Optional.ofNullable(member));
         given(crewRepository.findByName(any(Name.class))).willReturn(Optional.of(crew));
         given(crewMemberRepository.existsCrewMember(eq(memberId))).willReturn(false);
 
         // when
-        crewService.joinCrew(crewDto);
+        crewService.joinCrew(crewJoinDto, memberId);
 
         // then
         then(crewMemberRepository).should(times(1)).save(any(CrewMember.class));
@@ -103,15 +102,14 @@ class CrewServiceTest {
         // given
         Long memberId = 1L;
         Member member = Member.builder().id(memberId).build();
-        Crew crew = Crew.builder().member(member).build();
-        MemberDto memberDto = MemberDto.builder().id(memberId).build();
-        CrewDto crewDto = CrewDto.of("크룸 이름", memberDto);
+        Crew crew = Crew.builder().name(CrewFactory.NAME).member(member).build();
+        CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
         given(memberRepository.findById(eq(memberId))).willReturn(Optional.ofNullable(member));
         given(crewRepository.findByName(any(Name.class))).willReturn(Optional.of(crew));
         given(crewMemberRepository.existsCrewMember(eq(memberId))).willReturn(true);
 
         // when && then
-        assertThatThrownBy(() -> crewService.joinCrew(crewDto))
+        assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 해당 크루에 가입신청을 하였습니다.");
     }
@@ -122,14 +120,13 @@ class CrewServiceTest {
         // given
         Long memberId = 1L;
         Member member = Member.builder().id(memberId).build();
-        Crew crew = Crew.builder().member(member).build();
-        MemberDto memberDto = MemberDto.builder().id(memberId).build();
-        CrewDto crewDto = CrewDto.of("크룸 이름", memberDto);
+        Crew crew = Crew.builder().name(CrewFactory.NAME).member(member).build();
+        CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
         given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
         given(crewRepository.findByName(any(Name.class))).willReturn(Optional.empty());
 
         // when && then
-        assertThatThrownBy(() -> crewService.joinCrew(crewDto))
+        assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("크루가 존재하지 않아 크루에 가입신청을 할 수 없습니다.");
     }

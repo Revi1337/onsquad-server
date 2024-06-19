@@ -1,9 +1,7 @@
 package revi1337.onsquad.crew.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import revi1337.onsquad.crew.dto.CrewDto;
-import revi1337.onsquad.image.dto.ImageDto;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.crew.dto.CrewCreateDto;
 
 import java.util.List;
 
@@ -14,16 +12,7 @@ public record CrewCreateRequest(
         List<String> hashTags,
         String kakaoLink
 ) {
-    public CrewDto toDto(MemberDto memberDto, byte[] imageData) {
-        return CrewDto.of(
-                name,
-                introduce,
-                hashTags,
-                kakaoLink,
-                ImageDto.builder()
-                        .image(imageData)
-                        .build(),
-                memberDto
-        );
+    public CrewCreateDto toDto() {
+        return new CrewCreateDto(name, introduce, detail, hashTags, kakaoLink);
     }
 }

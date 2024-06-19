@@ -60,6 +60,6 @@ public class CrewConfigController {
             @Valid @RequestBody CrewAcceptRequest crewAcceptRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        crewConfigService.acceptCrewMember(crewAcceptRequest.toDto(authenticatedMember.toDto()));
+        crewConfigService.acceptCrewMember(crewAcceptRequest.toDto(), authenticatedMember.toDto().getId());
     }
 }

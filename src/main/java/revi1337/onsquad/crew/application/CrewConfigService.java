@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew.dto.CrewAcceptDto;
 import revi1337.onsquad.crew.dto.CrewDto;
 import revi1337.onsquad.crew.dto.OwnedCrewsDto;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
@@ -32,7 +33,7 @@ public class CrewConfigService {
         return crewMemberRepository.findMembersForSpecifiedCrew(new Name(crewName), memberId);
     }
 
-    public void acceptCrewMember(CrewDto crewDto) {
-        memberRepository.findById(crewDto.getMemberDto().getId());
+    public void acceptCrewMember(CrewAcceptDto crewAcceptDto, Long memberId) {
+        memberRepository.findById(memberId);
     }
 }
