@@ -33,4 +33,8 @@ public class Introduce {
             );
         }
     }
+
+    public Introduce updateIntroduce(String introduce) {
+        return new Introduce(introduce);
+    }
 }

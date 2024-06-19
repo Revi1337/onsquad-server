@@ -14,7 +14,7 @@ public class Image {
     private static final byte[] PNG_MAGIC_BYTE = {(byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47, (byte) 0x0D, (byte) 0x0A, (byte) 0x1A, (byte) 0x0A}; // PNG
     private static final byte[] JPG_MAGIC_BYTE = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF}; // JPG, JPEG
     private static final Set<byte[]> WHITELIST_MAGIC_BYTES = Set.of(PNG_MAGIC_BYTE, JPG_MAGIC_BYTE);
-    private static final byte[] DEFAULT_IMAGE = new byte[0];
+    private static final byte[] DEFAULT_IMAGE = JPG_MAGIC_BYTE;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,9 +49,19 @@ public class Image {
                 counter += 1;
             }
         }
+
         if (counter == WHITELIST_MAGIC_BYTES.size()) {
             throw new IllegalArgumentException("대표이미지는 jpg, jpeg, png 만 가능합니다."); // TODO 커스텀 익셉션 필요.
         }
+    }
+
+    public Image updateImage(byte[] data) {
+        if (data != null) {
+            validateMagicByte(data);
+            this.data = data;
+        }
+
+        return this;
     }
 
     @Override

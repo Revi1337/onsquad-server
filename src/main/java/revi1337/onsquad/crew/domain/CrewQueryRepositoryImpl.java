@@ -50,6 +50,18 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
                 .fetch();
     }
 
+    @Override
+    public Optional<Crew> findCrewByNameForUpdate(Name name) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .select(crew)
+                        .from(crew)
+                        .leftJoin(crew.member, member)
+                        .where(crew.name.eq(name))
+                        .fetchOne()
+        );
+    }
+
     private JPAQuery<CrewWithMemberAndImageDto> queryForFindCrewByName() {
         return jpaQueryFactory
                 .select(new QCrewWithMemberAndImageDto(

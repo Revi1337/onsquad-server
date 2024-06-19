@@ -33,4 +33,8 @@ public class Name {
             );
         }
     }
+
+    public Name updateName(String crewName) {
+        return new Name(crewName);
+    }
 }

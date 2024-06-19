@@ -4,14 +4,17 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewConfigService;
 import revi1337.onsquad.crew.dto.request.CrewAcceptRequest;
+import revi1337.onsquad.crew.dto.request.CrewUpdateRequest;
 import revi1337.onsquad.crew.dto.response.OwnedCrewsResponse;
 import revi1337.onsquad.crew_member.dto.response.EnrolledCrewMemberResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -50,6 +53,16 @@ public class CrewConfigController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(enrolledCrewMemberResponses));
+    }
+
+    @PutMapping("/crew")
+    public void updateCrew(
+            @Valid @RequestPart CrewUpdateRequest crewUpdateRequest,
+            @RequestPart MultipartFile file,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) throws IOException {
+        crewConfigService.updateCrew(crewUpdateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes());
+
     }
 
     /**

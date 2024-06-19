@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Getter
@@ -24,7 +25,10 @@ public class HashTags {
         }
 
         validateSize(hashtags);
-        this.value = String.join(HASHTAG_DELIMITER, new HashSet<>(hashtags));
+
+        List<String> hashTags = new ArrayList<>(new HashSet<>(hashtags));
+        Collections.reverse(hashTags);
+        this.value = String.join(HASHTAG_DELIMITER, hashTags);
     }
 
     public void validateSize(Collection<String> hashtags) {
@@ -34,5 +38,9 @@ public class HashTags {
                     String.format("해시태그의 최대 개수는 %d 개 입니다.", MAX_LENGTH)
             );
         }
+    }
+
+    public HashTags updateHashTags(Collection<String> hashTags) {
+        return new HashTags(hashTags);
     }
 }

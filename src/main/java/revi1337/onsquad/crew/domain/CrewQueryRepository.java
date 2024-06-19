@@ -15,4 +15,6 @@ public interface CrewQueryRepository {
 
     List<OwnedCrewsDto> findOwnedCrews(Long memberId);
 
+    Optional<Crew> findCrewByNameForUpdate(Name name);
+
 }

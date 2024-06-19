@@ -33,4 +33,8 @@ public class Detail {
             );
         }
     }
+
+    public Detail updateDetail(String detail) {
+        return new Detail(detail);
+    }
 }

@@ -10,6 +10,7 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
 
+import java.util.Collection;
 import java.util.Objects;
 
 
@@ -59,6 +60,15 @@ public class Crew extends BaseEntity {
         this.image = image;
         this.kakaoLink = kakaoLink;
         this.member = member;
+    }
+
+    public void updateCrew(String name, String introduce, String detail, Collection<String> hashTags, String kakaoLink, byte[] imageData) {
+        this.name = this.name.updateName(name);
+        this.introduce = this.introduce.updateIntroduce(introduce);
+        this.detail = this.detail.updateDetail(detail);
+        this.hashTags = this.hashTags.updateHashTags(hashTags);
+        this.kakaoLink = kakaoLink;
+        this.image = this.image.updateImage(imageData);
     }
 
     @Override
