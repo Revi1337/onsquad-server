@@ -3,11 +3,6 @@ package revi1337.onsquad.crew.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import revi1337.onsquad.config.TestJpaAuditingConfig;
-import revi1337.onsquad.config.TestQueryDslConfig;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
 import revi1337.onsquad.crew.dto.OwnedCrewsDto;
@@ -17,6 +12,7 @@ import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
 import java.util.List;
 
@@ -24,10 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 
-@Import({TestJpaAuditingConfig.class, TestQueryDslConfig.class})
-@DataJpaTest(showSql = false)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class CrewRepositoryTest {
+class CrewRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired private CrewRepository crewRepository;
     @Autowired private MemberRepository memberRepository;
@@ -133,5 +126,29 @@ class CrewRepositoryTest {
 
         // then
         assertThat(ownedCrews.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("Crew 정보 업데이트를 성공한다.")
+    public void updateCrewTest() {
+        // given
+        Member member = MemberFactory.defaultMember().build();
+        Image image = ImageFactory.defaultImage();
+        Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
+        memberRepository.save(member);
+        crewRepository.save(crew);
+
+        // when
+        crew.updateCrew("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("해시태그1", "해시태그2"), "변경 카카오 링크", ImageFactory.IMAGE_DATA);
+        crewRepository.saveAndFlush(crew);
+
+        // then
+        assertSoftly(softly -> {
+            assertThat(crew.getName().getValue()).isEqualTo("변경 크루 이름");
+            assertThat(crew.getIntroduce().getValue()).isEqualTo("변경 크루 소개");
+            assertThat(crew.getDetail().getValue()).isEqualTo("변경 크루 디테일");
+            assertThat(crew.getHashTags().getValue()).isEqualTo("해시태그1,해시태그2");
+            assertThat(crew.getKakaoLink()).isEqualTo("변경 카카오 링크");
+        });
     }
 }
