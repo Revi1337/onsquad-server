@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MvcResult;
 import revi1337.onsquad.auth.dto.request.LoginRequest;
 import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
@@ -29,7 +28,6 @@ class SquadControllerTest extends IntegrationTestSupport {
     @Autowired private MemberRepository memberRepository;
     @Autowired private SquadService squadService;
 
-    @Rollback(false)
     @DisplayName("인증된 사용자는 Squad 모집 게시글을 등록할 수 있다.")
     @Test
     public void squadTest() throws Exception {
