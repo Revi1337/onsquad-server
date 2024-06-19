@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewAcceptDto;
-import revi1337.onsquad.crew.dto.CrewDto;
 import revi1337.onsquad.crew.dto.OwnedCrewsDto;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
