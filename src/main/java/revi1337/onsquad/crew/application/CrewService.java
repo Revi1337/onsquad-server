@@ -9,6 +9,7 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewCreateDto;
 import revi1337.onsquad.crew.dto.CrewJoinDto;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
+import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
@@ -17,6 +18,8 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
 import java.util.List;
+
+import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -36,7 +39,7 @@ public class CrewService {
         memberRepository.findById(memberId)
                 .ifPresent(member -> crewRepository.findByName(new Name(crewCreateDto.name()))
                         .ifPresentOrElse(
-                                ignored -> { throw new IllegalArgumentException("크루명이 이미 존재하여 Crew 를 개설할 수 없습니다."); }, // TODO 커스텀 익셉션 필요.
+                                ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, crewCreateDto.name()); },
                                 () -> crewRepository.save(crewCreateDto.toEntity(new Image(image), member))
                         )
                 );
@@ -44,7 +47,7 @@ public class CrewService {
 
     public CrewWithMemberAndImageDto findCrewByName(String crewName) {
         return crewRepository.findCrewByName(new Name(crewName))
-                .orElseThrow(() -> new IllegalArgumentException("해당 이름의 크루가 존재하지 않습니다.")); // TODO 커스텀 익셉션 필요
+                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, crewName));
     }
 
     public List<CrewWithMemberAndImageDto> findCrewsByName() {
@@ -57,7 +60,7 @@ public class CrewService {
                 .ifPresent(member -> crewRepository.findByName(new Name(crewJoinDto.crewName()))
                         .ifPresentOrElse(
                                 crew -> retrieveAndJoinCrewMember(member, crew),
-                                () -> { throw new IllegalArgumentException("크루가 존재하지 않아 크루에 가입신청을 할 수 없습니다."); } // TODO 커스텀 익셉션 필요
+                                () -> { throw new CrewBusinessException.CannotJoin(CANNOT_JOIN, crewJoinDto.crewName()); }
                         )
                 );
     }
@@ -65,18 +68,18 @@ public class CrewService {
     private void retrieveAndJoinCrewMember(Member member, Crew crew) {
         crewMemberRepository.findCrewMemberByMemberId(member.getId())
                 .ifPresentOrElse(
-                        this::judgementCurrentJoinStatus,
+                        crewMember -> judgementCurrentJoinStatus(crewMember, crew.getName()),
                         () -> crewMemberRepository.save(CrewMember.of(crew, member))
                 );
     }
 
-    private void judgementCurrentJoinStatus(CrewMember crewMember) {
+    private void judgementCurrentJoinStatus(CrewMember crewMember, Name name) {
         if (crewMember.getStatus() == JoinStatus.ACCEPT) {
-            throw new IllegalArgumentException("이미 해당 크루에 가입된 사용자입니다."); // TODO 커스텀 익셉션 필요.
+            throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, name.getValue());
         }
 
         if (crewMember.getStatus() == JoinStatus.PENDING) {
-            throw new IllegalArgumentException("이미 해당 크루에 가입신청을 하였습니다."); // TODO 커스텀 익셉션 필요.
+            throw new CrewBusinessException.AlreadyRequest(ALREADY_REQUEST, name.getValue());
         }
     }
 }
