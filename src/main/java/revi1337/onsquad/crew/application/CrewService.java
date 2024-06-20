@@ -36,8 +36,8 @@ public class CrewService {
         memberRepository.findById(memberId)
                 .ifPresent(member -> crewRepository.findByName(new Name(crewCreateDto.name()))
                         .ifPresentOrElse(
-                                crew -> crewRepository.save(crewCreateDto.toEntity(new Image(image), member)),
-                                () -> { throw new IllegalArgumentException("크루명이 이미 존재합니다."); } // TODO 커스텀 익셉션 필요.
+                                ignored -> { throw new IllegalArgumentException("크루명이 이미 존재하여 Crew 를 개설할 수 없습니다."); }, // TODO 커스텀 익셉션 필요.
+                                () -> crewRepository.save(crewCreateDto.toEntity(new Image(image), member))
                         )
                 );
     }
