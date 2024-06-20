@@ -17,8 +17,10 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 
 @DisplayName("CrewMemberRepository 테스트")
@@ -90,5 +92,61 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
 
         // then
         assertThat(enrolledCrewMemberDtos.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("특정 Member 가 특정 Crew 에 참여요청을 한 이력이 있으면 실패한다.")
+    public void findCrewMemberByCrewIdAndMemberId1() {
+        // given
+        Member member1 = MemberFactory.defaultMember().build();
+        Member member2 = MemberFactory.defaultMember().build();
+        Image image1 = ImageFactory.defaultImage();
+        Image image2 = ImageFactory.defaultImage();
+        Image image3 = ImageFactory.defaultImage();
+        Crew crew1 = CrewFactory.defaultCrew().name(new Name("크루 이름 1")).image(image1).member(member1).build();
+        Crew crew2 = CrewFactory.defaultCrew().name(new Name("크루 이름 2")).image(image2).member(member1).build();
+        Crew crew3 = CrewFactory.defaultCrew().name(new Name("크루 이름 3")).image(image3).member(member2).build();
+        CrewMember crewMember1 = CrewMemberFactory.defaultCrewMember().member(member1).crew(crew1).build();
+        CrewMember crewMember2 = CrewMemberFactory.defaultCrewMember().member(member1).crew(crew2).build();
+        CrewMember crewMember3 = CrewMemberFactory.defaultCrewMember().member(member2).crew(crew3).build();
+        memberRepository.saveAll(List.of(member1, member2));
+        crewRepository.saveAll(List.of(crew1, crew2, crew3));
+        crewMemberRepository.saveAll(List.of(crewMember1, crewMember2, crewMember3));
+
+        // when
+        Optional<CrewMember> findCrewMember = crewMemberRepository.findCrewMemberByCrewIdAndMemberId(1L, 3L);
+
+        // then
+        assertThat(findCrewMember).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("특정 Member 가 특정 Crew 에 참여요청을 한 이력이 없으면 성공한다.")
+    public void findCrewMemberByCrewIdAndMemberId2() {
+        // given
+        Member member1 = MemberFactory.defaultMember().build();
+        Member member2 = MemberFactory.defaultMember().build();
+        Image image1 = ImageFactory.defaultImage();
+        Image image2 = ImageFactory.defaultImage();
+        Image image3 = ImageFactory.defaultImage();
+        Crew crew1 = CrewFactory.defaultCrew().name(new Name("크루 이름 1")).image(image1).member(member1).build();
+        Crew crew2 = CrewFactory.defaultCrew().name(new Name("크루 이름 2")).image(image2).member(member1).build();
+        Crew crew3 = CrewFactory.defaultCrew().name(new Name("크루 이름 3")).image(image3).member(member2).build();
+        CrewMember crewMember1 = CrewMemberFactory.defaultCrewMember().member(member1).crew(crew1).build();
+        CrewMember crewMember2 = CrewMemberFactory.defaultCrewMember().member(member1).crew(crew2).build();
+        CrewMember crewMember3 = CrewMemberFactory.defaultCrewMember().member(member2).crew(crew3).build();
+        memberRepository.saveAll(List.of(member1, member2));
+        crewRepository.saveAll(List.of(crew1, crew2, crew3));
+        crewMemberRepository.saveAll(List.of(crewMember1, crewMember2, crewMember3));
+
+        // when
+        Optional<CrewMember> findCrewMember = crewMemberRepository.findCrewMemberByCrewIdAndMemberId(1L, 2L);
+
+        // then
+        assertSoftly(softly -> {
+            assertThat(findCrewMember).isPresent();
+            assertThat(findCrewMember.get().getMember().getId()).isEqualTo(1L);
+            assertThat(findCrewMember.get().getCrew().getId()).isEqualTo(2L);
+        });
     }
 }
