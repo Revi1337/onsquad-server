@@ -1,7 +1,5 @@
 package revi1337.onsquad.crew_member.domain;
 
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.crew.domain.vo.Name;
@@ -9,6 +7,7 @@ import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
 import revi1337.onsquad.crew_member.dto.QEnrolledCrewMemberDto;
 
 import java.util.List;
+import java.util.Optional;
 
 import static revi1337.onsquad.crew.domain.QCrew.*;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
@@ -18,17 +17,6 @@ import static revi1337.onsquad.member.domain.QMember.*;
 public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-
-    @Override
-    public List<CrewMember> findEnrolledCrewMembers(Long memberId) {
-        return jpaQueryFactory
-                .selectFrom(crewMember)
-                .innerJoin(crewMember.member, member).fetchJoin()
-                .innerJoin(crewMember.crew, crew).fetchJoin()
-                .where(member.id.eq(memberId))
-                .where(member.id.eq(memberId))
-                .fetch();
-    }
 
     @Override
     public boolean existsCrewMember(Long memberId) {
@@ -60,5 +48,18 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
                         crew.name.eq(crewName)
                 )
                 .fetch();
+    }
+
+    @Override
+    public Optional<CrewMember> findCrewMemberByCrewIdAndMemberId(Long memberId, Long crewId) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(crewMember)
+                        .where(
+                                crewMember.crew.id.eq(crewId),
+                                crewMember.member.id.eq(memberId)
+                        )
+                        .fetchOne()
+        );
     }
 }

@@ -62,11 +62,10 @@ public class CrewConfigController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
         crewConfigService.updateCrew(crewUpdateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes());
-
     }
 
     /**
-     * 미완성
+     * Crew 참가 요청 수락
      */
     @PatchMapping("/crew/accept")
     public void acceptCrewMember(

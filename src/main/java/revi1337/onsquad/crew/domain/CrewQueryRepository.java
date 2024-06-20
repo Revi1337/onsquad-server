@@ -11,6 +11,8 @@ public interface CrewQueryRepository {
 
     Optional<CrewWithMemberAndImageDto> findCrewByName(Name name);
 
+    Optional<Crew> findCrewByCrewNameAndMemberId(Name name, Long memberId);
+
     List<CrewWithMemberAndImageDto> findCrewsByName();
 
     List<OwnedCrewsDto> findOwnedCrews(Long memberId);
