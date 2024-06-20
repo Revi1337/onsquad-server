@@ -3,6 +3,9 @@ package revi1337.onsquad.crew.domain.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import revi1337.onsquad.crew.error.exception.CrewDomainException;
+
+import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
 @Getter
 @EqualsAndHashCode
@@ -24,13 +27,11 @@ public class Introduce {
 
     public void validate(String value) {
         if (value == null) {
-            throw new NullPointerException("크루 소개는 null 일 수 없습니다."); // TODO 커스텀 익셉션 필요
+            throw new NullPointerException("크루 소개는 null 일 수 없습니다.");
         }
 
         if (value.length() > MAX_LENGTH || value.isEmpty()) {
-            throw new IllegalArgumentException( // TODO 커스텀 익셉션 필요
-                    String.format("크루 소개는 %d 자 이상 %d 자 이하여야 합니다.", MIN_LENGTH, MAX_LENGTH)
-            );
+            throw new CrewDomainException.InvalidIntroduceLength(INVALID_INTRODUCE_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
     }
 

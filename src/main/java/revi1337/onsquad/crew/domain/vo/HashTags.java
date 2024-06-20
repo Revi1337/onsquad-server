@@ -3,9 +3,11 @@ package revi1337.onsquad.crew.domain.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import revi1337.onsquad.crew.error.exception.CrewDomainException;
 
-import java.lang.reflect.Array;
 import java.util.*;
+
+import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
 @Getter
 @EqualsAndHashCode
@@ -34,9 +36,7 @@ public class HashTags {
     public void validateSize(Collection<String> hashtags) {
         HashSet<String> hashtagsSet = new HashSet<>(hashtags);
         if (hashtagsSet.isEmpty() || hashtagsSet.size() > MAX_LENGTH) {
-            throw new IllegalArgumentException( // TODO 커스텀 익셉션 필요.
-                    String.format("해시태그의 최대 개수는 %d 개 입니다.", MAX_LENGTH)
-            );
+            throw new CrewDomainException.InvalidHashTagsSize(INVALID_HASHTAGS_SIZE, MAX_LENGTH);
         }
     }
 
