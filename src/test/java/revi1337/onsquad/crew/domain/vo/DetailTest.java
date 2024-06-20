@@ -2,6 +2,7 @@ package revi1337.onsquad.crew.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import revi1337.onsquad.crew.error.exception.CrewDomainException;
 
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -65,8 +66,8 @@ class DetailTest {
 
         // when & then
         assertThatThrownBy(() -> new Detail(detail))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("크루 상세정보의 길이는 1 자 이상 150 자 이하여야 합니다.");
+                .isInstanceOf(CrewDomainException.InvalidDetailLength.class)
+                .hasMessage("크루 상세정보의 길이는 1 자 이상 150 자 입니다.");
     }
 
     @Test
@@ -77,7 +78,7 @@ class DetailTest {
 
         // when & then
         assertThatThrownBy(() -> new Detail(detail))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("크루 상세정보의 길이는 1 자 이상 150 자 이하여야 합니다.");
+                .isInstanceOf(CrewDomainException.InvalidDetailLength.class)
+                .hasMessage("크루 상세정보의 길이는 1 자 이상 150 자 입니다.");
     }
 }

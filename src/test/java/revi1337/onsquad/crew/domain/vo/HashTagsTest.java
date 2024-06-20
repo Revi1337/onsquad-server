@@ -2,6 +2,7 @@ package revi1337.onsquad.crew.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import revi1337.onsquad.crew.error.exception.CrewDomainException;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ class HashTagsTest {
 
         // when & then
         assertThatThrownBy(() -> new HashTags(hashtags))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(CrewDomainException.InvalidHashTagsSize.class)
                 .hasMessage("해시태그의 최대 개수는 10 개 입니다.");
     }
 
