@@ -12,6 +12,7 @@ import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewCreateDto;
 import revi1337.onsquad.crew.dto.CrewJoinDto;
+import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
@@ -98,8 +99,8 @@ class CrewServiceTest {
 
             // when & then
             assertThatThrownBy(() -> crewService.createNewCrew(crewCreateDto, memberId, pngImage))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("크루명이 이미 존재하여 Crew 를 개설할 수 없습니다.");
+                    .isInstanceOf(CrewBusinessException.AlreadyExists.class)
+                    .hasMessage(String.format("%s 크루가 이미 존재하여 크루를 개설할 수 없습니다.", crewCreateDto.name()));
         }
 
         @Test
@@ -157,8 +158,8 @@ class CrewServiceTest {
 
             // then
             assertThat(throwable)
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("해당 이름의 크루가 존재하지 않습니다.");
+                    .isInstanceOf(CrewBusinessException.NotFoundByName.class)
+                    .hasMessage(String.format("%s 크루 게시글이 존재하지 않습니다.", name));
             then(crewRepository).should(times(1)).findCrewByName(crewName);
         }
     }
@@ -181,8 +182,8 @@ class CrewServiceTest {
 
             // when & then
             assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("이미 해당 크루에 가입신청을 하였습니다.");
+                    .isInstanceOf(CrewBusinessException.AlreadyRequest.class)
+                    .hasMessage(String.format("%s 크루에 가입신청을 했지만 요청 수락 전 상태입니다.", crewJoinDto.crewName()));
         }
 
         @Test
@@ -199,8 +200,8 @@ class CrewServiceTest {
 
             // when & then
             assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("이미 해당 크루에 가입된 사용자입니다.");
+                    .isInstanceOf(CrewBusinessException.AlreadyJoin.class)
+                    .hasMessage(String.format("이미 %s 크루에 가입된 사용자입니다.", crewJoinDto.crewName()));
         }
 
         @Test
@@ -235,8 +236,8 @@ class CrewServiceTest {
 
             // when && then
             assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("크루가 존재하지 않아 크루에 가입신청을 할 수 없습니다.");
+                    .isInstanceOf(CrewBusinessException.CannotJoin.class)
+                    .hasMessage(String.format("%s 크루가 존재하지 않아 가입신청을 할 수 없습니다.", crewJoinDto.crewName()));
         }
     }
 }
