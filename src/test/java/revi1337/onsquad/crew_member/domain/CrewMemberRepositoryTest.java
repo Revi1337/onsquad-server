@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_member.domain;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,40 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
     @Autowired private CrewMemberRepository crewMemberRepository;
     @Autowired private MemberRepository memberRepository;
     @Autowired private CrewRepository crewRepository;
+
+    @Test
+    @DisplayName("Member Id 를 통해 CrewMember 를 찾는다. (1)")
+    public void findCrewMemberByMemberId() {
+        Member member = MemberFactory.defaultMember().build();
+        Image image = ImageFactory.defaultImage();
+        Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
+        CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).build();
+        memberRepository.save(member);
+        crewRepository.save(crew);
+        crewMemberRepository.save(crewMember);
+
+        // when
+        Optional<CrewMember> findCrewMember = crewMemberRepository.findCrewMemberByMemberId(1L);
+
+        assertThat(findCrewMember).isPresent();
+    }
+
+    @Test
+    @DisplayName("Member Id 를 통해 CrewMember 를 찾는다. (2)")
+    public void findCrewMemberByMemberId2() {
+        Member member = MemberFactory.defaultMember().build();
+        Image image = ImageFactory.defaultImage();
+        Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
+        CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).build();
+        memberRepository.save(member);
+        crewRepository.save(crew);
+        crewMemberRepository.save(crewMember);
+
+        // when
+        Optional<CrewMember> findCrewMember = crewMemberRepository.findCrewMemberByMemberId(2L);
+
+        assertThat(findCrewMember).isNotPresent();
+    }
 
     @Test
     @DisplayName("Member 가 Crew 에 가입신청을 한 이력이 있으면 true 를 반환한다.")
