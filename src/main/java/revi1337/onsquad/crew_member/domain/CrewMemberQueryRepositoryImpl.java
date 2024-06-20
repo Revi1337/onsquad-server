@@ -31,6 +31,16 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
     }
 
     @Override
+    public Optional<CrewMember> findCrewMemberByMemberId(Long memberId) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(crewMember)
+                        .where(crewMember.member.id.eq(memberId))
+                        .fetchOne()
+        );
+    }
+
+    @Override
     public List<EnrolledCrewMemberDto> findMembersForSpecifiedCrew(Name crewName, Long memberId) {
         return jpaQueryFactory
                 .select(new QEnrolledCrewMemberDto(

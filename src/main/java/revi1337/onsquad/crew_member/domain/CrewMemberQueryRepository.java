@@ -10,6 +10,8 @@ public interface CrewMemberQueryRepository {
 
     boolean existsCrewMember(Long memberId);
 
+    Optional<CrewMember> findCrewMemberByMemberId(Long memberId);
+
     List<EnrolledCrewMemberDto> findMembersForSpecifiedCrew(Name crewName, Long memberId);
 
     /**
