@@ -43,43 +43,47 @@ public class CrewConfigService {
     public void updateCrew(CrewUpdateDto dto, Long memberId, byte[] image) {
         crewRepository.findCrewByNameForUpdate(new Name(dto.name()))
                 .ifPresentOrElse(
-                        crew -> {
-                            if (!crew.getMember().getId().equals(memberId))
-                                throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, dto.name());
-
-                            crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.hashTags(), dto.kakaoLink(), image);
-                            crewRepository.saveAndFlush(crew);
-                        },
+                        crew -> updateCrewInformation(dto, memberId, image, crew),
                         () -> { throw new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, dto.name()); }
                 );
+    }
+
+    private void updateCrewInformation(CrewUpdateDto dto, Long memberId, byte[] image, Crew crew) {
+        validateCrewPublisher(memberId, crew, dto.name());
+
+        crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.hashTags(), dto.kakaoLink(), image);
+        crewRepository.saveAndFlush(crew);
+    }
+
+    private void validateCrewPublisher(Long memberId, Crew crew, String crewName) {
+        if (!crew.getMember().getId().equals(memberId)) {
+            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crewName);
+        }
     }
 
     @Transactional
     public void acceptCrewMember(CrewAcceptDto dto, Long memberId) {
         crewRepository.findByName(new Name(dto.requestCrewName()))
                 .ifPresentOrElse(
-                        crew -> updateCrewMemberMetadata(dto, memberId, crew),
+                        crew -> modifyCrewMemberMetadata(dto, memberId, crew),
                         () -> { throw new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, dto.requestCrewName()); }
                 );
     }
 
-    private void updateCrewMemberMetadata(CrewAcceptDto dto, Long memberId, Crew crew) {
-        if (!crew.getMember().getId().equals(memberId)) {
-            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, dto.requestCrewName());
-        }
-
-        updateCrewMemberStatus(dto, memberId, crew.getId());
+    private void modifyCrewMemberMetadata(CrewAcceptDto dto, Long memberId, Crew crew) {
+        validateCrewPublisher(memberId, crew, dto.requestCrewName());
+        modifyCrewMemberJoinStatus(dto, memberId, crew.getId());
     }
 
-    private void updateCrewMemberStatus(CrewAcceptDto dto, Long memberId, Long crewId) {
+    private void modifyCrewMemberJoinStatus(CrewAcceptDto dto, Long memberId, Long crewId) {
         crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crewId, memberId)
                 .ifPresentOrElse(
-                        crewMember -> updateStatus(dto.requestStatus(), crewMember),
+                        crewMember -> modifyJoinStatus(dto.requestStatus(), crewMember),
                         () -> { throw new CrewMemberBusinessException.NeverRequested(NEVER_REQUESTED, dto.requestCrewName()); }
                 );
     }
 
-    private void updateStatus(JoinStatus requestJoinStatus, CrewMember crewMember) {
+    private void modifyJoinStatus(JoinStatus requestJoinStatus, CrewMember crewMember) {
         if (requestJoinStatus == JoinStatus.PENDING) {
             return;
         }
