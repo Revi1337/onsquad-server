@@ -36,4 +36,8 @@ public record ProblemDetail(
     public static ProblemDetail of(ErrorCode code, Map<String, String> details) {
         return new ProblemDetail(code.getCode(), code.getDescription(), null, details);
     }
+
+    public static ProblemDetail of(ErrorCode code, String errorMessage) {
+        return new ProblemDetail(code.getCode(), errorMessage, null, null);
+    }
 }
