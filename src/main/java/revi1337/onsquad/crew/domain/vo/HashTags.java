@@ -16,20 +16,20 @@ import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 public class HashTags {
 
     private static final String HASHTAG_DELIMITER = ",";
+    private static final String DEFAULT_HASHTAG = "[EMPTY]";
     private static final int MAX_LENGTH = 10;
 
-    @Column(name = "hashtags")
+    @Column(name = "hashtags", nullable = false)
     private String value;
 
     public HashTags(Collection<String> hashtags) {
         if (hashtags == null) {
+            this.value = DEFAULT_HASHTAG;
             return;
         }
 
         validateSize(hashtags);
-
-        List<String> hashTags = new ArrayList<>(new HashSet<>(hashtags));
-        Collections.reverse(hashTags);
+        List<String> hashTags = new ArrayList<>(new LinkedHashSet<>(hashtags));
         this.value = String.join(HASHTAG_DELIMITER, hashTags);
     }
 

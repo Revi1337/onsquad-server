@@ -6,8 +6,7 @@ import revi1337.onsquad.crew.error.exception.CrewDomainException;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("해시태그 vo 테스트")
 class HashTagsTest {
@@ -47,6 +46,6 @@ class HashTagsTest {
         HashTags hashTags = new HashTags(hashtags);
 
         // then
-        assertThat(hashTags).isNotNull();
+        assertThat(hashTags.getValue()).isEqualTo("[EMPTY]");
     }
 }
