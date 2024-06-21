@@ -9,12 +9,17 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewAcceptDto;
 import revi1337.onsquad.crew.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.dto.OwnedCrewsDto;
+import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 import java.util.List;
+
+import static revi1337.onsquad.crew.error.CrewErrorCode.*;
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -40,12 +45,12 @@ public class CrewConfigService {
                 .ifPresentOrElse(
                         crew -> {
                             if (!crew.getMember().getId().equals(memberId))
-                                throw new IllegalArgumentException("Crew 를 생성한 사용자와 현재 사용자가 일치하지 않습니다"); // TODO 커스텀 익셉션 필요
+                                throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, dto.name());
 
                             crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.hashTags(), dto.kakaoLink(), image);
                             crewRepository.saveAndFlush(crew);
                         },
-                        () -> { throw new IllegalArgumentException("Crew 를 찾을 수 없습니다."); } // TODO 커스텀 익셉션 필요
+                        () -> { throw new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, dto.name()); }
                 );
     }
 
@@ -54,23 +59,23 @@ public class CrewConfigService {
         crewRepository.findByName(new Name(dto.requestCrewName()))
                 .ifPresentOrElse(
                         crew -> updateCrewMemberMetadata(dto, memberId, crew),
-                        () -> { throw new IllegalArgumentException("Crew 를 찾을 수 없습니다."); } // TODO 커스텀 익셉션 필요
+                        () -> { throw new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, dto.requestCrewName()); }
                 );
     }
 
     private void updateCrewMemberMetadata(CrewAcceptDto dto, Long memberId, Crew crew) {
         if (!crew.getMember().getId().equals(memberId)) {
-            throw new IllegalArgumentException("현재 사용자는 수락하려는 Crew 를 생성한 이력이 없습니다."); // TODO 커스텀 익셉션 필요
+            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, dto.requestCrewName());
         }
 
-        updateCrewMemberStatus(dto.requestStatus(), memberId, crew.getId());
+        updateCrewMemberStatus(dto, memberId, crew.getId());
     }
 
-    private void updateCrewMemberStatus(JoinStatus requestJoinStatus, Long memberId, Long crewId) {
+    private void updateCrewMemberStatus(CrewAcceptDto dto, Long memberId, Long crewId) {
         crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crewId, memberId)
                 .ifPresentOrElse(
-                        crewMember -> updateStatus(requestJoinStatus, crewMember),
-                        () -> { throw new IllegalArgumentException("사용자는 해당 Crew 에 참여요청을 한 이력이 없습니다."); } // TODO 커스텀 익셉션 필요
+                        crewMember -> updateStatus(dto.requestStatus(), crewMember),
+                        () -> { throw new CrewMemberBusinessException.NeverRequested(NEVER_REQUESTED, dto.requestCrewName()); }
                 );
     }
 

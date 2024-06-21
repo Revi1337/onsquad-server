@@ -49,4 +49,11 @@ public abstract class CrewBusinessException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), crewName));
         }
     }
+
+    public static class InvalidPublisher extends CrewBusinessException {
+
+        public InvalidPublisher(ErrorCode errorCode, String crewName) {
+            super(errorCode, String.format(errorCode.getDescription(), crewName));
+        }
+    }
 }
