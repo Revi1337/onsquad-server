@@ -11,6 +11,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,6 +23,7 @@ import revi1337.onsquad.config.TestJpaAuditingConfig;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
+@Sql("classpath:h2-truncate.sql")
 @Import(TestJpaAuditingConfig.class)
 @ExtendWith({RestDocumentationExtension.class})
 @AutoConfigureMockMvc
@@ -35,6 +37,8 @@ public abstract class IntegrationTestSupport extends TestContainerSupport {
     protected static final String TEST_NICKNAME = "nickname";
     protected static final String TEST_PASSWORD = "12345!@asa";
     protected static final CharSequence TEST_BCRYPT_PASSWORD = "{bcrypt}$2a$10$xCazQzTNODXcf.6Gj83v5.hcFiW0o/zO4YCyj5ZHUzUQUPZdm4H6m";
+    protected static final String ACCESS_TOKEN_SUBJECT = "access_token";
+    protected static final String REFRESH_TOKEN_SUBJECT = "refresh_token";
 
     @Autowired protected MockMvc mockMvc;
     @Autowired protected ObjectMapper objectMapper;
