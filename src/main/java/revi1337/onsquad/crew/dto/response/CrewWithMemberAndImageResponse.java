@@ -15,10 +15,10 @@ public record CrewWithMemberAndImageResponse(
 ) {
     public static CrewWithMemberAndImageResponse from(CrewWithMemberAndImageDto crewWithMemberAndImageDto) {
         return new CrewWithMemberAndImageResponse(
-                crewWithMemberAndImageDto.crewName().getValue() + "크루장",
+                crewWithMemberAndImageDto.crewName().getValue(),
                 crewWithMemberAndImageDto.crewDetail().getValue(),
-                crewWithMemberAndImageDto.hashTags() == null ? new ArrayList<>() : Arrays.stream(crewWithMemberAndImageDto.hashTags().getValue().split(",")).toList(),
-                crewWithMemberAndImageDto.crewOwner().getValue(),
+                crewWithMemberAndImageDto.hashTags().getValue().equals("[EMPTY]") ? new ArrayList<>() : Arrays.stream(crewWithMemberAndImageDto.hashTags().getValue().split(",")).toList(),
+                crewWithMemberAndImageDto.crewOwner().getValue() + " 크루장",
                 crewWithMemberAndImageDto.image()
         );
     }

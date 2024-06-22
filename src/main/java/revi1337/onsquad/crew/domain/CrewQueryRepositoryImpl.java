@@ -25,6 +25,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     public Optional<CrewWithMemberAndImageDto> findCrewByName(Name name) {
         return Optional.ofNullable(
                 queryForFindCrewByName()
+                        .where(crew.name.eq(name))
                         .fetchOne()
         );
     }
