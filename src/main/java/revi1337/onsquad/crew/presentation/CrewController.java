@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -43,7 +44,7 @@ public class CrewController {
     /**
      * 새로운 Crew 생성
      */
-    @PostMapping(value = "/crew/new")
+    @PostMapping( value = "/crew/new", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> createNewCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
             @RequestPart MultipartFile file,
