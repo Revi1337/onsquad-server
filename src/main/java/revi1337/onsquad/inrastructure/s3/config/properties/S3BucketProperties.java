@@ -9,7 +9,6 @@ public record S3BucketProperties(
 ) {
     @ConfigurationProperties("s3")
     public record S3(
-            String baseDomain,
             String bucket,
             String region,
             String accessKey,
