@@ -47,9 +47,9 @@ public class CrewService {
                 );
     }
 
-    private void persistCrew(CrewCreateDto crewCreateDto, byte[] image, String imageFileName, Member member) {
-        String uploadAbsolutePath = s3BucketUploader.uploadCrew(image, imageFileName);
-        crewRepository.save(crewCreateDto.toEntity(new Image(image), member));
+    private void persistCrew(CrewCreateDto crewCreateDto, byte[] imageBinary, String imageFileName, Member member) {
+        String uploadRemoteAddress = s3BucketUploader.uploadCrew(imageBinary, imageFileName);
+        crewRepository.save(crewCreateDto.toEntity(new Image(uploadRemoteAddress), member));
     }
 
     public CrewWithMemberAndImageDto findCrewByName(String crewName) {
@@ -58,7 +58,6 @@ public class CrewService {
     }
 
     public List<CrewWithMemberAndImageDto> findCrewsByName() {
-
         return crewRepository.findCrewsByName();
     }
 

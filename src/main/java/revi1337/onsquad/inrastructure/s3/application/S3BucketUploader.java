@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import revi1337.onsquad.image.application.AttachmentMagicByteValidator;
 import revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -43,6 +44,7 @@ public class S3BucketUploader {
     }
 
     public String uploadImage(String directoryPath, byte[] content, String originalFileName) {
+        AttachmentMagicByteValidator.validateMagicByte(content);
         try (InputStream inputStream = new ByteArrayInputStream(content)) {
             RequestBody requestBody = RequestBody.fromInputStream(inputStream, content.length);
             MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(originalFileName)));
@@ -72,7 +74,8 @@ public class S3BucketUploader {
     }
 
     private String generateFileNameUsingOriginal(String originalFileName) {
-        String extension = originalFileName.substring(originalFileName.lastIndexOf(FILE_EXTENSION_DELIMITER) + 1);
+        int delimeterIndex = originalFileName.lastIndexOf(FILE_EXTENSION_DELIMITER) + 1;
+        String extension = originalFileName.substring(delimeterIndex);
         return UUID.randomUUID() + FILE_EXTENSION_DELIMITER + extension;
     }
 

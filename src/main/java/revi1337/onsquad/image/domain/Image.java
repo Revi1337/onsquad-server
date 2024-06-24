@@ -21,11 +21,18 @@ public class Image {
     private Long id;
 
     @Lob
-    @Column(name = "data", nullable = false)
+    @Column(name = "data")
     private byte[] data;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     public Image() {
         this.data = DEFAULT_IMAGE;
+    }
+
+    public Image(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Image(byte[] binary) {
@@ -62,6 +69,10 @@ public class Image {
         }
 
         return this;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
