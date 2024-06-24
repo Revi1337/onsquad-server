@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.UUID;
 
 import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties.*;
 
@@ -26,6 +26,7 @@ import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProper
 public class S3BucketUploader {
 
     private static final String PATH_DELIMITER = "/";
+    private static final String FILE_EXTENSION_DELIMITER = ".";
     private static final String S3_LINK_FORMAT = "https://%s.s3.%s.amazonaws.com/%s"; // https://{bucketName}.s3.{region}.amazonaws.com/{path}
 
     private final S3BucketProperties s3BucketProperties;
@@ -55,7 +56,8 @@ public class S3BucketUploader {
     private String uploadFile(String directoryPath, String originalFileName, RequestBody requestBody, MediaType mediaType) {
         S3 s3 = s3BucketProperties.s3();
         String rootDirectory = s3.directory().root();
-        String fileNameWithFullPath = String.join(PATH_DELIMITER, buildPath(rootDirectory, directoryPath, originalFileName));
+        String randomFileName = generateFileNameUsingOriginal(originalFileName);
+        String fileNameWithFullPath = buildPath(PATH_DELIMITER, rootDirectory, directoryPath, randomFileName);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .key(fileNameWithFullPath)
                 .contentType(mediaType.toString())
@@ -69,11 +71,16 @@ public class S3BucketUploader {
         return uploadRemoteAddress;
     }
 
-    private List<String> buildPath(String... paths) {
-        return new ArrayList<>() {
+    private String generateFileNameUsingOriginal(String originalFileName) {
+        String extension = originalFileName.substring(originalFileName.lastIndexOf(FILE_EXTENSION_DELIMITER) + 1);
+        return UUID.randomUUID() + FILE_EXTENSION_DELIMITER + extension;
+    }
+
+    private String buildPath(String delimeter, String... paths) {
+        return String.join(delimeter, new ArrayList<>() {
             {
                 addAll(Arrays.asList(paths));
             }
-        };
+        });
     }
 }
