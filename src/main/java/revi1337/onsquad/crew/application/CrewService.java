@@ -14,6 +14,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.image.domain.Image;
+import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
@@ -29,20 +30,26 @@ public class CrewService {
     private final CrewRepository crewRepository;
     private final CrewMemberRepository crewMemberRepository;
     private final MemberRepository memberRepository;
+    private final S3BucketUploader s3BucketUploader;
 
     public boolean checkDuplicateNickname(String crewName) {
         return crewRepository.existsByName(new Name(crewName));
     }
 
     @Transactional
-    public void createNewCrew(CrewCreateDto crewCreateDto, Long memberId, byte[] image) {
+    public void createNewCrew(CrewCreateDto crewCreateDto, Long memberId, byte[] image, String imageFileName) {
         memberRepository.findById(memberId)
                 .ifPresent(member -> crewRepository.findByName(new Name(crewCreateDto.name()))
                         .ifPresentOrElse(
                                 ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, crewCreateDto.name()); },
-                                () -> crewRepository.save(crewCreateDto.toEntity(new Image(image), member))
+                                () -> persistCrew(crewCreateDto, image, imageFileName, member)
                         )
                 );
+    }
+
+    private void persistCrew(CrewCreateDto crewCreateDto, byte[] image, String imageFileName, Member member) {
+        String uploadAbsolutePath = s3BucketUploader.uploadCrew(image, imageFileName);
+        crewRepository.save(crewCreateDto.toEntity(new Image(image), member));
     }
 
     public CrewWithMemberAndImageDto findCrewByName(String crewName) {
@@ -51,6 +58,7 @@ public class CrewService {
     }
 
     public List<CrewWithMemberAndImageDto> findCrewsByName() {
+
         return crewRepository.findCrewsByName();
     }
 

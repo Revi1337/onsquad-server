@@ -50,7 +50,9 @@ public class CrewController {
             @RequestPart MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
-        crewService.createNewCrew(crewCreateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes());
+        crewService.createNewCrew(
+                crewCreateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes(), file.getOriginalFilename()
+        );
 
         return ResponseEntity.status(CREATED).build();
     }
