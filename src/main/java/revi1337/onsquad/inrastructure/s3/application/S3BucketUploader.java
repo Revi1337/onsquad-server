@@ -31,26 +31,23 @@ public class S3BucketUploader {
     private final S3BucketProperties s3BucketProperties;
     private final S3Client s3Client;
 
-    public String uploadCrew(byte[] content, String originalFileName) {
-        try (InputStream inputStream = new ByteArrayInputStream(content)) {
-            Directories directories = s3BucketProperties.s3().directory().directories();
-            RequestBody requestBody = RequestBody.fromInputStream(inputStream, content.length);
-            MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(originalFileName)));
-            return uploadFile(directories.crewDirectory(), originalFileName, requestBody, mediaType);
-        } catch (IOException e) {
-            log.error("Crew s3 업로드 실패", e);
-            throw new IllegalArgumentException("byte array s3업로드 예외", e); // TODO 커스텀 익셉션 필요
-        }
+    public String uploadCrew(byte[] content, String originalFileName) { // TODO 확장할 여지가 있을 때 객체지향적으로 해결하여 OCP 를 지켜야 한다.ㄴ
+        Directories directories = s3BucketProperties.s3().directory().directories();
+        return uploadImage(directories.crewDirectory(), content, originalFileName);
     }
 
-    public String uploadSquad(byte[] content, String originalFileName) {
+    public String uploadSquad(byte[] content, String originalFileName) { // TODO 확장할 여지가 있을 때 객체지향적으로 해결하여 OCP 를 지켜야 한다.
+        Directories directories = s3BucketProperties.s3().directory().directories();
+        return uploadImage(directories.squadDirectory(), content, originalFileName);
+    }
+
+    public String uploadImage(String directoryPath, byte[] content, String originalFileName) {
         try (InputStream inputStream = new ByteArrayInputStream(content)) {
-            Directories directories = s3BucketProperties.s3().directory().directories();
             RequestBody requestBody = RequestBody.fromInputStream(inputStream, content.length);
             MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(originalFileName)));
-            return uploadFile(directories.squadDirectory(), originalFileName, requestBody, mediaType);
+            return uploadFile(directoryPath, originalFileName, requestBody, mediaType);
         } catch (IOException e) {
-            log.error("Squad s3 업로드 실패", e);
+            log.error("{} s3 업로드 실패", directoryPath, e);
             throw new IllegalArgumentException("byte array s3업로드 예외", e); // TODO 커스텀 익셉션 필요
         }
     }
