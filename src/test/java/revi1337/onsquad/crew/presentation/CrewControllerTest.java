@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.mock.web.MockMultipartFile;
 import revi1337.onsquad.auth.application.JsonWebTokenProvider;
 import revi1337.onsquad.crew.domain.Crew;
@@ -21,6 +23,7 @@ import revi1337.onsquad.factory.CrewMemberFactory;
 import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.image.domain.Image;
+import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Nickname;
@@ -30,6 +33,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.*;
@@ -44,6 +50,7 @@ class CrewControllerTest extends IntegrationTestSupport {
     @Autowired private CrewRepository crewRepository;
     @Autowired private CrewMemberRepository crewMemberRepository;
     @Autowired private MemberRepository memberRepository;
+    @MockBean private S3BucketUploader s3BucketUploader;
     @Autowired private JsonWebTokenProvider jsonWebTokenProvider;
 
     @Nested
@@ -116,7 +123,6 @@ class CrewControllerTest extends IntegrationTestSupport {
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "multipart/form-data", pngImage);
             MockMultipartFile request = new MockMultipartFile("crewCreateRequest", null, "application/json", objectMapper.writeValueAsString(crewCreateRequest).getBytes(UTF_8));
             Member member = MemberFactory.defaultMember().nickname(new Nickname("닉네임 1")).build();
-
             memberRepository.save(member);
 
             // when & then
@@ -310,6 +316,7 @@ class CrewControllerTest extends IntegrationTestSupport {
                                     .header(AUTHORIZATION, accessToken)
                     )
                     .andExpect(status().isOk());
+
         }
     }
 }

@@ -19,6 +19,7 @@ import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.image.domain.Image;
+import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
@@ -37,6 +38,7 @@ class CrewServiceTest {
     @Mock private CrewRepository crewRepository;
     @Mock private CrewMemberRepository crewMemberRepository;
     @Mock private MemberRepository memberRepository;
+    @Mock private S3BucketUploader s3BucketUploader;
     @InjectMocks private CrewService crewService;
 
     @Nested
@@ -91,14 +93,14 @@ class CrewServiceTest {
             CrewCreateDto crewCreateDto = new CrewCreateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
             Long memberId = 1L;
             byte[] pngImage = ImageFactory.PNG_IMAGE;
+            String imageName = "imageName";
             Member member = Member.builder().id(memberId).build();
-
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             given(crewRepository.findByName(new Name(crewCreateDto.name())))
                     .willReturn(Optional.of(crewCreateDto.toEntity(new Image(pngImage), member)));
 
             // when & then
-            assertThatThrownBy(() -> crewService.createNewCrew(crewCreateDto, memberId, pngImage))
+            assertThatThrownBy(() -> crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName))
                     .isInstanceOf(CrewBusinessException.AlreadyExists.class)
                     .hasMessage(String.format("%s 크루가 이미 존재하여 크루를 개설할 수 없습니다.", crewCreateDto.name()));
         }
@@ -110,12 +112,13 @@ class CrewServiceTest {
             CrewCreateDto crewCreateDto = new CrewCreateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
             Long memberId = 1L;
             byte[] pngImage = ImageFactory.PNG_IMAGE;
+            String imageName = "imageName";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             given(crewRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
 
             // when
-            crewService.createNewCrew(crewCreateDto, memberId, pngImage);
+            crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);
 
             // then
             then(crewRepository).should(times(1)).save(any(Crew.class));
@@ -128,13 +131,14 @@ class CrewServiceTest {
             CrewCreateDto crewCreateDto = new CrewCreateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
             Long memberId = 1L;
             byte[] pngImage = ImageFactory.PNG_IMAGE;
+            String imageName = "imageName";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             given(crewRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
             given(crewRepository.save(any(Crew.class))).willReturn(crewCreateDto.toEntity(new Image(pngImage), member));
 
             // when
-            crewService.createNewCrew(crewCreateDto, memberId, pngImage);
+            crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);
 
             // then
             then(crewRepository).should(times(1)).save(any(Crew.class));
