@@ -62,13 +62,13 @@ public class Crew extends BaseEntity {
         this.member = member;
     }
 
-    public void updateCrew(String name, String introduce, String detail, Collection<String> hashTags, String kakaoLink, byte[] imageData) {
+    public void updateCrew(String name, String introduce, String detail, Collection<String> hashTags, String kakaoLink, String imageUrl) {
         this.name = this.name.updateName(name);
         this.introduce = this.introduce.updateIntroduce(introduce);
         this.detail = this.detail.updateDetail(detail);
         this.hashTags = this.hashTags.updateHashTags(hashTags);
         this.kakaoLink = kakaoLink;
-        this.image = this.image.updateImage(imageData);
+        this.image = this.image.updateImage(imageUrl);
     }
 
     @Override
