@@ -23,6 +23,12 @@ spring:
       hibernate:
         format_sql: true
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
+      resolve-lazily: true
+
 server:
   error:
     whitelabel:
@@ -31,6 +37,7 @@ server:
     include-message: never
     include-stacktrace: never
     include-binding-errors: never
+  port: 8083
 
 logging:
   level:
