@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.mock.web.MockMultipartFile;
 import revi1337.onsquad.auth.application.JsonWebTokenProvider;
 import revi1337.onsquad.crew.domain.Crew;
@@ -23,6 +22,7 @@ import revi1337.onsquad.factory.CrewMemberFactory;
 import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.image.domain.Image;
+import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -33,9 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.MediaType.*;
@@ -119,21 +117,23 @@ class CrewControllerTest extends IntegrationTestSupport {
         public void createNewCrew() throws Exception {
             // given
             CrewCreateRequest crewCreateRequest = new CrewCreateRequest("크루 이름", "크루 소개", "크루 디테일", List.of("해시태그1", "해시태그2"), "카카오 링크");
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "multipart/form-data", pngImage);
             MockMultipartFile request = new MockMultipartFile("crewCreateRequest", null, "application/json", objectMapper.writeValueAsString(crewCreateRequest).getBytes(UTF_8));
             Member member = MemberFactory.defaultMember().nickname(new Nickname("닉네임 1")).build();
             memberRepository.save(member);
+            given(s3BucketUploader.uploadCrew(file.getBytes(), file.getOriginalFilename())).willReturn("[imageLink]");
 
             // when & then
             mockMvc.perform(
-                        multipart(POST, "/api/v1/crew/new")
-                                .file(file)
-                                .file(request)
-                                .accept(APPLICATION_JSON)
-                                .contentType(MULTIPART_FORM_DATA)
-                                .header(AUTHORIZATION, accessToken)
-            );
+                            multipart(POST, "/api/v1/crew/new")
+                                    .file(file)
+                                    .file(request)
+                                    .accept(APPLICATION_JSON)
+                                    .contentType(MULTIPART_FORM_DATA)
+                                    .header(AUTHORIZATION, accessToken)
+                    )
+                    .andExpect(status().isCreated());
         }
     }
 
@@ -164,7 +164,7 @@ class CrewControllerTest extends IntegrationTestSupport {
                     .andExpect(jsonPath("$.data.crewDetail").value(CrewFactory.DETAIL.getValue()))
                     .andExpect(jsonPath("$.data.hashTags").isArray())
                     .andExpect(jsonPath("$.data.crewOwner").value(MemberFactory.NICKNAME.getValue() + " 크루장"))
-                    .andExpect(jsonPath("$.data.image").isString());
+                    .andExpect(jsonPath("$.data.imageUrl").isString());
         }
 
         @Test
@@ -316,7 +316,6 @@ class CrewControllerTest extends IntegrationTestSupport {
                                     .header(AUTHORIZATION, accessToken)
                     )
                     .andExpect(status().isOk());
-
         }
     }
 }

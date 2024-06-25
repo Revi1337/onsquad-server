@@ -17,8 +17,8 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.factory.CrewFactory;
-import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.image.domain.Image;
+import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -92,12 +92,13 @@ class CrewServiceTest {
             // given
             CrewCreateDto crewCreateDto = new CrewCreateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
             Long memberId = 1L;
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
+            String imageRemoteAddress = "[Remote Address]";
             String imageName = "imageName";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             given(crewRepository.findByName(new Name(crewCreateDto.name())))
-                    .willReturn(Optional.of(crewCreateDto.toEntity(new Image(pngImage), member)));
+                    .willReturn(Optional.of(crewCreateDto.toEntity(new Image(imageRemoteAddress), member)));
 
             // when & then
             assertThatThrownBy(() -> crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName))
@@ -111,11 +112,13 @@ class CrewServiceTest {
             // given
             CrewCreateDto crewCreateDto = new CrewCreateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
             Long memberId = 1L;
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
             String imageName = "imageName";
+            String imageUrl = "[default image url]";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             given(crewRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
+            given(s3BucketUploader.uploadCrew(pngImage, imageName)).willReturn(imageUrl);
 
             // when
             crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);
@@ -130,12 +133,15 @@ class CrewServiceTest {
             // given
             CrewCreateDto crewCreateDto = new CrewCreateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
             Long memberId = 1L;
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
+            String imageRemoteAddress = "[Remote Address]";
             String imageName = "imageName";
+            String imageUrl = "[default image url]";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             given(crewRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
-            given(crewRepository.save(any(Crew.class))).willReturn(crewCreateDto.toEntity(new Image(pngImage), member));
+            given(crewRepository.save(any(Crew.class))).willReturn(crewCreateDto.toEntity(new Image(imageRemoteAddress), member));
+            given(s3BucketUploader.uploadCrew(pngImage, imageName)).willReturn(imageUrl);
 
             // when
             crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);

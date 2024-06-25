@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.HashTags;
@@ -20,9 +21,10 @@ import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.CrewMemberFactory;
-import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.image.domain.Image;
+import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
+import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 
 import java.util.List;
@@ -39,6 +41,7 @@ class CrewConfigServiceTest {
 
     @Mock private CrewRepository crewRepository;
     @Mock private CrewMemberRepository crewMemberRepository;
+    @Mock private S3BucketUploader s3BucketUploader;
     @InjectMocks private CrewConfigService crewConfigService;
 
     @Nested
@@ -50,13 +53,15 @@ class CrewConfigServiceTest {
         public void updateCrew1() {
             // given
             Long memberId = 1L;
+            String targetCrewName = "없는 크루";
             CrewUpdateDto crewUpdateDto = new CrewUpdateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
-            given(crewRepository.findCrewByNameForUpdate(new Name(crewUpdateDto.name())))
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
+            String imageRemoteAddress = "[Remote Address]";
+            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.empty());
 
             // when && then
-            assertThatThrownBy(() -> crewConfigService.updateCrew(crewUpdateDto, 1L, pngImage))
+            assertThatThrownBy(() -> crewConfigService.updateCrew(targetCrewName, crewUpdateDto, 1L, pngImage, imageRemoteAddress))
                     .isInstanceOf(CrewBusinessException.NotFoundByName.class)
                     .hasMessage("크루 이름 크루 게시글이 존재하지 않습니다.");
         }
@@ -66,15 +71,20 @@ class CrewConfigServiceTest {
         public void updateCrew2() {
             // given
             Long memberId = 1L;
+            String targetCrewName = "크루 이름";
             CrewUpdateDto crewUpdateDto = new CrewUpdateDto("크루 이름", "크루 소개", "크루 디테일", null, "카카오링크");
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
+            String imageName = "dummy.png";
+            String imageRemoteAddress = "[Remote Address]";
             Member member = MemberFactory.defaultMember().id(memberId).build();
-            Crew crew = CrewFactory.defaultCrew().kakaoLink(null).member(member).image(new Image(pngImage)).build();
-            given(crewRepository.findCrewByNameForUpdate(new Name(crewUpdateDto.name())))
+            Crew crew = CrewFactory.defaultCrew().kakaoLink(null).member(member).image(new Image(imageRemoteAddress)).build();
+            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.of(crew));
+            willDoNothing()
+                    .given(s3BucketUploader).updateImage(imageRemoteAddress, pngImage, imageName);
 
             // when
-            crewConfigService.updateCrew(crewUpdateDto, 1L, pngImage);
+            crewConfigService.updateCrew(targetCrewName, crewUpdateDto, 1L, pngImage, imageName);
 
             // then
             assertSoftly(softly -> {
@@ -92,15 +102,18 @@ class CrewConfigServiceTest {
         public void updateCrew3() {
             // given
             Long memberId = 1L;
+            String targetCrewName = "크루 이름";
             CrewUpdateDto crewUpdateDto = new CrewUpdateDto("크루 이름", "크루 소개", "크루 디테일", null, "카카오링크");
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
+            String imageName = "dummy.png";
+            String imageRemoteAddress = "[Remote Address]";
             Member member = MemberFactory.defaultMember().id(memberId).build();
-            Crew crew = CrewFactory.defaultCrew().kakaoLink(null).member(member).image(new Image(pngImage)).build();
-            given(crewRepository.findCrewByNameForUpdate(new Name(crewUpdateDto.name())))
+            Crew crew = CrewFactory.defaultCrew().kakaoLink(null).member(member).image(new Image(imageRemoteAddress)).build();
+            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.of(crew));
 
             // when
-            crewConfigService.updateCrew(crewUpdateDto, 1L, pngImage);
+            crewConfigService.updateCrew(targetCrewName, crewUpdateDto, 1L, pngImage, imageName);
 
             // then
             assertSoftly(softly -> {
@@ -118,15 +131,18 @@ class CrewConfigServiceTest {
         public void updateCrew4() {
             // given
             Long memberId = 1L;
+            String targetCrewName = "크루 이름";
             CrewUpdateDto crewUpdateDto = new CrewUpdateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "태그2"), "카카오링크");
-            byte[] pngImage = ImageFactory.PNG_IMAGE;
+            byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
+            String imageName = "dummy.png";
+            String imageRemoteAddress = "[Remote Address]";
             Member member = MemberFactory.defaultMember().id(memberId).build();
-            Crew crew = CrewFactory.defaultCrew().hashTags(new HashTags(null)).member(member).image(new Image(pngImage)).build();
-            given(crewRepository.findCrewByNameForUpdate(new Name(crewUpdateDto.name())))
+            Crew crew = CrewFactory.defaultCrew().hashTags(new HashTags(null)).member(member).image(new Image(imageRemoteAddress)).build();
+            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.of(crew));
 
             // when
-            crewConfigService.updateCrew(crewUpdateDto, 1L, pngImage);
+            crewConfigService.updateCrew(targetCrewName, crewUpdateDto, 1L, pngImage, imageName);
 
             // then
             assertSoftly(softly -> {
