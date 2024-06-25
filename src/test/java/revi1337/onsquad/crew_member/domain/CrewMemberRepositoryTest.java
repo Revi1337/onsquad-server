@@ -1,6 +1,5 @@
 package revi1337.onsquad.crew_member.domain;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,9 +178,9 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
 
         // then
         assertSoftly(softly -> {
-            assertThat(findCrewMember).isPresent();
-            assertThat(findCrewMember.get().getMember().getId()).isEqualTo(1L);
-            assertThat(findCrewMember.get().getCrew().getId()).isEqualTo(2L);
+            softly.assertThat(findCrewMember).isPresent();
+            softly.assertThat(findCrewMember.get().getMember().getId()).isEqualTo(1L);
+            softly.assertThat(findCrewMember.get().getCrew().getId()).isEqualTo(2L);
         });
     }
 }

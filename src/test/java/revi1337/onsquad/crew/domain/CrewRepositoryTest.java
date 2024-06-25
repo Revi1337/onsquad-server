@@ -1,11 +1,8 @@
 package revi1337.onsquad.crew.domain;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
 import revi1337.onsquad.crew.dto.OwnedCrewsDto;
@@ -18,7 +15,6 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -75,8 +71,8 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
 
         // then
         assertSoftly(softly -> {
-            assertThat(crewWithMemberAndImageDto.crewName()).isEqualTo(CrewFactory.NAME);
-            assertThat(crewWithMemberAndImageDto.crewDetail()).isEqualTo(CrewFactory.DETAIL);
+            softly.assertThat(crewWithMemberAndImageDto.crewName()).isEqualTo(CrewFactory.NAME);
+            softly.assertThat(crewWithMemberAndImageDto.crewDetail()).isEqualTo(CrewFactory.DETAIL);
         });
     }
 
@@ -149,28 +145,12 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
 
         // then
         assertSoftly(softly -> {
-            assertThat(crew.getName().getValue()).isEqualTo("변경 크루 이름");
-            assertThat(crew.getIntroduce().getValue()).isEqualTo("변경 크루 소개");
-            assertThat(crew.getDetail().getValue()).isEqualTo("변경 크루 디테일");
-            assertThat(crew.getHashTags().getValue()).isEqualTo("해시태그1,해시태그2");
-            assertThat(crew.getKakaoLink()).isEqualTo("변경 카카오 링크");
-            assertThat(crew.getImage().getImageUrl()).isEqualTo(imageRemoteAddress);
+            softly.assertThat(crew.getName().getValue()).isEqualTo("변경 크루 이름");
+            softly.assertThat(crew.getIntroduce().getValue()).isEqualTo("변경 크루 소개");
+            softly.assertThat(crew.getDetail().getValue()).isEqualTo("변경 크루 디테일");
+            softly.assertThat(crew.getHashTags().getValue()).isEqualTo("해시태그1,해시태그2");
+            softly.assertThat(crew.getKakaoLink()).isEqualTo("변경 카카오 링크");
+            softly.assertThat(crew.getImage().getImageUrl()).isEqualTo(imageRemoteAddress);
         });
     }
-
-//    @Autowired private TestEntityManager entityManager;
-//
-//    @Test
-//    public void asdfsd() {
-//        // given
-//        Member member = MemberFactory.defaultMember().build();
-//        Image image = ImageFactory.defaultImage();
-//        Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
-//        memberRepository.save(member);
-//        crewRepository.save(crew);
-//
-//        Crew findCrew = crewRepository.findCrewByNameForUpdate(CrewFactory.NAME).get();
-//
-//        System.out.println(findCrew.getImage().getImageUrl());
-//    }
 }

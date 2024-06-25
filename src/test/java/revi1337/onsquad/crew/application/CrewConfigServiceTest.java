@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.HashTags;
@@ -30,7 +29,6 @@ import revi1337.onsquad.member.domain.Member;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.*;
@@ -89,11 +87,11 @@ class CrewConfigServiceTest {
             // then
             assertSoftly(softly -> {
                 then(crewRepository).should(times(1)).saveAndFlush(crew);
-                assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
-                assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
-                assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
-                assertThat(crew.getHashTags().getValue()).isEqualTo("[EMPTY]");
-                assertThat(crew.getKakaoLink()).isEqualTo("카카오링크");
+                softly.assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
+                softly.assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
+                softly.assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
+                softly.assertThat(crew.getHashTags().getValue()).isEqualTo("[EMPTY]");
+                softly.assertThat(crew.getKakaoLink()).isEqualTo("카카오링크");
             });
         }
 
@@ -118,11 +116,11 @@ class CrewConfigServiceTest {
             // then
             assertSoftly(softly -> {
                 then(crewRepository).should(times(1)).saveAndFlush(crew);
-                assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
-                assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
-                assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
-                assertThat(crew.getHashTags().getValue()).isEqualTo("[EMPTY]");
-                assertThat(crew.getKakaoLink()).isEqualTo("카카오링크");
+                softly.assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
+                softly.assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
+                softly.assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
+                softly.assertThat(crew.getHashTags().getValue()).isEqualTo("[EMPTY]");
+                softly.assertThat(crew.getKakaoLink()).isEqualTo("카카오링크");
             });
         }
 
@@ -147,11 +145,11 @@ class CrewConfigServiceTest {
             // then
             assertSoftly(softly -> {
                 then(crewRepository).should(times(1)).saveAndFlush(crew);
-                assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
-                assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
-                assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
-                assertThat(crew.getHashTags().getValue()).isEqualTo("태그1,태그2");
-                assertThat(crew.getKakaoLink()).isEqualTo("카카오링크");
+                softly.assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
+                softly.assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
+                softly.assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
+                softly.assertThat(crew.getHashTags().getValue()).isEqualTo("태그1,태그2");
+                softly.assertThat(crew.getKakaoLink()).isEqualTo("카카오링크");
             });
         }
     }

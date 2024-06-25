@@ -59,7 +59,7 @@ class CrewServiceTest {
             // then
             assertSoftly(softly -> {
                 then(crewRepository).should(times(1)).existsByName(crewName);
-                assertThat(duplicated).isTrue();
+                softly.assertThat(duplicated).isTrue();
             });
         }
 
@@ -77,7 +77,7 @@ class CrewServiceTest {
             // then
             assertSoftly(softly -> {
                 then(crewRepository).should(times(1)).existsByName(crewName);
-                assertThat(duplicated).isFalse();
+                softly.assertThat(duplicated).isFalse();
             });
         }
     }
