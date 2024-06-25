@@ -13,6 +13,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.UUID;
 
 import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties.*;
 
+// TODO 리팩토링 필요. 해당 클래스 코드 너무 개판.
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -73,6 +76,25 @@ public class S3BucketUploader {
         return uploadRemoteAddress;
     }
 
+    public void updateImage(String remoteAddress, byte[] imageData, String imageName) {
+        AttachmentMagicByteValidator.validateMagicByte(imageData);
+        try (InputStream inputStream = new ByteArrayInputStream(imageData)) {
+            S3 s3 = s3BucketProperties.s3();
+            RequestBody requestBody = RequestBody.fromInputStream(inputStream, imageData.length);
+            MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(imageName)));
+            String uri = parseUriFromUrl(remoteAddress);
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .key(uri)
+                    .contentType(mediaType.toString())
+                    .bucket(s3.bucket())
+                    .build();
+
+            s3Client.putObject(putObjectRequest, requestBody);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("byte array s3업로드 예외", e); // TODO 커스텀 익셉션 필요
+        }
+    }
+
     private String generateFileNameUsingOriginal(String originalFileName) {
         int delimeterIndex = originalFileName.lastIndexOf(FILE_EXTENSION_DELIMITER) + 1;
         String extension = originalFileName.substring(delimeterIndex);
@@ -85,5 +107,18 @@ public class S3BucketUploader {
                 addAll(Arrays.asList(paths));
             }
         });
+    }
+
+    private String parseUriFromUrl(String remoteAddress) {
+        try {
+            URL url = new URL(remoteAddress);
+            String path = url.getPath();
+            if (path != null && path.length() > 1) {
+                return path.substring(1);
+            }
+            return path;
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL", e);
+        }
     }
 }

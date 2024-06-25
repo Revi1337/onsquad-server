@@ -15,6 +15,7 @@ import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class CrewConfigService {
 
     private final CrewRepository crewRepository;
     private final CrewMemberRepository crewMemberRepository;
+    private final S3BucketUploader s3BucketUploader;
 
     public List<OwnedCrewsDto> findOwnedCrews(Long memberId) {
         return crewRepository.findOwnedCrews(memberId)
@@ -40,18 +42,18 @@ public class CrewConfigService {
     }
 
     @Transactional
-    public void updateCrew(CrewUpdateDto dto, Long memberId, byte[] image) {
-        crewRepository.findCrewByNameForUpdate(new Name(dto.name()))
+    public void updateCrew(String targetCrewName, CrewUpdateDto dto, Long memberId, byte[] image, String imageName) {
+        crewRepository.findCrewByNameForUpdate(new Name(targetCrewName))
                 .ifPresentOrElse(
-                        crew -> updateCrewInformation(dto, memberId, image, crew),
+                        crew -> updateCrewInformation(dto, memberId, image, imageName, crew),
                         () -> { throw new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, dto.name()); }
                 );
     }
 
-    private void updateCrewInformation(CrewUpdateDto dto, Long memberId, byte[] image, Crew crew) {
+    private void updateCrewInformation(CrewUpdateDto dto, Long memberId, byte[] imageData, String imageName, Crew crew) {
         validateCrewPublisher(memberId, crew, dto.name());
 
-        crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.hashTags(), dto.kakaoLink(), image);
+        uploadImageAndUpdateCrew(dto, imageData, imageName, crew);
         crewRepository.saveAndFlush(crew);
     }
 
@@ -59,6 +61,12 @@ public class CrewConfigService {
         if (!crew.getMember().getId().equals(memberId)) {
             throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crewName);
         }
+    }
+
+    private void uploadImageAndUpdateCrew(CrewUpdateDto dto, byte[] imageData, String imageName, Crew crew) {
+        String remoteAddress = crew.getImage().getImageUrl();
+        s3BucketUploader.updateImage(remoteAddress, imageData, imageName);
+        crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.hashTags(), dto.kakaoLink(), remoteAddress);
     }
 
     @Transactional

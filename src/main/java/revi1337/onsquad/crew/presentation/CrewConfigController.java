@@ -17,6 +17,9 @@ import revi1337.onsquad.crew_member.dto.response.EnrolledCrewMemberResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/config")
 @RestController
@@ -55,13 +58,16 @@ public class CrewConfigController {
         return ResponseEntity.ok().body(RestResponse.success(enrolledCrewMemberResponses));
     }
 
-    @PutMapping("/crew")
+    @PutMapping(value = "/crew", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public void updateCrew(
+            @RequestParam String crewName,
             @Valid @RequestPart CrewUpdateRequest crewUpdateRequest,
             @RequestPart MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
-        crewConfigService.updateCrew(crewUpdateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes());
+        crewConfigService.updateCrew(
+                crewName, crewUpdateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes(), file.getOriginalFilename()
+        );
     }
 
     /**
