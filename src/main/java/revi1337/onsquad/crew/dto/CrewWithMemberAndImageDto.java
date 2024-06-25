@@ -11,14 +11,14 @@ public record CrewWithMemberAndImageDto(
         Detail crewDetail,
         HashTags hashTags,
         Nickname crewOwner,
-        byte[] image
+        String imageUrl
 ) {
     @QueryProjection
-    public CrewWithMemberAndImageDto(Name crewName, Detail crewDetail, HashTags hashTags, Nickname crewOwner, byte[] image) {
+    public CrewWithMemberAndImageDto(Name crewName, Detail crewDetail, HashTags hashTags, Nickname crewOwner, String imageUrl) {
         this.crewName = crewName;
         this.crewDetail = crewDetail;
         this.hashTags = hashTags;
         this.crewOwner = crewOwner;
-        this.image = image;
+        this.imageUrl = imageUrl;
     }
 }

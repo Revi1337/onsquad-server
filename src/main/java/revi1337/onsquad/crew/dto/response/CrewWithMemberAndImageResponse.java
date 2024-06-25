@@ -11,7 +11,7 @@ public record CrewWithMemberAndImageResponse(
         String crewDetail,
         List<String> hashTags,
         String crewOwner,
-        byte[] image
+        String imageUrl
 ) {
     public static CrewWithMemberAndImageResponse from(CrewWithMemberAndImageDto crewWithMemberAndImageDto) {
         return new CrewWithMemberAndImageResponse(
@@ -19,7 +19,7 @@ public record CrewWithMemberAndImageResponse(
                 crewWithMemberAndImageDto.crewDetail().getValue(),
                 crewWithMemberAndImageDto.hashTags().getValue().equals("[EMPTY]") ? new ArrayList<>() : Arrays.stream(crewWithMemberAndImageDto.hashTags().getValue().split(",")).toList(),
                 crewWithMemberAndImageDto.crewOwner().getValue() + " 크루장",
-                crewWithMemberAndImageDto.image()
+                crewWithMemberAndImageDto.imageUrl()
         );
     }
 }

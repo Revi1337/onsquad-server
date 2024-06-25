@@ -70,7 +70,8 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
                 jpaQueryFactory
                         .select(crew)
                         .from(crew)
-                        .leftJoin(crew.member, member)
+                        .leftJoin(crew.member, member).fetchJoin()
+                        .innerJoin(crew.image, image).fetchJoin()
                         .where(crew.name.eq(name))
                         .fetchOne()
         );
@@ -83,7 +84,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
                         crew.detail,
                         crew.hashTags,
                         member.nickname,
-                        image.data
+                        image.imageUrl
                 ))
                 .from(crew)
                 .innerJoin(crew.image, image)
