@@ -221,4 +221,4 @@ out/
 ### VS Code ###
 .vscode/
 
-request/
+request/*.http
