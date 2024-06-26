@@ -9,7 +9,10 @@ import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.comment.application.CrewCommentService;
 import revi1337.onsquad.comment.dto.request.CreateCommentRequest;
 import revi1337.onsquad.comment.dto.response.CommentResponse;
+import revi1337.onsquad.comment.dto.response.CommentsResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/crew")
@@ -29,5 +32,18 @@ public class CrewCommentController {
         );
 
         return ResponseEntity.ok().body(RestResponse.success(commentResponse));
+    }
+
+    @GetMapping("/comments")
+    public ResponseEntity<RestResponse<List<CommentsResponse>>> addComment(
+            @RequestParam String crewName,
+            @Authenticate AuthenticatedMember ignored
+    ) {
+        List<CommentsResponse> commentsResponses = crewCommentService.findComments(crewName)
+                .stream()
+                .map(CommentsResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
     }
 }
