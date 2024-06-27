@@ -35,10 +35,10 @@ public class CrewCommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentDto addComment(String crewName, CreateCommentDto dto, Long memberId) {
-        return crewRepository.findByName(new Name(crewName))
+    public CommentDto addComment(CreateCommentDto dto, Long memberId) {
+        return crewRepository.findByName(new Name(dto.crewName()))
                 .flatMap(crew -> persistCommentAndCreateDto(dto, memberId, crew))
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, crewName));
+                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, dto.crewName()));
     }
 
     private Optional<CommentDto> persistCommentAndCreateDto(CreateCommentDto dto, Long memberId, Crew crew) {

@@ -24,12 +24,11 @@ public class CrewCommentController {
 
     @PostMapping("/comment/new")
     public ResponseEntity<RestResponse<CommentResponse>> addComment(
-            @RequestParam String crewName,
             @Valid @RequestBody CreateCommentRequest commentRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         CommentResponse commentResponse = CommentResponse.from(
-                crewCommentService.addComment(crewName, commentRequest.toDto(), authenticatedMember.toDto().getId())
+                crewCommentService.addComment(commentRequest.toDto(), authenticatedMember.toDto().getId())
         );
 
         return ResponseEntity.ok().body(RestResponse.success(commentResponse));
