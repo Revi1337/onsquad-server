@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.annotation.Rollback;
 import revi1337.onsquad.comment.dto.CommentsDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
@@ -300,5 +301,71 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         for (CommentsDto comment : comments) {
             System.out.println("comment = " + comment);
         }
+    }
+
+    @Rollback(false)
+    @Test
+    public void findCrewWithCommentByNameAndCommentId() {
+        // given
+        Member member1 = MemberFactory.defaultMember().build();
+        Member member2 = MemberFactory.defaultMember().build();
+        Member member3 = MemberFactory.defaultMember().build();
+        Image image1 = ImageFactory.defaultImage();
+        Image image2 = ImageFactory.defaultImage();
+        Crew crew1 = CrewFactory.defaultCrew().name(new Name("크루 이름 1")).image(image1).member(member1).build();
+        Crew crew2 = CrewFactory.defaultCrew().name(new Name("크루 이름 2")).image(image2).member(member2).build();
+        Comment comment1 = Comment.of("댓글 4", crew1, member1);
+        Comment comment2 = Comment.of("댓글 3", crew1, member1);
+        Comment comment3 = Comment.of("댓글 2", crew2, member1);
+        Comment comment4 = Comment.of("댓글 1", crew2, member1);
+        memberRepository.saveAll(List.of(member1, member2, member3));
+        crewRepository.saveAll(List.of(crew1, crew2));
+        commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
+        Comment reply1 = Comment.forReply(comment1, "대댓글 1", crew1, member1);
+        Comment reply2 = Comment.forReply(comment1, "대댓글 2", crew1, member2);
+        Comment reply3 = Comment.forReply(comment1, "대댓글 3", crew1, member2);
+        Comment reply4 = Comment.forReply(comment2, "대댓글 4", crew1, member2);
+        Comment reply5 = Comment.forReply(comment2, "대댓글 5", crew1, member1);
+        Comment reply6 = Comment.forReply(comment2, "대댓글 6", crew1, member1);
+        Comment reply7 = Comment.forReply(comment3, "대댓글 7", crew2, member2);
+        Comment reply8 = Comment.forReply(comment3, "대댓글 8", crew2, member1);
+        Comment reply9 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply10 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply11 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply12 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply13 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply14 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply15 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply16 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply17 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply18 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply19 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply20 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply21 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply22 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply23 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply24 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply25 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+        Comment reply26 = Comment.forReply(comment3, "대댓글 9", crew2, member1);
+
+        commentRepository.saveAll(
+                List.of(
+                        reply1, reply2, reply3, reply4, reply5, reply6, reply7, reply8, reply9, reply10,
+                        reply11, reply12, reply13, reply14, reply15, reply16, reply17, reply18, reply19,
+                        reply20, reply21, reply22, reply23, reply24, reply25, reply26
+                )
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+        commentRepository.findCommentById(5L)
+                .ifPresent(
+                        com -> {
+                            System.out.println(com.getId());
+                            System.out.println(com.getContent());
+                            System.out.println(com.getCrew().getName().getValue());
+                            System.out.println(com.getParent() == null);
+                        }
+                );
     }
 }
