@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.comment.application.CrewCommentService;
+import revi1337.onsquad.comment.dto.request.CreateCommentReplyRequest;
 import revi1337.onsquad.comment.dto.request.CreateCommentRequest;
 import revi1337.onsquad.comment.dto.response.CommentResponse;
 import revi1337.onsquad.comment.dto.response.CommentsResponse;
@@ -34,8 +35,20 @@ public class CrewCommentController {
         return ResponseEntity.ok().body(RestResponse.success(commentResponse));
     }
 
+    @PostMapping("/comment/reply/new")
+    public ResponseEntity<RestResponse<CommentResponse>> addCommentReply(
+            @Valid @RequestBody CreateCommentReplyRequest commentReplyRequest,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        CommentResponse commentResponse = CommentResponse.from(
+                crewCommentService.addCommentReply(commentReplyRequest.toDto(), authenticatedMember.toDto().getId())
+        );
+
+        return ResponseEntity.ok().body(RestResponse.success(commentResponse));
+    }
+
     @GetMapping("/comments")
-    public ResponseEntity<RestResponse<List<CommentsResponse>>> addComment(
+    public ResponseEntity<RestResponse<List<CommentsResponse>>> findComments(
             @RequestParam String crewName,
             @Authenticate AuthenticatedMember ignored
     ) {

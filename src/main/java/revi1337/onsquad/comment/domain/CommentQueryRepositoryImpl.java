@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.crew.domain.vo.Name;
 
 import java.util.List;
+import java.util.Optional;
 
 import static revi1337.onsquad.comment.domain.QComment.*;
 import static revi1337.onsquad.crew.domain.QCrew.*;
@@ -28,5 +29,16 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         comment.createdAt.desc()
                 )
                 .fetch();
+    }
+
+    @Override
+    public Optional<Comment> findCommentById(Long commentId) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(comment)
+                        .innerJoin(comment.crew, crew).fetchJoin()
+                        .where(comment.id.eq(commentId))
+                        .fetchOne()
+        );
     }
 }

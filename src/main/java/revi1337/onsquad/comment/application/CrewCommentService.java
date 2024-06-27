@@ -8,10 +8,13 @@ import revi1337.onsquad.comment.domain.CommentRepository;
 import revi1337.onsquad.comment.dto.CommentsDto;
 import revi1337.onsquad.comment.dto.CreateCommentDto;
 import revi1337.onsquad.comment.dto.CommentDto;
+import revi1337.onsquad.comment.dto.CreateCommentReplyDto;
+import revi1337.onsquad.comment.error.exception.CommentBusinessException;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
 import java.util.*;
@@ -19,6 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static revi1337.onsquad.comment.error.CommentErrorCode.*;
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
 @Transactional(readOnly = true)
@@ -39,10 +43,12 @@ public class CrewCommentService {
 
     private Optional<CommentDto> persistCommentAndCreateDto(CreateCommentDto dto, Long memberId, Crew crew) {
         return memberRepository.findById(memberId)
-                .map(member -> {
-                    Comment comment = commentRepository.save(Comment.of(dto.content(), crew, member));
-                    return CommentDto.from(comment, member);
-                });
+                .map(member -> persistCommentAndBuildDto(Comment.of(dto.content(), crew, member), member));
+    }
+
+    private CommentDto persistCommentAndBuildDto(Comment comment, Member member) {
+        Comment persistComment = commentRepository.save(comment);
+        return CommentDto.from(persistComment, member);
     }
 
     public List<CommentsDto> findComments(String crewName) {
@@ -80,5 +86,28 @@ public class CrewCommentService {
                 parentDto.replies().add(childDto);
             }
         });
+    }
+
+    @Transactional
+    public CommentDto addCommentReply(CreateCommentReplyDto dto, Long memberId) {
+        return commentRepository.findCommentById(dto.parentCommentId())
+                .flatMap(comment -> persistCommentReplyAndCreateDtoIfParent(dto, memberId, comment))
+                .orElseThrow(() -> new CommentBusinessException.NotFoundById(NOTFOUND_COMMENT, dto.parentCommentId()));
+    }
+
+    private Optional<CommentDto> persistCommentReplyAndCreateDtoIfParent(CreateCommentReplyDto dto, Long memberId, Comment comment) {
+        validateParentComment(dto, comment);
+        return memberRepository.findById(memberId)
+                .map(member -> persistCommentAndBuildDto(Comment.forReply(comment, dto.content(), comment.getCrew(), member), member));
+    }
+
+    private void validateParentComment(CreateCommentReplyDto dto, Comment comment) {
+        if (comment.getParent() != null) {
+            throw new CommentBusinessException.NotParent(NOT_PARENT, dto.parentCommentId());
+        }
+
+        if (!comment.getCrew().getName().equals(new Name(dto.crewName()))) {
+            throw new CommentBusinessException.NotFoundCrewComment(NOTFOUND_CREW_COMMENT, dto.crewName(), dto.parentCommentId());
+        }
     }
 }
