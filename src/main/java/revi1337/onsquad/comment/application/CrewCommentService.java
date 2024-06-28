@@ -1,6 +1,7 @@
 package revi1337.onsquad.comment.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.comment.domain.Comment;
@@ -51,7 +52,75 @@ public class CrewCommentService {
         return CommentDto.from(persistComment, member);
     }
 
-    public List<CommentsDto> findComments(String crewName) {
+    @Transactional
+    public CommentDto addCommentReply(CreateCommentReplyDto dto, Long memberId) {
+        return commentRepository.findCommentById(dto.parentCommentId())
+                .flatMap(comment -> persistCommentReplyAndCreateDtoIfParent(dto, memberId, comment))
+                .orElseThrow(() -> new CommentBusinessException.NotFoundById(NOTFOUND_COMMENT, dto.parentCommentId()));
+    }
+
+    private Optional<CommentDto> persistCommentReplyAndCreateDtoIfParent(CreateCommentReplyDto dto, Long memberId, Comment comment) {
+        validateParentComment(dto, comment);
+        return memberRepository.findById(memberId)
+                .map(member -> persistCommentAndBuildDto(Comment.forReply(comment, dto.content(), comment.getCrew(), member), member));
+    }
+
+    private void validateParentComment(CreateCommentReplyDto dto, Comment comment) {
+        if (comment.getParent() != null) {
+            throw new CommentBusinessException.NotParent(NOT_PARENT, dto.parentCommentId());
+        }
+
+        if (!comment.getCrew().getName().equals(new Name(dto.crewName()))) {
+            throw new CommentBusinessException.NotFoundCrewComment(NOTFOUND_CREW_COMMENT, dto.crewName(), dto.parentCommentId());
+        }
+    }
+
+    public List<CommentsDto> findComments(String crewName, Pageable pageable) {
+        List<Comment> parentComments = commentRepository.findParentCommentsByCrewNameUsingPageable(new Name(crewName), pageable);
+        List<Long> parentIds = collectParentIds(parentComments);
+        Map<Long, CommentsDto> commentDtoMap = retrieveChildrenAndLinkToParent(parentIds, parentComments);
+
+        return parentComments.stream()
+                .map(comment -> commentDtoMap.get(comment.getId()))
+                .collect(Collectors.toList());
+    }
+
+    private Map<Long, CommentsDto> retrieveChildrenAndLinkToParent(List<Long> parentIds, List<Comment> parentComments) {
+        Map<Comment, List<Comment>> groupedByParents = commentRepository.findGroupedChildCommentsByParentIdIn(parentIds);
+        Map<Long, CommentsDto> commentDtoMap = linkParentWithChildrenAndReturnDto(parentComments, groupedByParents);
+        return commentDtoMap;
+    }
+
+    private Map<Long, CommentsDto> linkParentWithChildrenAndReturnDto(List<Comment> parentComments, Map<Comment, List<Comment>> groupedByParents) {
+        Map<Long, CommentsDto> commentDtoMap = convertParentToDto(parentComments);
+        convertChildrenToDtoAndLinkToParent(groupedByParents, commentDtoMap);
+        return commentDtoMap;
+    }
+
+    private void convertChildrenToDtoAndLinkToParent(Map<Comment, List<Comment>> groupedByParents, Map<Long, CommentsDto> commentDtoMap) {
+        groupedByParents.forEach((parentComment, childComments) -> {
+            CommentsDto parentDto = commentDtoMap.get(parentComment.getId());
+            List<CommentsDto> childDtos = childComments.stream()
+                    .map(CommentsDto::from)
+                    .toList();
+            parentDto.replies().addAll(childDtos);
+        });
+    }
+
+    private Map<Long, CommentsDto> convertParentToDto(List<Comment> parentComments) {
+        Map<Long, CommentsDto> commentDtoMap = parentComments.stream()
+                .map(CommentsDto::from)
+                .collect(Collectors.toMap(CommentsDto::commentId, Function.identity()));
+        return commentDtoMap;
+    }
+
+    private List<Long> collectParentIds(List<Comment> parentComments) {
+        return parentComments.stream()
+                .map(Comment::getId)
+                .toList();
+    }
+
+    public List<CommentsDto> findAllComments(String crewName) {
         List<Comment> comments = commentRepository.findCommentsByCrewName(new Name(crewName));
         return comments.stream()
                 .collect(Collectors.collectingAndThen(
@@ -86,28 +155,5 @@ public class CrewCommentService {
                 parentDto.replies().add(childDto);
             }
         });
-    }
-
-    @Transactional
-    public CommentDto addCommentReply(CreateCommentReplyDto dto, Long memberId) {
-        return commentRepository.findCommentById(dto.parentCommentId())
-                .flatMap(comment -> persistCommentReplyAndCreateDtoIfParent(dto, memberId, comment))
-                .orElseThrow(() -> new CommentBusinessException.NotFoundById(NOTFOUND_COMMENT, dto.parentCommentId()));
-    }
-
-    private Optional<CommentDto> persistCommentReplyAndCreateDtoIfParent(CreateCommentReplyDto dto, Long memberId, Comment comment) {
-        validateParentComment(dto, comment);
-        return memberRepository.findById(memberId)
-                .map(member -> persistCommentAndBuildDto(Comment.forReply(comment, dto.content(), comment.getCrew(), member), member));
-    }
-
-    private void validateParentComment(CreateCommentReplyDto dto, Comment comment) {
-        if (comment.getParent() != null) {
-            throw new CommentBusinessException.NotParent(NOT_PARENT, dto.parentCommentId());
-        }
-
-        if (!comment.getCrew().getName().equals(new Name(dto.crewName()))) {
-            throw new CommentBusinessException.NotFoundCrewComment(NOTFOUND_CREW_COMMENT, dto.crewName(), dto.parentCommentId());
-        }
     }
 }

@@ -2,6 +2,8 @@ package revi1337.onsquad.comment.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
@@ -48,10 +50,24 @@ public class CrewCommentController {
 
     @GetMapping("/comments")
     public ResponseEntity<RestResponse<List<CommentsResponse>>> findComments(
+            @PageableDefault Pageable pageable,
             @RequestParam String crewName,
             @Authenticate AuthenticatedMember ignored
     ) {
-        List<CommentsResponse> commentsResponses = crewCommentService.findComments(crewName)
+        List<CommentsResponse> commentsResponses = crewCommentService.findComments(crewName, pageable)
+                .stream()
+                .map(CommentsResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
+    }
+
+    @GetMapping("/comment/all")
+    public ResponseEntity<RestResponse<List<CommentsResponse>>> findAllComments(
+            @RequestParam String crewName,
+            @Authenticate AuthenticatedMember ignored
+    ) {
+        List<CommentsResponse> commentsResponses = crewCommentService.findAllComments(crewName)
                 .stream()
                 .map(CommentsResponse::from)
                 .toList();
