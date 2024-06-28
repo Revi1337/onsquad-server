@@ -24,6 +24,13 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
 
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+        default-page-size: 10
+        max-page-size: 100
+
   servlet:
     multipart:
       max-file-size: 5MB
