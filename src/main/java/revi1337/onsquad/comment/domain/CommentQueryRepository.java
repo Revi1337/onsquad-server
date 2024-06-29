@@ -36,7 +36,7 @@ public interface CommentQueryRepository {
      * 최상위 댓글 id 들을 부모로 갖고있는 모든 대댓글들을 가져온다.
      * @param parentIds
      * @return
-     * @see #findGroupedChildCommentsByParentIdIn(List)
+     * @see #findGroupedChildCommentsByParentIdIn(List, Pageable)
      */
     List<Comment> findChildCommentsByParentIdIn(List<Long> parentIds);
 
@@ -45,7 +45,7 @@ public interface CommentQueryRepository {
      * @param parentIds
      * @return
      */
-    Map<Comment, List<Comment>> findGroupedChildCommentsByParentIdIn(List<Long> parentIds);
+    Map<Comment, List<Comment>> findGroupedChildCommentsByParentIdIn(List<Long> parentIds, Pageable childPageable);
 
     /**
      * 댓글 id 를 통해 댓글 정보를 가져온다.

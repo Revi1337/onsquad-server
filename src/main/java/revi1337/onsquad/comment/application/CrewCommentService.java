@@ -75,18 +75,18 @@ public class CrewCommentService {
         }
     }
 
-    public List<CommentsDto> findComments(String crewName, Pageable pageable) {
-        List<Comment> parentComments = commentRepository.findParentCommentsByCrewNameUsingPageable(new Name(crewName), pageable);
+    public List<CommentsDto> findComments(String crewName, Pageable parentPageable, Pageable childPageable) {
+        List<Comment> parentComments = commentRepository.findParentCommentsByCrewNameUsingPageable(new Name(crewName), parentPageable);
         List<Long> parentIds = collectParentIds(parentComments);
-        Map<Long, CommentsDto> commentDtoMap = retrieveChildrenAndLinkToParent(parentIds, parentComments);
+        Map<Long, CommentsDto> commentDtoMap = retrieveChildrenAndLinkToParent(parentIds, parentComments, childPageable);
 
         return parentComments.stream()
                 .map(comment -> commentDtoMap.get(comment.getId()))
                 .collect(Collectors.toList());
     }
 
-    private Map<Long, CommentsDto> retrieveChildrenAndLinkToParent(List<Long> parentIds, List<Comment> parentComments) {
-        Map<Comment, List<Comment>> groupedByParents = commentRepository.findGroupedChildCommentsByParentIdIn(parentIds);
+    private Map<Long, CommentsDto> retrieveChildrenAndLinkToParent(List<Long> parentIds, List<Comment> parentComments, Pageable childPageable) {
+        Map<Comment, List<Comment>> groupedByParents = commentRepository.findGroupedChildCommentsByParentIdIn(parentIds, childPageable);
         Map<Long, CommentsDto> commentDtoMap = linkParentWithChildrenAndReturnDto(parentComments, groupedByParents);
         return commentDtoMap;
     }

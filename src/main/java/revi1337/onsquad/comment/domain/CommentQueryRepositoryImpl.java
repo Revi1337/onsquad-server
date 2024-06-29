@@ -75,7 +75,7 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
     }
 
     @Override
-    public Map<Comment, List<Comment>> findGroupedChildCommentsByParentIdIn(List<Long> parentIds) {
+    public Map<Comment, List<Comment>> findGroupedChildCommentsByParentIdIn(List<Long> parentIds, Pageable childPageable) {
         return jpaQueryFactory
                 .selectFrom(comment)
                 .innerJoin(comment.member, member).fetchJoin()
