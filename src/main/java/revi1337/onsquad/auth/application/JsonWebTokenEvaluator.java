@@ -7,25 +7,21 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
-import revi1337.onsquad.auth.error.AuthErrorCode;
-import revi1337.onsquad.auth.error.exception.InvalidTokenSignatureException;
-import revi1337.onsquad.auth.error.exception.TokenExpiredException;
+import revi1337.onsquad.auth.error.exception.AuthTokenException;
 
 import java.security.Key;
 import java.util.function.Function;
 
 import static revi1337.onsquad.auth.config.properties.TokenProperties.*;
+import static revi1337.onsquad.auth.error.AuthErrorCode.*;
 
 @Component
 public class JsonWebTokenEvaluator {
-
-    private final TokenProperties tokenProperties;
 
     private AccessTokenAttributes accessTokenAttributes;
     private RefreshTokenAttributes refreshTokenAttributes;
 
     public JsonWebTokenEvaluator(TokenProperties tokenProperties) {
-        this.tokenProperties = tokenProperties;
         this.accessTokenAttributes = tokenProperties.accessTokenAttributes();
         this.refreshTokenAttributes = tokenProperties.refreshTokenAttributes();
     }
@@ -48,9 +44,9 @@ public class JsonWebTokenEvaluator {
         try {
             return extractAllClaims(token, secretKey);
         } catch (SignatureException e) {
-            throw new InvalidTokenSignatureException(AuthErrorCode.INVALID_TOKEN_SIGNATURE);
+            throw new AuthTokenException.InvalidTokenSignature(INVALID_TOKEN_SIGNATURE);
         } catch (ExpiredJwtException e) {
-            throw new TokenExpiredException(AuthErrorCode.TOKEN_EXPIRED);
+            throw new AuthTokenException.TokenExpired(TOKEN_EXPIRED);
         }
     }
 

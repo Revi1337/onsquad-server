@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import revi1337.onsquad.auth.dto.response.AccessToken;
-import revi1337.onsquad.auth.error.exception.TokenExpiredException;
+import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.config.PropertiesConfiguration;
 
 import java.util.Collections;
@@ -49,7 +49,7 @@ class JsonWebTokenEvaluatorTest extends PropertiesConfiguration {
         // when && then
         Thread.sleep(1100);
         assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyAccessToken(accessToken.value()))
-                .isInstanceOf(TokenExpiredException.class)
-                .hasMessage("토큰 만료날짜가 지났음");
+                .isInstanceOf(AuthTokenException.TokenExpired.class)
+                .hasMessage("토큰이 만료되었습니다.");
     }
 }

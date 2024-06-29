@@ -1,11 +1,20 @@
 package revi1337.onsquad.auth.error.exception;
 
-import revi1337.onsquad.auth.error.AuthException;
+import lombok.Getter;
+import org.springframework.security.core.AuthenticationException;
 import revi1337.onsquad.common.error.ErrorCode;
 
-public class UnsupportedLoginUrlMethod extends AuthException {
+@Getter
+public class UnsupportedLoginUrlMethod extends AuthenticationException {
+
+    private ErrorCode errorCode;
+
+    public UnsupportedLoginUrlMethod(ErrorCode errorCode) {
+        this(errorCode, null);
+    }
 
     public UnsupportedLoginUrlMethod(ErrorCode errorCode, Throwable cause) {
-        super(errorCode, cause);
+        super(errorCode.getDescription(), cause);
+        this.errorCode = errorCode;
     }
 }

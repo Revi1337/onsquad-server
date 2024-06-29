@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import revi1337.onsquad.auth.error.AuthErrorCode;
-import revi1337.onsquad.auth.error.AuthException;
 import revi1337.onsquad.auth.error.exception.AuthJoinException;
+import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
@@ -39,9 +39,9 @@ public class AuthExceptionHandler {
         };
     }
 
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleAuthException(
-            AuthException exception
+    @ExceptionHandler(AuthTokenException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleAuthTokenException(
+            AuthTokenException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode);

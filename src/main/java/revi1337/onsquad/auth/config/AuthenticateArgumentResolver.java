@@ -9,8 +9,9 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
-import revi1337.onsquad.auth.error.AuthErrorCode;
-import revi1337.onsquad.auth.error.exception.InvalidTokenFormatException;
+import revi1337.onsquad.auth.error.exception.AuthTokenException;
+
+import static revi1337.onsquad.auth.error.AuthErrorCode.*;
 
 @RequiredArgsConstructor
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {
@@ -30,7 +31,7 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String authorizationHeader = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith(TOKEN_PREFIX)) {
-            throw new InvalidTokenFormatException(AuthErrorCode.INVALID_TOKEN_FORMAT);
+            throw new AuthTokenException.InvalidTokenFormat(INVALID_TOKEN_FORMAT);
         }
 
         String accessToken = authorizationHeader.split(" ")[TOKEN_INDEX];
