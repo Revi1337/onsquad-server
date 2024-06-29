@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
+import revi1337.onsquad.crew.error.exception.CrewDomainException;
+import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.member.error.exception.MemberException;
 
 @RestControllerAdvice
@@ -17,6 +19,16 @@ public class MemberExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
+        return ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+    }
+
+    @ExceptionHandler(MemberBusinessException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleMemberBusinessException(
+            MemberBusinessException exception
+    ) {
+        ErrorCode errorCode = exception.getErrorCode();
+        ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
         RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
         return ResponseEntity.status(errorCode.getStatus()).body(restResponse);
     }
