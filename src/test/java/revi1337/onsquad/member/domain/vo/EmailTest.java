@@ -2,7 +2,7 @@ package revi1337.onsquad.member.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.error.exception.InvalidEmailFormat;
+import revi1337.onsquad.member.error.exception.MemberDomainException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -39,8 +39,8 @@ class EmailTest {
 
         // when & then
         assertThatThrownBy(() -> new Email(value))
-                .isInstanceOf(InvalidEmailFormat.class)
-                .hasMessage("이메일 형식이 올바르지 않은 상태");
+                .isInstanceOf(MemberDomainException.InvalidEmailFormat.class)
+                .hasMessage("이메일 형식이 올바르지 않습니다.");
     }
 
 }

@@ -189,7 +189,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.code").value("M004"))
-                    .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않은 상태"));
+                    .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않습니다."));
         }
 
         @DisplayName("닉네임이 중복되면 회원가입에 실패한다.")
@@ -212,7 +212,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.code").value("M003"))
-                    .andExpect(jsonPath("$.error.message").value("닉네임이 중복된 상태"));
+                    .andExpect(jsonPath("$.error.message").value("닉네임이 중복됩니다."));
         }
 
         @DisplayName("이메일이 중복되면 회원가입에 실패한다.")
@@ -235,7 +235,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.code").value("M005"))
-                    .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자"));
+                    .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자입니다."));
         }
 
         @DisplayName("이메일이 형식이 옳지 않으면 회원가입에 실패한다.")
@@ -255,7 +255,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.code").value("M001"))
-                    .andExpect(jsonPath("$.error.message").value("이메일 형식이 올바르지 않은 상태"));
+                    .andExpect(jsonPath("$.error.message").value("이메일 형식이 올바르지 않습니다."));
         }
 
         @DisplayName("닉네임 길이가 올바르지 않으면 회원가입에 실패한다.")
@@ -275,7 +275,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.code").value("M002"))
-                    .andExpect(jsonPath("$.error.message").value("닉네임 길이가 올바르지 않은 상태"));
+                    .andExpect(jsonPath("$.error.message").value("닉네임은 2 자 이상 8 자 이하여야합니다."));
         }
     }
 }

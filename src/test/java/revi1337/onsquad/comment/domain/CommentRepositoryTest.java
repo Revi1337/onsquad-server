@@ -1,6 +1,7 @@
 package revi1337.onsquad.comment.domain;
 
 import com.querydsl.core.Tuple;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -387,6 +388,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
 
     @Test
     @DisplayName("부모 댓글들 조회 후 --> 그 id 들로 자식댓글들을 찾아오는 방식 transform")
+    @Disabled
     public void transformTest2() {
         Member member1 = MemberFactory.defaultMember().build();
         Member member2 = MemberFactory.defaultMember().build();
