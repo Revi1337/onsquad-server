@@ -2,7 +2,7 @@ package revi1337.onsquad.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import revi1337.onsquad.comment.dto.CommentsDto;
-import revi1337.onsquad.member.dto.response.MemberInfoResponse;
+import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +15,7 @@ public record CommentsResponse(
         String comment,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        MemberInfoResponse memberInfo,
+        SimpleMemberInfoResponse memberInfo,
         List<CommentsResponse> replies
 ) {
     public static CommentsResponse from(CommentsDto commentsDto) {
@@ -25,7 +25,7 @@ public record CommentsResponse(
                 commentsDto.comment(),
                 commentsDto.createdAt(),
                 commentsDto.updatedAt(),
-                MemberInfoResponse.from(commentsDto.memberInfo()),
+                SimpleMemberInfoResponse.from(commentsDto.memberInfo()),
                 commentsDto.replies().stream()
                         .map(CommentsResponse::from)
                         .collect(Collectors.toList())

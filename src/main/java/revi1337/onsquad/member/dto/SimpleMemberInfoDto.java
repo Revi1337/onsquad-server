@@ -2,13 +2,13 @@ package revi1337.onsquad.member.dto;
 
 import revi1337.onsquad.member.domain.Member;
 
-public record MemberInfoDto(
+public record SimpleMemberInfoDto(
         Long id,
         String email,
         String nickname
 ) {
-    public static MemberInfoDto from(Member member) {
-        return new MemberInfoDto(
+    public static SimpleMemberInfoDto from(Member member) {
+        return new SimpleMemberInfoDto(
                 member.getId(),
                 member.getEmail().getValue(),
                 member.getNickname().getValue()

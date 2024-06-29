@@ -2,7 +2,7 @@ package revi1337.onsquad.comment.dto;
 
 import revi1337.onsquad.comment.domain.Comment;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.dto.MemberInfoDto;
+import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ public record CommentDto(
         String comment,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        MemberInfoDto memberInfo
+        SimpleMemberInfoDto memberInfo
 ) {
     public static CommentDto from(Comment comment, Member member) {
         return new CommentDto(
@@ -19,7 +19,7 @@ public record CommentDto(
                 comment.getContent(),
                 comment.getCreatedAt(),
                 comment.getUpdatedAt(),
-                MemberInfoDto.from(member)
+                SimpleMemberInfoDto.from(member)
         );
     }
 }

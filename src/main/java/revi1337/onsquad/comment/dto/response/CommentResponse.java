@@ -1,7 +1,7 @@
 package revi1337.onsquad.comment.dto.response;
 
 import revi1337.onsquad.comment.dto.CommentDto;
-import revi1337.onsquad.member.dto.response.MemberInfoResponse;
+import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +10,7 @@ public record CommentResponse(
         String comment,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        MemberInfoResponse memberInfo
+        SimpleMemberInfoResponse memberInfo
 ) {
     public static CommentResponse from(CommentDto commentDto) {
         return new CommentResponse(
@@ -18,7 +18,7 @@ public record CommentResponse(
                 commentDto.comment(),
                 commentDto.createdAt(),
                 commentDto.updatedAt(),
-                MemberInfoResponse.from(commentDto.memberInfo())
+                SimpleMemberInfoResponse.from(commentDto.memberInfo())
         );
     }
 }
