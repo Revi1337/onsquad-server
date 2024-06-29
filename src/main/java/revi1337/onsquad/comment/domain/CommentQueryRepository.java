@@ -1,5 +1,6 @@
 package revi1337.onsquad.comment.domain;
 
+import com.querydsl.core.Tuple;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.vo.Name;
 
@@ -46,6 +47,8 @@ public interface CommentQueryRepository {
      * @return
      */
     Map<Comment, List<Comment>> findGroupedChildCommentsByParentIdIn(List<Long> parentIds, Pageable childPageable);
+
+    List<Tuple> findGroupedChildCommentsByParentIdIn2(List<Long> parentIds);
 
     /**
      * 댓글 id 를 통해 댓글 정보를 가져온다.
