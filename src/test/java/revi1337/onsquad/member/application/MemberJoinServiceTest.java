@@ -5,17 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import revi1337.onsquad.auth.error.exception.AuthJoinException;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.dto.MemberDto;
 import revi1337.onsquad.member.error.DuplicateMember;
-import revi1337.onsquad.member.error.exception.DuplicateNickname;
-import revi1337.onsquad.member.error.exception.UnsatisfiedEmailAuthentication;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;
@@ -126,8 +124,8 @@ class MemberJoinServiceTest extends TestContainerSupport {
 
         // when && then
         assertThatThrownBy(() -> memberJoinService.joinMember(memberDto))
-                .isExactlyInstanceOf(DuplicateNickname.class)
-                .hasMessage("닉네임이 중복됩니다.");
+                .isExactlyInstanceOf(AuthJoinException.DuplicateNickname.class)
+                .hasMessage(String.format("%s 닉네임은 이미 사용중입니다.", memberDto.getNickname().getValue()));
         then(memberRepository).should(times(0)).save(any());
     }
 
@@ -141,7 +139,7 @@ class MemberJoinServiceTest extends TestContainerSupport {
 
         // when && then
         assertThatThrownBy(() -> memberJoinService.joinMember(memberDto))
-                .isExactlyInstanceOf(UnsatisfiedEmailAuthentication.class)
+                .isExactlyInstanceOf(AuthJoinException.NonAuthenticateEmail.class)
                 .hasMessage("메일 인증이 되어있지 않습니다.");
         then(memberRepository).should(times(0)).save(any());
     }
@@ -157,7 +155,7 @@ class MemberJoinServiceTest extends TestContainerSupport {
 
         // when && then
         assertThatThrownBy(() -> memberJoinService.joinMember(memberDto))
-                .isExactlyInstanceOf(DuplicateMember.class)
+                .isExactlyInstanceOf(AuthJoinException.DuplicateMember.class)
                 .hasMessage("이미 회원가입이 되어있는 사용자입니다.");
         then(memberRepository).should(times(0)).save(any());
     }

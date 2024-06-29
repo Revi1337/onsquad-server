@@ -188,7 +188,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M004"))
+                    .andExpect(jsonPath("$.error.code").value("A007"))
                     .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않습니다."));
         }
 
@@ -211,8 +211,8 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M003"))
-                    .andExpect(jsonPath("$.error.message").value("닉네임이 중복됩니다."));
+                    .andExpect(jsonPath("$.error.code").value("A006"))
+                    .andExpect(jsonPath("$.error.message").value(String.format("%s 닉네임은 이미 사용중입니다.", member.getNickname().getValue())));
         }
 
         @DisplayName("이메일이 중복되면 회원가입에 실패한다.")
@@ -234,7 +234,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M005"))
+                    .andExpect(jsonPath("$.error.code").value("A008"))
                     .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자입니다."));
         }
 
