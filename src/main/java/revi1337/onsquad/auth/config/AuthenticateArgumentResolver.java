@@ -30,9 +30,7 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String authorizationHeader = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authorizationHeader == null || !authorizationHeader.startsWith(TOKEN_PREFIX)) {
-            throw new AuthTokenException.InvalidTokenFormat(INVALID_TOKEN_FORMAT);
-        }
+        validateAuthorizationHeader(authorizationHeader);
 
         String accessToken = authorizationHeader.split(" ")[TOKEN_INDEX];
         Long memberId = jsonWebTokenEvaluator.extractSpecificClaim(
@@ -41,5 +39,15 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
         );
 
         return AuthenticatedMember.of(memberId);
+    }
+
+    private void validateAuthorizationHeader(String authorizationHeader) {
+        if (authorizationHeader == null) {
+            throw new AuthTokenException.NeedToken(EMPTY_TOKEN);
+        }
+
+        if (!authorizationHeader.startsWith(TOKEN_PREFIX)) {
+            throw new AuthTokenException.InvalidTokenFormat(INVALID_TOKEN_FORMAT);
+        }
     }
 }

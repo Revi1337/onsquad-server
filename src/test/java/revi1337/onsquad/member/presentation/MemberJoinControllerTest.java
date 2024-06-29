@@ -188,7 +188,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("A007"))
+                    .andExpect(jsonPath("$.error.code").value("A008"))
                     .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않습니다."));
         }
 
@@ -211,7 +211,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("A006"))
+                    .andExpect(jsonPath("$.error.code").value("A007"))
                     .andExpect(jsonPath("$.error.message").value(String.format("%s 닉네임은 이미 사용중입니다.", member.getNickname().getValue())));
         }
 
@@ -234,7 +234,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     )
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("A008"))
+                    .andExpect(jsonPath("$.error.code").value("A009"))
                     .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자입니다."));
         }
 

@@ -33,4 +33,11 @@ public abstract class AuthTokenException extends RuntimeException {
             super(errorCode);
         }
     }
+
+    public static class NeedToken extends AuthTokenException {
+
+        public NeedToken(ErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }
