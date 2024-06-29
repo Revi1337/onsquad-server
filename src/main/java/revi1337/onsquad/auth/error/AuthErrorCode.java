@@ -14,8 +14,7 @@ public enum AuthErrorCode implements ErrorCode {
     INVALID_TOKEN_FORMAT(401, "A003", "토큰 포맷이 올바르지 않습니다."),
     INVALID_TOKEN_SIGNATURE(401, "A004", "토큰 서명이 일치하지 않습니다."),
     TOKEN_EXPIRED(401, "A005", "토큰이 만료되었습니다."),
-    EMPTY_TOKEN(401, "A006", "인증이 필요한 API 입니다."),
-
+    EMPTY_TOKEN(401, "A006", "토큰이 필요한 API 입니다."),
 
     DUPLICATE_NICKNAME(401, "A007", "%s 닉네임은 이미 사용중입니다."),
     NON_AUTHENTICATE_EMAIL(401, "A008", "메일 인증이 되어있지 않습니다."),
