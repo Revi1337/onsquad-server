@@ -108,7 +108,7 @@ class CrewControllerTest extends IntegrationTestSupport {
 
         @BeforeEach
         void tearDown() {
-            this.accessToken = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT, Collections.singletonMap("identifier", 1L)).value();
+            this.accessToken = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT, Collections.singletonMap("memberId", 1L)).value();
             this.accessToken = "Bearer " + this.accessToken;
         }
 
@@ -245,7 +245,7 @@ class CrewControllerTest extends IntegrationTestSupport {
 
         @BeforeEach
         void tearDown() {
-            this.accessToken = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT, Collections.singletonMap("identifier", 1L)).value();
+            this.accessToken = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT, Collections.singletonMap("memberId", 1L)).value();
             this.accessToken = "Bearer " + this.accessToken;
         }
 

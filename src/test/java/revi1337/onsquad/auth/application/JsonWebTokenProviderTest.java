@@ -25,7 +25,7 @@ public class JsonWebTokenProviderTest extends PropertiesConfiguration {
     public void generateAccessToken() {
         // given
         String subject = "revi1337";
-        Map<String, Integer> identifier = Collections.singletonMap("identifier", 1);
+        Map<String, Integer> identifier = Collections.singletonMap("memberId", 1);
 
         // when
         AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(subject, identifier);
