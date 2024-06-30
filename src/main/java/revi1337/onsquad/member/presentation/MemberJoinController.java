@@ -13,8 +13,6 @@ import revi1337.onsquad.member.dto.request.MemberJoinRequest;
 import revi1337.onsquad.member.dto.response.DuplicateNicknameResponse;
 import revi1337.onsquad.member.dto.response.EmailValidResponse;
 
-import static org.springframework.http.HttpStatus.*;
-
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -24,10 +22,12 @@ public class MemberJoinController {
     private final MemberJoinService memberJoinService;
 
     @GetMapping("/send")
-    public void sendAuthCodeToEmail(
+    public ResponseEntity<RestResponse<String>> sendAuthCodeToEmail(
             @RequestParam @Email @NotEmpty String email
     ) {
         memberJoinService.sendAuthCodeToEmail(email);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @GetMapping("/valid")
@@ -38,6 +38,7 @@ public class MemberJoinController {
         if (memberJoinService.verifyAuthCode(email, authCode)) {
             return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(true)));
         }
+
         return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(false)));
     }
 
@@ -48,14 +49,16 @@ public class MemberJoinController {
         if (memberJoinService.checkDuplicateNickname(nickname)) {
             return ResponseEntity.ok(RestResponse.success(DuplicateNicknameResponse.of(true)));
         }
+
         return ResponseEntity.ok(RestResponse.success(DuplicateNicknameResponse.of(false)));
     }
 
     @PostMapping("/join")
-    public ResponseEntity<Void> joinMember(
+    public ResponseEntity<RestResponse<String>> joinMember(
             @Valid @RequestBody MemberJoinRequest memberJoinRequest
     ) {
         memberJoinService.joinMember(memberJoinRequest.toDto());
-        return ResponseEntity.status(CREATED).build();
+
+        return ResponseEntity.ok().body(RestResponse.created());
     }
 }

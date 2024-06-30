@@ -3,10 +3,11 @@ package revi1337.onsquad.member.domain.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.exception.InvalidPasswordFormat;
+import revi1337.onsquad.member.error.exception.MemberDomainException;
 
 import java.util.regex.Pattern;
+
+import static revi1337.onsquad.member.error.MemberErrorCode.*;
 
 @Getter
 @EqualsAndHashCode
@@ -22,7 +23,6 @@ public class Password {
     private String value;
 
     public Password(String rawPassword) {
-
         validate(rawPassword);
         this.value = rawPassword;
     }
@@ -39,7 +39,7 @@ public class Password {
     private void validate(CharSequence value) {
         validateNull(value);
         if (invalidPassword(value)) {
-            throw new InvalidPasswordFormat(MemberErrorCode.INVALID_PASSWORD_FORMAT);
+            throw new MemberDomainException.InvalidPasswordFormat(INVALID_PASSWORD_FORMAT);
         }
     }
 

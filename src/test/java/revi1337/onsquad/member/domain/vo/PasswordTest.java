@@ -2,7 +2,7 @@ package revi1337.onsquad.member.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.error.exception.InvalidPasswordFormat;
+import revi1337.onsquad.member.error.exception.MemberDomainException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -59,10 +59,10 @@ class PasswordTest {
 
         // when & then
         assertSoftly(softly -> {
-            assertThat(password).hasSizeLessThan(8);
-            assertThatThrownBy(() -> new Password(password))
-                    .isInstanceOf(InvalidPasswordFormat.class)
-                    .hasMessage("비밀번호는 영문,숫자,특수문자 조합 8 ~ 20 길이어야 한다.");
+            softly.assertThat(password).hasSizeLessThan(8);
+            softly.assertThatThrownBy(() -> new Password(password))
+                    .isInstanceOf(MemberDomainException.InvalidPasswordFormat.class)
+                    .hasMessage("비밀번호는 영문,숫자,특수문자 조합 8 ~ 20 길이어야 합니다.");
         });
     }
 
@@ -74,10 +74,10 @@ class PasswordTest {
 
         // when & then
         assertSoftly(softly -> {
-            assertThat(value).hasSizeGreaterThan(20);
-            assertThatThrownBy(() -> new Password(value))
-                    .isInstanceOf(InvalidPasswordFormat.class)
-                    .hasMessage("비밀번호는 영문,숫자,특수문자 조합 8 ~ 20 길이어야 한다.");
+            softly.assertThat(value).hasSizeGreaterThan(20);
+            softly.assertThatThrownBy(() -> new Password(value))
+                    .isInstanceOf(MemberDomainException.InvalidPasswordFormat.class)
+                    .hasMessage("비밀번호는 영문,숫자,특수문자 조합 8 ~ 20 길이어야 합니다.");
         });
     }
 

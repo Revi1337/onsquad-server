@@ -159,7 +159,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
             redisMailRepository.overwriteAuthCodeToStatus(TEST_EMAIL, MailStatus.SUCCESS, Duration.ofMinutes(5));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -168,7 +168,8 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isCreated());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(201));
         }
 
         @DisplayName("메일인증이 진행되어있지 않으면 회원가입에 실패한다.")
@@ -177,7 +178,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             // given
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nickname", "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -186,10 +187,11 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isUnauthorized())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(401))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M004"))
-                    .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않은 상태"));
+                    .andExpect(jsonPath("$.error.code").value("A008"))
+                    .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않습니다."));
         }
 
         @DisplayName("닉네임이 중복되면 회원가입에 실패한다.")
@@ -200,7 +202,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             memberRepository.save(member);
             redisMailRepository.saveAuthCode(TEST_EMAIL, TEST_AUTH_CODE, Duration.ofMinutes(5));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, TEST_NICKNAME, "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, TEST_NICKNAME, "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -209,10 +211,11 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isUnauthorized())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(401))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M003"))
-                    .andExpect(jsonPath("$.error.message").value("닉네임이 중복된 상태"));
+                    .andExpect(jsonPath("$.error.code").value("A007"))
+                    .andExpect(jsonPath("$.error.message").value(String.format("%s 닉네임은 이미 사용중입니다.", member.getNickname().getValue())));
         }
 
         @DisplayName("이메일이 중복되면 회원가입에 실패한다.")
@@ -223,7 +226,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
             redisMailRepository.overwriteAuthCodeToStatus(TEST_EMAIL, MailStatus.SUCCESS, Duration.ofMinutes(5));
             memberRepository.save(MemberFactory.withEmail(new Email(TEST_EMAIL)));
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nick", "어딘가"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "nick", "어딘가", "우장산 롯데캐슬"
             );
 
             // when & then
@@ -232,10 +235,11 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isUnauthorized())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(401))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M005"))
-                    .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자"));
+                    .andExpect(jsonPath("$.error.code").value("A009"))
+                    .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자입니다."));
         }
 
         @DisplayName("이메일이 형식이 옳지 않으면 회원가입에 실패한다.")
@@ -243,7 +247,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
         public void joinMember5() throws Exception {
             // given
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    "invalid_email", TEST_PASSWORD, TEST_PASSWORD, "nickname", "anywhere"
+                    "invalid_email", TEST_PASSWORD, TEST_PASSWORD, "nickname", "anywhere", "우장산 롯데캐슬"
             );
 
             // when && then
@@ -252,10 +256,11 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.code").value("M001"))
-                    .andExpect(jsonPath("$.error.message").value("이메일 형식이 올바르지 않은 상태"));
+                    .andExpect(jsonPath("$.error.message").value("이메일 형식이 올바르지 않습니다."));
         }
 
         @DisplayName("닉네임 길이가 올바르지 않으면 회원가입에 실패한다.")
@@ -263,7 +268,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
         public void joinMember6() throws Exception {
             // given
             MemberJoinRequest memberJoinRequest = new MemberJoinRequest(
-                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "a", "anywhere"
+                    TEST_EMAIL, TEST_PASSWORD, TEST_PASSWORD, "a", "anywhere", "우장산 롯데캐슬"
             );
 
             // when && then
@@ -272,10 +277,11 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.code").value("M002"))
-                    .andExpect(jsonPath("$.error.message").value("닉네임 길이가 올바르지 않은 상태"));
+                    .andExpect(jsonPath("$.error.message").value("닉네임은 2 자 이상 8 자 이하여야합니다."));
         }
     }
 }

@@ -4,17 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.auth.error.exception.AuthJoinException;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.dto.MemberDto;
 import revi1337.onsquad.member.error.DuplicateMember;
-import revi1337.onsquad.member.error.exception.DuplicateNickname;
 import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.exception.UnsatisfiedEmailAuthentication;
 
 import java.time.Duration;
+
+import static revi1337.onsquad.auth.error.AuthErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -50,16 +51,16 @@ public class MemberJoinService {
 
     private boolean verifyAttribute(MemberDto memberDto) {
         if (memberRepository.existsByNickname(memberDto.getNickname())) {
-            throw new DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
+            throw new AuthJoinException.DuplicateNickname(DUPLICATE_NICKNAME, memberDto.getNickname().getValue());
         }
 
         Email email = memberDto.getEmail();
         if (!joinMailService.isValidMailStatus(email.getValue())) {
-            throw new UnsatisfiedEmailAuthentication(MemberErrorCode.NON_AUTHENTICATE_EMAIL);
+            throw new AuthJoinException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
         }
 
-        if (memberRepository.existsByEmail(email)) {
-            throw new DuplicateMember(MemberErrorCode.DUPLICATE_MEMBER);
+        if (memberRepository.existsByEmail(email)) { // TODO 이메일이 아니라 UserType 도 검색조건에 넣어야함.
+            throw new AuthJoinException.DuplicateMember(DUPLICATE_MEMBER);
         }
 
         return true;

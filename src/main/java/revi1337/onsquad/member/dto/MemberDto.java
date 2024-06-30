@@ -26,11 +26,11 @@ public class MemberDto {
     }
 
     @Builder(builderClassName = "MemberDtoValueBuilder", builderMethodName = "create")
-    private MemberDto(Long id, String userType, String email, String address, String nickname, String password) {
+    private MemberDto(Long id, String userType, String email, String address, String addressDetail, String nickname, String password) {
         this.id = id;
         this.userType = userType == null ? UserType.GENERAL : UserType.valueOf(userType);
         this.email = new Email(email);
-        this.address = new Address(address);
+        this.address = new Address(address, addressDetail);
         this.nickname = new Nickname(nickname);
         this.password = new Password(password);
     }

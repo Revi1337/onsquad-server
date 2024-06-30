@@ -5,7 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.auth.config.TokenProperties;
+import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.dto.response.AccessToken;
 import revi1337.onsquad.auth.dto.response.RefreshToken;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
-import static revi1337.onsquad.auth.config.TokenProperties.*;
+import static revi1337.onsquad.auth.config.properties.TokenProperties.*;
 
 @RequiredArgsConstructor
 @Component

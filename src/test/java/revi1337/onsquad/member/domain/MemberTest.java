@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.vo.Password;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayName("영속성객체 Member 테스트")
@@ -29,8 +28,8 @@ class MemberTest {
 
         // then
         assertSoftly(softly -> {
-            assertThat(member.getPassword().getValue()).isNotEqualTo(TEST_PASSWORD);
-            assertThat(member.getPassword().getValue()).isEqualTo(encodedPassword);
+            softly.assertThat(member.getPassword().getValue()).isNotEqualTo(TEST_PASSWORD);
+            softly.assertThat(member.getPassword().getValue()).isEqualTo(encodedPassword);
         });
     }
 }

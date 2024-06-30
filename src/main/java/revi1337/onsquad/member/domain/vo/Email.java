@@ -2,14 +2,12 @@ package revi1337.onsquad.member.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import revi1337.onsquad.member.error.exception.InvalidEmailFormat;
-import revi1337.onsquad.member.error.MemberErrorCode;
+import lombok.*;
+import revi1337.onsquad.member.error.exception.MemberDomainException;
 
 import java.util.regex.Pattern;
+
+import static revi1337.onsquad.member.error.MemberErrorCode.*;
 
 @Getter
 @EqualsAndHashCode
@@ -33,7 +31,7 @@ public class Email {
         }
 
         if (invalidEmailFormat(value)) {
-            throw new InvalidEmailFormat(MemberErrorCode.INVALID_EMAIL_FORMAT);
+            throw new MemberDomainException.InvalidEmailFormat(INVALID_EMAIL_FORMAT);
         }
     }
 

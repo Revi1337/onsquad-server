@@ -2,7 +2,7 @@ package revi1337.onsquad.auth.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.auth.config.TokenProperties;
+import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.domain.redis.RedisTokenRepository;
 import revi1337.onsquad.auth.dto.response.RefreshToken;
 

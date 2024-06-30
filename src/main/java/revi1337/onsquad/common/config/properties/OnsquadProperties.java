@@ -13,4 +13,7 @@ public class OnsquadProperties {
     @Value("${spring.application.name:onsquad}")
     private String applicationName;
 
+    public OnsquadProperties(String applicationName) {
+        this.applicationName = applicationName;
+    }
 }

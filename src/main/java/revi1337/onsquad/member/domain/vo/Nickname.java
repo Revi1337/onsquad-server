@@ -3,8 +3,9 @@ package revi1337.onsquad.member.domain.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.exception.UnsatisfiedNicknameLength;
+import revi1337.onsquad.member.error.exception.MemberDomainException;
+
+import static revi1337.onsquad.member.error.MemberErrorCode.INVALID_NICKNAME_LENGTH;
 
 @Getter
 @EqualsAndHashCode
@@ -14,8 +15,9 @@ public class Nickname {
 
     private static final int MIN_LENGTH = 2;
     private static final int MAX_LENGTH = 8;
+    private static final int PERSIST_MAX_LENGTH = 8;
 
-    @Column(name = "nickname", length = MAX_LENGTH * 3, nullable = false)
+    @Column(name = "nickname", length = PERSIST_MAX_LENGTH, nullable = false)
     private String value;
 
     public Nickname(String value) {
@@ -29,7 +31,7 @@ public class Nickname {
         }
 
         if (value.length() > MAX_LENGTH || value.length() < MIN_LENGTH) {
-            throw new UnsatisfiedNicknameLength(MemberErrorCode.INVALID_NICKNAME_LENGTH);
+            throw new MemberDomainException.InvalidNicknameLength(INVALID_NICKNAME_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
     }
 }

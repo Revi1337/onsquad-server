@@ -18,6 +18,16 @@ public record AuthenticatedMember(
         Password password,
         Collection<? extends GrantedAuthority> authorities
 ) implements UserDetails {
+
+    /**
+     * Only Used For @Authenticated HandlerMethodArgumentResolver
+     * @param id
+     * @return
+     */
+    public static AuthenticatedMember of(Long id) {
+        return new AuthenticatedMember(id, null, null, null, null, null, null);
+    }
+
     // TODO 권한이 도입되면 리팩토링 필요.
     public static AuthenticatedMember of(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {
         Set<SimpleGrantedAuthority> roles = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
