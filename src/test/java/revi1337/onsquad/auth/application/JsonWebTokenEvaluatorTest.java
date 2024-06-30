@@ -29,7 +29,7 @@ class JsonWebTokenEvaluatorTest extends PropertiesConfiguration {
     public void verifyAccessToken() {
         // given
         String subject = "revi1337";
-        Map<String, Integer> identifier = Collections.singletonMap("identifier", 1);
+        Map<String, Integer> identifier = Collections.singletonMap("memberId", 1);
         AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(subject, identifier);
 
         // when
@@ -43,7 +43,7 @@ class JsonWebTokenEvaluatorTest extends PropertiesConfiguration {
     @DisplayName("AccessToken 이 만료되면 실패한다.")
     public void verifyAccessToken2() throws InterruptedException {
         String subject = "revi1337";
-        Map<String, Integer> identifier = Collections.singletonMap("identifier", 1);
+        Map<String, Integer> identifier = Collections.singletonMap("memberId", 1);
         AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(subject, identifier);
 
         // when && then

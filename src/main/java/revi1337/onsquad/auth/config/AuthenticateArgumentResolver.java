@@ -17,7 +17,7 @@ import static revi1337.onsquad.auth.error.AuthErrorCode.*;
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final int TOKEN_INDEX = 1;
-    private static final String EXTRACT_KEY = "identifier";
+    private static final String EXTRACT_KEY = "memberId";
     private static final String TOKEN_PREFIX = "Bearer ";
 
     private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
