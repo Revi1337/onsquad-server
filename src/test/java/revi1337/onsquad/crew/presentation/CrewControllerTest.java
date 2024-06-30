@@ -133,7 +133,8 @@ class CrewControllerTest extends IntegrationTestSupport {
                                     .contentType(MULTIPART_FORM_DATA)
                                     .header(AUTHORIZATION, accessToken)
                     )
-                    .andExpect(status().isCreated());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(201));
         }
     }
 
@@ -183,7 +184,8 @@ class CrewControllerTest extends IntegrationTestSupport {
                             get("/api/v1/crew")
                                     .param("crewName", invalidCrewName)
                     )
-                    .andExpect(status().isNotFound())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(404))
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error").exists())
                     .andExpect(jsonPath("$.error.message").value(String.format("%s 크루 게시글이 존재하지 않습니다.", invalidCrewName)));
@@ -267,7 +269,8 @@ class CrewControllerTest extends IntegrationTestSupport {
                                     .contentType(APPLICATION_JSON)
                                     .header(AUTHORIZATION, accessToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.message").value(String.format(CrewErrorCode.ALREADY_REQUEST.getDescription(), "크루 이름 1")));
         }
@@ -292,7 +295,8 @@ class CrewControllerTest extends IntegrationTestSupport {
                                     .contentType(APPLICATION_JSON)
                                     .header(AUTHORIZATION, accessToken)
                     )
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.success").value(false))
                     .andExpect(jsonPath("$.error.message").value(String.format(CrewErrorCode.ALREADY_JOIN.getDescription(), "크루 이름 1")));
         }

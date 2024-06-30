@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("Squad 통합 테스트")
@@ -50,6 +51,7 @@ class SquadControllerTest extends IntegrationTestSupport {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jsonWebTokenResponse.accessToken().value())
                         .contentType(APPLICATION_JSON)
         )
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(201));
     }
 }

@@ -25,6 +25,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -51,7 +52,8 @@ class SquadControllerValidationTest extends ValidationWithRestDocsTestSupport {
                                     .content(objectMapper.writeValueAsString(squadCreateRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400));
         }
 
         static Stream<Arguments> parameterizedCreateNewSquad() {
@@ -80,7 +82,8 @@ class SquadControllerValidationTest extends ValidationWithRestDocsTestSupport {
 
             // then
             resultActions
-                    .andExpect(status().isCreated())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(201))
                     .andDo(
                             document("squad-controller/createNewSquad",
                                     preprocessRequest(prettyPrint()),

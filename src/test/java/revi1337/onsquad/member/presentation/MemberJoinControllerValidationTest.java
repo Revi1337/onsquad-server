@@ -55,7 +55,8 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
                                     .queryParam("email", email)
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400));
         }
 
         static Stream<Arguments> parameterizedSendAuthCodeToEmail() {
@@ -109,7 +110,8 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
                                     .queryParam("authCode", authCode)
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400));
         }
 
         static Stream<Arguments> parameterizedVerifyAuthCodeArguments() {
@@ -172,7 +174,8 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
                                     .queryParam("nickname", nickname)
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400));
         }
 
         @DisplayName("[Docs] 닉네임 중복 검사 문서를 작성한다.")
@@ -219,7 +222,8 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
                                     .content(objectMapper.writeValueAsString(memberJoinRequest))
                                     .contentType(APPLICATION_JSON)
                     )
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(400));
         }
 
         static Stream<Arguments> parameterizedJoinMemberArguments() {
@@ -252,7 +256,8 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
 
             // then
             resultActions
-                    .andExpect(status().isCreated())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(201))
                     .andDo(
                             document(
                                     "member-join-controller/joinMember",
