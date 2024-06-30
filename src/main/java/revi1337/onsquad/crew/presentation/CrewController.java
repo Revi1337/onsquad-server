@@ -17,7 +17,6 @@ import revi1337.onsquad.crew.dto.response.DuplicateCrewNameResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class CrewController {
     /**
      * 크루명 중복확인
      */
-    @GetMapping(value = "/crew/check")
+    @GetMapping("/crew/check")
     public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkCrewNameDuplicate(
             @RequestParam String crewName
     ) {
@@ -45,7 +44,7 @@ public class CrewController {
      * 새로운 Crew 생성
      */
     @PostMapping( value = "/crew/new", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> createNewCrew(
+    public ResponseEntity<RestResponse<String>> createNewCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
             @RequestPart MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
@@ -54,7 +53,7 @@ public class CrewController {
                 crewCreateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes(), file.getOriginalFilename()
         );
 
-        return ResponseEntity.status(CREATED).build();
+        return ResponseEntity.ok().body(RestResponse.created());
     }
 
     /**
@@ -86,12 +85,12 @@ public class CrewController {
      * Crew 참가 신청
      */
     @PostMapping("/crew/join")
-    public ResponseEntity<Void> joinCrew(
+    public ResponseEntity<RestResponse<String>> joinCrew(
             @Valid @RequestBody CrewJoinRequest crewJoinRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         crewService.joinCrew(crewJoinRequest.toDto(), authenticatedMember.toDto().getId());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(RestResponse.created());
     }
 }

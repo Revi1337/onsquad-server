@@ -59,7 +59,7 @@ public class CrewConfigController {
     }
 
     @PutMapping(value = "/crew", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
-    public void updateCrew(
+    public ResponseEntity<RestResponse<String>> updateCrew(
             @RequestParam String crewName,
             @Valid @RequestPart CrewUpdateRequest crewUpdateRequest,
             @RequestPart MultipartFile file,
@@ -68,16 +68,20 @@ public class CrewConfigController {
         crewConfigService.updateCrew(
                 crewName, crewUpdateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes(), file.getOriginalFilename()
         );
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     /**
      * Crew 참가 요청 수락
      */
     @PatchMapping("/crew/accept")
-    public void acceptCrewMember(
+    public ResponseEntity<RestResponse<String>> acceptCrewMember(
             @Valid @RequestBody CrewAcceptRequest crewAcceptRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         crewConfigService.acceptCrewMember(crewAcceptRequest.toDto(), authenticatedMember.toDto().getId());
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 }

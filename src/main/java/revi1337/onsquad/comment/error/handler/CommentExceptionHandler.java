@@ -18,8 +18,8 @@ public class CommentExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-        return ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
+        return ResponseEntity.ok().body(restResponse);
     }
 
     @ExceptionHandler(CommentBusinessException.class)
@@ -28,7 +28,7 @@ public class CommentExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-        return ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
+        return ResponseEntity.ok().body(restResponse);
     }
 }

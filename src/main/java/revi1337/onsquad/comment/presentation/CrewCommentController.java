@@ -33,7 +33,7 @@ public class CrewCommentController {
                 crewCommentService.addComment(commentRequest.toDto(), authenticatedMember.toDto().getId())
         );
 
-        return ResponseEntity.ok().body(RestResponse.success(commentResponse));
+        return ResponseEntity.ok().body(RestResponse.created(commentResponse));
     }
 
     @PostMapping("/comment/reply/new")
@@ -45,7 +45,7 @@ public class CrewCommentController {
                 crewCommentService.addCommentReply(commentReplyRequest.toDto(), authenticatedMember.toDto().getId())
         );
 
-        return ResponseEntity.ok().body(RestResponse.success(commentResponse));
+        return ResponseEntity.ok().body(RestResponse.created(commentResponse));
     }
 
     @GetMapping("/comments")

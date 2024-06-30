@@ -24,15 +24,15 @@ public class AuthExceptionHandler {
             case UsernameNotFoundException ignored -> {
                 ErrorCode errorCode = AuthErrorCode.USERNAME_NOT_FOUND;
                 ProblemDetail problemDetail = ProblemDetail.of(errorCode);
-                RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-                yield ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
+                yield ResponseEntity.ok().body(restResponse);
             }
 
             case BadCredentialsException ignored -> {
                 ErrorCode errorCode = AuthErrorCode.BAD_CREDENTIAL;
                 ProblemDetail problemDetail = ProblemDetail.of(errorCode);
-                RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-                yield ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
+                yield ResponseEntity.ok().body(restResponse);
             }
 
             default -> throw new RuntimeException("unexpected authenticated exception");
@@ -45,8 +45,8 @@ public class AuthExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode);
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-        return ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
+        return ResponseEntity.ok().body(restResponse);
     }
 
     @ExceptionHandler(AuthJoinException.class)
@@ -55,7 +55,7 @@ public class AuthExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-        return ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
+        return ResponseEntity.ok().body(restResponse);
     }
 }

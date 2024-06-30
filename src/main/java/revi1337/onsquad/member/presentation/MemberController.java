@@ -27,5 +27,4 @@ public class MemberController {
 
         return ResponseEntity.ok().body(RestResponse.success(memberInfoResponse));
     }
-
 }

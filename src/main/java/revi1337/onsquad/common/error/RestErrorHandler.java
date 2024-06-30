@@ -19,14 +19,23 @@ public class RestErrorHandler implements ErrorController {
     public ResponseEntity<RestResponse<ProblemDetail>> handleError(HttpServletRequest httpServletRequest) {
         HttpStatus httpStatus = new RequestDispatcherResolver(httpServletRequest).resolveHttpStatus();
         return switch (httpStatus) {
-            case BAD_REQUEST -> ResponseEntity.status(BAD_REQUEST)
-                    .body(RestResponse.fail(ProblemDetail.of(CommonErrorCode.INVALID_INPUT_VALUE)));
+            case BAD_REQUEST -> {
+                ErrorCode errorCode = CommonErrorCode.INVALID_INPUT_VALUE;
+                yield ResponseEntity.ok()
+                        .body(RestResponse.fail(errorCode, ProblemDetail.of(errorCode)));
+            }
 
-            case NOT_FOUND -> ResponseEntity.status(NOT_FOUND)
-                    .body(RestResponse.fail(ProblemDetail.of(CommonErrorCode.NOT_FOUND)));
+            case NOT_FOUND -> {
+                ErrorCode errorCode = CommonErrorCode.NOT_FOUND;
+                yield ResponseEntity.ok()
+                        .body(RestResponse.fail(errorCode, ProblemDetail.of(errorCode)));
+            }
 
-            default -> ResponseEntity.status(INTERNAL_SERVER_ERROR)
-                    .body(RestResponse.fail(ProblemDetail.of(CommonErrorCode.INTERNAL_SERVER_ERROR)));
+            default -> {
+                ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
+                yield ResponseEntity.ok()
+                        .body(RestResponse.fail(errorCode, ProblemDetail.of(errorCode)));
+            }
         };
     }
 }

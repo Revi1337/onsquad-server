@@ -17,7 +17,7 @@ public class AttachmentExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-        return ResponseEntity.status(errorCode.getStatus()).body(restResponse);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
+        return ResponseEntity.ok().body(restResponse);
     }
 }

@@ -25,8 +25,8 @@ public class RestExceptionHandler {
         CommonErrorCode commonErrorCode = CommonErrorCode.INVALID_INPUT_VALUE;
         ProblemDetail problemDetail = new ValidationExceptionTranslator()
                 .translate(commonErrorCode, exception);
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(problemDetail);
-        return ResponseEntity.status(commonErrorCode.getStatus()).body(restResponse);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(commonErrorCode, problemDetail);
+        return ResponseEntity.ok().body(restResponse);
     }
 
     @ExceptionHandler({
@@ -37,15 +37,15 @@ public class RestExceptionHandler {
     public ResponseEntity<RestResponse<ProblemDetail>> handleServletException(
             Exception exception
     ) {
-        CommonErrorCode commonErrorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
+        ErrorCode errorcode = CommonErrorCode.INTERNAL_SERVER_ERROR;
         if (exception instanceof MethodArgumentTypeMismatchException) {
-            commonErrorCode = CommonErrorCode.PARAMETER_TYPE_MISMATCH;
+            errorcode = CommonErrorCode.PARAMETER_TYPE_MISMATCH;
         } else if (exception instanceof MissingServletRequestParameterException) {
-            commonErrorCode = CommonErrorCode.MISSING_PARAMETER;
+            errorcode = CommonErrorCode.MISSING_PARAMETER;
         } else if (exception instanceof HttpRequestMethodNotSupportedException){
-            commonErrorCode = CommonErrorCode.METHOD_NOT_SUPPORT;
+            errorcode = CommonErrorCode.METHOD_NOT_SUPPORT;
         }
-        return ResponseEntity.status(commonErrorCode.getStatus())
-                .body(RestResponse.fail(ProblemDetail.of(commonErrorCode)));
+        return ResponseEntity.ok()
+                .body(RestResponse.fail(errorcode, ProblemDetail.of(errorcode)));
     }
 }
