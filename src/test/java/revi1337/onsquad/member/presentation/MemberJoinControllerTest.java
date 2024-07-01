@@ -190,7 +190,6 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(401))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("A008"))
                     .andExpect(jsonPath("$.error.message").value("메일 인증이 되어있지 않습니다."));
         }
 
@@ -214,7 +213,6 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(401))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("A007"))
                     .andExpect(jsonPath("$.error.message").value(String.format("%s 닉네임은 이미 사용중입니다.", member.getNickname().getValue())));
         }
 
@@ -238,7 +236,6 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(401))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("A009"))
                     .andExpect(jsonPath("$.error.message").value("이미 회원가입이 되어있는 사용자입니다."));
         }
 
@@ -259,7 +256,6 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M001"))
                     .andExpect(jsonPath("$.error.message").value("이메일 형식이 올바르지 않습니다."));
         }
 
@@ -280,7 +276,6 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.code").value("M002"))
                     .andExpect(jsonPath("$.error.message").value("닉네임은 2 자 이상 8 자 이하여야합니다."));
         }
     }

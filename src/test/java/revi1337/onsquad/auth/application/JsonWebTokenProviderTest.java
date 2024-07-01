@@ -4,8 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import revi1337.onsquad.auth.dto.response.AccessToken;
-import revi1337.onsquad.auth.dto.response.RefreshToken;
+import revi1337.onsquad.auth.domain.vo.AccessToken;
+import revi1337.onsquad.auth.domain.vo.RefreshToken;
 import revi1337.onsquad.config.PropertiesConfiguration;
 
 import java.util.Arrays;
@@ -25,10 +25,10 @@ public class JsonWebTokenProviderTest extends PropertiesConfiguration {
     public void generateAccessToken() {
         // given
         String subject = "revi1337";
-        Map<String, Integer> identifier = Collections.singletonMap("memberId", 1);
+        Map<String, Integer> memberId = Collections.singletonMap("memberId", 1);
 
         // when
-        AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(subject, identifier);
+        AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(subject, memberId);
 
         // then
         assertThat(Arrays.stream(accessToken.value().split("\\.")).count()).isEqualTo(3);
@@ -39,7 +39,7 @@ public class JsonWebTokenProviderTest extends PropertiesConfiguration {
     public void generateRefreshToken() {
         // given
         String subject = "revi1337";
-        Map<String, Integer> identifier = Collections.singletonMap("identifier", 1);
+        Map<String, Integer> identifier = Collections.singletonMap("memberId", 1);
 
         // when
         RefreshToken refreshToken = jsonWebTokenProvider.generateRefreshToken(subject, identifier);

@@ -10,20 +10,23 @@ import revi1337.onsquad.auth.domain.redis.RedisTokenRepository;
 import revi1337.onsquad.auth.domain.vo.RefreshToken;
 import revi1337.onsquad.support.TestContainerSupport;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 /**
  * TODO TokenProperties 를 Mocking 하여 Stubbing 해야하는데... 아무리 찾아봐도 방법이 나오지않는다.
  *  Reflection 을 사용해서 할 수 있다고는하는데.. 시간관계상 슬라이스테스트 대신 SpringBootTest 로 대체한다.
  */
 @SpringBootTest
-class RefreshTokenManagerTest extends TestContainerSupport {
+@DisplayName("RedisRefreshTokenManager 테스트")
+class RedisRefreshTokenManagerTest extends TestContainerSupport {
 
     @Autowired private StringRedisTemplate stringRedisTemplate;
     @Autowired private RedisTokenRepository redisTokenRepository;
-    @Autowired private RefreshTokenManager refreshTokenManager;
+    @Autowired private RedisRefreshTokenManager redisRefreshTokenManager;
 
     @AfterEach
     void tearDown() {
@@ -41,10 +44,45 @@ class RefreshTokenManagerTest extends TestContainerSupport {
         Long id = 2L;
 
         // when
-        refreshTokenManager.storeTemporaryToken(refreshToken, id);
+        redisRefreshTokenManager.storeTemporaryToken(refreshToken, id);
 
         // then
-        String memberId = redisTokenRepository.retrieveTemporaryRefreshToken(refreshToken);
-        assertThat(memberId).isEqualTo(id.toString());
+        Optional<Long> tokenOwnerId = redisTokenRepository.retrieveTemporaryRefreshToken(refreshToken);
+        assertSoftly(softly -> {
+            softly.assertThat(tokenOwnerId).isPresent();
+            softly.assertThat(tokenOwnerId.get()).isEqualTo(2L);
+        });
+    }
+
+    @DisplayName("RefreshToken 이 잘 조회되는지 확인한다.")
+    @Test
+    public void findTemporaryToken() {
+        // given
+        RefreshToken refreshToken = RefreshToken.of(UUID.randomUUID().toString());
+        Long id = 1L;
+        redisRefreshTokenManager.storeTemporaryToken(refreshToken, id);
+
+        // when
+        Optional<Long> temporaryToken = redisRefreshTokenManager.findTemporaryToken(refreshToken);
+
+        // then
+        assertThat(temporaryToken).isPresent();
+        assertThat(temporaryToken.get()).isEqualTo(id);
+    }
+
+    @DisplayName("RefreshToken 이 삭제되는지 확인한다.")
+    @Test
+    public void removeTemporaryToken() {
+        // given
+        RefreshToken refreshToken = RefreshToken.of(UUID.randomUUID().toString());
+        Long id = 1L;
+        redisRefreshTokenManager.storeTemporaryToken(refreshToken, id);
+
+        // when
+        redisRefreshTokenManager.removeTemporaryToken(refreshToken);
+
+        // then
+        Optional<Long> temporaryToken = redisRefreshTokenManager.findTemporaryToken(refreshToken);
+        assertThat(temporaryToken).isEmpty();
     }
 }
