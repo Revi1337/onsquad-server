@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import revi1337.onsquad.auth.error.AuthErrorCode;
 import revi1337.onsquad.auth.error.exception.AuthJoinException;
-import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
@@ -37,16 +36,6 @@ public class AuthExceptionHandler {
 
             default -> throw new RuntimeException("unexpected authenticated exception");
         };
-    }
-
-    @ExceptionHandler(AuthTokenException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleAuthTokenException(
-            AuthTokenException exception
-    ) {
-        ErrorCode errorCode = exception.getErrorCode();
-        ProblemDetail problemDetail = ProblemDetail.of(errorCode);
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
     }
 
     @ExceptionHandler(AuthJoinException.class)

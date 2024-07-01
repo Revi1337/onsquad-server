@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.dto;
+package revi1337.onsquad.auth.domain.vo;
 
 public record RefreshToken(
         String value

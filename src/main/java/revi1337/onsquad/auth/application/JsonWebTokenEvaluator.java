@@ -13,7 +13,7 @@ import java.security.Key;
 import java.util.function.Function;
 
 import static revi1337.onsquad.auth.config.properties.TokenProperties.*;
-import static revi1337.onsquad.auth.error.AuthErrorCode.*;
+import static revi1337.onsquad.auth.error.TokenErrorCode.*;
 
 @Component
 public class JsonWebTokenEvaluator {
