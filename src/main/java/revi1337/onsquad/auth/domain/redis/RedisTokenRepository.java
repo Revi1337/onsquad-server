@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.auth.dto.response.RefreshToken;
+import revi1337.onsquad.auth.domain.vo.RefreshToken;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -19,8 +20,13 @@ public class RedisTokenRepository {
         valueOperations.set(refreshToken.value(), String.valueOf(id), expired);
     }
 
-    public String retrieveTemporaryRefreshToken(RefreshToken refreshToken) {
+    public Optional<Long> retrieveTemporaryRefreshToken(RefreshToken refreshToken) {
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
-        return valueOperations.get(refreshToken.value());
+        return Optional.ofNullable(valueOperations.get(refreshToken.value()))
+                .map(Long::parseLong);
+    }
+
+    public void deleteTemporaryRefreshToken(RefreshToken refreshToken) {
+        stringRedisTemplate.delete(refreshToken.value());
     }
 }
