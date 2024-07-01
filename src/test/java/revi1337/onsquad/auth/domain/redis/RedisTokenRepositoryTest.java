@@ -7,14 +7,16 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import revi1337.onsquad.auth.dto.response.RefreshToken;
+import revi1337.onsquad.auth.domain.vo.RefreshToken;
 import revi1337.onsquad.config.SpringActiveProfilesResolver;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayName("RedisTokenRepository 테스트")
 @Import(RedisTokenRepository.class)
@@ -51,9 +53,12 @@ class RedisTokenRepositoryTest extends TestContainerSupport {
         redisTokenRepository.storeTemporaryRefreshToken(refreshToken, id, duration);
 
         // when
-        String extractedRefreshToken = redisTokenRepository.retrieveTemporaryRefreshToken(refreshToken);
+        Optional<Long> tokenOwnerId = redisTokenRepository.retrieveTemporaryRefreshToken(refreshToken);
 
         // then
-        assertThat(extractedRefreshToken).isNotNull();
+        assertSoftly(softly -> {
+            softly.assertThat(tokenOwnerId).isPresent();
+            softly.assertThat(tokenOwnerId.get()).isEqualTo(1L);
+        });
     }
 }
