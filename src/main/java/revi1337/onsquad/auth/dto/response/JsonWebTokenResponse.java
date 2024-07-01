@@ -1,5 +1,8 @@
 package revi1337.onsquad.auth.dto.response;
 
+import revi1337.onsquad.auth.domain.vo.AccessToken;
+import revi1337.onsquad.auth.domain.vo.RefreshToken;
+
 public record JsonWebTokenResponse(
         AccessToken accessToken,
         RefreshToken refreshToken

@@ -11,7 +11,7 @@ import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 
-import static revi1337.onsquad.auth.error.AuthErrorCode.*;
+import static revi1337.onsquad.auth.error.TokenErrorCode.*;
 
 @RequiredArgsConstructor
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {
