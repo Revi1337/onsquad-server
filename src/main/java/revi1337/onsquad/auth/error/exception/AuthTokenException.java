@@ -41,9 +41,9 @@ public abstract class AuthTokenException extends RuntimeException {
         }
     }
 
-    public static class InvalidRefreshOwner extends AuthTokenException {
+    public static class NotFoundRefresh extends AuthTokenException {
 
-        public InvalidRefreshOwner(ErrorCode errorCode) {
+        public NotFoundRefresh(ErrorCode errorCode) {
             super(errorCode);
         }
     }

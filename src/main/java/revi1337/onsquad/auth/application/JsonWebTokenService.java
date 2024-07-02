@@ -12,6 +12,7 @@ import revi1337.onsquad.member.domain.MemberRepository;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Optional;
 
 import static revi1337.onsquad.auth.error.TokenErrorCode.*;
 
@@ -24,7 +25,7 @@ public class JsonWebTokenService {
 
     private final JsonWebTokenProvider jsonWebTokenProvider;
     private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
-    private final RefreshTokenManager refreshTokenManager;
+    private final RefreshTokenManager redisHashRefreshTokenManager;
     private final MemberRepository memberRepository;
 
     public JsonWebTokenResponse generateTokenPair(MemberDto dto) {
@@ -35,14 +36,16 @@ public class JsonWebTokenService {
     }
 
     public void storeTemporaryTokenInMemory(RefreshToken refreshToken, Long memberId) {
-        refreshTokenManager.storeTemporaryToken(refreshToken, memberId);
+        redisHashRefreshTokenManager.storeTemporaryToken(refreshToken, memberId);
     }
 
     public JsonWebTokenResponse reissueToken(RefreshToken refreshToken) {
-        return refreshTokenManager.findTemporaryToken(refreshToken)
-                .filter(tokenOwnerId -> isTokenOwnerValid(tokenOwnerId, refreshToken))
-                .map(tokenOwnerId -> restoreTemporaryTokenAndCreateTokenPair(tokenOwnerId, refreshToken))
-                .orElseThrow(() -> new AuthTokenException.InvalidRefreshOwner(INVALID_REFRESH_OWNER));
+        Claims claims = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
+        return Optional.ofNullable(claims.get("memberId", Long.class))
+                .flatMap(memberId -> redisHashRefreshTokenManager.findTemporaryToken(memberId)
+                        .filter(token -> token.equals(refreshToken))
+                        .map(token -> restoreTemporaryTokenAndCreateTokenPair(memberId)))
+                .orElseThrow(() -> new AuthTokenException.NotFoundRefresh(NOT_FOUND_REFRESH));
     }
 
     private AccessToken generateAccessToken(MemberDto dto) {
@@ -66,28 +69,17 @@ public class JsonWebTokenService {
         );
     }
 
-    private boolean isTokenOwnerValid(Long tokenOwnerId, RefreshToken refreshToken) {
-        Claims claims = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
-        Long claimMemberId = claims.get("memberId", Long.class);
-        return tokenOwnerId.equals(claimMemberId);
-    }
-
-    private JsonWebTokenResponse restoreTemporaryTokenAndCreateTokenPair(Long tokenOwnerId, RefreshToken refreshToken) {
+    private JsonWebTokenResponse restoreTemporaryTokenAndCreateTokenPair(Long tokenOwnerId) {
         return memberRepository.findById(tokenOwnerId)
                 .map(member -> {
                     JsonWebTokenResponse jsonWebTokenResponse = generateTokenPair(MemberDto.from(member));
-                    restoreTemporaryToken(refreshToken, jsonWebTokenResponse.refreshToken(), tokenOwnerId);
+                    updateTemporaryToken(tokenOwnerId, jsonWebTokenResponse.refreshToken());
                     return jsonWebTokenResponse;
                 })
                 .orElseThrow(() -> new AuthTokenException.NotFoundRefreshOwner(NOT_FOUND_REFRESH_MEMBER));
     }
 
-    private void restoreTemporaryToken(RefreshToken refreshToken, RefreshToken newRefreshToken, Long tokenOwnerId) {
-        removeTemporaryTokenInMemory(refreshToken);
-        storeTemporaryTokenInMemory(newRefreshToken, tokenOwnerId);
-    }
-
-    private void removeTemporaryTokenInMemory(RefreshToken refreshToken) {
-        refreshTokenManager.removeTemporaryToken(refreshToken);
+    private void updateTemporaryToken(Long tokenOwnerId, RefreshToken newRefreshToken) {
+        redisHashRefreshTokenManager.updateTemporaryToken(tokenOwnerId, newRefreshToken);
     }
 }
