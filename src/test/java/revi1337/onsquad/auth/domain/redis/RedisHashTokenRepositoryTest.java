@@ -25,7 +25,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class RedisTokenRepositoryTest extends TestContainerSupport {
 
     @Autowired private StringRedisTemplate stringRedisTemplate;
-    @Autowired private RedisTokenRepository redisTokenRepository;
+    @Autowired private RedisHashTokenRepository redisTokenRepository;
 
     @DisplayName("RefreshToken 이 저장되는지 확인한다.")
     @Test
