@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import revi1337.onsquad.auth.domain.vo.RefreshToken;
 import revi1337.onsquad.config.SpringActiveProfilesResolver;
@@ -15,17 +14,15 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayName("RedisTokenRepository 테스트")
-@Import(RedisTokenRepository.class)
+@Import(RedisHashTokenRepository.class)
 @DataRedisTest
 @ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
-class RedisTokenRepositoryTest extends TestContainerSupport {
+class RedisHashTokenRepositoryTest extends TestContainerSupport {
 
-    @Autowired private StringRedisTemplate stringRedisTemplate;
-    @Autowired private RedisHashTokenRepository redisTokenRepository;
+    @Autowired private RedisHashTokenRepository redisHashTokenRepository;
 
     @DisplayName("RefreshToken 이 저장되는지 확인한다.")
     @Test
@@ -36,11 +33,14 @@ class RedisTokenRepositoryTest extends TestContainerSupport {
         Duration duration = Duration.ofSeconds(5);
 
         // when
-        redisTokenRepository.storeTemporaryRefreshToken(refreshToken, id, duration);
+        redisHashTokenRepository.storeTemporaryRefreshToken(refreshToken, id, duration);
 
         // then
-        String extractedRefreshToken = stringRedisTemplate.opsForValue().get(refreshToken.value());
-        assertThat(extractedRefreshToken).isNotNull();
+        Optional<RefreshToken> findToken = redisHashTokenRepository.retrieveTemporaryRefreshToken(id);
+        assertSoftly(softly -> {
+            softly.assertThat(findToken).isPresent();
+            softly.assertThat(findToken.get()).isEqualTo(refreshToken);
+        });
     }
 
     @DisplayName("RefreshToken 이 잘 조회되는지 확인한다.")
@@ -50,15 +50,12 @@ class RedisTokenRepositoryTest extends TestContainerSupport {
         RefreshToken refreshToken = RefreshToken.of(UUID.randomUUID().toString());
         Long id = 1L;
         Duration duration = Duration.ofSeconds(5);
-        redisTokenRepository.storeTemporaryRefreshToken(refreshToken, id, duration);
+        redisHashTokenRepository.storeTemporaryRefreshToken(refreshToken, id, duration);
 
         // when
-        Optional<Long> tokenOwnerId = redisTokenRepository.retrieveTemporaryRefreshToken(refreshToken);
+        Optional<RefreshToken> findToken = redisHashTokenRepository.retrieveTemporaryRefreshToken(id);
 
         // then
-        assertSoftly(softly -> {
-            softly.assertThat(tokenOwnerId).isPresent();
-            softly.assertThat(tokenOwnerId.get()).isEqualTo(1L);
-        });
+        assertSoftly(softly -> softly.assertThat(findToken).isPresent());
     }
 }
