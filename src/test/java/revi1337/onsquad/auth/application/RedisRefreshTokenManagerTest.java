@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import revi1337.onsquad.auth.domain.redis.RedisTokenRepository;
+import revi1337.onsquad.auth.domain.redis.RedisHashTokenRepository;
 import revi1337.onsquad.auth.domain.vo.RefreshToken;
 import revi1337.onsquad.support.TestContainerSupport;
 
@@ -25,7 +25,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class RedisRefreshTokenManagerTest extends TestContainerSupport {
 
     @Autowired private StringRedisTemplate stringRedisTemplate;
-    @Autowired private RedisTokenRepository redisTokenRepository;
+    @Autowired private RedisHashTokenRepository redisHashTokenRepository;
     @Autowired private RedisRefreshTokenManager redisRefreshTokenManager;
 
     @AfterEach
@@ -36,9 +36,9 @@ class RedisRefreshTokenManagerTest extends TestContainerSupport {
                 .flushAll();
     }
 
-    @DisplayName("RefreshToken 이 잘 저장되는지 확인한다.")
+    @DisplayName("RefreshToken 이 잘 저장되고 조회되는지 확인한다.")
     @Test
-    public void storeTemporaryToken() {
+    public void storeAndRetrieveTemporaryToken() {
         // given
         RefreshToken refreshToken = RefreshToken.of(UUID.randomUUID().toString());
         Long id = 2L;
@@ -47,27 +47,27 @@ class RedisRefreshTokenManagerTest extends TestContainerSupport {
         redisRefreshTokenManager.storeTemporaryToken(refreshToken, id);
 
         // then
-        Optional<Long> tokenOwnerId = redisTokenRepository.retrieveTemporaryRefreshToken(refreshToken);
-        assertSoftly(softly -> {
-            softly.assertThat(tokenOwnerId).isPresent();
-            softly.assertThat(tokenOwnerId.get()).isEqualTo(2L);
-        });
+        assertThat(redisHashTokenRepository.retrieveTemporaryRefreshToken(2L)).isPresent();
     }
 
-    @DisplayName("RefreshToken 이 잘 조회되는지 확인한다.")
+    @DisplayName("RefreshToken 이 변경되는지 확인한다.")
     @Test
-    public void findTemporaryToken() {
+    public void updateTemporaryToken() {
         // given
-        RefreshToken refreshToken = RefreshToken.of(UUID.randomUUID().toString());
         Long id = 1L;
+        RefreshToken refreshToken = RefreshToken.of(UUID.randomUUID().toString());
+        RefreshToken newRefreshToken = RefreshToken.of(UUID.randomUUID().toString());
         redisRefreshTokenManager.storeTemporaryToken(refreshToken, id);
 
         // when
-        Optional<Long> temporaryToken = redisRefreshTokenManager.findTemporaryToken(refreshToken);
+        redisRefreshTokenManager.updateTemporaryToken(id, newRefreshToken);
 
         // then
-        assertThat(temporaryToken).isPresent();
-        assertThat(temporaryToken.get()).isEqualTo(id);
+        Optional<RefreshToken> findToken = redisRefreshTokenManager.findTemporaryToken(id);
+        assertSoftly(softly -> {
+            softly.assertThat(findToken).isPresent();
+            softly.assertThat(findToken.get()).isEqualTo(newRefreshToken);
+        });
     }
 
     @DisplayName("RefreshToken 이 삭제되는지 확인한다.")
@@ -79,10 +79,9 @@ class RedisRefreshTokenManagerTest extends TestContainerSupport {
         redisRefreshTokenManager.storeTemporaryToken(refreshToken, id);
 
         // when
-        redisRefreshTokenManager.removeTemporaryToken(refreshToken);
+        redisRefreshTokenManager.removeTemporaryToken(id);
 
         // then
-        Optional<Long> temporaryToken = redisRefreshTokenManager.findTemporaryToken(refreshToken);
-        assertThat(temporaryToken).isEmpty();
+        assertThat(redisRefreshTokenManager.findTemporaryToken(id)).isEmpty();
     }
 }
