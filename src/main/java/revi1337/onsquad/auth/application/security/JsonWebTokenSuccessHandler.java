@@ -7,14 +7,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import revi1337.onsquad.auth.application.JsonWebTokenProvider;
 import revi1337.onsquad.auth.application.JsonWebTokenService;
-import revi1337.onsquad.auth.application.RefreshTokenStoreService;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import static org.springframework.http.MediaType.*;
 
@@ -31,13 +28,17 @@ public class JsonWebTokenSuccessHandler implements AuthenticationSuccessHandler 
                                         Authentication authentication) throws IOException {
         log.info("{} --> onAuthenticationSuccess", getClass().getSimpleName());
         if (authentication.getPrincipal() instanceof AuthenticatedMember authenticatedMember) {
-            JsonWebTokenResponse jsonWebTokenResponse = jsonWebTokenService.generateTokenPairResponse(Collections.singletonMap("identifier", authenticatedMember.id()));
-            jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebTokenResponse.refreshToken(), authenticatedMember.toDto());
+            JsonWebTokenResponse jsonWebTokenResponse = generateJsonWebTokenPair(authenticatedMember);
+            jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebTokenResponse.refreshToken(), authenticatedMember.id());
             sendTokenResponseToClient(response, jsonWebTokenResponse);
             return;
         }
 
         throw new RuntimeException("unexpected principal type");
+    }
+
+    private JsonWebTokenResponse generateJsonWebTokenPair(AuthenticatedMember authenticatedMember) {
+        return jsonWebTokenService.generateTokenPair(authenticatedMember.toDto());
     }
 
     private void sendTokenResponseToClient(HttpServletResponse response,

@@ -4,9 +4,10 @@ import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
-import revi1337.onsquad.auth.dto.response.AccessToken;
+import revi1337.onsquad.auth.domain.vo.AccessToken;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.config.PropertiesConfiguration;
 
@@ -29,7 +30,7 @@ class JsonWebTokenEvaluatorTest extends PropertiesConfiguration {
     public void verifyAccessToken() {
         // given
         String subject = "revi1337";
-        Map<String, Integer> identifier = Collections.singletonMap("identifier", 1);
+        Map<String, Integer> identifier = Collections.singletonMap("memberId", 1);
         AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(subject, identifier);
 
         // when
@@ -43,7 +44,7 @@ class JsonWebTokenEvaluatorTest extends PropertiesConfiguration {
     @DisplayName("AccessToken 이 만료되면 실패한다.")
     public void verifyAccessToken2() throws InterruptedException {
         String subject = "revi1337";
-        Map<String, Integer> identifier = Collections.singletonMap("identifier", 1);
+        Map<String, Integer> identifier = Collections.singletonMap("memberId", 1);
         AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(subject, identifier);
 
         // when && then

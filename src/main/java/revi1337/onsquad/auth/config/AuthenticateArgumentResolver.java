@@ -11,13 +11,13 @@ import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 
-import static revi1337.onsquad.auth.error.AuthErrorCode.*;
+import static revi1337.onsquad.auth.error.TokenErrorCode.*;
 
 @RequiredArgsConstructor
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final int TOKEN_INDEX = 1;
-    private static final String EXTRACT_KEY = "identifier";
+    private static final String EXTRACT_KEY = "memberId";
     private static final String TOKEN_PREFIX = "Bearer ";
 
     private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
