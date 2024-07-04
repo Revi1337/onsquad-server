@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import revi1337.onsquad.comment.dto.CommentsDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
@@ -604,11 +605,13 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
                 .fetch();
 
         for (Tuple tuple : rn) {
-            Long l = tuple.get(1, Long.class);
-            System.out.println("l = " + l);
+            Comment findComment = tuple.get(0, Comment.class);
+            System.out.println("parent comment id : " + findComment.getParent().getId());
+            System.out.println(String.format("---> comment id : %d, row_number : %d \n", findComment.getId(), tuple.get(1, Long.class)));
         }
     }
 
+    @Rollback(false)
     @Test
     @DisplayName("JPQLNextExpressions 테스트 2")
     public void jPQLNextExpressions2() {
@@ -683,6 +686,12 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
                         comment.parent.id.in(1, 2, 3)
                 )
                 .fetch();
+
+        for (Tuple tuple : rn) {
+            Comment findComment = tuple.get(0, Comment.class);
+            System.out.println("parent comment id : " + findComment.getParent().getId());
+            System.out.println(String.format("---> comment id : %d, row_number : %d \n", findComment.getId(), tuple.get(1, Long.class)));
+        }
     }
 
     @Test
