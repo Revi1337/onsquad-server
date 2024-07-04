@@ -1,10 +1,13 @@
 package revi1337.onsquad.comment.presentation;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
@@ -17,6 +20,7 @@ import revi1337.onsquad.common.dto.RestResponse;
 
 import java.util.List;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/crew")
 @RestController
@@ -50,12 +54,12 @@ public class CrewCommentController {
 
     @GetMapping("/comments")
     public ResponseEntity<RestResponse<List<CommentsResponse>>> findComments(
-            @Qualifier("parent") Pageable parentPageable,
-            @Qualifier("child") Pageable childPageable,
             @RequestParam String crewName,
+            @Qualifier("parent") Pageable parentPageable,
+            @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) Integer childSize,
             @Authenticate AuthenticatedMember ignored
     ) {
-        List<CommentsResponse> commentsResponses = crewCommentService.findComments(crewName, parentPageable, childPageable)
+        List<CommentsResponse> commentsResponses = crewCommentService.findComments(crewName, parentPageable, childSize)
                 .stream()
                 .map(CommentsResponse::from)
                 .toList();

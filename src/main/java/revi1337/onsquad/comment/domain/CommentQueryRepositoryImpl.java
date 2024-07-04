@@ -1,35 +1,32 @@
 package revi1337.onsquad.comment.domain;
 
-import com.blazebit.persistence.querydsl.JPQLNextExpressions;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.SubQueryExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.SimpleExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.jpa.sql.JPASQLQuery;
-import com.querydsl.sql.SQLExpressions;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.vo.Name;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.*;
 import static revi1337.onsquad.comment.domain.QComment.*;
 import static revi1337.onsquad.crew.domain.QCrew.*;
 import static revi1337.onsquad.member.domain.QMember.*;
 
-@RequiredArgsConstructor
 public class CommentQueryRepositoryImpl implements CommentQueryRepository {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final JPAQueryFactory jpaQueryFactory;
+
+    public CommentQueryRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+        this.jpaQueryFactory = jpaQueryFactory;
+    }
 
     @Override
     public List<Comment> findCommentsByCrewName(Name crewName) {
@@ -60,7 +57,7 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
     }
 
     @Override
-    public List<Comment> findParentCommentsByCrewNameUsingPageable(Name crewName, Pageable pageable) {
+    public List<Comment> findLimitedParentCommentsByCrewName(Name crewName, Pageable pageable) {
         return jpaQueryFactory
                 .selectFrom(comment)
                 .innerJoin(comment.member, member).fetchJoin()
@@ -87,7 +84,7 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
     }
 
     @Override
-    public Map<Comment, List<Comment>> findGroupedChildCommentsByParentIdIn(List<Long> parentIds, Pageable childPageable) {
+    public Map<Comment, List<Comment>> findGroupedChildCommentsByParentIdIn(List<Long> parentIds) {
         return jpaQueryFactory
                 .selectFrom(comment)
                 .innerJoin(comment.member, member).fetchJoin()
@@ -98,80 +95,32 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
     }
 
     @Override
-    public List<Tuple> findGroupedChildCommentsByParentIdIn2(List<Long> parentIds) {
-//        List<Tuple> sequence = jpaQueryFactory
-//                .select(comment,
-//                        SQLExpressions.rowNumber()
-//                                .over()
-//                                .partitionBy(comment.parent.id)
-//                                .as("rn")
-//                )
-//                .from(comment)
-//                .innerJoin(comment.member, member).fetchJoin()
-//                .innerJoin(comment.crew, crew).fetchJoin()
-//                .where(
-//                        comment.parent.id.in(parentIds)
-//                )
-//                .fetch();
+    public List<Comment> findLimitedChildCommentsByParentIdIn(List<Long> parentIds, Integer childrenSize) {
+        String sql = "SELECT * FROM (" +
+                "    SELECT " +
+                "        comment.*, " +
+                "        ROW_NUMBER() OVER (PARTITION BY comment.parent_id ORDER BY comment.created_at DESC) AS rn " +
+                "    FROM comment " +
+                "    INNER JOIN member ON comment.member_id = member.id " +
+                "    WHERE comment.parent_id IN (:parentIds) " +
+                ") AS subquery " +
+                " WHERE subquery.rn <= (:childLimit)" +
+                " ORDER BY subquery.rn ASC";
 
+        List<Comment> resultList = entityManager.createNativeQuery(sql, Comment.class)
+                .setParameter("parentIds", parentIds)
+                .setParameter("childLimit", childrenSize)
+                .getResultList();
 
+        Set<Long> memberIds = resultList.stream()
+                .map(Comment::getId)
+                .collect(Collectors.toSet());
 
-//        List<Tuple> sequence = jpaQueryFactory
-//                .select(comment,
-//                        JPQLNextExpressions.rowNumber()
-//                                .over()
-//                                .partitionBy(comment.parent.id)
-//                                .orderBy(comment.createdAt.desc())
-//                                .as("rn")
-//                )
-//                .from(comment)
-//                .innerJoin(comment.member, member).fetchJoin()
-//                .innerJoin(comment.crew, crew).fetchJoin()
-//                .where(
-//                        comment.parent.id.in(parentIds),
-//                )
-//                .fetch();
+        entityManager.createQuery("select m from Member as m where m.id in :memberIds")
+                .setParameter("memberIds", memberIds)
+                .getResultList();
 
-
-
-//        List<Tuple> sequence = jpaQueryFactory
-//                .select(comment,
-//                        JPQLNextExpressions.rowNumber()
-//                                .over()
-//                                .partitionBy(comment.parent.id)
-//                                .orderBy(comment.createdAt.desc())
-//                                .as("rn")
-//                )
-//                .from(comment)
-//                .innerJoin(comment.member, member).fetchJoin()
-//                .innerJoin(comment.crew, crew).fetchJoin()
-//                .where(
-//                        comment.parent.id.in(parentIds)
-//                )
-//                .fetch();
-
-
-
-//        List<Tuple> sequence = jpaQueryFactory
-//                .select(comment,
-//                        SQLExpressions.rowNumber()
-//                                .over()
-//                                .partitionBy(comment.parent.id)
-//                                .orderBy(comment.createdAt.desc())
-//                                .as("rn")
-//                )
-//                .from(comment)
-//                .innerJoin(comment.member, member).fetchJoin()
-//                .innerJoin(comment.crew, crew).fetchJoin()
-//                .where(
-//                        comment.parent.id.in(parentIds)
-//                )
-//                .having(Expressions.numberPath(Long.class, "rn").loe(10))
-//                .orderBy(Expressions.numberPath(Long.class, "rn").asc())
-//                .fetch();
-
-//        return sequence;
-        return null;
+        return resultList;
     }
 
     @Override
