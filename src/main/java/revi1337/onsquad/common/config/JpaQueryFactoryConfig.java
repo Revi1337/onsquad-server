@@ -2,7 +2,6 @@ package revi1337.onsquad.common.config;
 
 import com.blazebit.persistence.querydsl.JPQLNextOps;
 import com.blazebit.persistence.querydsl.JPQLNextTemplates;
-import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.sql.SQLOps;
 import jakarta.persistence.EntityManager;
@@ -18,13 +17,9 @@ public class JpaQueryFactoryConfig {
 
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
-//        return new JPAQueryFactory(JPQLTemplates.DEFAULT, entityManager);
-//        return new JPAQueryFactory(JPQLNextTemplates.DEFAULT, entityManager);
         return new JPAQueryFactory(new CustomJPQLTemplates(), entityManager);
     }
 
-//    static class CustomJPQLTemplates extends JPQLTemplates {
-//    static class CustomJPQLTemplates extends Hibernate5Templates {
     static class CustomJPQLTemplates extends JPQLNextTemplates {
 
         public CustomJPQLTemplates() {
