@@ -24,13 +24,6 @@ public class JpaQueryFactoryConfig {
 
         public CustomJPQLTemplates() {
             add(SQLOps.ROWNUMBER, "row_number()");
-            add(JPQLNextOps.ROW_NUMBER, "row_number()");
-            add(JPQLNextOps.WINDOW_ORDER_BY, "ORDER BY {0}");
-            add(JPQLNextOps.WINDOW_PARTITION_BY, "PARTITION BY {0}");
-            add(JPQLNextOps.WINDOW_DEFINITION_1, "{0}");
-            add(JPQLNextOps.WINDOW_DEFINITION_2, "{0} {1}");
-            add(JPQLNextOps.WINDOW_DEFINITION_3, "{0} {1} {2}");
-            add(JPQLNextOps.WINDOW_DEFINITION_4, "{0} {1} {2} {3}");
         }
     }
 }
