@@ -20,7 +20,6 @@ import revi1337.onsquad.member.domain.MemberRepository;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static revi1337.onsquad.comment.error.CommentErrorCode.*;
@@ -75,43 +74,34 @@ public class CrewCommentService {
         }
     }
 
-    public List<CommentsDto> findComments(String crewName, Pageable parentPageable, Pageable childPageable) {
-        List<Comment> parentComments = commentRepository.findParentCommentsByCrewNameUsingPageable(new Name(crewName), parentPageable);
-        List<Long> parentIds = collectParentIds(parentComments);
-        Map<Long, CommentsDto> commentDtoMap = retrieveChildrenAndLinkToParent(parentIds, parentComments, childPageable);
+    public List<CommentsDto> findComments(String crewName, Pageable parentPageable, Integer childSize) {
+        List<Comment> parentComments = commentRepository.findLimitedParentCommentsByCrewName(new Name(crewName), parentPageable);
+        Map<Long, CommentsDto> commentDtoMap = convertToCommentsDto(parentComments);
+        List<Comment> childComments = retrieveChildCommentsByParentIds(childSize, parentComments);
 
+        convertToCommentsDtoAndLinkToParent(childComments, commentDtoMap);
         return parentComments.stream()
                 .map(comment -> commentDtoMap.get(comment.getId()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private Map<Long, CommentsDto> retrieveChildrenAndLinkToParent(List<Long> parentIds, List<Comment> parentComments, Pageable childPageable) {
-        Map<Comment, List<Comment>> groupedByParents = commentRepository.findGroupedChildCommentsByParentIdIn(parentIds, childPageable);
-        Map<Long, CommentsDto> commentDtoMap = linkParentWithChildrenAndReturnDto(parentComments, groupedByParents);
-        return commentDtoMap;
+    private List<Comment> retrieveChildCommentsByParentIds(Integer childSize, List<Comment> parentComments) {
+        List<Long> parentIds = collectParentIds(parentComments);
+        return commentRepository.findLimitedChildCommentsByParentIdIn(parentIds, childSize);
     }
 
-    private Map<Long, CommentsDto> linkParentWithChildrenAndReturnDto(List<Comment> parentComments, Map<Comment, List<Comment>> groupedByParents) {
-        Map<Long, CommentsDto> commentDtoMap = convertParentToDto(parentComments);
-        convertChildrenToDtoAndLinkToParent(groupedByParents, commentDtoMap);
-        return commentDtoMap;
-    }
-
-    private void convertChildrenToDtoAndLinkToParent(Map<Comment, List<Comment>> groupedByParents, Map<Long, CommentsDto> commentDtoMap) {
-        groupedByParents.forEach((parentComment, childComments) -> {
-            CommentsDto parentDto = commentDtoMap.get(parentComment.getId());
-            List<CommentsDto> childDtos = childComments.stream()
-                    .map(CommentsDto::from)
-                    .toList();
-            parentDto.replies().addAll(childDtos);
-        });
-    }
-
-    private Map<Long, CommentsDto> convertParentToDto(List<Comment> parentComments) {
-        Map<Long, CommentsDto> commentDtoMap = parentComments.stream()
+    private Map<Long, CommentsDto> convertToCommentsDto(List<Comment> parentComments) {
+        return parentComments.stream()
                 .map(CommentsDto::from)
                 .collect(Collectors.toMap(CommentsDto::commentId, Function.identity()));
-        return commentDtoMap;
+    }
+
+    private void convertToCommentsDtoAndLinkToParent(List<Comment> childComments, Map<Long, CommentsDto> commentDtoMap) {
+        childComments.forEach(childComment -> {
+            CommentsDto childDto = CommentsDto.from(childComment);
+            CommentsDto parentDto = commentDtoMap.get(childComment.getParent().getId());
+            parentDto.replies().add(childDto);
+        });
     }
 
     private List<Long> collectParentIds(List<Comment> parentComments) {
@@ -122,38 +112,22 @@ public class CrewCommentService {
 
     public List<CommentsDto> findAllComments(String crewName) {
         List<Comment> comments = commentRepository.findCommentsByCrewName(new Name(crewName));
-        return comments.stream()
-                .collect(Collectors.collectingAndThen(
-                        convertToHashMap(),
-                        buildCommentDtos(comments)
-                ));
+        return convertToCommentsDtoAndMappedWithParent(comments);
     }
 
-    private Collector<Comment, ?, LinkedHashMap<Long, CommentsDto>> convertToHashMap() {
-        return Collectors.toMap(
-                Comment::getId,
-                CommentsDto::from,
-                (dto1, dto2) -> dto2,
-                LinkedHashMap::new
-        );
-    }
-
-    private Function<LinkedHashMap<Long, CommentsDto>, List<CommentsDto>> buildCommentDtos(List<Comment> comments) {
-        return commentMap -> {
-            separateCommentAndReplies(comments, commentMap);
-            return commentMap.values().stream()
-                    .filter(dto -> dto.parentCommentId() == null)
-                    .collect(Collectors.toList());
-        };
-    }
-
-    private void separateCommentAndReplies(List<Comment> comments, Map<Long, CommentsDto> commentMap) {
+    private List<CommentsDto> convertToCommentsDtoAndMappedWithParent(List<Comment> comments) {
+        List<CommentsDto> commentList = new ArrayList<>();
+        Map<Long, CommentsDto> hashMap = new HashMap<>();
         comments.forEach(comment -> {
+            CommentsDto commentDto = CommentsDto.from(comment);
+            hashMap.put(commentDto.commentId(), commentDto);
             if (comment.getParent() != null) {
-                CommentsDto childDto = commentMap.get(comment.getId());
-                CommentsDto parentDto = commentMap.get(comment.getParent().getId());
-                parentDto.replies().add(childDto);
+                hashMap.get(comment.getParent().getId()).replies().add(commentDto);
+            } else {
+                commentList.add(commentDto);
             }
         });
+
+        return commentList;
     }
 }
