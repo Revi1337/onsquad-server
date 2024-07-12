@@ -8,9 +8,13 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Categories;
+
 import revi1337.onsquad.squad.domain.vo.Content;
 import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad_member.domain.SquadMember;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static jakarta.persistence.CascadeType.*;
@@ -51,8 +55,11 @@ public class Squad extends BaseEntity {
     @JoinColumn(name = "crew_id")
     private Crew crew;
 
+    @OneToMany(mappedBy = "squad", cascade = PERSIST)
+    private final List<SquadMember> squadMembers = new ArrayList<>();
+
     @Builder
-    private Squad(Long id, Title title, Content content, Capacity capacity, Categories categories, Address address, String kakaoLink, String discordLink, Member member) {
+    private Squad(Long id, Title title, Content content, Capacity capacity, Categories categories, Address address, String kakaoLink, String discordLink, Member member, Crew crew) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -62,6 +69,14 @@ public class Squad extends BaseEntity {
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
         this.member = member;
+        this.crew = crew;
+    }
+
+    public void addSquadMember(SquadMember... squadMembers) {
+        for (SquadMember squadMember : squadMembers) {
+            squadMember.addSquad(this);
+            this.squadMembers.add(squadMember);
+        }
     }
 
     @Override

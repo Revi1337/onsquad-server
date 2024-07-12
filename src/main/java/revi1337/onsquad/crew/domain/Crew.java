@@ -7,11 +7,11 @@ import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 
 @Getter
@@ -42,13 +42,16 @@ public class Crew extends BaseEntity {
 
     private String kakaoLink;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "image_id", nullable = false)
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "crew")
+    private final List<CrewMember> crewMembers = new ArrayList<>();
 
     @Builder
     private Crew(Long id, Name name, Introduce introduce, Detail detail, HashTags hashTags, Image image, String kakaoLink, Member member) {

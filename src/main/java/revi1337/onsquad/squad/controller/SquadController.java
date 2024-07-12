@@ -3,10 +3,7 @@ package revi1337.onsquad.squad.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
@@ -25,7 +22,7 @@ public class SquadController {
             @Valid @RequestBody SquadCreateRequest squadCreateRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        squadService.createNewSquad(squadCreateRequest.toDto(authenticatedMember.toDto()));
+        squadService.createNewSquad(squadCreateRequest.toDto(), authenticatedMember.toDto().getId());
 
         return ResponseEntity.ok(RestResponse.created());
     }
