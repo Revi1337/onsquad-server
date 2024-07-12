@@ -17,6 +17,6 @@ public class JoinStatusDeserializer extends JsonDeserializer<JoinStatus> {
                 .stream()
                 .filter(status -> JoinStatus.checkEquivalence(status, joinStatus))
                 .findFirst()
-                .orElse(JoinStatus.REJECT);
+                .orElse(null);
     }
 }

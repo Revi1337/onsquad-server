@@ -20,6 +20,7 @@ import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import java.util.List;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
+import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
 
 @Transactional(readOnly = true)
@@ -92,11 +93,13 @@ public class CrewConfigService {
     }
 
     private void modifyJoinStatus(JoinStatus requestJoinStatus, CrewMember crewMember) {
-        if (requestJoinStatus == JoinStatus.PENDING) {
+        if (requestJoinStatus == null) {
+            throw new CrewMemberBusinessException.InvalidJoinStatus(INVALID_STATUS, convertSupportedTypeString());
+        }
+        if (requestJoinStatus == PENDING) {
             return;
         }
-
-        if (requestJoinStatus == JoinStatus.REJECT) {
+        if (requestJoinStatus == REJECT) {
             crewMemberRepository.delete(crewMember);
             return;
         }

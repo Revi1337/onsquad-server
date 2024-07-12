@@ -271,5 +271,25 @@ class CrewConfigServiceTest {
             then(crewRepository).shouldHaveNoMoreInteractions();
             then(crewMemberRepository).should(times(1)).delete(crewMember);
         }
+
+        @Test
+        @DisplayName("Crew 와 CrewMember 가 있지만 요청 JoinStatus 가 null 이면 예외가 발생한다.")
+        public void acceptCrewMember7() {
+            // given
+            Long memberId = 1L;
+            CrewAcceptDto crewAcceptDto = new CrewAcceptDto("크루 이름", 1L, null);
+            Member member = MemberFactory.defaultMember().id(1L).build();
+            Crew crew = CrewFactory.defaultCrew().id(1L).member(member).build();
+            CrewMember crewMember = CrewMemberFactory.defaultCrewMember().crew(crew).member(member).status(null).build();
+            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
+                    .willReturn(Optional.of(crew));
+            given(crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crew.getId(), memberId))
+                    .willReturn(Optional.of(crewMember));
+
+            // when
+            assertThatThrownBy(() -> crewConfigService.acceptCrewMember(crewAcceptDto, memberId))
+                    .isInstanceOf(CrewMemberBusinessException.InvalidJoinStatus.class)
+                    .hasMessage(String.format("크루 참여요청 상태는 %s 만 가능합니다", JoinStatus.convertSupportedTypeString()));
+        }
     }
 }

@@ -21,4 +21,11 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), crewName));
         }
     }
+
+    public static class InvalidJoinStatus extends CrewMemberBusinessException {
+
+        public InvalidJoinStatus(ErrorCode errorCode, String errorMessage) {
+            super(errorCode, String.format(errorCode.getDescription(), errorMessage));
+        }
+    }
 }
