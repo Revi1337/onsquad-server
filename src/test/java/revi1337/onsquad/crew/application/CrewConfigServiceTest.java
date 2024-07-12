@@ -289,7 +289,7 @@ class CrewConfigServiceTest {
             // when
             assertThatThrownBy(() -> crewConfigService.acceptCrewMember(crewAcceptDto, memberId))
                     .isInstanceOf(CrewMemberBusinessException.InvalidJoinStatus.class)
-                    .hasMessage(String.format("크루 참여요청 상태는 %s 만 가능합니다", JoinStatus.convertSupportedTypeString()));
+                    .hasMessage(String.format("크루 참여요청 상태는 %s 만 가능합니다.", JoinStatus.convertSupportedTypeString()));
         }
     }
 }
