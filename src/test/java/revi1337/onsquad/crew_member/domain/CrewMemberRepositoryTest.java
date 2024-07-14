@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.CrewMemberFactory;
@@ -97,6 +98,44 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
 
         // when
         boolean memberExists = crewMemberRepository.existsCrewMember(2L);
+
+        // then
+        assertThat(memberExists).isFalse();
+    }
+
+    @Test
+    @DisplayName("Crew 에 참여하고있는 CrewMember 가 있는지 확인한다.")
+    public void existsParticipantCrewMember() {
+        // given
+        Member member = MemberFactory.defaultMember().build();
+        Image image = ImageFactory.defaultImage();
+        Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
+        CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).status(JoinStatus.ACCEPT).build();
+        memberRepository.save(member);
+        crewRepository.save(crew);
+        crewMemberRepository.save(crewMember);
+
+        // when
+        boolean memberExists = crewMemberRepository.existsParticipantCrewMember(1L);
+
+        // then
+        assertThat(memberExists).isTrue();
+    }
+
+    @Test
+    @DisplayName("Crew 에 참여하고있는 CrewMember 가 있는지 확인한다. 2")
+    public void existsParticipantCrewMember2() {
+        // given
+        Member member = MemberFactory.defaultMember().build();
+        Image image = ImageFactory.defaultImage();
+        Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
+        CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).status(JoinStatus.PENDING).build();
+        memberRepository.save(member);
+        crewRepository.save(crew);
+        crewMemberRepository.save(crewMember);
+
+        // when
+        boolean memberExists = crewMemberRepository.existsParticipantCrewMember(1L);
 
         // then
         assertThat(memberExists).isFalse();

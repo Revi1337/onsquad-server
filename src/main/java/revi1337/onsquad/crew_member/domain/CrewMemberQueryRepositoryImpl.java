@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_member.domain;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
 import revi1337.onsquad.crew_member.dto.QEnrolledCrewMemberDto;
 
@@ -25,6 +26,21 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
                 .from(crewMember)
                 .innerJoin(crewMember.member, member)
                 .where(member.id.eq(memberId))
+                .fetchFirst();
+
+        return fetchOne != null;
+    }
+
+    @Override
+    public boolean existsParticipantCrewMember(Long memberId) {
+        Integer fetchOne = jpaQueryFactory
+                .selectOne()
+                .from(crewMember)
+                .innerJoin(crewMember.member, member)
+                .where(
+                        member.id.eq(memberId),
+                        crewMember.status.eq(JoinStatus.ACCEPT)
+                )
                 .fetchFirst();
 
         return fetchOne != null;
