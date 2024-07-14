@@ -169,9 +169,9 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
         Member member = MemberFactory.defaultMember().build();
         Image image = ImageFactory.defaultImage();
         Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
-        CrewMember crewMember = CrewMember.of(crew, member);
+        CrewMember crewMember = CrewMember.forGeneral(crew, member);
         Member member2 = MemberFactory.defaultMember().build();
-        CrewMember crewMember2 = CrewMember.of(crew, member2);
+        CrewMember crewMember2 = CrewMember.forGeneral(crew, member2);
         memberRepository.saveAll(List.of(member, member2));
         crewRepository.save(crew);
         crewMemberRepository.saveAll(List.of(crewMember, crewMember2));

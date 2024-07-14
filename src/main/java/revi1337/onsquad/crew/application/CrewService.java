@@ -42,14 +42,16 @@ public class CrewService {
                 .ifPresent(member -> crewRepository.findByName(new Name(crewCreateDto.name()))
                         .ifPresentOrElse(
                                 ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, crewCreateDto.name()); },
-                                () -> persistCrew(crewCreateDto, image, imageFileName, member)
+                                () -> persistCrewAndRegisterOwner(crewCreateDto, image, imageFileName, member)
                         )
                 );
     }
 
-    private void persistCrew(CrewCreateDto crewCreateDto, byte[] imageBinary, String imageFileName, Member member) {
+    private void persistCrewAndRegisterOwner(CrewCreateDto crewCreateDto, byte[] imageBinary, String imageFileName, Member member) {
         String uploadRemoteAddress = s3BucketUploader.uploadCrew(imageBinary, imageFileName);
-        crewRepository.save(crewCreateDto.toEntity(new Image(uploadRemoteAddress), member));
+        Crew crew = crewCreateDto.toEntity(new Image(uploadRemoteAddress), member);
+        crew.addCrewMember(CrewMember.forOwner(member));
+        crewRepository.save(crew);
     }
 
     public CrewWithMemberAndImageDto findCrewByName(String crewName) {
@@ -76,7 +78,7 @@ public class CrewService {
         crewMemberRepository.findCrewMemberByMemberId(member.getId())
                 .ifPresentOrElse(
                         crewMember -> judgementCurrentJoinStatus(crewMember, crew.getName()),
-                        () -> crewMemberRepository.save(CrewMember.of(crew, member))
+                        () -> crewMemberRepository.save(CrewMember.forGeneral(crew, member))
                 );
     }
 

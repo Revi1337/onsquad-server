@@ -13,6 +13,9 @@ import revi1337.onsquad.member.domain.Member;
 
 import java.util.*;
 
+import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.REFRESH;
+
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -50,7 +53,7 @@ public class Crew extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "crew")
+    @OneToMany(mappedBy = "crew", cascade = {PERSIST, MERGE, DETACH, REFRESH})
     private final List<CrewMember> crewMembers = new ArrayList<>();
 
     @Builder
@@ -63,6 +66,13 @@ public class Crew extends BaseEntity {
         this.image = image;
         this.kakaoLink = kakaoLink;
         this.member = member;
+    }
+
+    public void addCrewMember(CrewMember... crewMembers) {
+        for (CrewMember crewMember : crewMembers) {
+            crewMember.addCrew(this);
+            this.crewMembers.add(crewMember);
+        }
     }
 
     public void updateCrew(String name, String introduce, String detail, Collection<String> hashTags, String kakaoLink, String imageUrl) {
