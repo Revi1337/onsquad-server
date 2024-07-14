@@ -5,8 +5,7 @@ import lombok.Getter;
 @Getter
 public enum SquadRole {
 
-    ADMIN,
-    MANAGER,
+    LEADER,
     GENERAL;
 
 }

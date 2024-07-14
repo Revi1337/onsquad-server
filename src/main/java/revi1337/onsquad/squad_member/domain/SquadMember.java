@@ -8,11 +8,15 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import revi1337.onsquad.common.domain.BaseEntity;
+import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad_member.domain.vo.SquadRole;
 
 import java.util.Objects;
+
+import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
+import static revi1337.onsquad.squad_member.domain.vo.SquadRole.*;
 
 @DynamicInsert
 @Getter
@@ -41,18 +45,31 @@ public class SquadMember extends BaseEntity {
     @Column(nullable = false)
     private SquadRole role;
 
+    @ColumnDefault("'PENDING'")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private JoinStatus status;
+
     @Builder
-    private SquadMember(Long id, Squad squad, Member member, SquadRole role) {
+    private SquadMember(Long id, Squad squad, Member member, SquadRole role, JoinStatus status) {
         this.id = id;
         this.squad = squad;
         this.member = member;
-        this.role = role;
+        this.role = role == null ? GENERAL : role;
+        this.status = status == null ? PENDING : status;
     }
 
-    public static SquadMember forAdmin(Member member) {
+    public static SquadMember forLeader(Member member) {
         return SquadMember.builder()
                 .member(member)
-                .role(SquadRole.ADMIN)
+                .role(LEADER)
+                .status(ACCEPT)
+                .build();
+    }
+
+    public static SquadMember forGeneral(Member member) {
+        return SquadMember.builder()
+                .member(member)
                 .build();
     }
 
