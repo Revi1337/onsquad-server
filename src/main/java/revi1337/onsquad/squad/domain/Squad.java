@@ -55,7 +55,7 @@ public class Squad extends BaseEntity {
     @JoinColumn(name = "crew_id")
     private Crew crew;
 
-    @OneToMany(mappedBy = "squad", cascade = PERSIST)
+    @OneToMany(mappedBy = "squad", cascade = {PERSIST, MERGE, DETACH, REFRESH})
     private final List<SquadMember> squadMembers = new ArrayList<>();
 
     @Builder
@@ -74,6 +74,7 @@ public class Squad extends BaseEntity {
 
     public void addSquadMember(SquadMember... squadMembers) {
         for (SquadMember squadMember : squadMembers) {
+            capacity.decreaseRemain();
             squadMember.addSquad(this);
             this.squadMembers.add(squadMember);
         }
