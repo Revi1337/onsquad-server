@@ -9,6 +9,7 @@ import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.application.SquadService;
 import revi1337.onsquad.squad.dto.request.SquadCreateRequest;
+import revi1337.onsquad.squad.dto.request.SquadJoinRequest;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/squad")
@@ -25,5 +26,13 @@ public class SquadController {
         squadService.createNewSquad(squadCreateRequest.toDto(), authenticatedMember.toDto().getId());
 
         return ResponseEntity.ok(RestResponse.created());
+    }
+
+    @PostMapping("/join")
+    public void joinSquad(
+            @Valid @RequestBody SquadJoinRequest joinRequest,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        squadService.joinSquad(joinRequest.toDto(), authenticatedMember.toDto().getId());
     }
 }
