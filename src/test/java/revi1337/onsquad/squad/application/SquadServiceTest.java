@@ -15,15 +15,19 @@ import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.factory.CrewFactory;
+import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.factory.SquadFactory;
+import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Title;
 import revi1337.onsquad.squad.dto.SquadCreateDto;
+import revi1337.onsquad.squad.dto.SquadDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
@@ -32,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("Squad 서비스 테스트")
@@ -243,5 +248,27 @@ class SquadServiceTest {
         assertThatThrownBy(() -> squadService.joinSquad(squadJoinDto, memberId))
                 .isInstanceOf(CrewMemberBusinessException.NotParticipant.class)
                 .hasMessage("id 가 1 인 사용자는 크루 1 크루에 속해있지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("squadId 와 squadTitle 로 Squad 를 가져온다.")
+    public void findSquad() {
+        // given
+        Long squadId = 1L;
+        String squadTitle = SquadFactory.TITLE.getValue();
+        Member member = MemberFactory.defaultMember().build();
+        Squad squad = SquadFactory.defaultSquad().id(squadId).title(new Title(squadTitle)).member(member).capacity(new Capacity(8)).build();
+        given(squadRepository.findSquadWithMemberByIdAndTitle(squadId, new Title(squadTitle))).willReturn(Optional.of(squad));
+
+        // when
+        SquadDto squadDto = squadService.findSquad(squadId, squadTitle);
+
+        assertSoftly(softly -> {
+            softly.assertThat(squadDto.id()).isEqualTo(squadId);
+            softly.assertThat(squadDto.title()).isEqualTo(SquadFactory.TITLE.getValue());
+            softly.assertThat(squadDto.capacity()).isEqualTo(8);
+            softly.assertThat(squadDto.remain()).isEqualTo(8);
+            softly.assertThat(squadDto.categories()).isEqualTo(List.of("배드민턴"));
+        });
     }
 }
