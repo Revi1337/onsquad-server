@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface SquadQueryRepository {
 
-    Optional<Squad> findSquadWithMembersById(Long squadId, Title squadTitle);
+    Optional<Squad> findSquadWithMembersById(Long id, Title title);
+
+    Optional<Squad> findSquadWithMemberByIdAndTitle(Long id, Title title);
 
 }

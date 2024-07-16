@@ -48,11 +48,11 @@ public class Squad extends BaseEntity {
     private String discordLink;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = PERSIST)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crew_id")
+    @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;
 
     @OneToMany(mappedBy = "squad", cascade = {PERSIST, MERGE, DETACH, REFRESH})

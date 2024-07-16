@@ -21,6 +21,7 @@ import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.domain.vo.Title;
 import revi1337.onsquad.squad.dto.SquadCreateDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
+import revi1337.onsquad.squad.dto.SquadDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 
@@ -45,6 +46,20 @@ public class SquadService {
         memberRepository.findById(memberId)
                 .map(member -> persistSquadIfMemberAndCrewIsValid(dto, member))
                 .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
+    }
+
+    @Transactional
+    public void joinSquad(SquadJoinDto dto, Long memberId) {
+        memberRepository.findById(memberId)
+                .map(member -> checkMemberInCrew(dto, memberId, member))
+                .map(member -> persistSquadMember(dto, member))
+                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
+    }
+
+    public SquadDto findSquad(Long id, String title) {
+        return squadRepository.findSquadWithMemberByIdAndTitle(id, new Title(title))
+                .map(SquadDto::from)
+                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND_SQUAD, title));
     }
 
     private Crew persistSquadIfMemberAndCrewIsValid(SquadCreateDto dto, Member member) {
@@ -72,14 +87,6 @@ public class SquadService {
         Squad squad = dto.toEntity(member, crew);
         squad.addSquadMember(SquadMember.forLeader(member));
         squadRepository.save(squad);
-    }
-
-    @Transactional
-    public void joinSquad(SquadJoinDto dto, Long memberId) {
-        memberRepository.findById(memberId)
-                .map(member -> checkMemberInCrew(dto, memberId, member))
-                .map(member -> persistSquadMember(dto, member))
-                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
     }
 
     private Member checkMemberInCrew(SquadJoinDto dto, Long memberId, Member member) {

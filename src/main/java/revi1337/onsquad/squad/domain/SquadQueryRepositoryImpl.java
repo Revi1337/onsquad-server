@@ -2,10 +2,12 @@ package revi1337.onsquad.squad.domain;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.squad.domain.vo.Title;
 
 import java.util.Optional;
 
+import static revi1337.onsquad.member.domain.QMember.*;
 import static revi1337.onsquad.squad.domain.QSquad.*;
 
 @RequiredArgsConstructor
@@ -22,6 +24,20 @@ public class SquadQueryRepositoryImpl implements SquadQueryRepository {
                         .where(
                                 squad.id.eq(squadId),
                                 squad.title.eq(squadTitle)
+                        )
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<Squad> findSquadWithMemberByIdAndTitle(Long id, Title title) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(squad)
+                        .innerJoin(squad.member, member).fetchJoin()
+                        .where(
+                                squad.id.eq(id),
+                                squad.title.eq(title)
                         )
                         .fetchOne()
         );
