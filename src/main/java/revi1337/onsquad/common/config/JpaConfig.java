@@ -13,8 +13,8 @@ public class JpaConfig {
     public PageableHandlerMethodArgumentResolverCustomizer customPageableResolver() {
         return pageableResolver -> {
             pageableResolver.setQualifierDelimiter("");
-            pageableResolver.setPageParameterName("Page");
-            pageableResolver.setSizeParameterName("Size");
+            pageableResolver.setPageParameterName("page");
+            pageableResolver.setSizeParameterName("size");
             pageableResolver.setOneIndexedParameters(true);
         };
     }

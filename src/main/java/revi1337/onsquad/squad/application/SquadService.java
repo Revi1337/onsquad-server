@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.Crew;
@@ -26,6 +27,7 @@ import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
 import static revi1337.onsquad.squad.error.SquadErrorCode.*;
@@ -60,6 +62,12 @@ public class SquadService {
         return squadRepository.findSquadWithMemberByIdAndTitle(id, new Title(title))
                 .map(SquadDto::from)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND_SQUAD, title));
+    }
+
+    public List<SquadDto> findSquads(String crewName, Pageable pageable) {
+        return squadRepository.findSquadsByCrewName(new Name(crewName), pageable).stream()
+                .map(SquadDto::from)
+                .collect(Collectors.toList());
     }
 
     private Crew persistSquadIfMemberAndCrewIsValid(SquadCreateDto dto, Member member) {
