@@ -4,10 +4,9 @@ import jakarta.validation.constraints.NotEmpty;
 import revi1337.onsquad.comment.dto.CreateCommentDto;
 
 public record CreateCommentRequest(
-        @NotEmpty String crewName,
         @NotEmpty String content
 ) {
     public CreateCommentDto toDto() {
-        return new CreateCommentDto(crewName, content);
+        return new CreateCommentDto(content);
     }
 }

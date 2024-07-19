@@ -35,10 +35,10 @@ public class CrewCommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentDto addComment(CreateCommentDto dto, Long memberId) {
-        return crewRepository.findByName(new Name(dto.crewName()))
+    public CommentDto addComment(String crewName, CreateCommentDto dto, Long memberId) {
+        return crewRepository.findByName(new Name(crewName))
                 .flatMap(crew -> persistCommentAndCreateDto(dto, memberId, crew))
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, dto.crewName()));
+                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, crewName));
     }
 
     private Optional<CommentDto> persistCommentAndCreateDto(CreateCommentDto dto, Long memberId, Crew crew) {
@@ -52,25 +52,25 @@ public class CrewCommentService {
     }
 
     @Transactional
-    public CommentDto addCommentReply(CreateCommentReplyDto dto, Long memberId) {
+    public CommentDto addCommentReply(String crewName, CreateCommentReplyDto dto, Long memberId) {
         return commentRepository.findCommentById(dto.parentCommentId())
-                .flatMap(comment -> persistCommentReplyAndCreateDtoIfParent(dto, memberId, comment))
+                .flatMap(comment -> persistCommentReplyAndCreateDtoIfParent(crewName, dto, memberId, comment))
                 .orElseThrow(() -> new CommentBusinessException.NotFoundById(NOTFOUND_COMMENT, dto.parentCommentId()));
     }
 
-    private Optional<CommentDto> persistCommentReplyAndCreateDtoIfParent(CreateCommentReplyDto dto, Long memberId, Comment comment) {
-        validateParentComment(dto, comment);
+    private Optional<CommentDto> persistCommentReplyAndCreateDtoIfParent(String crewName, CreateCommentReplyDto dto, Long memberId, Comment comment) {
+        validateParentComment(crewName, dto, comment);
         return memberRepository.findById(memberId)
                 .map(member -> persistCommentAndBuildDto(Comment.forReply(comment, dto.content(), comment.getCrew(), member), member));
     }
 
-    private void validateParentComment(CreateCommentReplyDto dto, Comment comment) {
+    private void validateParentComment(String crewName, CreateCommentReplyDto dto, Comment comment) {
         if (comment.getParent() != null) {
             throw new CommentBusinessException.NotParent(NOT_PARENT, dto.parentCommentId());
         }
 
-        if (!comment.getCrew().getName().equals(new Name(dto.crewName()))) {
-            throw new CommentBusinessException.NotFoundCrewComment(NOTFOUND_CREW_COMMENT, dto.crewName(), dto.parentCommentId());
+        if (!comment.getCrew().getName().equals(new Name(crewName))) {
+            throw new CommentBusinessException.NotFoundCrewComment(NOTFOUND_CREW_COMMENT, crewName, dto.parentCommentId());
         }
     }
 

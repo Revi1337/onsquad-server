@@ -1,7 +1,6 @@
 package revi1337.onsquad.comment.presentation;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,11 +29,12 @@ public class CrewCommentController {
 
     @PostMapping("/comment/new")
     public ResponseEntity<RestResponse<CommentResponse>> addComment(
+            @RequestParam String crewName,
             @Valid @RequestBody CreateCommentRequest commentRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         CommentResponse commentResponse = CommentResponse.from(
-                crewCommentService.addComment(commentRequest.toDto(), authenticatedMember.toDto().getId())
+                crewCommentService.addComment(crewName, commentRequest.toDto(), authenticatedMember.toDto().getId())
         );
 
         return ResponseEntity.ok().body(RestResponse.created(commentResponse));
@@ -42,11 +42,12 @@ public class CrewCommentController {
 
     @PostMapping("/comment/reply/new")
     public ResponseEntity<RestResponse<CommentResponse>> addCommentReply(
+            @RequestParam String crewName,
             @Valid @RequestBody CreateCommentReplyRequest commentReplyRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         CommentResponse commentResponse = CommentResponse.from(
-                crewCommentService.addCommentReply(commentReplyRequest.toDto(), authenticatedMember.toDto().getId())
+                crewCommentService.addCommentReply(crewName, commentReplyRequest.toDto(), authenticatedMember.toDto().getId())
         );
 
         return ResponseEntity.ok().body(RestResponse.created(commentResponse));
