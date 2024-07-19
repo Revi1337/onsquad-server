@@ -43,7 +43,7 @@ public class CrewCommentService {
 
     private Optional<CommentDto> persistCommentAndCreateDto(CreateCommentDto dto, Long memberId, Crew crew) {
         return memberRepository.findById(memberId)
-                .map(member -> persistCommentAndBuildDto(Comment.of(dto.content(), crew, member), member));
+                .map(member -> persistCommentAndBuildDto(Comment.forCrew(dto.content(), crew, member), member));
     }
 
     private CommentDto persistCommentAndBuildDto(Comment comment, Member member) {
@@ -61,7 +61,7 @@ public class CrewCommentService {
     private Optional<CommentDto> persistCommentReplyAndCreateDtoIfParent(String crewName, CreateCommentReplyDto dto, Long memberId, Comment comment) {
         validateParentComment(crewName, dto, comment);
         return memberRepository.findById(memberId)
-                .map(member -> persistCommentAndBuildDto(Comment.forReply(comment, dto.content(), comment.getCrew(), member), member));
+                .map(member -> persistCommentAndBuildDto(Comment.replyForCrew(comment, dto.content(), comment.getCrew(), member), member));
     }
 
     private void validateParentComment(String crewName, CreateCommentReplyDto dto, Comment comment) {

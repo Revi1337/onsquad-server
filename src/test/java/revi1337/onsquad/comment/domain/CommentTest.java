@@ -68,7 +68,7 @@ class CommentTest {
         Crew crew = CrewFactory.defaultCrew().member(member).build();
 
         // when
-        Comment comment = Comment.of(content, crew, member);
+        Comment comment = Comment.forCrew(content, crew, member);
         
         // then
         assertSoftly(softly -> {

@@ -1,9 +1,11 @@
 package revi1337.onsquad.comment.domain;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.data.domain.Pageable;
+import revi1337.onsquad.comment.domain.vo.CommentType;
 import revi1337.onsquad.crew.domain.vo.Name;
 
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.*;
 import static revi1337.onsquad.comment.domain.QComment.*;
+import static revi1337.onsquad.comment.domain.vo.CommentType.*;
 import static revi1337.onsquad.crew.domain.QCrew.*;
 import static revi1337.onsquad.member.domain.QMember.*;
 
@@ -35,7 +38,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 .innerJoin(comment.member, member).fetchJoin()
                 .innerJoin(comment.crew, crew).fetchJoin()
                 .leftJoin(comment.parent)
-                .where(comment.crew.name.eq(crewName))
+                .where(
+                        commentTypeEq(CREW),
+                        comment.crew.name.eq(crewName)
+                )
                 .orderBy(
                         comment.parent.id.asc().nullsFirst(),
                         comment.createdAt.desc()
@@ -49,6 +55,7 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 .innerJoin(comment.member, member).fetchJoin()
                 .innerJoin(comment.crew, crew).fetchJoin()
                 .where(
+                        commentTypeEq(CREW),
                         comment.crew.name.eq(crewName),
                         comment.parent.isNull()
                 )
@@ -63,6 +70,7 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 .innerJoin(comment.member, member).fetchJoin()
                 .innerJoin(comment.crew, crew).fetchJoin()
                 .where(
+                        commentTypeEq(CREW),
                         comment.crew.name.eq(crewName),
                         comment.parent.isNull()
                 )
@@ -78,7 +86,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 .selectFrom(comment)
                 .innerJoin(comment.member, member).fetchJoin()
                 .innerJoin(comment.crew, crew).fetchJoin()
-                .where(comment.parent.id.in(parentIds))
+                .where(
+                        commentTypeEq(CREW),
+                        comment.parent.id.in(parentIds)
+                )
                 .orderBy(comment.createdAt.desc())
                 .fetch();
     }
@@ -89,7 +100,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 .selectFrom(comment)
                 .innerJoin(comment.member, member).fetchJoin()
                 .innerJoin(comment.crew, crew).fetchJoin()
-                .where(comment.parent.id.in(parentIds))
+                .where(
+                        commentTypeEq(CREW),
+                        comment.parent.id.in(parentIds)
+                )
                 .orderBy(comment.createdAt.desc())
                 .transform(groupBy(comment.parent).as(list(comment)));
     }
@@ -102,12 +116,13 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 "        ROW_NUMBER() OVER (PARTITION BY comment.parent_id ORDER BY comment.created_at DESC) AS rn " +
                 "    FROM comment " +
                 "    INNER JOIN member ON comment.member_id = member.id " +
-                "    WHERE comment.parent_id IN (:parentIds) " +
+                "    WHERE comment.type = :commentType AND comment.parent_id IN (:parentIds) " +
                 ") AS subquery " +
                 " WHERE subquery.rn <= (:childLimit)" +
                 " ORDER BY subquery.rn ASC";
 
         List<Comment> resultList = entityManager.createNativeQuery(sql, Comment.class)
+                .setParameter("commentType", CREW.toString())
                 .setParameter("parentIds", parentIds)
                 .setParameter("childLimit", childrenSize)
                 .getResultList();
@@ -129,8 +144,15 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 jpaQueryFactory
                         .selectFrom(comment)
                         .innerJoin(comment.crew, crew).fetchJoin()
-                        .where(comment.id.eq(commentId))
+                        .where(
+                                commentTypeEq(CREW),
+                                comment.id.eq(commentId)
+                        )
                         .fetchOne()
         );
+    }
+
+    private BooleanExpression commentTypeEq(CommentType commentType) {
+        return commentType != null ? comment.type.eq(commentType) : null;
     }
 }

@@ -2,6 +2,7 @@ package revi1337.onsquad.comment.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import revi1337.onsquad.comment.domain.vo.CommentType;
 import revi1337.onsquad.comment.error.exception.CommentDomainException;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static revi1337.onsquad.comment.domain.vo.CommentType.*;
 import static revi1337.onsquad.comment.error.CommentErrorCode.*;
 
 @Getter
@@ -27,6 +29,10 @@ public class Comment extends BaseEntity {
 
     @Column(nullable = false, length = PERSIST_MAX_LENGTH)
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CommentType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "crew_id")
@@ -59,28 +65,31 @@ public class Comment extends BaseEntity {
     }
 
     @Builder
-    private Comment(Long id, String content, Crew crew, Member member, Comment parent) {
+    private Comment(Long id, String content, Crew crew, Member member, Comment parent, CommentType type) {
         this.id = id;
         this.content = content;
         this.crew = crew;
         this.member = member;
         this.parent = parent;
+        this.type = type;
     }
 
-    public static Comment of(String content, Crew crew, Member member) {
+    public static Comment forCrew(String content, Crew crew, Member member) {
         return Comment.builder()
                 .content(content)
                 .crew(crew)
                 .member(member)
+                .type(CREW)
                 .build();
     }
 
-    public static Comment forReply(Comment parent, String content, Crew crew, Member member) {
+    public static Comment replyForCrew(Comment parent, String content, Crew crew, Member member) {
         return Comment.builder()
                 .parent(parent)
                 .content(content)
                 .crew(crew)
                 .member(member)
+                .type(CREW)
                 .build();
     }
 
