@@ -15,4 +15,6 @@ public interface SquadQueryRepository {
 
     Page<Squad> findSquadsByCrewName(Name crewName, Pageable pageable);
 
+    Optional<Squad> findSquadWithCrewById(Long id);
+
 }

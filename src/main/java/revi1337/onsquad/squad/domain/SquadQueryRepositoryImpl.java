@@ -5,6 +5,7 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.patterns.OrPointcut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -68,6 +69,17 @@ public class SquadQueryRepositoryImpl implements SquadQueryRepository {
                 .where(squad.crew.id.eq(findCrewIdByCrewName(crewName)));
 
         return PageableExecutionUtils.getPage(pageableSquads, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Optional<Squad> findSquadWithCrewById(Long id) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(squad)
+                        .innerJoin(squad.crew, crew)
+                        .where(squad.id.eq(id))
+                        .fetchOne()
+        );
     }
 
     private JPQLQuery<Long> findCrewIdByCrewName(Name crewName) {

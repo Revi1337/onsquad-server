@@ -74,6 +74,15 @@ public class Comment extends BaseEntity {
         this.type = type;
     }
 
+    public static Comment forSquad(String content, Crew crew, Member member) {
+        return Comment.builder()
+                .content(content)
+                .crew(crew)
+                .member(member)
+                .type(SQUAD)
+                .build();
+    }
+
     public static Comment forCrew(String content, Crew crew, Member member) {
         return Comment.builder()
                 .content(content)

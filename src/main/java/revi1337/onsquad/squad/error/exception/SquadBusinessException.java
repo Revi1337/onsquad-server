@@ -20,6 +20,10 @@ public abstract class SquadBusinessException extends RuntimeException {
         public NotFound(ErrorCode errorCode, String squadName) {
             super(errorCode, String.format(errorCode.getDescription(), squadName));
         }
+
+        public NotFound(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
+        }
     }
 
     public static class AlreadyRequest extends SquadBusinessException {
@@ -33,6 +37,13 @@ public abstract class SquadBusinessException extends RuntimeException {
 
         public AlreadyParticipant(ErrorCode errorCode, String squadName) {
             super(errorCode, String.format(errorCode.getDescription(), squadName));
+        }
+    }
+
+    public static class NotInCrew extends SquadBusinessException {
+
+        public NotInCrew(ErrorCode errorCode, String crewName) {
+            super(errorCode, String.format(errorCode.getDescription(), crewName));
         }
     }
 }
