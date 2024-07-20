@@ -11,11 +11,11 @@ public record SquadResponse(
         String content,
         int capacity,
         int remain,
-        List<String> categories,
         String address,
         String addressDetail,
         String kakaoLink,
         String discordLink,
+        List<String> categories,
         SimpleMemberInfoResponse memberInfo
 ) {
     public static SquadResponse from(SquadDto dto) {
@@ -25,11 +25,11 @@ public record SquadResponse(
                 dto.content(),
                 dto.capacity(),
                 dto.remain(),
-                dto.categories(),
                 dto.address(),
                 dto.addressDetail(),
                 dto.kakaoLink(),
                 dto.discordLink(),
+                dto.categories(),
                 SimpleMemberInfoResponse.from(dto.memberInfo())
         );
     }

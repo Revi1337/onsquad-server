@@ -13,11 +13,11 @@ public record SquadDto(
         String content,
         int capacity,
         int remain,
-        List<String> categories,
         String address,
         String addressDetail,
         String kakaoLink,
         String discordLink,
+        List<String> categories,
         SimpleMemberInfoDto memberInfo
 ) {
     public static SquadDto from(Squad squad) {
@@ -27,12 +27,12 @@ public record SquadDto(
                 squad.getContent().getValue(),
                 squad.getCapacity().getValue(),
                 squad.getCapacity().getRemain(),
-                Arrays.stream(squad.getCategories().getValue().split(","))
-                        .collect(Collectors.toList()),
                 squad.getAddress().getValue(),
                 squad.getAddress().getDetail(),
                 squad.getKakaoLink(),
                 squad.getDiscordLink(),
+                Arrays.stream(squad.getCategories().getValue().split(","))
+                        .collect(Collectors.toList()),
                 SimpleMemberInfoDto.from(squad.getMember())
         );
     }

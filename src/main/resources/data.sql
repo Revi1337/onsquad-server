@@ -120,6 +120,3 @@ values ('스쿼드 타이틀 1', '스쿼드 본문 1', 8, 7, '등산,배드민�
        ('스쿼드 타이틀 38', '스쿼드 본문 38', 8, 7, '등산,배드민턴', '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 5, 19),
        ('스쿼드 타이틀 39', '스쿼드 본문 39', 8, 7, '등산,배드민턴', '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 5, 20),
        ('스쿼드 타이틀 40', '스쿼드 본문 40', 8, 7, '등산,배드민턴', '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 20);
-
-insert into squad_member(squad_id, member_id, role, status)
-values (null, null, 'GENERAL', 'ACCEPT')
