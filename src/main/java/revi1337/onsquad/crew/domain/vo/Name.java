@@ -14,7 +14,7 @@ import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_NAME_LENGTH;
 public class Name {
 
     private static final int MIN_LENGTH = 1;
-    private static final int MAX_LENGTH = 45;
+    private static final int MAX_LENGTH = 15;
     private static final int PERSIST_MAX_LENGTH = MAX_LENGTH * 3;
 
     @Column(name = "name", nullable = false, length = PERSIST_MAX_LENGTH)
