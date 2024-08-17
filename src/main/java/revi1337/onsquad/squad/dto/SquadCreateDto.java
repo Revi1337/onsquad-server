@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad.dto;
 
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.vo.Capacity;
@@ -22,7 +22,7 @@ public record SquadCreateDto(
         String kakaoLink,
         String discordLink
 ) {
-    public Squad toEntity(Member member, Crew crew) {
+    public Squad toEntity(CrewMember crewMember, Crew crew) {
         return Squad.builder()
                 .title(new Title(title))
                 .content(new Content(content))
@@ -31,7 +31,7 @@ public record SquadCreateDto(
                 .categories(new Categories(categories.toArray(new String[0])))
                 .kakaoLink(kakaoLink)
                 .discordLink(discordLink)
-                .member(member)
+                .crewMember(crewMember)
                 .crew(crew)
                 .build();
     }

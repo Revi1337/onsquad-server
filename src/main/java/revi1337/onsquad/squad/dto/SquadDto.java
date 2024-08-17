@@ -33,7 +33,7 @@ public record SquadDto(
                 squad.getDiscordLink(),
                 Arrays.stream(squad.getCategories().getValue().split(","))
                         .collect(Collectors.toList()),
-                SimpleMemberInfoDto.from(squad.getMember())
+                SimpleMemberInfoDto.from(squad.getCrewMember().getMember())
         );
     }
 }
