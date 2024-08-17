@@ -8,24 +8,26 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.vo.Detail;
+import revi1337.onsquad.crew.domain.vo.HashTags;
+import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.MemberFactory;
-import revi1337.onsquad.factory.SquadFactory;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.vo.*;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
+import revi1337.onsquad.participant.domain.SquadParticipant;
+import revi1337.onsquad.participant.domain.SquadParticipantRepository;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad.domain.vo.Capacity;
-import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.vo.*;
 import revi1337.onsquad.squad.dto.SquadCreateDto;
-import revi1337.onsquad.squad.dto.SquadDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
@@ -34,17 +36,17 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.*;
+import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.PENDING;
+import static revi1337.onsquad.squad_member.domain.vo.SquadRole.*;
 
-@DisplayName("Squad 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
 class SquadServiceTest {
 
     @Mock private MemberRepository memberRepository;
     @Mock private SquadRepository squadRepository;
     @Mock private CrewRepository crewRepository;
-    @Mock private CrewMemberRepository crewMemberRepository;
+    @Mock private SquadParticipantRepository squadParticipantRepository;
     @InjectMocks private SquadService squadService;
 
     @Test
@@ -59,7 +61,7 @@ class SquadServiceTest {
         crew.getCrewMembers().add(crewMember);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         given(crewRepository.findCrewWithMembersByName(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
-        given(squadRepository.save(any(Squad.class))).willReturn(squadCreateDto.toEntity(member, crew));
+        given(squadRepository.save(any(Squad.class))).willReturn(squadCreateDto.toEntity(crewMember, crew));
 
         // when
         squadService.createNewSquad(squadCreateDto, memberId);
@@ -100,173 +102,241 @@ class SquadServiceTest {
     }
 
     @Test
-    @DisplayName("Squad 를 생성하기 전에 Member 가 Crew 에 요청했지만 대기상태면 예외를 던진다.")
+    @DisplayName("Squad 를 생성하기 전에 Crew 에 Member 가 속해있지 않으면 예외를 던진다.")
     public void createNewSquad4() {
         // given
         SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
         Long memberId = 1L;
         Member member = MemberFactory.defaultMember().id(memberId).build();
         Crew crew = CrewFactory.defaultCrew().member(member).build();
-        CrewMember crewMember = CrewMember.of(crew, member, JoinStatus.PENDING);
-        crew.getCrewMembers().add(crewMember);
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewRepository.findCrewWithMembersByName(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
-
-        // when & then
-        assertThatThrownBy(() -> squadService.createNewSquad(squadCreateDto, memberId))
-                .isInstanceOf(CrewBusinessException.AlreadyRequest.class)
-                .hasMessage("크루 1 크루에 가입신청을 했지만 요청 수락 전 상태입니다.");
-    }
-
-    @Test
-    @DisplayName("Squad 를 생성하기 전에 Crew 에 Member 가 속해있지 않으면 예외를 던진다.")
-    public void createNewSquad5() {
-        // given
-        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
-        Long memberId = 1L;
-        Member member = MemberFactory.defaultMember().id(memberId).build();
-        Crew crew = CrewFactory.defaultCrew().member(member).build();
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         given(crewRepository.findCrewWithMembersByName(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
 
         // when & then
         assertThatThrownBy(() -> squadService.createNewSquad(squadCreateDto, memberId))
                 .isInstanceOf(CrewMemberBusinessException.NotParticipant.class)
-                .hasMessage("id 가 1 인 사용자는 크루 1 크루에 속해있지 않습니다.");
+                .hasMessage("사용자는 크루 1 크루에 속해있지 않습니다.");
     }
 
     @Test
-    @DisplayName("Squad 참여 요청에 성공한다.")
+    @DisplayName("Squad 참가 요청에 성공한다.")
     public void joinSquad1() {
         // given
-        SquadJoinDto squadJoinDto = new SquadJoinDto("크루 1", 1L, "스쿼드 제목");
-        Long memberId = 1L;
-        Member member = MemberFactory.defaultMember().id(memberId).build();
-        Crew crew = CrewFactory.defaultCrew().member(member).build();
-        Squad squad = SquadFactory.defaultSquad().crew(crew).member(member).build();
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewMemberRepository.existsCrewMember(memberId)).willReturn(true);
-        given(squadRepository.findSquadWithMembersById(squadJoinDto.squadId(), new Title(squadJoinDto.squadTitle()))).willReturn(Optional.of(squad));
+        SquadJoinDto squadJoinDto = new SquadJoinDto("Crew 명", 1L);
+        Long requestMemberId = 2L;
+        Member findMember = createMember(1L);
+        given(memberRepository.findById(requestMemberId)).willReturn(Optional.of(findMember));
+        Crew findCrew = createCrew(1L, findMember);
+        CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
+        findCrew.addCrewMember(findCrewMember);
+        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        Squad findSquad = createSquad(1L, findCrew, createCrewMember(2L, createCrew(2L), createMember(3L)));
+        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
+        given(squadParticipantRepository.findBySquadIdAndCrewMemberId(anyLong(), anyLong())).willReturn(Optional.empty());
 
         // when
-        squadService.joinSquad(squadJoinDto, memberId);
+        squadService.submitParticipationRequest(squadJoinDto, requestMemberId);
 
         // then
-        then(squadRepository).should(times(1)).saveAndFlush(squad);
+        then(squadParticipantRepository).should(times(1)).save(any(SquadParticipant.class));
     }
 
     @Test
-    @DisplayName("이미 Squad 에 참여 요청을 한적있으면 실패한다.")
+    @DisplayName("Member 가 Crew 에 속해있지 않으면, Squad 참가 요청에 실패한다.")
     public void joinSquad2() {
         // given
-        SquadJoinDto squadJoinDto = new SquadJoinDto("크루 1", 1L, "스쿼드 제목");
-        Long memberId = 1L;
-        Member member = MemberFactory.defaultMember().id(memberId).build();
-        Crew crew = CrewFactory.defaultCrew().member(member).build();
-        Squad squad = SquadFactory.defaultSquad().crew(crew).member(member).build();
-        SquadMember squadMember = SquadMember.forGeneral(member);
-        squad.addSquadMember(squadMember);
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewMemberRepository.existsCrewMember(memberId)).willReturn(true);
-        given(squadRepository.findSquadWithMembersById(squadJoinDto.squadId(), new Title(squadJoinDto.squadTitle()))).willReturn(Optional.of(squad));
+        SquadJoinDto squadJoinDto = new SquadJoinDto("Crew 명", 1L);
+        Long requestMemberId = 2L;
+
+        Member findMember = createMember(1L);
+        given(memberRepository.findById(requestMemberId)).willReturn(Optional.of(findMember));
+        Crew findCrew = createCrew(1L, findMember);
+        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
 
         // when & then
-        assertThatThrownBy(() -> squadService.joinSquad(squadJoinDto, memberId))
-                .isInstanceOf(SquadBusinessException.AlreadyRequest.class)
-                .hasMessage("스쿼드 제목 스쿼드에 참여요청을 한 이력이 있습니다.");
+        assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
+                .isInstanceOf(CrewMemberBusinessException.NotParticipant.class)
+                .hasMessage(String.format("사용자는 %s 크루에 속해있지 않습니다.", squadJoinDto.crewName()));
     }
 
     @Test
-    @DisplayName("이미 Squad 에 이미 속한 사용자면 실패한다.")
+    @DisplayName("Squad 를 만든 사람은 Squad 참가 요청에 실패한다.")
     public void joinSquad3() {
         // given
-        SquadJoinDto squadJoinDto = new SquadJoinDto("크루 1", 1L, "스쿼드 제목");
-        Long memberId = 1L;
-        Member member = MemberFactory.defaultMember().id(memberId).build();
-        Crew crew = CrewFactory.defaultCrew().member(member).build();
-        Squad squad = SquadFactory.defaultSquad().crew(crew).member(member).build();
-        SquadMember squadMember = SquadMember.forLeader(member);
-        squad.addSquadMember(squadMember);
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewMemberRepository.existsCrewMember(memberId)).willReturn(true);
-        given(squadRepository.findSquadWithMembersById(squadJoinDto.squadId(), new Title(squadJoinDto.squadTitle()))).willReturn(Optional.of(squad));
+        SquadJoinDto squadJoinDto = new SquadJoinDto("Crew 명", 1L);
+        Long requestMemberId = 2L;
+
+        Member findMember = createMember(1L);
+        given(memberRepository.findById(requestMemberId)).willReturn(Optional.of(findMember));
+        Crew findCrew = createCrew(1L, findMember);
+        CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
+        findCrew.addCrewMember(findCrewMember);
+        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        Squad findSquad = createSquad(3L, findCrew, createCrewMember(1L));
+        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
 
         // when & then
-        assertThatThrownBy(() -> squadService.joinSquad(squadJoinDto, memberId))
-                .isInstanceOf(SquadBusinessException.AlreadyParticipant.class)
-                .hasMessage("이미 스쿼드 제목 스쿼드에 가입된 사용자입니다.");
+        assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
+                .isInstanceOf(SquadBusinessException.OwnerCantParticipant.class)
+                .hasMessage("스쿼드를 만든 사람은 신청할 수 없습니다.");
     }
 
     @Test
-    @DisplayName("Squad 가 없으면 Squad 에 참여신청할 수 없다.")
+    @DisplayName("Squad 가 다른 Crew 에 속해있으면 Squad 참가 요청에 실패한다.")
     public void joinSquad4() {
         // given
-        SquadJoinDto squadJoinDto = new SquadJoinDto("크루 1", 1L, "스쿼드 제목");
-        Long memberId = 1L;
-        Member member = MemberFactory.defaultMember().id(memberId).build();
-        Crew crew = CrewFactory.defaultCrew().member(member).build();
-        Squad squad = SquadFactory.defaultSquad().crew(crew).member(member).build();
-        SquadMember squadMember = SquadMember.forLeader(member);
-        squad.addSquadMember(squadMember);
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewMemberRepository.existsCrewMember(memberId)).willReturn(true);
-        given(squadRepository.findSquadWithMembersById(squadJoinDto.squadId(), new Title(squadJoinDto.squadTitle()))).willReturn(Optional.empty());
+        SquadJoinDto squadJoinDto = new SquadJoinDto("Crew 명", 1L);
+        Long requestMemberId = 2L;
+
+        Member findMember = createMember(1L);
+        given(memberRepository.findById(requestMemberId)).willReturn(Optional.of(findMember));
+        Crew findCrew = createCrew(1L, findMember);
+        CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
+        findCrew.addCrewMember(findCrewMember);
+        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        Squad findSquad = createSquad(1L, createCrew(1L, "dummy_name"), createCrewMember(3L));
+        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
 
         // when & then
-        assertThatThrownBy(() -> squadService.joinSquad(squadJoinDto, memberId))
-                .isInstanceOf(SquadBusinessException.NotFound.class)
-                .hasMessage("스쿼드 제목 스쿼드를 찾을 수 없습니다.");
+        assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
+                .isExactlyInstanceOf(SquadBusinessException.NotInCrew.class)
+                .hasMessage(String.format("스쿼드는 %s 크루 안에 속해있지 않습니다.", squadJoinDto.crewName()));
     }
 
     @Test
-    @DisplayName("Member 가 없으면 Squad 에 참여신청할 수 없다.")
+    @DisplayName("이미 Squad 에 속한 사용자면 Squad 참가 신청에 실패한다.")
     public void joinSquad5() {
         // given
-        SquadJoinDto squadJoinDto = new SquadJoinDto("크루 1", 1L, "스쿼드 제목");
-        Long memberId = 1L;
-        given(memberRepository.findById(memberId)).willReturn(Optional.empty());
+        SquadJoinDto squadJoinDto = new SquadJoinDto("Crew 명", 1L);
+        Long requestMemberId = 2L;
+
+        Member findMember = createMember(1L);
+        given(memberRepository.findById(requestMemberId)).willReturn(Optional.of(findMember));
+        Crew findCrew = createCrew(1L, findMember);
+        CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
+        findCrew.addCrewMember(findCrewMember);
+        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        Squad findSquad = createSquad(1L, createCrew(1L), createCrewMember(3L));
+        findSquad.addSquadMember(createSquadMember(1L, createCrewMember(1L)), createSquadMember(2L, createCrewMember(2L)));
+        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
 
         // when & then
-        assertThatThrownBy(() -> squadService.joinSquad(squadJoinDto, memberId))
-                .isInstanceOf(MemberBusinessException.NotFound.class)
-                .hasMessage("id 가 1 인 사용자를 찾을 수 없습니다.");
+        assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
+                .isExactlyInstanceOf(SquadBusinessException.AlreadyParticipant.class);
     }
 
-    @Test
-    @DisplayName("Member 아 Crew 에 속해있지 않으면 Squad 에 참여신청할 수 없다.")
-    public void joinSquad6() {
-        // given
-        SquadJoinDto squadJoinDto = new SquadJoinDto("크루 1", 1L, "스쿼드 제목");
-        Long memberId = 1L;
-        Member member = MemberFactory.defaultMember().id(memberId).build();
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewMemberRepository.existsCrewMember(memberId)).willReturn(false);
-
-        // when & then
-        assertThatThrownBy(() -> squadService.joinSquad(squadJoinDto, memberId))
-                .isInstanceOf(CrewMemberBusinessException.NotParticipant.class)
-                .hasMessage("id 가 1 인 사용자는 크루 1 크루에 속해있지 않습니다.");
+    public static Member createMember(Long id) {
+        return Member.builder()
+                .id(id)
+                .nickname(new Nickname("nickname"))
+                .address(new Address("어딘가", "롯데캐슬"))
+                .email(new Email("test@email.com"))
+                .password(new Password("12345!@asa"))
+                .userType(UserType.GENERAL)
+                .build();
     }
 
-    @Test
-    @DisplayName("squadId 와 squadTitle 로 Squad 를 가져온다.")
-    public void findSquad() {
-        // given
-        Long squadId = 1L;
-        String squadTitle = SquadFactory.TITLE.getValue();
-        Member member = MemberFactory.defaultMember().build();
-        Squad squad = SquadFactory.defaultSquad().id(squadId).title(new Title(squadTitle)).member(member).capacity(new Capacity(8)).build();
-        given(squadRepository.findSquadWithMemberByIdAndTitle(squadId, new Title(squadTitle))).willReturn(Optional.of(squad));
+    public static Crew createCrew(Long id) {
+        return Crew.builder()
+                .id(id)
+                .name(new Name("Crew 명"))
+                .introduce(new Introduce("Crew 소개"))
+                .detail(new Detail("Crew 세부정보"))
+                .hashTags(new HashTags(List.of("해시태그1", "해시태그2", "해시태그3")))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .build();
+    }
 
-        // when
-        SquadDto squadDto = squadService.findSquad(squadId, squadTitle);
+    public static Crew createCrew(Long id, String name) {
+        return Crew.builder()
+                .id(id)
+                .name(new Name(name))
+                .introduce(new Introduce("Crew 소개"))
+                .detail(new Detail("Crew 세부정보"))
+                .hashTags(new HashTags(List.of("해시태그1", "해시태그2", "해시태그3")))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .build();
+    }
 
-        assertSoftly(softly -> {
-            softly.assertThat(squadDto.id()).isEqualTo(squadId);
-            softly.assertThat(squadDto.title()).isEqualTo(SquadFactory.TITLE.getValue());
-            softly.assertThat(squadDto.capacity()).isEqualTo(8);
-            softly.assertThat(squadDto.remain()).isEqualTo(8);
-            softly.assertThat(squadDto.categories()).isEqualTo(List.of("배드민턴"));
-        });
+    public static Crew createCrew(Long id, Member member) {
+        return Crew.builder()
+                .id(id)
+                .name(new Name("Crew 명"))
+                .introduce(new Introduce("Crew 소개"))
+                .detail(new Detail("Crew 세부정보"))
+                .hashTags(new HashTags(List.of("해시태그1", "해시태그2", "해시태그3")))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .member(member)
+                .build();
+    }
+
+    public static CrewMember createCrewMember(Long id) {
+        return CrewMember.builder()
+                .id(id)
+                .build();
+    }
+
+    public static CrewMember createCrewMember(Long id, Crew crew, Member member) {
+        return CrewMember.builder()
+                .id(id)
+                .crew(crew)
+                .member(member)
+                .build();
+    }
+
+    public static Squad createSquad(Long id) {
+        return Squad.builder()
+                .id(id)
+                .title(new Title("타이틀 1"))
+                .content(new Content("Sauad 내용"))
+                .capacity(new Capacity(8))
+                .categories(new Categories(Category.BADMINTON))
+                .address(new Address("주소", "상세주소"))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .discordLink("디스코드 링크")
+                .build();
+    }
+
+
+    public static Squad createSquad(Long id, Crew crew, CrewMember crewMember) {
+        return Squad.builder()
+                .id(id)
+                .title(new Title("Squad 타이틀"))
+                .content(new Content("Sauad 내용"))
+                .capacity(new Capacity(8))
+                .categories(new Categories(Category.BADMINTON))
+                .address(new Address("주소", "상세주소"))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .discordLink("디스코드 링크")
+                .crew(crew)
+                .crewMember(crewMember)
+                .build();
+    }
+
+    public static SquadMember createSquadMember(Long id) {
+        return SquadMember.builder()
+                .id(id)
+                .role(GENERAL)
+                .status(PENDING)
+                .build();
+    }
+
+    public static SquadMember createSquadMember(Long id, CrewMember crewMember) {
+        return SquadMember.builder()
+                .id(id)
+                .role(GENERAL)
+                .status(PENDING)
+                .crewMember(crewMember)
+                .build();
+    }
+
+    public static SquadMember createSquadMember(Long id, Squad squad, CrewMember crewMember) {
+        return SquadMember.builder()
+                .id(id)
+                .role(GENERAL)
+                .status(PENDING)
+                .squad(squad)
+                .crewMember(crewMember)
+                .build();
     }
 }
