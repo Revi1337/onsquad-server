@@ -23,8 +23,8 @@ import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @AttributeOverrides({
-        @AttributeOverride(name = "createdAt", column = @Column(name = "request_at")),
-        @AttributeOverride(name = "updatedAt", column = @Column(name = "participate_at"))
+        @AttributeOverride(name = "createdAt", column = @Column(name = "request_at", nullable = false, updatable = false)),
+        @AttributeOverride(name = "updatedAt", column = @Column(name = "participate_at", nullable = false))
 })
 public class CrewMember extends BaseEntity {
 

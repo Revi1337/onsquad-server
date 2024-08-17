@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Categories;
@@ -47,9 +47,9 @@ public class Squad extends BaseEntity {
 
     private String discordLink;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = PERSIST)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crew_member_id", nullable = false)
+    private CrewMember crewMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
@@ -59,7 +59,7 @@ public class Squad extends BaseEntity {
     private final List<SquadMember> squadMembers = new ArrayList<>();
 
     @Builder
-    private Squad(Long id, Title title, Content content, Capacity capacity, Categories categories, Address address, String kakaoLink, String discordLink, Member member, Crew crew) {
+    private Squad(Long id, Title title, Content content, Capacity capacity, Categories categories, Address address, String kakaoLink, String discordLink, CrewMember crewMember, Crew crew) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -68,7 +68,7 @@ public class Squad extends BaseEntity {
         this.address = address;
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
-        this.member = member;
+        this.crewMember = crewMember;
         this.crew = crew;
     }
 
