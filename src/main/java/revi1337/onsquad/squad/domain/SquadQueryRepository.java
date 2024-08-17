@@ -11,10 +11,14 @@ public interface SquadQueryRepository {
 
     Optional<Squad> findSquadWithMembersById(Long id, Title title);
 
-    Optional<Squad> findSquadWithMemberByIdAndTitle(Long id, Title title);
+    Optional<Squad> findSquadByIdAndTitleWithMember(Long id);
 
     Page<Squad> findSquadsByCrewName(Name crewName, Pageable pageable);
 
     Optional<Squad> findSquadWithCrewById(Long id);
+
+    Optional<Squad> findSquadByIdWithCrewAndCrewMembers(Long id);
+
+    Optional<Squad> findSquadByIdWithSquadMembers(Long id);
 
 }

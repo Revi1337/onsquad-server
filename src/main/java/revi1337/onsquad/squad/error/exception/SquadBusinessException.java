@@ -17,10 +17,6 @@ public abstract class SquadBusinessException extends RuntimeException {
 
     public static class NotFound extends SquadBusinessException {
 
-        public NotFound(ErrorCode errorCode, String squadName) {
-            super(errorCode, String.format(errorCode.getDescription(), squadName));
-        }
-
         public NotFound(ErrorCode errorCode) {
             super(errorCode, String.format(errorCode.getDescription()));
         }
@@ -44,6 +40,13 @@ public abstract class SquadBusinessException extends RuntimeException {
 
         public NotInCrew(ErrorCode errorCode, String crewName) {
             super(errorCode, String.format(errorCode.getDescription(), crewName));
+        }
+    }
+
+    public static class OwnerCantParticipant extends SquadBusinessException {
+
+        public OwnerCantParticipant(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 }

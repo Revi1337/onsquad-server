@@ -6,10 +6,9 @@ import revi1337.onsquad.squad.dto.SquadJoinDto;
 
 public record SquadJoinRequest(
         @NotEmpty String crewName,
-        @Positive Long squadId,
-        @NotEmpty String squadTitle
+        @Positive Long squadId
 ) {
     public SquadJoinDto toDto() {
-        return new SquadJoinDto(crewName, squadId, squadTitle);
+        return new SquadJoinDto(crewName, squadId);
     }
 }

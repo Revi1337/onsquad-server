@@ -10,28 +10,27 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
+import revi1337.onsquad.participant.domain.SquadParticipant;
+import revi1337.onsquad.participant.domain.SquadParticipantRepository;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad.domain.vo.Title;
 import revi1337.onsquad.squad.dto.SquadCreateDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
 import revi1337.onsquad.squad.dto.SquadDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
 import static revi1337.onsquad.squad.error.SquadErrorCode.*;
-import static revi1337.onsquad.squad.error.SquadErrorCode.ALREADY_REQUEST;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -41,136 +40,108 @@ public class SquadService {
     private final SquadRepository squadRepository;
     private final MemberRepository memberRepository;
     private final CrewRepository crewRepository;
-    private final CrewMemberRepository crewMemberRepository;
+    private final SquadParticipantRepository squadParticipantRepository;
 
-    @Transactional
-    public void createNewSquad(SquadCreateDto dto, Long memberId) {
-        memberRepository.findById(memberId)
-                .map(member -> persistSquadIfMemberAndCrewIsValid(dto, member))
-                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
-    }
-
-    @Transactional
-    public void joinSquad(SquadJoinDto dto, Long memberId) {
-        memberRepository.findById(memberId)
-                .map(member -> checkMemberInCrew(dto, memberId, member))
-                .map(member -> persistSquadMember(dto, member))
-                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
-    }
-
-    public SquadDto findSquad(Long id, String title) {
-        return squadRepository.findSquadWithMemberByIdAndTitle(id, new Title(title))
+    @Transactional(readOnly = true)
+    public SquadDto findSquad(Long id) {
+        return squadRepository.findSquadByIdAndTitleWithMember(id)
                 .map(SquadDto::from)
-                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND_SQUAD, title));
+                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
     }
 
+    @Transactional(readOnly = true)
     public List<SquadDto> findSquads(String crewName, Pageable pageable) {
         return squadRepository.findSquadsByCrewName(new Name(crewName), pageable).stream()
                 .map(SquadDto::from)
                 .collect(Collectors.toList());
     }
 
-    private Crew persistSquadIfMemberAndCrewIsValid(SquadCreateDto dto, Member member) {
-        return crewRepository.findCrewWithMembersByName(new Name(dto.crewName()))
-                .map(crew -> persistSquadIfCrewMemberIsValid(dto, member, crew))
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(CrewErrorCode.NOTFOUND_CREW, dto.crewName()));
+    @Transactional
+    public void createNewSquad(SquadCreateDto dto, Long memberId) {
+        Member member = getMemberById(memberId);
+        Crew crew = getCrewWithMembersByName(dto.crewName());
+        persistSquadIfCrewMemberIsValid(dto, member, crew);
     }
 
-    private Crew persistSquadIfCrewMemberIsValid(SquadCreateDto dto, Member member, Crew crew) {
-        for (CrewMember crewMember : crew.getCrewMembers()) {
-            if (crewMember.getMember().getId().equals(member.getId())) {
-                if (crewMember.getStatus() == JoinStatus.PENDING) {
-                    throw new CrewBusinessException.AlreadyRequest(CrewErrorCode.ALREADY_REQUEST, dto.crewName());
-                }
-
-                persistSquadAndRegisterAdmin(dto, member, crew);
-                return crew;
-            }
-        }
-
-        throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT, member.getId(), dto.crewName());
+    @Transactional
+    public void submitParticipationRequest(SquadJoinDto dto, Long memberId) {
+        Member member = getMemberById(memberId);
+        Crew crew = getCrewWithMembersByName(dto.crewName());
+        CrewMember crewMember = checkMemberInCrew(dto.crewName(), crew, member);
+        Squad squad = squadRepository.findSquadByIdWithSquadMembers(dto.squadId())
+                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
+        validateSquadMetadata(dto, squad, crewMember, member);
+        addParticipantRequest(squad, crewMember);
     }
 
-    private void persistSquadAndRegisterAdmin(SquadCreateDto dto, Member member, Crew crew) {
-        Squad squad = dto.toEntity(member, crew);
-        squad.addSquadMember(SquadMember.forLeader(member));
+    private Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
+    }
+
+    private Crew getCrewWithMembersByName(String crewName) {
+        return crewRepository.findCrewWithMembersByName(new Name(crewName))
+                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(CrewErrorCode.NOTFOUND_CREW, crewName));
+    }
+
+    private void persistSquadIfCrewMemberIsValid(SquadCreateDto dto, Member member, Crew crew) {
+        crew.getCrewMembers().stream()
+                .filter(crewMember -> crewMember.getMember().equals(member))
+                .findFirst()
+                .ifPresentOrElse(
+                        crewMember -> persistSquadAndRegisterAdmin(dto, crewMember, crew),
+                        () -> { throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT, dto.crewName()); }
+                );
+    }
+
+    private void persistSquadAndRegisterAdmin(SquadCreateDto dto, CrewMember crewMember, Crew crew) {
+        Squad squad = dto.toEntity(crewMember, crew);
+        squad.addSquadMember(SquadMember.forLeader(crewMember));
         squadRepository.save(squad);
     }
 
-    private Member checkMemberInCrew(SquadJoinDto dto, Long memberId, Member member) {
-        if (crewMemberRepository.existsCrewMember(memberId)) {
-            return member;
+    private CrewMember checkMemberInCrew(String crewName, Crew crew, Member member) {
+        return crew.getCrewMembers().stream()
+                .filter(crewMember -> crewMember.getMember().equals(member))
+                .findFirst()
+                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT, crewName));
+    }
+
+    private void validateSquadMetadata(SquadJoinDto dto, Squad squad, CrewMember crewMember, Member member) {
+        checkDifferenceSquadCreator(squad, crewMember);
+        checkSquadInCrew(dto, squad);
+        checkSquadMemberAlreadyJoined(squad, member);
+    }
+
+    private void checkDifferenceSquadCreator(Squad squad, CrewMember crewMember) {
+        if (squad.getCrewMember().equals(crewMember)) {
+            throw new SquadBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
         }
-
-        throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT, member.getId(), dto.crewName());
     }
 
-    private Squad persistSquadMember(SquadJoinDto dto, Member member) {
-        return squadRepository.findSquadWithMembersById(dto.squadId(), new Title(dto.squadTitle()))
-                .map(squad -> persistSquadMemberIfMemberInSquad(dto, member, squad))
-                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND_SQUAD, dto.squadTitle()));
+    private void checkSquadInCrew(SquadJoinDto dto, Squad squad) {
+        if (!squad.getCrew().getName().equals(new Name(dto.crewName()))) {
+            throw new SquadBusinessException.NotInCrew(NOT_IN_CREW, dto.crewName());
+        }
     }
 
-    private Squad persistSquadMemberIfMemberInSquad(SquadJoinDto dto, Member member, Squad squad) {
-        validateMemberInSquad(dto, member, squad);
-        return persistSquadMemberInSquad(member, squad);
-    }
-
-    private void validateMemberInSquad(SquadJoinDto dto, Member member, Squad squad) {
-        List<SquadMember> squadMembers = squad.getSquadMembers();
-        for (SquadMember squadMember : squadMembers) {
-            if (squadMember.getMember().getId().equals(member.getId())) {
-                if (squadMember.getStatus() == JoinStatus.PENDING) {
-                    throw new SquadBusinessException.AlreadyRequest(ALREADY_REQUEST, dto.squadTitle());
-                }
-                if (squadMember.getStatus() == JoinStatus.ACCEPT) {
-                    throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, dto.squadTitle());
-                }
+    private void checkSquadMemberAlreadyJoined(Squad squad, Member member) {
+        for (SquadMember squadMember : squad.getSquadMembers()) {
+            if (squadMember.getCrewMember().getId().equals(member.getId())) {
+                throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
             }
         }
     }
 
-    private Squad persistSquadMemberInSquad(Member member, Squad squad) {
-        squad.addSquadMember(SquadMember.forGeneral(member));
-        squadRepository.saveAndFlush(squad);
-        return squad;
+    private void addParticipantRequest(Squad squad, CrewMember crewMember) {
+        synchronized (this) {
+            squadParticipantRepository.findBySquadIdAndCrewMemberId(squad.getId(), crewMember.getId()).ifPresentOrElse(
+                    squadParticipant -> {
+                        squadParticipant.updateRequestTimestamp(LocalDateTime.now());
+                        squadParticipantRepository.saveAndFlush(squadParticipant);
+                    },
+                    () -> squadParticipantRepository.save(SquadParticipant.of(squad, crewMember, LocalDateTime.now()))
+            );
+        }
     }
 }
-
-//    /**
-//     * Member 가 있나 체크 (O)
-//     * Member 가 Crew 에 속해있나 체크 (0)
-//     * Squad 가 존재하나 체크 (O)
-//     *      Squad 에 참여요청을 한적있나 체크 (O)
-//     *      이미 Squad 에 가입된 사용자인지 체크. (O)
-//     */
-//    public void joinSquad(SquadJoinDto dto, Long memberId) {
-//        memberRepository.findById(memberId)
-//                .map(member -> {
-//                    if (crewMemberRepository.existsCrewMember(memberId)) {
-//                        return member;
-//                    }
-//
-//                    throw new IllegalArgumentException("멤버가 Crew 에 속해있지 않음.");
-//                })
-//                .map(member -> squadRepository.findSquadWithMembersById(dto.squadId(), new Title(dto.squadTitle()))
-//                        .map(squad -> {
-//                            List<SquadMember> squadMembers = squad.getSquadMembers();
-//                            for (SquadMember squadMember : squadMembers) {
-//                                if (squadMember.getMember().getId().equals(member.getId())) {
-//                                    if (squadMember.getStatus() == JoinStatus.PENDING) {
-//                                        throw new SquadBusinessException.AlreadyRequest(ALREADY_REQUEST, dto.squadTitle());
-//                                    }
-//                                    if (squadMember.getStatus() == JoinStatus.ACCEPT) {
-//                                        throw new SquadBusinessException.AlreadyParticipant(ALREADY_PARTICIPANT, dto.squadTitle());
-//                                    }
-//                                }
-//                            }
-//
-//                            squad.addSquadMember(SquadMember.forGeneral(member));
-//                            squadRepository.saveAndFlush(squad);
-//                            return squad;
-//                        })
-//                        .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND_SQUAD, dto.squadTitle())))
-//                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
-//    }

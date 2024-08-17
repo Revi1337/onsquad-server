@@ -14,7 +14,6 @@ import revi1337.onsquad.squad.dto.request.SquadCreateRequest;
 import revi1337.onsquad.squad.dto.request.SquadJoinRequest;
 import revi1337.onsquad.squad.dto.response.SquadResponse;
 
-import javax.inject.Qualifier;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,17 +39,16 @@ public class SquadController {
             @Valid @RequestBody SquadJoinRequest joinRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        squadService.joinSquad(joinRequest.toDto(), authenticatedMember.toDto().getId());
+        squadService.submitParticipationRequest(joinRequest.toDto(), authenticatedMember.toDto().getId());
 
         return ResponseEntity.ok(RestResponse.noContent());
     }
 
     @GetMapping("/squad")
     public ResponseEntity<RestResponse<SquadResponse>> findSquad(
-            @RequestParam Long id,
-            @RequestParam String title
+            @RequestParam Long id
     ) {
-        SquadResponse squadResponse = SquadResponse.from(squadService.findSquad(id, title));
+        SquadResponse squadResponse = SquadResponse.from(squadService.findSquad(id));
 
         return ResponseEntity.ok(RestResponse.success(squadResponse));
     }
