@@ -2,7 +2,7 @@ package revi1337.onsquad.squad.domain.category;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.squad.domain.category.vo.CategoryType;
+import revi1337.onsquad.squad.domain.vo.category.CategoryType;
 
 import java.util.List;
 import java.util.Optional;

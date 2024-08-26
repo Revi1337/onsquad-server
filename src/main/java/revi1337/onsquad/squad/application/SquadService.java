@@ -20,7 +20,7 @@ import revi1337.onsquad.participant.domain.SquadParticipant;
 import revi1337.onsquad.participant.domain.SquadParticipantRepository;
 import revi1337.onsquad.squad.domain.*;
 import revi1337.onsquad.squad.domain.category.Category;
-import revi1337.onsquad.squad.domain.category.vo.CategoryType;
+import revi1337.onsquad.squad.domain.vo.category.CategoryType;
 import revi1337.onsquad.squad.dto.SquadCreateDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
 import revi1337.onsquad.squad.dto.SquadDto;

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.auth.application.JsonWebTokenProvider;
 import revi1337.onsquad.squad.domain.category.Category;
 import revi1337.onsquad.squad.domain.category.CategoryRepository;
-import revi1337.onsquad.squad.domain.category.vo.CategoryType;
+import revi1337.onsquad.squad.domain.vo.category.CategoryType;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;

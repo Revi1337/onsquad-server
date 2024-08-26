@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.domain.category.vo;
+package revi1337.onsquad.squad.domain.vo.category;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

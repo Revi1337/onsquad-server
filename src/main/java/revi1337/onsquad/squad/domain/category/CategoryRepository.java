@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad.domain.category;
 
-import revi1337.onsquad.squad.domain.category.vo.CategoryType;
+import revi1337.onsquad.squad.domain.vo.category.CategoryType;
 
 import java.util.List;
 import java.util.Optional;
