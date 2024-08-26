@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
@@ -21,5 +22,11 @@ public enum JoinStatus {
 
     public static EnumSet<JoinStatus> defaultEnumSet() {
         return EnumSet.allOf(JoinStatus.class);
+    }
+
+    public static String convertSupportedTypeString() {
+        return defaultEnumSet().stream()
+                .map(JoinStatus::getText)
+                .collect(Collectors.joining(", "));
     }
 }

@@ -12,7 +12,6 @@ import revi1337.onsquad.crew.dto.OwnedCrewsDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
@@ -20,6 +19,7 @@ import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import java.util.List;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
+import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
 
 @Transactional(readOnly = true)
@@ -80,27 +80,32 @@ public class CrewConfigService {
 
     private void modifyCrewMemberMetadata(CrewAcceptDto dto, Long memberId, Crew crew) {
         validateCrewPublisher(memberId, crew, dto.requestCrewName());
-        modifyCrewMemberJoinStatus(dto, memberId, crew.getId());
+        modifyCrewMemberJoinStatus(dto, crew.getId());
     }
 
-    private void modifyCrewMemberJoinStatus(CrewAcceptDto dto, Long memberId, Long crewId) {
-        crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crewId, memberId)
+    private void modifyCrewMemberJoinStatus(CrewAcceptDto dto, Long crewId) {
+        crewMemberRepository.findCrewMemberByCrewIdAndMemberId(dto.requestMemberId(), crewId)
                 .ifPresentOrElse(
-                        crewMember -> modifyJoinStatus(dto.requestStatus(), crewMember),
+                        crewMember -> modifyJoinStatus(dto, crewMember),
                         () -> { throw new CrewMemberBusinessException.NeverRequested(NEVER_REQUESTED, dto.requestCrewName()); }
                 );
     }
 
-    private void modifyJoinStatus(JoinStatus requestJoinStatus, CrewMember crewMember) {
-        if (requestJoinStatus == JoinStatus.PENDING) {
+    private void modifyJoinStatus(CrewAcceptDto dto, CrewMember crewMember) {
+        if (dto.requestStatus() == null) {
+            throw new CrewMemberBusinessException.InvalidJoinStatus(INVALID_STATUS, convertSupportedTypeString());
+        }
+        if (dto.requestStatus() == PENDING) {
             return;
         }
-
-        if (requestJoinStatus == JoinStatus.REJECT) {
+        if (dto.requestStatus() == REJECT) {
             crewMemberRepository.delete(crewMember);
             return;
         }
+        if (crewMember.getStatus() == ACCEPT) {
+            throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.requestCrewName());
+        }
 
-        crewMember.updateStatus(requestJoinStatus);
+        crewMember.updateStatus(dto.requestStatus());
     }
 }

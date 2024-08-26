@@ -2,23 +2,31 @@ package revi1337.onsquad.squad.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.squad.domain.squad_category.SquadCategory;
 import revi1337.onsquad.squad.domain.vo.Capacity;
-import revi1337.onsquad.squad.domain.vo.Categories;
+
 import revi1337.onsquad.squad.domain.vo.Content;
 import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad_member.domain.SquadMember;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.FetchType.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Squad extends BaseEntity {
+
+    private static final int CATEGORY_BATCH_SIZE = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,34 +42,46 @@ public class Squad extends BaseEntity {
     private Capacity capacity;
 
     @Embedded
-    private Categories categories;
-
-    @Embedded
     private Address address;
 
     private String kakaoLink;
 
     private String discordLink;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = PERSIST)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @BatchSize(size = CATEGORY_BATCH_SIZE)
+    @OneToMany(mappedBy = "squad")
+    private final List<SquadCategory> categories = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crew_id")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "crew_member_id", nullable = false)
+    private CrewMember crewMember;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;
 
+    @OneToMany(mappedBy = "squad", cascade = {PERSIST, MERGE, DETACH, REFRESH})
+    private final List<SquadMember> squadMembers = new ArrayList<>();
+
     @Builder
-    private Squad(Long id, Title title, Content content, Capacity capacity, Categories categories, Address address, String kakaoLink, String discordLink, Member member) {
+    private Squad(Long id, Title title, Content content, Capacity capacity, Address address, String kakaoLink, String discordLink, CrewMember crewMember, Crew crew) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.capacity = capacity;
-        this.categories = categories;
         this.address = address;
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
-        this.member = member;
+        this.crewMember = crewMember;
+        this.crew = crew;
+    }
+
+    public void addSquadMember(SquadMember... squadMembers) {
+        for (SquadMember squadMember : squadMembers) {
+            capacity.decreaseRemain();
+            squadMember.addSquad(this);
+            this.squadMembers.add(squadMember);
+        }
     }
 
     @Override

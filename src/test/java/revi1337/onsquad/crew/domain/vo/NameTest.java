@@ -40,10 +40,10 @@ class NameTest {
     }
 
     @Test
-    @DisplayName("크루명은 45 자가 이하면 성공한다.")
+    @DisplayName("크루명은 15 자가 이하면 성공한다.")
     public void crewNameTest3() {
         // given
-        String name = IntStream.of(new Random().ints(45, 67, 90).toArray())
+        String name = IntStream.of(new Random().ints(15, 67, 90).toArray())
                 .mapToObj(integer -> (char) integer)
                 .map(String::valueOf)
                 .collect(Collectors.joining(""));
@@ -67,7 +67,7 @@ class NameTest {
         // when & then
         assertThatThrownBy(() -> new Name(name))
                 .isInstanceOf(CrewDomainException.InvalidNameLength.class)
-                .hasMessage("크루명의 길이는 1 자 이상 45 자 입니다.");
+                .hasMessage("크루명의 길이는 1 자 이상 15 자 입니다.");
     }
 
     @Test
@@ -79,6 +79,6 @@ class NameTest {
         // when & then
         assertThatThrownBy(() -> new Name(name))
                 .isInstanceOf(CrewDomainException.InvalidNameLength.class)
-                .hasMessage("크루명의 길이는 1 자 이상 45 자 입니다.");
+                .hasMessage("크루명의 길이는 1 자 이상 15 자 입니다.");
     }
 }

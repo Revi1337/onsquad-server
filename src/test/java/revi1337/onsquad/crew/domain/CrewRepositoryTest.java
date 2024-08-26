@@ -3,9 +3,14 @@ package revi1337.onsquad.crew.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
 import revi1337.onsquad.crew.dto.OwnedCrewsDto;
+import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
@@ -15,6 +20,7 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -24,6 +30,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired private CrewRepository crewRepository;
     @Autowired private MemberRepository memberRepository;
+    @Autowired private CrewMemberRepository crewMemberRepository;
 
     @Test
     @DisplayName("Crew 이름으로 Crew 명이 중복되는지 확인한다. (1)")
@@ -151,6 +158,34 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
             softly.assertThat(crew.getHashTags().getValue()).isEqualTo("해시태그1,해시태그2");
             softly.assertThat(crew.getKakaoLink()).isEqualTo("변경 카카오 링크");
             softly.assertThat(crew.getImage().getImageUrl()).isEqualTo(imageRemoteAddress);
+        });
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Test
+    @DisplayName("Crew 와 Crew 에 속한 CrewMember 가 잘 조회되는지 확인한다.")
+    public void findCrewWithMembersByName() {
+        // given
+        Member member = MemberFactory.defaultMember().build();
+        Image image = ImageFactory.defaultImage();
+        Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
+        CrewMember crewMember = CrewMember.forGeneral(crew, member);
+        Member member2 = MemberFactory.defaultMember().build();
+        CrewMember crewMember2 = CrewMember.forGeneral(crew, member2);
+        memberRepository.saveAll(List.of(member, member2));
+        crewRepository.save(crew);
+        crewMemberRepository.saveAll(List.of(crewMember, crewMember2));
+
+        // when
+        Optional<Crew> findCrewOptional = crewRepository.findCrewWithMembersByName(crew.getName());
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(findCrewOptional).isPresent();
+            softly.assertThat(findCrewOptional.get().getName()).isEqualTo(crew.getName());
+            softly.assertThat(findCrewOptional.get().getCrewMembers()).hasSize(2);
+            softly.assertThat(findCrewOptional.get().getCrewMembers().get(0).getMember().getId()).isEqualTo(1L);
+            softly.assertThat(findCrewOptional.get().getCrewMembers().get(1).getMember().getId()).isEqualTo(2L);
         });
     }
 }

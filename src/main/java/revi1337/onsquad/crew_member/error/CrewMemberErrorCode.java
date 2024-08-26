@@ -8,7 +8,9 @@ import revi1337.onsquad.common.error.ErrorCode;
 @AllArgsConstructor
 public enum CrewMemberErrorCode implements ErrorCode {
 
-    NEVER_REQUESTED(400, "CRM001", "%s 크루에 참여요청을 한 이력이 없습니다.");
+    NEVER_REQUESTED(400, "CRM001", "%s 크루에 참여요청을 한 이력이 없습니다."),
+    INVALID_STATUS(400, "CRM002", "크루 참여요청 상태는 %s 만 가능합니다."),
+    NOT_PARTICIPANT(400, "CRM003", "사용자는 %s 크루에 속해있지 않습니다.");
 
     private final int status;
     private final String code;

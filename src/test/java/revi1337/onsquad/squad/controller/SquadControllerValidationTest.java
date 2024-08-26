@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import revi1337.onsquad.squad.application.SquadService;
-import revi1337.onsquad.squad.dto.SquadDto;
+import revi1337.onsquad.squad.dto.SquadCreateDto;
 import revi1337.onsquad.squad.dto.request.SquadCreateRequest;
 import revi1337.onsquad.support.ValidationWithRestDocsTestSupport;
 
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -58,10 +59,13 @@ class SquadControllerValidationTest extends ValidationWithRestDocsTestSupport {
 
         static Stream<Arguments> parameterizedCreateNewSquad() {
             return Stream.of(
-                    Arguments.of(SquadCreateRequest.of(null, "서울시 강서구", "우장산 롯데캐슬", 10, "제목", "내용", null, null)),
-                    Arguments.of(SquadCreateRequest.of(List.of("등산"), null, "우장산 롯데캐슬", 10, "제목", "내용", null, null)),
-                    Arguments.of(SquadCreateRequest.of(List.of("등산"), "서울시 강서구", "우장산 롯데캐슬", 10, null, "내용", null, null)),
-                    Arguments.of(SquadCreateRequest.of(List.of("등산"), "서울시 강서구", "우장산 롯데캐슬", 10, "제목", null, null, null))
+                    Arguments.of(new SquadCreateRequest(null,"스쿼드 제목", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크")),
+                    Arguments.of(new SquadCreateRequest("크루 제목", null, "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크")),
+                    Arguments.of(new SquadCreateRequest("크루 제목", "스쿼드 제목", null, 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크")),
+                    Arguments.of(new SquadCreateRequest("크루 제목", "스쿼드 제목", "스쿼드 내용", 0, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크")),
+                    Arguments.of(new SquadCreateRequest("크루 제목", "스쿼드 제목", "스쿼드 내용", -1, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크")),
+                    Arguments.of(new SquadCreateRequest("크루 제목", "스쿼드 제목", "스쿼드 내용", 8, null, "상세주소", List.of("등산"), "카카오링크", "디스코드링크")),
+                    Arguments.of(new SquadCreateRequest("크루 제목", "스쿼드 제목", "스쿼드 내용", 8, "주소", "상세주소", null, "카카오링크", "디스코드링크"))
             );
         }
 
@@ -69,8 +73,8 @@ class SquadControllerValidationTest extends ValidationWithRestDocsTestSupport {
         @Test
         public void CreateNewSquadDocsTest() throws Exception {
             // given
-            SquadCreateRequest squadCreateRequest = SquadCreateRequest.of(List.of("등산", "낚시"), "서울시 강서구", "우장산 롯데캐슬", 10, "제목", "내용", "카카오 링크", "디스코드 링크");
-            willDoNothing().given(squadService).createNewSquad(any(SquadDto.class));
+            SquadCreateRequest squadCreateRequest = new SquadCreateRequest("크루 이름", "스쿼드 제목", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
+            willDoNothing().given(squadService).createNewSquad(any(SquadCreateDto.class), anyLong());
 
             // when
             ResultActions resultActions = mockMvc.perform(
@@ -92,6 +96,7 @@ class SquadControllerValidationTest extends ValidationWithRestDocsTestSupport {
                                             headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")
                                     ),
                                     requestFields(
+                                            fieldWithPath("crewName").type(JsonFieldType.STRING).description("크루 제목"),
                                             fieldWithPath("title").type(JsonFieldType.STRING).description("제목"),
                                             fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
                                             fieldWithPath("capacity").type(JsonFieldType.NUMBER).description("모집 인원"),

@@ -7,11 +7,14 @@ import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
+
+import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.REFRESH;
 
 
 @Getter
@@ -42,13 +45,16 @@ public class Crew extends BaseEntity {
 
     private String kakaoLink;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "image_id", nullable = false)
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "crew", cascade = {PERSIST, MERGE, DETACH, REFRESH})
+    private final List<CrewMember> crewMembers = new ArrayList<>();
 
     @Builder
     private Crew(Long id, Name name, Introduce introduce, Detail detail, HashTags hashTags, Image image, String kakaoLink, Member member) {
@@ -60,6 +66,13 @@ public class Crew extends BaseEntity {
         this.image = image;
         this.kakaoLink = kakaoLink;
         this.member = member;
+    }
+
+    public void addCrewMember(CrewMember... crewMembers) {
+        for (CrewMember crewMember : crewMembers) {
+            crewMember.addCrew(this);
+            this.crewMembers.add(crewMember);
+        }
     }
 
     public void updateCrew(String name, String introduce, String detail, Collection<String> hashTags, String kakaoLink, String imageUrl) {
