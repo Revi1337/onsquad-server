@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewCreateDto;
 import revi1337.onsquad.crew.dto.CrewJoinDto;
@@ -35,7 +35,7 @@ import static org.mockito.BDDMockito.*;
 @DisplayName("CrewService 테스트")
 class CrewServiceTest {
 
-    @Mock private CrewRepository crewRepository;
+    @Mock private CrewJpaRepository crewJpaRepository;
     @Mock private CrewMemberRepository crewMemberRepository;
     @Mock private MemberRepository memberRepository;
     @Mock private S3BucketUploader s3BucketUploader;
@@ -51,14 +51,14 @@ class CrewServiceTest {
             // given
             String name = "크루 이름";
             Name crewName = new Name(name);
-            given(crewRepository.existsByName(crewName)).willReturn(true);
+            given(crewJpaRepository.existsByName(crewName)).willReturn(true);
 
             // when
             boolean duplicated = crewService.checkDuplicateNickname(name);
 
             // then
             assertSoftly(softly -> {
-                then(crewRepository).should(times(1)).existsByName(crewName);
+                then(crewJpaRepository).should(times(1)).existsByName(crewName);
                 softly.assertThat(duplicated).isTrue();
             });
         }
@@ -69,14 +69,14 @@ class CrewServiceTest {
             // given
             String name = "크루 이름";
             Name crewName = new Name(name);
-            given(crewRepository.existsByName(crewName)).willReturn(false);
+            given(crewJpaRepository.existsByName(crewName)).willReturn(false);
 
             // when
             boolean duplicated = crewService.checkDuplicateNickname(name);
 
             // then
             assertSoftly(softly -> {
-                then(crewRepository).should(times(1)).existsByName(crewName);
+                then(crewJpaRepository).should(times(1)).existsByName(crewName);
                 softly.assertThat(duplicated).isFalse();
             });
         }
@@ -97,7 +97,7 @@ class CrewServiceTest {
             String imageName = "imageName";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-            given(crewRepository.findByName(new Name(crewCreateDto.name())))
+            given(crewJpaRepository.findByName(new Name(crewCreateDto.name())))
                     .willReturn(Optional.of(crewCreateDto.toEntity(new Image(imageRemoteAddress), member)));
 
             // when & then
@@ -117,14 +117,14 @@ class CrewServiceTest {
             String imageUrl = "[default image url]";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-            given(crewRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
+            given(crewJpaRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
             given(s3BucketUploader.uploadCrew(pngImage, imageName)).willReturn(imageUrl);
 
             // when
             crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);
 
             // then
-            then(crewRepository).should(times(1)).save(any(Crew.class));
+            then(crewJpaRepository).should(times(1)).save(any(Crew.class));
         }
 
         @Test
@@ -139,15 +139,15 @@ class CrewServiceTest {
             String imageUrl = "[default image url]";
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-            given(crewRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
-            given(crewRepository.save(any(Crew.class))).willReturn(crewCreateDto.toEntity(new Image(imageRemoteAddress), member));
+            given(crewJpaRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
+            given(crewJpaRepository.save(any(Crew.class))).willReturn(crewCreateDto.toEntity(new Image(imageRemoteAddress), member));
             given(s3BucketUploader.uploadCrew(pngImage, imageName)).willReturn(imageUrl);
 
             // when
             crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);
 
             // then
-            then(crewRepository).should(times(1)).save(any(Crew.class));
+            then(crewJpaRepository).should(times(1)).save(any(Crew.class));
         }
     }
 
@@ -161,7 +161,7 @@ class CrewServiceTest {
             // given
             String name = "크루 이름";
             Name crewName = new Name(name);
-            given(crewRepository.findCrewByName(crewName)).willReturn(Optional.empty());
+            given(crewJpaRepository.findCrewByName(crewName)).willReturn(Optional.empty());
 
             // when
             Throwable throwable = catchThrowable(() -> crewService.findCrewByName(name));
@@ -170,7 +170,7 @@ class CrewServiceTest {
             assertThat(throwable)
                     .isInstanceOf(CrewBusinessException.NotFoundByName.class)
                     .hasMessage(String.format("%s 크루 게시글이 존재하지 않습니다.", name));
-            then(crewRepository).should(times(1)).findCrewByName(crewName);
+            then(crewJpaRepository).should(times(1)).findCrewByName(crewName);
         }
     }
 
@@ -187,7 +187,7 @@ class CrewServiceTest {
             CrewMember crewMember = CrewMember.of(crew, member, JoinStatus.PENDING);
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
+            given(crewJpaRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByMemberId(eq(memberId))).willReturn(Optional.of(crewMember));
 
             // when & then
@@ -205,7 +205,7 @@ class CrewServiceTest {
             CrewMember crewMember = CrewMember.of(crew, member, JoinStatus.ACCEPT);
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
+            given(crewJpaRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByMemberId(eq(memberId))).willReturn(Optional.of(crewMember));
 
             // when & then
@@ -223,7 +223,7 @@ class CrewServiceTest {
             Crew crew = Crew.builder().name(CrewFactory.NAME).member(member).build();
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
+            given(crewJpaRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByMemberId(eq(memberId))).willReturn(Optional.empty());
 
             // when
@@ -242,7 +242,7 @@ class CrewServiceTest {
             Crew crew = Crew.builder().name(CrewFactory.NAME).member(member) .build();
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
             given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.empty());
+            given(crewJpaRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.empty());
 
             // when && then
             assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))

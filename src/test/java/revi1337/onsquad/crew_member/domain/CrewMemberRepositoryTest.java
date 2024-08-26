@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
@@ -29,7 +29,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired private CrewMemberRepository crewMemberRepository;
     @Autowired private MemberRepository memberRepository;
-    @Autowired private CrewRepository crewRepository;
+    @Autowired private CrewJpaRepository crewJpaRepository;
 
     @Test
     @DisplayName("Member Id 를 통해 CrewMember 를 찾는다. (1)")
@@ -39,7 +39,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
         CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).build();
         memberRepository.save(member);
-        crewRepository.save(crew);
+        crewJpaRepository.save(crew);
         crewMemberRepository.save(crewMember);
 
         // when
@@ -56,7 +56,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
         CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).build();
         memberRepository.save(member);
-        crewRepository.save(crew);
+        crewJpaRepository.save(crew);
         crewMemberRepository.save(crewMember);
 
         // when
@@ -74,7 +74,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
         CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).build();
         memberRepository.save(member);
-        crewRepository.save(crew);
+        crewJpaRepository.save(crew);
         crewMemberRepository.save(crewMember);
 
         // when
@@ -93,7 +93,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
         CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).build();
         memberRepository.save(member);
-        crewRepository.save(crew);
+        crewJpaRepository.save(crew);
         crewMemberRepository.save(crewMember);
 
         // when
@@ -112,7 +112,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
         CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).status(JoinStatus.ACCEPT).build();
         memberRepository.save(member);
-        crewRepository.save(crew);
+        crewJpaRepository.save(crew);
         crewMemberRepository.save(crewMember);
 
         // when
@@ -131,7 +131,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         Crew crew = CrewFactory.defaultCrew().member(member).image(image).build();
         CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).status(JoinStatus.PENDING).build();
         memberRepository.save(member);
-        crewRepository.save(crew);
+        crewJpaRepository.save(crew);
         crewMemberRepository.save(crewMember);
 
         // when
@@ -157,7 +157,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember crewMember2 = CrewMemberFactory.defaultCrewMember().member(member1).crew(crew2).build();
         CrewMember crewMember3 = CrewMemberFactory.defaultCrewMember().member(member2).crew(crew3).build();
         memberRepository.saveAll(List.of(member1, member2));
-        crewRepository.saveAll(List.of(crew1, crew2, crew3));
+        crewJpaRepository.saveAll(List.of(crew1, crew2, crew3));
         crewMemberRepository.saveAll(List.of(crewMember1, crewMember2, crewMember3));
 
         // when
@@ -183,7 +183,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember crewMember2 = CrewMemberFactory.defaultCrewMember().member(member1).crew(crew2).build();
         CrewMember crewMember3 = CrewMemberFactory.defaultCrewMember().member(member2).crew(crew3).build();
         memberRepository.saveAll(List.of(member1, member2));
-        crewRepository.saveAll(List.of(crew1, crew2, crew3));
+        crewJpaRepository.saveAll(List.of(crew1, crew2, crew3));
         crewMemberRepository.saveAll(List.of(crewMember1, crewMember2, crewMember3));
 
         // when
@@ -209,7 +209,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember crewMember2 = CrewMemberFactory.defaultCrewMember().member(member1).crew(crew2).build();
         CrewMember crewMember3 = CrewMemberFactory.defaultCrewMember().member(member2).crew(crew3).build();
         memberRepository.saveAll(List.of(member1, member2));
-        crewRepository.saveAll(List.of(crew1, crew2, crew3));
+        crewJpaRepository.saveAll(List.of(crew1, crew2, crew3));
         crewMemberRepository.saveAll(List.of(crewMember1, crewMember2, crewMember3));
 
         // when

@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import revi1337.onsquad.comment.dto.CommentsDto;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
@@ -41,7 +41,7 @@ import static revi1337.onsquad.member.domain.QMember.*;
 class CommentRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired private MemberRepository memberRepository;
-    @Autowired private CrewRepository crewRepository;
+    @Autowired private CrewJpaRepository crewJpaRepository;
     @Autowired private CommentRepository commentRepository;
     @Autowired private EntityManager entityManager;
     @Autowired private JPAQueryFactory jpaQueryFactory;
@@ -67,7 +67,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 3", crew1, member1);
         Comment comment4 = Comment.forCrew("댓글 4", crew1, member1);
         memberRepository.saveAll(List.of(member1, member2));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member1);
         commentRepository.saveAll(List.of(reply1));
@@ -93,7 +93,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 2", crew1, member1);
         Comment comment4 = Comment.forCrew("댓글 1", crew1, member1);
         memberRepository.saveAll(List.of(member1, member2, member3));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member1);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member2);
@@ -169,7 +169,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 2", crew1, member1);
         Comment comment4 = Comment.forCrew("댓글 1", crew1, member1);
         memberRepository.saveAll(List.of(member1, member2, member3));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member1);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member2);
@@ -254,7 +254,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 2", crew1, member1);
         Comment comment4 = Comment.forCrew("댓글 1", crew1, member1);
         memberRepository.saveAll(List.of(member1, member2, member3));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member1);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member2);
@@ -341,7 +341,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 2", crew1, member1);
         Comment comment4 = Comment.forCrew("댓글 1", crew1, member1);
         memberRepository.saveAll(List.of(member1, member2, member3));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member1);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member2);
@@ -424,7 +424,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 2", crew1, member1);
         Comment comment4 = Comment.forCrew("댓글 1", crew1, member1);
         memberRepository.saveAll(List.of(member1, member2, member3));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member1);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member2);
@@ -517,7 +517,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment4 = Comment.forCrew("댓글 2", crew1, member4);
         Comment comment5 = Comment.forCrew("댓글 1", crew1, member5);
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member6);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member7);
@@ -636,7 +636,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment4 = Comment.forCrew("댓글 2", crew1, member4);
         Comment comment5 = Comment.forCrew("댓글 1", crew1, member5);
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member6);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member7);
@@ -718,7 +718,7 @@ class CommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment4 = Comment.forCrew("댓글 2", crew1, member4);
         Comment comment5 = Comment.forCrew("댓글 1", crew1, member5);
         memberRepository.saveAll(List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12));
-        crewRepository.saveAll(List.of(crew1, crew2));
+        crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member6);
         Comment reply2 = Comment.replyForCrew(comment1, "대댓글 2", crew1, member7);

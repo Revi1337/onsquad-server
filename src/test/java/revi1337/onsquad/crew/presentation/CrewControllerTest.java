@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import revi1337.onsquad.auth.application.JsonWebTokenProvider;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.dto.request.CrewJoinRequest;
@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("CrewController 통합 테스트")
 class CrewControllerTest extends IntegrationTestSupport {
 
-    @Autowired private CrewRepository crewRepository;
+    @Autowired private CrewJpaRepository crewJpaRepository;
     @Autowired private CrewMemberRepository crewMemberRepository;
     @Autowired private MemberRepository memberRepository;
     @MockBean private S3BucketUploader s3BucketUploader;
@@ -63,7 +63,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Image image = ImageFactory.defaultImage();
             Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
             memberRepository.save(member);
-            crewRepository.save(crew);
+            crewJpaRepository.save(crew);
             String validCrewName = CrewFactory.NAME.getValue();
 
             // when & then
@@ -85,7 +85,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Image image = ImageFactory.defaultImage();
             Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
             memberRepository.save(member);
-            crewRepository.save(crew);
+            crewJpaRepository.save(crew);
             String invalidCrewName = "없는 크루 이름";
 
             // when & then
@@ -150,7 +150,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Image image = ImageFactory.defaultImage();
             Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
             memberRepository.save(member);
-            crewRepository.save(crew);
+            crewJpaRepository.save(crew);
             String validCrewName = CrewFactory.NAME.getValue();
 
             // when & then
@@ -176,7 +176,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Image image = ImageFactory.defaultImage();
             Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
             memberRepository.save(member);
-            crewRepository.save(crew);
+            crewJpaRepository.save(crew);
             String invalidCrewName = "asdadasd";
 
             // when & then
@@ -209,7 +209,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Crew crew2 = CrewFactory.defaultCrew().name((new Name("크루 이름 2"))).member(member1).image(image2).build();
             Crew crew3 = CrewFactory.defaultCrew().name((new Name("크루 이름 3"))).member(member2).image(image3).build();
             memberRepository.saveAll(List.of(member1, member2));
-            crewRepository.saveAll(List.of(crew1, crew2, crew3));
+            crewJpaRepository.saveAll(List.of(crew1, crew2, crew3));
 
             // when & then
             mockMvc.perform(
@@ -258,7 +258,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Crew crew = CrewFactory.defaultCrew().name((new Name("크루 이름 1"))).member(member).image(image).build();
             CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).status(JoinStatus.PENDING).build();
             memberRepository.save(member);
-            crewRepository.save(crew);
+            crewJpaRepository.save(crew);
             crewMemberRepository.save(crewMember);
             CrewJoinRequest crewJoinRequest = new CrewJoinRequest("크루 이름 1");
 
@@ -284,7 +284,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Crew crew = CrewFactory.defaultCrew().name((new Name("크루 이름 1"))).member(member).image(image).build();
             CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).status(JoinStatus.ACCEPT).build();
             memberRepository.save(member);
-            crewRepository.save(crew);
+            crewJpaRepository.save(crew);
             crewMemberRepository.save(crewMember);
             CrewJoinRequest crewJoinRequest = new CrewJoinRequest("크루 이름 1");
 
@@ -309,7 +309,7 @@ class CrewControllerTest extends IntegrationTestSupport {
             Image image = ImageFactory.defaultImage();
             Crew crew = CrewFactory.defaultCrew().name((new Name("크루 이름 1"))).member(member).image(image).build();
             memberRepository.save(member);
-            crewRepository.save(crew);
+            crewJpaRepository.save(crew);
             CrewJoinRequest crewJoinRequest = new CrewJoinRequest("크루 이름 1");
 
             // when & then

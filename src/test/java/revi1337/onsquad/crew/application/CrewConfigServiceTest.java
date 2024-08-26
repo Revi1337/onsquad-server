@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.dto.CrewAcceptDto;
@@ -37,7 +37,7 @@ import static org.mockito.BDDMockito.*;
 @DisplayName("CrewConfigService 테스트")
 class CrewConfigServiceTest {
 
-    @Mock private CrewRepository crewRepository;
+    @Mock private CrewJpaRepository crewJpaRepository;
     @Mock private CrewMemberRepository crewMemberRepository;
     @Mock private S3BucketUploader s3BucketUploader;
     @InjectMocks private CrewConfigService crewConfigService;
@@ -55,7 +55,7 @@ class CrewConfigServiceTest {
             CrewUpdateDto crewUpdateDto = new CrewUpdateDto("크루 이름", "크루 소개", "크루 디테일", List.of("태그1", "테그2"), "카카오링크");
             byte[] pngImage = SupportAttachmentType.PNG.getMagicByte();
             String imageRemoteAddress = "[Remote Address]";
-            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
+            given(crewJpaRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.empty());
 
             // when && then
@@ -76,7 +76,7 @@ class CrewConfigServiceTest {
             String imageRemoteAddress = "[Remote Address]";
             Member member = MemberFactory.defaultMember().id(memberId).build();
             Crew crew = CrewFactory.defaultCrew().kakaoLink(null).member(member).image(new Image(imageRemoteAddress)).build();
-            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
+            given(crewJpaRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.of(crew));
             willDoNothing()
                     .given(s3BucketUploader).updateImage(imageRemoteAddress, pngImage, imageName);
@@ -86,7 +86,7 @@ class CrewConfigServiceTest {
 
             // then
             assertSoftly(softly -> {
-                then(crewRepository).should(times(1)).saveAndFlush(crew);
+                then(crewJpaRepository).should(times(1)).saveAndFlush(crew);
                 softly.assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
                 softly.assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
                 softly.assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
@@ -107,7 +107,7 @@ class CrewConfigServiceTest {
             String imageRemoteAddress = "[Remote Address]";
             Member member = MemberFactory.defaultMember().id(memberId).build();
             Crew crew = CrewFactory.defaultCrew().kakaoLink(null).member(member).image(new Image(imageRemoteAddress)).build();
-            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
+            given(crewJpaRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.of(crew));
 
             // when
@@ -115,7 +115,7 @@ class CrewConfigServiceTest {
 
             // then
             assertSoftly(softly -> {
-                then(crewRepository).should(times(1)).saveAndFlush(crew);
+                then(crewJpaRepository).should(times(1)).saveAndFlush(crew);
                 softly.assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
                 softly.assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
                 softly.assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
@@ -136,7 +136,7 @@ class CrewConfigServiceTest {
             String imageRemoteAddress = "[Remote Address]";
             Member member = MemberFactory.defaultMember().id(memberId).build();
             Crew crew = CrewFactory.defaultCrew().hashTags(new HashTags(null)).member(member).image(new Image(imageRemoteAddress)).build();
-            given(crewRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
+            given(crewJpaRepository.findCrewByNameForUpdate(new Name(targetCrewName)))
                     .willReturn(Optional.of(crew));
 
             // when
@@ -144,7 +144,7 @@ class CrewConfigServiceTest {
 
             // then
             assertSoftly(softly -> {
-                then(crewRepository).should(times(1)).saveAndFlush(crew);
+                then(crewJpaRepository).should(times(1)).saveAndFlush(crew);
                 softly.assertThat(crew.getName().getValue()).isEqualTo("크루 이름");
                 softly.assertThat(crew.getIntroduce().getValue()).isEqualTo("크루 소개");
                 softly.assertThat(crew.getDetail().getValue()).isEqualTo("크루 디테일");
@@ -164,7 +164,7 @@ class CrewConfigServiceTest {
             // given
             Long memberId = 1L;
             CrewAcceptDto crewAcceptDto = new CrewAcceptDto("크루 이름", 1L, JoinStatus.ACCEPT);
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName()))).willReturn(Optional.empty());
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName()))).willReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(() -> crewConfigService.acceptCrewMember(crewAcceptDto, memberId))
@@ -180,7 +180,7 @@ class CrewConfigServiceTest {
             CrewAcceptDto crewAcceptDto = new CrewAcceptDto("크루 이름", 1L, JoinStatus.ACCEPT);
             Member member = MemberFactory.defaultMember().id(2L).build();
             Crew crew = CrewFactory.defaultCrew().member(member).build();
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName()))).willReturn(Optional.of(crew));
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName()))).willReturn(Optional.of(crew));
 
             // when & then
             assertThatThrownBy(() -> crewConfigService.acceptCrewMember(crewAcceptDto, memberId))
@@ -196,7 +196,7 @@ class CrewConfigServiceTest {
             CrewAcceptDto crewAcceptDto = new CrewAcceptDto("크루 이름", 1L, JoinStatus.ACCEPT);
             Member member = MemberFactory.defaultMember().id(1L).build();
             Crew crew = CrewFactory.defaultCrew().id(1L).member(member).build();
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
                     .willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crew.getId(), memberId))
                     .willReturn(Optional.empty());
@@ -216,7 +216,7 @@ class CrewConfigServiceTest {
             Member member = MemberFactory.defaultMember().id(1L).build();
             Crew crew = CrewFactory.defaultCrew().id(1L).member(member).build();
             CrewMember crewMember = mock(CrewMember.class);
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
                     .willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crew.getId(), memberId))
                     .willReturn(Optional.of(crewMember));
@@ -237,7 +237,7 @@ class CrewConfigServiceTest {
             Member member = MemberFactory.defaultMember().id(1L).build();
             Crew crew = CrewFactory.defaultCrew().id(1L).member(member).build();
             CrewMember crewMember = CrewMemberFactory.defaultCrewMember().crew(crew).member(member).status(JoinStatus.PENDING).build();
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
                     .willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crew.getId(), memberId))
                     .willReturn(Optional.of(crewMember));
@@ -246,7 +246,7 @@ class CrewConfigServiceTest {
             crewConfigService.acceptCrewMember(crewAcceptDto, memberId);
 
             // then
-            then(crewRepository).shouldHaveNoMoreInteractions();
+            then(crewJpaRepository).shouldHaveNoMoreInteractions();
             then(crewMemberRepository).shouldHaveNoMoreInteractions();
         }
 
@@ -259,7 +259,7 @@ class CrewConfigServiceTest {
             Member member = MemberFactory.defaultMember().id(1L).build();
             Crew crew = CrewFactory.defaultCrew().id(1L).member(member).build();
             CrewMember crewMember = CrewMemberFactory.defaultCrewMember().crew(crew).member(member).status(JoinStatus.PENDING).build();
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
                     .willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crew.getId(), memberId))
                     .willReturn(Optional.of(crewMember));
@@ -268,7 +268,7 @@ class CrewConfigServiceTest {
             crewConfigService.acceptCrewMember(crewAcceptDto, memberId);
 
             // then
-            then(crewRepository).shouldHaveNoMoreInteractions();
+            then(crewJpaRepository).shouldHaveNoMoreInteractions();
             then(crewMemberRepository).should(times(1)).delete(crewMember);
         }
 
@@ -281,7 +281,7 @@ class CrewConfigServiceTest {
             Member member = MemberFactory.defaultMember().id(1L).build();
             Crew crew = CrewFactory.defaultCrew().id(1L).member(member).build();
             CrewMember crewMember = CrewMemberFactory.defaultCrewMember().crew(crew).member(member).status(null).build();
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
                     .willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crew.getId(), memberId))
                     .willReturn(Optional.of(crewMember));
@@ -301,7 +301,7 @@ class CrewConfigServiceTest {
             Member member = MemberFactory.defaultMember().id(1L).build();
             Crew crew = CrewFactory.defaultCrew().id(1L).member(member).build();
             CrewMember crewMember = CrewMemberFactory.defaultCrewMember().crew(crew).member(member).status(JoinStatus.ACCEPT).build();
-            given(crewRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
+            given(crewJpaRepository.findByName(new Name(crewAcceptDto.requestCrewName())))
                     .willReturn(Optional.of(crew));
             given(crewMemberRepository.findCrewMemberByCrewIdAndMemberId(crew.getId(), memberId))
                     .willReturn(Optional.of(crewMember));
