@@ -6,6 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import revi1337.onsquad.squad.domain.category.Category;
+import revi1337.onsquad.squad.domain.category.CategoryRepository;
+import revi1337.onsquad.squad.domain.category.vo.CategoryType;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Detail;
@@ -45,6 +48,7 @@ class SquadServiceTest {
 
     @Mock private MemberRepository memberRepository;
     @Mock private SquadRepository squadRepository;
+    @Mock private CategoryRepository categoryRepository;
     @Mock private CrewRepository crewRepository;
     @Mock private SquadParticipantRepository squadParticipantRepository;
     @InjectMocks private SquadService squadService;
@@ -62,12 +66,16 @@ class SquadServiceTest {
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         given(crewRepository.findCrewWithMembersByName(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
         given(squadRepository.save(any(Squad.class))).willReturn(squadCreateDto.toEntity(crewMember, crew));
+        List<CategoryType> categoryTypes = CategoryType.fromTexts(squadCreateDto.categories());
+        List<Category> categories = Category.fromCategoryTypes(categoryTypes);
+        given(categoryRepository.findCategoriesInSecondCache(categoryTypes)).willReturn(categories);
 
         // when
         squadService.createNewSquad(squadCreateDto, memberId);
 
         // then
         then(squadRepository).should(times(1)).save(any(Squad.class));
+        then(squadRepository).should(times(1)).batchInsertSquadCategories(any(), eq(categories));
     }
 
     @Test
@@ -131,7 +139,7 @@ class SquadServiceTest {
         findCrew.addCrewMember(findCrewMember);
         given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(1L, findCrew, createCrewMember(2L, createCrew(2L), createMember(3L)));
-        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
+        given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
         given(squadParticipantRepository.findBySquadIdAndCrewMemberId(anyLong(), anyLong())).willReturn(Optional.empty());
 
         // when
@@ -173,11 +181,11 @@ class SquadServiceTest {
         findCrew.addCrewMember(findCrewMember);
         given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(3L, findCrew, createCrewMember(1L));
-        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
+        given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
         // when & then
         assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
-                .isInstanceOf(SquadBusinessException.OwnerCantParticipant.class)
+                .isExactlyInstanceOf(SquadBusinessException.OwnerCantParticipant.class)
                 .hasMessage("스쿼드를 만든 사람은 신청할 수 없습니다.");
     }
 
@@ -195,7 +203,7 @@ class SquadServiceTest {
         findCrew.addCrewMember(findCrewMember);
         given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(1L, createCrew(1L, "dummy_name"), createCrewMember(3L));
-        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
+        given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
         // when & then
         assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
@@ -218,11 +226,12 @@ class SquadServiceTest {
         given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(1L, createCrew(1L), createCrewMember(3L));
         findSquad.addSquadMember(createSquadMember(1L, createCrewMember(1L)), createSquadMember(2L, createCrewMember(2L)));
-        given(squadRepository.findSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(Optional.of(findSquad));
+        given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
         // when & then
         assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
-                .isExactlyInstanceOf(SquadBusinessException.AlreadyParticipant.class);
+                .isExactlyInstanceOf(SquadBusinessException.AlreadyParticipant.class)
+                .hasMessage("이미 Squad 타이틀 스쿼드에 가입된 사용자입니다.");
     }
 
     public static Member createMember(Long id) {
@@ -290,7 +299,6 @@ class SquadServiceTest {
                 .title(new Title("타이틀 1"))
                 .content(new Content("Sauad 내용"))
                 .capacity(new Capacity(8))
-                .categories(new Categories(Category.BADMINTON))
                 .address(new Address("주소", "상세주소"))
                 .kakaoLink("카카오 오픈채팅 링크")
                 .discordLink("디스코드 링크")
@@ -304,7 +312,6 @@ class SquadServiceTest {
                 .title(new Title("Squad 타이틀"))
                 .content(new Content("Sauad 내용"))
                 .capacity(new Capacity(8))
-                .categories(new Categories(Category.BADMINTON))
                 .address(new Address("주소", "상세주소"))
                 .kakaoLink("카카오 오픈채팅 링크")
                 .discordLink("디스코드 링크")

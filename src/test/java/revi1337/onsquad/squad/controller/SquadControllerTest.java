@@ -9,6 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.auth.application.JsonWebTokenProvider;
+import revi1337.onsquad.squad.domain.category.Category;
+import revi1337.onsquad.squad.domain.category.CategoryRepository;
+import revi1337.onsquad.squad.domain.category.vo.CategoryType;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;
@@ -24,6 +27,7 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.squad.dto.request.SquadCreateRequest;
 import revi1337.onsquad.support.IntegrationTestSupport;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +42,7 @@ class SquadControllerTest extends IntegrationTestSupport {
     @Autowired private MemberRepository memberRepository;
     @Autowired private CrewRepository crewRepository;
     @Autowired private CrewMemberRepository crewMemberRepository;
+    @Autowired private CategoryRepository categoryRepository;
     @Autowired private JsonWebTokenProvider jsonWebTokenProvider;
 
     @Nested
@@ -61,6 +66,7 @@ class SquadControllerTest extends IntegrationTestSupport {
             Image image = ImageFactory.defaultImage();
             Crew crew = CrewFactory.defaultCrew().image(image).member(member).build();
             CrewMember crewMember = CrewMemberFactory.defaultCrewMember().member(member).crew(crew).status(JoinStatus.ACCEPT).build();
+            categoryRepository.saveAll(Arrays.stream(CategoryType.values()).map(Category::fromCategoryType).toList());
             memberRepository.save(member);
             crewRepository.save(crew);
             crewMemberRepository.save(crewMember);
