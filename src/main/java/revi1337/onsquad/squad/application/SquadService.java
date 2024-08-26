@@ -24,6 +24,7 @@ import revi1337.onsquad.squad.domain.vo.category.CategoryType;
 import revi1337.onsquad.squad.dto.SquadCreateDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
 import revi1337.onsquad.squad.dto.SquadDto;
+import revi1337.onsquad.squad.dto.request.CategoryCondition;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad.util.category.CategoryTypeUtil;
 import revi1337.onsquad.squad_member.domain.SquadMember;
@@ -53,8 +54,8 @@ public class SquadService {
     }
 
     @Transactional(readOnly = true)
-    public List<SquadDto> findSquads(String crewName, Pageable pageable) {
-        return squadRepository.findSquadsByCrewName(new Name(crewName), pageable).stream()
+    public List<SquadDto> findSquads(String crewName, CategoryCondition condition, Pageable pageable) {
+        return squadRepository.findSquadsByCrewName(new Name(crewName), condition.categoryType(), pageable).stream()
                 .map(SquadDto::from)
                 .collect(Collectors.toList());
     }

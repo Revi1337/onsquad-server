@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.squad.domain.category.Category;
 import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.vo.category.CategoryType;
+import revi1337.onsquad.squad.dto.request.CategoryCondition;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public interface SquadRepository {
 
     Optional<Squad> findSquadByIdAndTitleWithMember(Long id);
 
-    Page<Squad> findSquadsByCrewName(Name crewName, Pageable pageable);
+    Page<Squad> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable);
 
     Optional<Squad> findSquadWithCrewById(Long id);
 

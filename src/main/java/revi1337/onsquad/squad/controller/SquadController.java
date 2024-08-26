@@ -10,6 +10,7 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.application.SquadService;
+import revi1337.onsquad.squad.dto.request.CategoryCondition;
 import revi1337.onsquad.squad.dto.request.SquadCreateRequest;
 import revi1337.onsquad.squad.dto.request.SquadJoinRequest;
 import revi1337.onsquad.squad.dto.response.SquadResponse;
@@ -56,9 +57,10 @@ public class SquadController {
     @GetMapping("/squads")
     public ResponseEntity<RestResponse<List<SquadResponse>>> findSquads(
             @RequestParam String crewName,
+            @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable
     ) {
-        List<SquadResponse> squadResponses = squadService.findSquads(crewName, pageable).stream()
+        List<SquadResponse> squadResponses = squadService.findSquads(crewName, category, pageable).stream()
                 .map(SquadResponse::from)
                 .collect(Collectors.toList());
 

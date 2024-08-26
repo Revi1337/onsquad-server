@@ -8,6 +8,8 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.squad.domain.category.Category;
 import revi1337.onsquad.squad.domain.squad_category.SquadCategoryJdbcRepository;
 import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.vo.category.CategoryType;
+import revi1337.onsquad.squad.dto.request.CategoryCondition;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +38,8 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Page<Squad> findSquadsByCrewName(Name crewName, Pageable pageable) {
-        return squadQueryDslRepository.findSquadsByCrewName(crewName, pageable);
+    public Page<Squad> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable) {
+        return squadQueryDslRepository.findSquadsByCrewName(crewName, categoryType, pageable);
     }
 
     @Override
