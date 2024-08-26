@@ -25,6 +25,7 @@ import revi1337.onsquad.squad.dto.SquadCreateDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
 import revi1337.onsquad.squad.dto.SquadDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
+import revi1337.onsquad.squad.util.category.CategoryTypeUtil;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 
 import java.time.LocalDateTime;
@@ -99,7 +100,7 @@ public class SquadService {
         Squad squad = dto.toEntity(crewMember, crew);
         squad.addSquadMember(SquadMember.forLeader(crewMember));
         Squad persistedSquad = squadRepository.save(squad);
-        List<CategoryType> categoryTypes = CategoryType.fromTexts(dto.categories());
+        List<CategoryType> categoryTypes = CategoryTypeUtil.extractPossible(CategoryType.fromTexts(dto.categories()));
         List<Category> categories = categoryRepository.findCategoriesInSecondCache(categoryTypes);
         squadRepository.batchInsertSquadCategories(persistedSquad.getId(), categories);
     }

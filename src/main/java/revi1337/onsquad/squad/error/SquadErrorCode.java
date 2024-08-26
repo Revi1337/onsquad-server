@@ -16,7 +16,7 @@ public enum SquadErrorCode implements ErrorCode {
     NOT_ENOUGH_LEFT(400, "SQ005", "정원이 다 찼습니다."),
     NOT_IN_CREW(400, "SQ006", "스쿼드는 %s 크루 안에 속해있지 않습니다."),
     OWNER_CANT_PARTICIPANT(400, "SQ007", "스쿼드를 만든 사람은 신청할 수 없습니다."),
-    INVALID_CATEGORY(400, "SQ008", "일치하지 않는 카테고리가 존재합니다.");
+    INVALID_CATEGORY(400, "SQ008", "유효하지 않은 카테고리가 존재합니다.");
 
     private final int status;
     private final String code;

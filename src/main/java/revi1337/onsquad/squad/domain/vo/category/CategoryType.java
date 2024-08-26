@@ -2,12 +2,9 @@ package revi1337.onsquad.squad.domain.vo.category;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import revi1337.onsquad.squad.error.exception.SquadDomainException;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CATEGORY;
 
 @Getter
 @RequiredArgsConstructor
@@ -63,17 +60,10 @@ public enum CategoryType {
     public static List<CategoryType> fromTexts(List<String> categoryTexts) {
         return new LinkedHashSet<>(categoryTexts).stream()
                 .map(CategoryType::mapFromText)
-                .peek(CategoryType::validateCategory)
                 .collect(Collectors.toList());
     }
 
     public static CategoryType mapFromText(String categoryText) {
         return categoryHashMap.get(categoryText);
-    }
-
-    private static void validateCategory(CategoryType categoryType) {
-        if (categoryType == null) {
-            throw new SquadDomainException.InvalidCategory(INVALID_CATEGORY);
-        }
     }
 }
