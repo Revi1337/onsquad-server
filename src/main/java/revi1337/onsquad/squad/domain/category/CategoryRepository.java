@@ -13,6 +13,8 @@ public interface CategoryRepository {
 
     List<Category> findAll();
 
+    List<Category> findAllCategories();
+
     Optional<Category> findById(Long id);
 
     List<Category> findCategoriesInSecondCache(List<CategoryType> categoryTypes);

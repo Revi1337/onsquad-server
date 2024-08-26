@@ -1,0 +1,11 @@
+package revi1337.onsquad.squad.dto.response.category;
+
+import revi1337.onsquad.squad.dto.category.CategoryDto;
+
+public record CategoryResponse(
+        String name
+) {
+    public static CategoryResponse from(CategoryDto category) {
+        return new CategoryResponse(category.categoryType().getText());
+    }
+}
