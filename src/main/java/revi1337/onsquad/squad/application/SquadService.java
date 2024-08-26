@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.squad.domain.category.CategoryRepository;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
@@ -17,8 +18,9 @@ import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.participant.domain.SquadParticipant;
 import revi1337.onsquad.participant.domain.SquadParticipantRepository;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.squad.domain.*;
+import revi1337.onsquad.squad.domain.category.Category;
+import revi1337.onsquad.squad.domain.category.vo.CategoryType;
 import revi1337.onsquad.squad.dto.SquadCreateDto;
 import revi1337.onsquad.squad.dto.SquadJoinDto;
 import revi1337.onsquad.squad.dto.SquadDto;
@@ -41,12 +43,12 @@ public class SquadService {
     private final MemberRepository memberRepository;
     private final CrewRepository crewRepository;
     private final SquadParticipantRepository squadParticipantRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
     public SquadDto findSquad(Long id) {
-        return squadRepository.findSquadByIdAndTitleWithMember(id)
-                .map(SquadDto::from)
-                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
+        Squad squad = squadRepository.getSquadByIdAndTitleWithMember(id);
+        return SquadDto.from(squad);
     }
 
     @Transactional(readOnly = true)
@@ -68,8 +70,7 @@ public class SquadService {
         Member member = getMemberById(memberId);
         Crew crew = getCrewWithMembersByName(dto.crewName());
         CrewMember crewMember = checkMemberInCrew(dto.crewName(), crew, member);
-        Squad squad = squadRepository.findSquadByIdWithSquadMembers(dto.squadId())
-                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
+        Squad squad = squadRepository.getSquadByIdWithSquadMembers(dto.squadId());
         validateSquadMetadata(dto, squad, crewMember, member);
         addParticipantRequest(squad, crewMember);
     }
@@ -97,7 +98,10 @@ public class SquadService {
     private void persistSquadAndRegisterAdmin(SquadCreateDto dto, CrewMember crewMember, Crew crew) {
         Squad squad = dto.toEntity(crewMember, crew);
         squad.addSquadMember(SquadMember.forLeader(crewMember));
-        squadRepository.save(squad);
+        Squad persistedSquad = squadRepository.save(squad);
+        List<CategoryType> categoryTypes = CategoryType.fromTexts(dto.categories());
+        List<Category> categories = categoryRepository.findCategoriesInSecondCache(categoryTypes);
+        squadRepository.batchInsertSquadCategories(persistedSquad.getId(), categories);
     }
 
     private CrewMember checkMemberInCrew(String crewName, Crew crew, Member member) {

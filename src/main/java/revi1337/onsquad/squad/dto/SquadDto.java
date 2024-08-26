@@ -1,9 +1,9 @@
 package revi1337.onsquad.squad.dto;
 
+import revi1337.onsquad.squad.domain.squad_category.SquadCategory;
 import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad.domain.Squad;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +31,9 @@ public record SquadDto(
                 squad.getAddress().getDetail(),
                 squad.getKakaoLink(),
                 squad.getDiscordLink(),
-                Arrays.stream(squad.getCategories().getValue().split(","))
+                squad.getCategories().stream()
+                        .map(SquadCategory::getCategory)
+                        .map(category -> category.getCategoryType().getText())
                         .collect(Collectors.toList()),
                 SimpleMemberInfoDto.from(squad.getCrewMember().getMember())
         );

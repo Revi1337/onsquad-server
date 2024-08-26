@@ -19,7 +19,7 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.squad.domain.SquadJpaRepository;
 import revi1337.onsquad.squad.error.SquadErrorCode;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 
@@ -31,7 +31,7 @@ import java.util.*;
 public class SquadCommentService {
 
     private final CrewRepository crewRepository;
-    private final SquadRepository squadRepository;
+    private final SquadJpaRepository squadJpaRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
 
@@ -48,7 +48,7 @@ public class SquadCommentService {
      */
     @Transactional
     public CommentDto addComment(String crewName, Long squadId, CreateCommentDto dto, Long memberId) {
-        return squadRepository.findSquadWithCrewById(squadId)
+        return squadJpaRepository.findSquadWithCrewById(squadId)
                 .map(squad -> persistSquadCommentIfValid(crewName, dto, memberId, squad))
                 .orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOTFOUND));
     }

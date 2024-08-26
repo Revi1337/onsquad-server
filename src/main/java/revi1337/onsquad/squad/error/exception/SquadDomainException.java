@@ -28,4 +28,11 @@ public abstract class SquadDomainException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }
+
+    public static class InvalidCategory extends SquadDomainException {
+
+        public InvalidCategory(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
+        }
+    }
 }
