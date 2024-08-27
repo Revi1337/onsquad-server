@@ -27,9 +27,6 @@ public class CrewConfigController {
 
     private final CrewConfigService crewConfigService;
 
-    /**
-     * 사용자가 개설한 Crew 들
-     */
     @GetMapping("/crews")
     public ResponseEntity<RestResponse<List<OwnedCrewsResponse>>> findOwnedCrews(
             @Authenticate AuthenticatedMember authenticatedMember
@@ -42,9 +39,6 @@ public class CrewConfigController {
         return ResponseEntity.ok().body(RestResponse.success(ownedCrewsResponses));
     }
 
-    /**
-     * 사용자가 생성한 Crew 에 속한 CrewMember 들 조회
-     */
     @GetMapping("/crew/members")
     public ResponseEntity<RestResponse<List<EnrolledCrewMemberResponse>>> findMembersForSpecifiedCrew(
             @RequestParam String crewName,
@@ -66,21 +60,18 @@ public class CrewConfigController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
         crewConfigService.updateCrew(
-                crewName, crewUpdateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes(), file.getOriginalFilename()
+                authenticatedMember.toDto().getId(), crewName, crewUpdateRequest.toDto(), file.getBytes(), file.getOriginalFilename()
         );
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    /**
-     * Crew 참가 요청 수락
-     */
     @PatchMapping("/crew/accept")
     public ResponseEntity<RestResponse<String>> acceptCrewMember(
             @Valid @RequestBody CrewAcceptRequest crewAcceptRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        crewConfigService.acceptCrewMember(crewAcceptRequest.toDto(), authenticatedMember.toDto().getId());
+        crewConfigService.acceptCrewMember(authenticatedMember.toDto().getId(), crewAcceptRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

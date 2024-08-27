@@ -10,13 +10,11 @@ import org.hibernate.annotations.DynamicInsert;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.vo.CrewRole;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.member.domain.Member;
 
 import java.util.Objects;
 
 import static revi1337.onsquad.crew_member.domain.vo.CrewRole.*;
-import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
 
 @DynamicInsert
 @Getter
@@ -45,24 +43,17 @@ public class CrewMember extends BaseEntity {
     @Column(nullable = false)
     private CrewRole role;
 
-    @ColumnDefault("'PENDING'")
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private JoinStatus status;
-
     @Builder
-    private CrewMember(Long id, Crew crew, Member member, JoinStatus status, CrewRole role) {
+    private CrewMember(Long id, Crew crew, Member member, CrewRole role) {
         this.id = id;
         this.crew = crew;
         this.member = member;
-        this.status = status == null ? PENDING : status;
         this.role = role == null ? GENERAL : role;
     }
 
     public static CrewMember forOwner(Member member) {
         return CrewMember.builder()
                 .member(member)
-                .status(ACCEPT)
                 .role(OWNER)
                 .build();
     }
@@ -74,20 +65,15 @@ public class CrewMember extends BaseEntity {
                 .build();
     }
 
-    public static CrewMember of(Crew crew, Member member, JoinStatus status) {
+    public static CrewMember of(Crew crew, Member member) {
         return CrewMember.builder()
                 .crew(crew)
                 .member(member)
-                .status(status)
                 .build();
     }
 
     public void addCrew(Crew crew) {
         this.crew = crew;
-    }
-
-    public void updateStatus(JoinStatus status) {
-        this.status = status;
     }
 
     @Override

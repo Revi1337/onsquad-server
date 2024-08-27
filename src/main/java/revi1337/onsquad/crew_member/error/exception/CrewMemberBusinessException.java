@@ -17,8 +17,8 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
 
     public static class NeverRequested extends CrewMemberBusinessException {
 
-        public NeverRequested(ErrorCode errorCode, String crewName) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName));
+        public NeverRequested(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 

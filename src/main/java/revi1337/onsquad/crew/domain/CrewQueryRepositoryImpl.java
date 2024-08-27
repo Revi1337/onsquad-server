@@ -22,21 +22,6 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<CrewWithMemberAndImageDto> findCrewByName(Name name) {
-        return Optional.ofNullable(
-                queryForFindCrewByName()
-                        .where(crew.name.eq(name))
-                        .fetchOne()
-        );
-    }
-
-    @Override
-    public List<CrewWithMemberAndImageDto> findCrewsByName() {
-        return queryForFindCrewByName()
-                .fetch();
-    }
-
-    @Override
     public List<OwnedCrewsDto> findOwnedCrews(Long memberId) {
         return jpaQueryFactory
                 .select(new QOwnedCrewsDto(
@@ -52,12 +37,11 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     }
 
     @Override
-    public Optional<Crew> findCrewByNameForUpdate(Name name) {
+    public Optional<Crew> findCrewByNameWithImage(Name name) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .select(crew)
                         .from(crew)
-                        .leftJoin(crew.member, member).fetchJoin()
                         .innerJoin(crew.image, image).fetchJoin()
                         .where(crew.name.eq(name))
                         .fetchOne()
@@ -65,7 +49,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     }
 
     @Override
-    public Optional<Crew> findCrewWithMembersByName(Name name) {
+    public Optional<Crew> findCrewByNameWithCrewMembers(Name name) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(crew)

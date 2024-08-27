@@ -26,9 +26,6 @@ public class CrewController {
 
     private final CrewService crewService;
 
-    /**
-     * 크루명 중복확인
-     */
     @GetMapping("/crew/check")
     public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkCrewNameDuplicate(
             @RequestParam String crewName
@@ -40,9 +37,6 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(false)));
     }
 
-    /**
-     * 새로운 Crew 생성
-     */
     @PostMapping( value = "/crew/new", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<String>> createNewCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
@@ -50,15 +44,12 @@ public class CrewController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
         crewService.createNewCrew(
-                crewCreateRequest.toDto(), authenticatedMember.toDto().getId(), file.getBytes(), file.getOriginalFilename()
+                authenticatedMember.toDto().getId(), crewCreateRequest.toDto(), file.getBytes(), file.getOriginalFilename()
         );
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    /**
-     * Crew 게시글 단일 조회
-     */
     @GetMapping("/crew")
     public ResponseEntity<RestResponse<CrewWithMemberAndImageResponse>> findCrew(
             @RequestParam String crewName
@@ -69,9 +60,6 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
 
-    /**
-     * Crew 게시글들 조회
-     */
     @GetMapping("/crews")
     public ResponseEntity<RestResponse<List<CrewWithMemberAndImageResponse>>> findCrews() {
         List<CrewWithMemberAndImageResponse> crewWithMemberAndImageResponses = crewService.findCrewsByName()
@@ -81,15 +69,12 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.success(crewWithMemberAndImageResponses));
     }
 
-    /**
-     * Crew 참가 신청
-     */
     @PostMapping("/crew/join")
     public ResponseEntity<RestResponse<String>> joinCrew(
             @Valid @RequestBody CrewJoinRequest crewJoinRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        crewService.joinCrew(crewJoinRequest.toDto(), authenticatedMember.toDto().getId());
+        crewService.joinCrew(authenticatedMember.toDto().getId(), crewJoinRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.created());
     }

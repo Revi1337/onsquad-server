@@ -56,4 +56,11 @@ public abstract class CrewBusinessException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), crewName));
         }
     }
+
+    public static class OwnerCantParticipant extends CrewBusinessException {
+
+        public OwnerCantParticipant(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

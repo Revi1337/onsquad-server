@@ -83,7 +83,7 @@ public class SquadService {
     }
 
     private Crew getCrewWithMembersByName(String crewName) {
-        return crewRepository.findCrewWithMembersByName(new Name(crewName))
+        return crewRepository.findByNameWithCrewMembers(new Name(crewName))
                 .orElseThrow(() -> new CrewBusinessException.NotFoundByName(CrewErrorCode.NOTFOUND_CREW, crewName));
     }
 
