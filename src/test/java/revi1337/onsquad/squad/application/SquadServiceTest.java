@@ -17,7 +17,6 @@ import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.MemberFactory;
@@ -61,10 +60,10 @@ class SquadServiceTest {
         Long memberId = 1L;
         Member member = MemberFactory.defaultMember().id(memberId).build();
         Crew crew = CrewFactory.defaultCrew().member(member).build();
-        CrewMember crewMember = CrewMember.of(crew, member, JoinStatus.ACCEPT);
+        CrewMember crewMember = CrewMember.of(crew, member);
         crew.getCrewMembers().add(crewMember);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewRepository.findCrewWithMembersByName(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
         given(squadRepository.save(any(Squad.class))).willReturn(squadCreateDto.toEntity(crewMember, crew));
         List<CategoryType> categoryTypes = CategoryType.fromTexts(squadCreateDto.categories());
         List<Category> categories = Category.fromCategoryTypes(categoryTypes);
@@ -101,7 +100,7 @@ class SquadServiceTest {
         Member member = MemberFactory.defaultMember().id(memberId).build();
         Crew crew = CrewFactory.defaultCrew().member(member).build();
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewRepository.findCrewWithMembersByName(new Name(squadCreateDto.crewName()))).willReturn(Optional.empty());
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> squadService.createNewSquad(squadCreateDto, memberId))
@@ -118,7 +117,7 @@ class SquadServiceTest {
         Member member = MemberFactory.defaultMember().id(memberId).build();
         Crew crew = CrewFactory.defaultCrew().member(member).build();
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewRepository.findCrewWithMembersByName(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
 
         // when & then
         assertThatThrownBy(() -> squadService.createNewSquad(squadCreateDto, memberId))
@@ -137,7 +136,7 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(1L, findCrew, createCrewMember(2L, createCrew(2L), createMember(3L)));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
         given(squadParticipantRepository.findBySquadIdAndCrewMemberId(anyLong(), anyLong())).willReturn(Optional.empty());
@@ -159,7 +158,7 @@ class SquadServiceTest {
         Member findMember = createMember(1L);
         given(memberRepository.findById(requestMemberId)).willReturn(Optional.of(findMember));
         Crew findCrew = createCrew(1L, findMember);
-        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
 
         // when & then
         assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
@@ -179,7 +178,7 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(3L, findCrew, createCrewMember(1L));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
@@ -201,7 +200,7 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(1L, createCrew(1L, "dummy_name"), createCrewMember(3L));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
@@ -223,7 +222,7 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findCrewWithMembersByName(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
         Squad findSquad = createSquad(1L, createCrew(1L), createCrewMember(3L));
         findSquad.addSquadMember(createSquadMember(1L, createCrewMember(1L)), createSquadMember(2L, createCrewMember(2L)));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
