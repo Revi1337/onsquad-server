@@ -10,14 +10,14 @@ public record OwnedCrewsResponse(
         String crewName,
         String crewDetail,
         List<String> hashTags,
-        String crewOwner
+        boolean isOwner
 ) {
     public static OwnedCrewsResponse from(OwnedCrewsDto ownedCrewsDto) {
         return new OwnedCrewsResponse(
                 ownedCrewsDto.crewName().getValue(),
                 ownedCrewsDto.crewDetail().getValue(),
                 ownedCrewsDto.hashTags() == null ? new ArrayList<>() : Arrays.stream(ownedCrewsDto.hashTags().getValue().split(",")).toList(),
-                ownedCrewsDto.crewOwner().getValue()
+                ownedCrewsDto.isOwner()
         );
     }
 }

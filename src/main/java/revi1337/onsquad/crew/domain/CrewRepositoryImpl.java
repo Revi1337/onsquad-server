@@ -53,7 +53,7 @@ public class CrewRepositoryImpl implements CrewRepository {
 
     @Override
     public List<OwnedCrewsDto> findOwnedCrews(Long memberId) {
-        return crewJpaRepository.findOwnedCrews(memberId);
+        return crewQueryDslRepository.findOwnedCrews(memberId);
     }
 
     @Override
