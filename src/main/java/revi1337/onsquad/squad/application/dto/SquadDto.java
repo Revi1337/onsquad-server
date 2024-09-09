@@ -1,6 +1,6 @@
-package revi1337.onsquad.squad.dto;
+package revi1337.onsquad.squad.application.dto;
 
-import revi1337.onsquad.squad_category.SquadCategory;
+import revi1337.onsquad.squad_category.domain.SquadCategory;
 import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad.domain.Squad;
 

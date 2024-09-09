@@ -1,8 +1,8 @@
-package revi1337.onsquad.squad.controller.category.converter;
+package revi1337.onsquad.category.presentation.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import revi1337.onsquad.squad.domain.vo.category.CategoryType;
-import revi1337.onsquad.squad.dto.request.CategoryCondition;
+import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 
 import java.util.Optional;
 

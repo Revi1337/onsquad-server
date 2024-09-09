@@ -1,10 +1,15 @@
-package revi1337.onsquad.participant.domain.crew_participant;
+package revi1337.onsquad.crew_participant.domain;
 
-import revi1337.onsquad.participant.domain.crew_participant.dto.CrewParticipantRequest;
+import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
+import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
+import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.*;
 
 public interface CrewParticipantRepository {
 
@@ -14,10 +19,18 @@ public interface CrewParticipantRepository {
 
     CrewParticipant saveAndFlush(CrewParticipant crewParticipant);
 
-    Optional<CrewParticipant> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
+    void deleteById(Long id);
+
+    Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
     void upsertCrewParticipant(Long crewId, Long memberId, LocalDateTime now);
 
-    List<CrewParticipantRequest> findCrewParticipantsByCrewNameAndMemberId(Long memberId);
+    List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
 
+    List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Name name);
+
+    default CrewParticipant getByCrewIdAndMemberId(Long crewId, Long memberId) {
+        return findByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new CrewParticipantBusinessException.NeverRequested(NEVER_REQUESTED));
+    }
 }

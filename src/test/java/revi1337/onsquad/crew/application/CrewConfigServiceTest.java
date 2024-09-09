@@ -13,19 +13,19 @@ import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewAcceptDto;
-import revi1337.onsquad.crew.dto.CrewUpdateDto;
+import revi1337.onsquad.crew.application.dto.CrewAcceptDto;
+import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.vo.*;
-import revi1337.onsquad.participant.domain.CrewParticipant;
-import revi1337.onsquad.participant.domain.CrewParticipantRepository;
+import revi1337.onsquad.crew_participant.domain.CrewParticipant;
+import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,8 +40,8 @@ import static org.mockito.BDDMockito.*;
 class CrewConfigServiceTest {
 
     @Mock private CrewRepository crewRepository;
-    @Mock private CrewMemberRepository crewMemberRepository;
-    @Mock private CrewParticipantRepository crewParticipantRepository;
+    @Mock private CrewMemberJpaRepository crewMemberRepository;
+    @Mock private CrewParticipantJpaRepository crewParticipantRepository;
     @Mock private S3BucketUploader s3BucketUploader;
     @InjectMocks private CrewConfigService crewConfigService;
 

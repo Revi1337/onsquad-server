@@ -2,6 +2,8 @@ package revi1337.onsquad.crew.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,10 +11,10 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewService;
-import revi1337.onsquad.crew.dto.request.CrewCreateRequest;
-import revi1337.onsquad.crew.dto.request.CrewJoinRequest;
-import revi1337.onsquad.crew.dto.response.CrewWithMemberAndImageResponse;
-import revi1337.onsquad.crew.dto.response.DuplicateCrewNameResponse;
+import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
+import revi1337.onsquad.crew.presentation.dto.request.CrewJoinRequest;
+import revi1337.onsquad.crew.presentation.dto.response.CrewInfoResponse;
+import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,22 +53,24 @@ public class CrewController {
     }
 
     @GetMapping("/crew")
-    public ResponseEntity<RestResponse<CrewWithMemberAndImageResponse>> findCrew(
+    public ResponseEntity<RestResponse<CrewInfoResponse>> findCrew(
             @RequestParam String crewName
     ) {
-        CrewWithMemberAndImageResponse crewResponse =
-                CrewWithMemberAndImageResponse.from(crewService.findCrewByName(crewName));
+        CrewInfoResponse crewResponse = CrewInfoResponse.from(crewService.findCrewByName(crewName));
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
 
     @GetMapping("/crews")
-    public ResponseEntity<RestResponse<List<CrewWithMemberAndImageResponse>>> findCrews() {
-        List<CrewWithMemberAndImageResponse> crewWithMemberAndImageResponses = crewService.findCrewsByName()
+    public ResponseEntity<RestResponse<List<CrewInfoResponse>>> findCrews(
+             @RequestParam(required = false, defaultValue = "") String crewName,
+             @PageableDefault Pageable pageable
+    ) {
+        List<CrewInfoResponse> crewResponses = crewService.findCrewsByName(crewName, pageable)
                 .stream()
-                .map(CrewWithMemberAndImageResponse::from).toList();
+                .map(CrewInfoResponse::from).toList();
 
-        return ResponseEntity.ok().body(RestResponse.success(crewWithMemberAndImageResponses));
+        return ResponseEntity.ok().body(RestResponse.success(crewResponses));
     }
 
     @PostMapping("/crew/join")

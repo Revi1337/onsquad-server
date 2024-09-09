@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.domain.category;
+package revi1337.onsquad.category.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import revi1337.onsquad.squad.domain.vo.category.CategoryType;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 
 import java.util.List;
 import java.util.Objects;

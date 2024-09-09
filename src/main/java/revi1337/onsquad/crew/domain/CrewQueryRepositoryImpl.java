@@ -15,7 +15,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Crew> findCrewByNameWithImage(Name name) {
+    public Optional<Crew> findByNameWithImage(Name name) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .select(crew)
@@ -27,7 +27,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     }
 
     @Override
-    public Optional<Crew> findCrewByNameWithCrewMembers(Name name) {
+    public Optional<Crew> findByNameWithCrewMembers(Name name) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(crew)

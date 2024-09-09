@@ -1,7 +1,7 @@
-package revi1337.onsquad.crew.dto;
+package revi1337.onsquad.crew.application.dto;
 
 public record CrewAcceptDto(
-        String requestCrewName,
-        Long requestMemberId
+        String crewName,
+        Long memberId
 ) {
 }

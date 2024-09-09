@@ -1,7 +1,7 @@
-package revi1337.onsquad.crew.dto.request;
+package revi1337.onsquad.crew.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import revi1337.onsquad.crew.dto.CrewJoinDto;
+import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 
 public record CrewJoinRequest(
         @NotEmpty String crewName

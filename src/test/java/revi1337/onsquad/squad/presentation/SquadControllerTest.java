@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.controller;
+package revi1337.onsquad.squad.presentation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.squad.controller.dto.request.SquadCreateRequest;
+import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 import revi1337.onsquad.support.IntegrationTestSupport;
 
 import java.util.Arrays;

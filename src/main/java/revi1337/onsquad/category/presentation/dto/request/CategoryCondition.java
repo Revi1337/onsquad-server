@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.dto.request;
+package revi1337.onsquad.category.presentation.dto.request;
 
 import revi1337.onsquad.category.domain.vo.CategoryType;
 

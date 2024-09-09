@@ -1,14 +1,15 @@
-package revi1337.onsquad.crew.dto.request;
+package revi1337.onsquad.crew.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import revi1337.onsquad.crew.dto.CrewAcceptDto;
+import jakarta.validation.constraints.Positive;
+import revi1337.onsquad.crew.application.dto.CrewAcceptDto;
 
 public record CrewAcceptRequest (
-        @NotEmpty String requestCrewName,
-        @NotNull Long requestMemberId
+        @NotEmpty String crewName,
+        @Positive Long memberId
 ) {
     public CrewAcceptDto toDto() {
-        return new CrewAcceptDto(requestCrewName, requestMemberId);
+        return new CrewAcceptDto(crewName, memberId);
     }
 }

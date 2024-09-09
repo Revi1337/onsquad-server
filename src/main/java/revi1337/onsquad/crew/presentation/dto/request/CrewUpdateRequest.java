@@ -1,7 +1,7 @@
-package revi1337.onsquad.crew.dto.request;
+package revi1337.onsquad.crew.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import revi1337.onsquad.crew.dto.CrewUpdateDto;
+import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 
 import java.util.List;
 

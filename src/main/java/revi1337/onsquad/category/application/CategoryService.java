@@ -1,10 +1,10 @@
-package revi1337.onsquad.squad.application.category;
+package revi1337.onsquad.category.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.squad.domain.category.CategoryRepository;
-import revi1337.onsquad.squad.dto.category.CategoryDto;
+import revi1337.onsquad.category.domain.CategoryRepository;
+import revi1337.onsquad.category.application.dto.CategoryDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

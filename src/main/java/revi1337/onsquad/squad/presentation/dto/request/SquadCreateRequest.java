@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.controller.dto.request;
+package revi1337.onsquad.squad.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;

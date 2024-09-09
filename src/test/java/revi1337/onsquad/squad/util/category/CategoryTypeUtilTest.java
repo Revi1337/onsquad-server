@@ -2,14 +2,14 @@ package revi1337.onsquad.squad.util.category;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.squad.domain.vo.category.CategoryType;
+import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.util.CategoryTypeUtil;
 import revi1337.onsquad.squad.error.exception.SquadDomainException;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("CategoryTypeUtil 테스트")
 class CategoryTypeUtilTest {

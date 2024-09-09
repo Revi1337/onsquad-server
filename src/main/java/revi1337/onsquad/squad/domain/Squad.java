@@ -7,7 +7,7 @@ import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.squad.domain.squad_category.SquadCategory;
+import revi1337.onsquad.squad_category.domain.SquadCategory;
 import revi1337.onsquad.squad.domain.vo.Capacity;
 
 import revi1337.onsquad.squad.domain.vo.Content;

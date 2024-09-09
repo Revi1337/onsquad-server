@@ -6,9 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import revi1337.onsquad.squad.domain.category.Category;
-import revi1337.onsquad.squad.domain.category.CategoryRepository;
-import revi1337.onsquad.squad.domain.vo.category.CategoryType;
+import revi1337.onsquad.category.domain.Category;
+import revi1337.onsquad.category.domain.CategoryRepository;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Detail;
@@ -24,13 +24,13 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.*;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
-import revi1337.onsquad.participant.domain.SquadParticipant;
-import revi1337.onsquad.participant.domain.SquadParticipantRepository;
+import revi1337.onsquad.squad_participant.domain.SquadParticipant;
+import revi1337.onsquad.squad_participant.domain.SquadParticipantJpaRepository;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.domain.vo.*;
-import revi1337.onsquad.squad.dto.SquadCreateDto;
-import revi1337.onsquad.squad.dto.SquadJoinDto;
+import revi1337.onsquad.squad.application.dto.SquadCreateDto;
+import revi1337.onsquad.squad.application.dto.SquadJoinDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 
@@ -49,7 +49,7 @@ class SquadServiceTest {
     @Mock private SquadRepository squadRepository;
     @Mock private CategoryRepository categoryRepository;
     @Mock private CrewRepository crewRepository;
-    @Mock private SquadParticipantRepository squadParticipantRepository;
+    @Mock private SquadParticipantJpaRepository squadParticipantRepository;
     @InjectMocks private SquadService squadService;
 
     @Test

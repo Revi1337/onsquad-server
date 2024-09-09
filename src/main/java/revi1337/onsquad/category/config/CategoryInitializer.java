@@ -1,10 +1,10 @@
-package revi1337.onsquad.squad.config.category;
+package revi1337.onsquad.category.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import revi1337.onsquad.squad.domain.category.CategoryRepository;
+import revi1337.onsquad.category.domain.CategoryRepository;
 
 @RequiredArgsConstructor
 @Configuration

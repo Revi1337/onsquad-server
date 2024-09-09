@@ -6,9 +6,10 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import revi1337.onsquad.common.domain.BaseEntity;
+import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.member.domain.vo.*;
 
-import java.util.Objects;
+import java.util.*;
 
 @DynamicInsert
 @DynamicUpdate
@@ -37,6 +38,9 @@ public class Member extends BaseEntity {
 
     @Embedded
     private Password password;
+
+    @OneToMany(mappedBy = "member")
+    private final Set<Crew> crews = new HashSet<>();
 
     @Builder
     private Member(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {

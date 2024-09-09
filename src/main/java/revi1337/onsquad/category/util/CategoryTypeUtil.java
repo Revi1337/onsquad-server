@@ -1,6 +1,6 @@
-package revi1337.onsquad.squad.util.category;
+package revi1337.onsquad.category.util;
 
-import revi1337.onsquad.squad.domain.vo.category.CategoryType;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.squad.error.exception.SquadDomainException;
 
 import java.util.Collections;

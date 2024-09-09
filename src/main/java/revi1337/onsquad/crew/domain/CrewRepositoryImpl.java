@@ -1,10 +1,11 @@
 package revi1337.onsquad.crew.domain;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
-import revi1337.onsquad.crew.dto.OwnedCrewsDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,27 +43,22 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<CrewWithMemberAndImageDto> findCrewByName(Name name) {
+    public Optional<CrewInfoDomainDto> findCrewByName(Name name) {
         return crewQueryDslRepository.findCrewByName(name);
     }
 
     @Override
-    public List<CrewWithMemberAndImageDto> findCrewsByName() {
-        return crewQueryDslRepository.findCrewsByName();
+    public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
+        return crewQueryDslRepository.findCrewsByName(name, pageable);
     }
 
     @Override
-    public List<OwnedCrewsDto> findOwnedCrews(Long memberId) {
-        return crewQueryDslRepository.findOwnedCrews(memberId);
-    }
-
-    @Override
-    public Optional<Crew> findCrewByNameWithImage(Name name) {
-        return crewJpaRepository.findCrewByNameWithImage(name);
+    public Optional<Crew> findByNameWithImage(Name name) {
+        return crewJpaRepository.findByNameWithImage(name);
     }
 
     @Override
     public Optional<Crew> findByNameWithCrewMembers(Name name) {
-        return crewJpaRepository.findCrewByNameWithCrewMembers(name);
+        return crewJpaRepository.findByNameWithCrewMembers(name);
     }
 }

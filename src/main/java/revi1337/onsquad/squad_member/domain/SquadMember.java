@@ -7,12 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import revi1337.onsquad.common.domain.BaseEntity;
+import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad_member.domain.vo.SquadRole;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
@@ -22,11 +23,13 @@ import static revi1337.onsquad.squad_member.domain.vo.SquadRole.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@AttributeOverrides({
-        @AttributeOverride(name = "createdAt", column = @Column(name = "request_at", nullable = false, updatable = false)),
-        @AttributeOverride(name = "updatedAt", column = @Column(name = "participate_at", nullable = false))
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "unique_squadmember_squad_crewmember", columnNames = {"squad_id", "crew_member_id"})
 })
-public class SquadMember extends BaseEntity {
+@AttributeOverrides({
+        @AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))
+})
+public class SquadMember extends RequestEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +54,8 @@ public class SquadMember extends BaseEntity {
     private JoinStatus status;
 
     @Builder
-    private SquadMember(Long id, Squad squad, CrewMember crewMember, SquadRole role, JoinStatus status) {
+    private SquadMember(Long id, Squad squad, CrewMember crewMember, SquadRole role, JoinStatus status, LocalDateTime participantAt) {
+        super(participantAt);
         this.id = id;
         this.squad = squad;
         this.crewMember = crewMember;
@@ -59,17 +63,19 @@ public class SquadMember extends BaseEntity {
         this.status = status == null ? PENDING : status;
     }
 
-    public static SquadMember forLeader(CrewMember crewMember) {
+    public static SquadMember forLeader(CrewMember crewMember, LocalDateTime participantAt) {
         return SquadMember.builder()
                 .crewMember(crewMember)
                 .role(LEADER)
                 .status(ACCEPT)
+                .participantAt(participantAt)
                 .build();
     }
 
-    public static SquadMember forGeneral(CrewMember crewMember) {
+    public static SquadMember forGeneral(CrewMember crewMember, LocalDateTime participantAt) {
         return SquadMember.builder()
                 .crewMember(crewMember)
+                .participantAt(participantAt)
                 .build();
     }
 
@@ -93,7 +99,6 @@ public class SquadMember extends BaseEntity {
 
 
 
-
 //package revi1337.onsquad.squad_member.domain;
 //
 //import jakarta.persistence.*;
@@ -104,8 +109,8 @@ public class SquadMember extends BaseEntity {
 //import org.hibernate.annotations.ColumnDefault;
 //import org.hibernate.annotations.DynamicInsert;
 //import revi1337.onsquad.common.domain.BaseEntity;
+//import revi1337.onsquad.crew_member.domain.CrewMember;
 //import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
-//import revi1337.onsquad.member.domain.Member;
 //import revi1337.onsquad.squad.domain.Squad;
 //import revi1337.onsquad.squad_member.domain.vo.SquadRole;
 //
@@ -118,9 +123,12 @@ public class SquadMember extends BaseEntity {
 //@Getter
 //@NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@Entity
+//@Table(uniqueConstraints = {
+//        @UniqueConstraint(name = "unique_squadmember_squad_crewmember", columnNames = {"squad_id", "crew_member_id"})
+//})
 //@AttributeOverrides({
-//        @AttributeOverride(name = "createdAt", column = @Column(name = "request_at")),
-//        @AttributeOverride(name = "updatedAt", column = @Column(name = "participate_at"))
+//        @AttributeOverride(name = "createdAt", column = @Column(name = "request_at", updatable = false)),
+//        @AttributeOverride(name = "updatedAt", column = @Column(name = "participate_at", nullable = false))
 //})
 //public class SquadMember extends BaseEntity {
 //
@@ -133,8 +141,8 @@ public class SquadMember extends BaseEntity {
 //    private Squad squad;
 //
 //    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id", nullable = false)
-//    private Member member;
+//    @JoinColumn(name = "crew_member_id", nullable = false)
+//    private CrewMember crewMember;
 //
 //    @ColumnDefault("'GENERAL'")
 //    @Enumerated(EnumType.STRING)
@@ -147,25 +155,25 @@ public class SquadMember extends BaseEntity {
 //    private JoinStatus status;
 //
 //    @Builder
-//    private SquadMember(Long id, Squad squad, Member member, SquadRole role, JoinStatus status) {
+//    private SquadMember(Long id, Squad squad, CrewMember crewMember, SquadRole role, JoinStatus status) {
 //        this.id = id;
 //        this.squad = squad;
-//        this.member = member;
+//        this.crewMember = crewMember;
 //        this.role = role == null ? GENERAL : role;
 //        this.status = status == null ? PENDING : status;
 //    }
 //
-//    public static SquadMember forLeader(Member member) {
+//    public static SquadMember forLeader(CrewMember crewMember) {
 //        return SquadMember.builder()
-//                .member(member)
+//                .crewMember(crewMember)
 //                .role(LEADER)
 //                .status(ACCEPT)
 //                .build();
 //    }
 //
-//    public static SquadMember forGeneral(Member member) {
+//    public static SquadMember forGeneral(CrewMember crewMember) {
 //        return SquadMember.builder()
-//                .member(member)
+//                .crewMember(crewMember)
 //                .build();
 //    }
 //

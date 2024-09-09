@@ -1,8 +1,9 @@
 package revi1337.onsquad.crew.domain;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
-import revi1337.onsquad.crew.dto.OwnedCrewsDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 
 import java.util.List;
@@ -22,18 +23,21 @@ public interface CrewRepository {
 
     List<Crew> findAllByMemberId(Long memberId);
 
-    Optional<CrewWithMemberAndImageDto> findCrewByName(Name name);
+    Optional<CrewInfoDomainDto> findCrewByName(Name name);
 
-    List<CrewWithMemberAndImageDto> findCrewsByName();
+    Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable);
 
-    List<OwnedCrewsDto> findOwnedCrews(Long memberId);
-
-    Optional<Crew> findCrewByNameWithImage(Name name);
+    Optional<Crew> findByNameWithImage(Name name);
 
     Optional<Crew> findByNameWithCrewMembers(Name name);
 
-    default CrewWithMemberAndImageDto getCrewByName(Name name) {
+    default CrewInfoDomainDto getCrewByName(Name name) {
         return findCrewByName(name)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    }
+
+    default Crew getCrewByNameWithImage(Name name) {
+        return findByNameWithImage(name)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
     }
 
@@ -42,8 +46,8 @@ public interface CrewRepository {
                 .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
     }
 
-    default Crew getCrewByNameWithImage(Name name) {
-        return findCrewByNameWithImage(name)
+    default Crew getByNameWithCrewMembers(Name name) {
+        return findByNameWithCrewMembers(name)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
     }
 }

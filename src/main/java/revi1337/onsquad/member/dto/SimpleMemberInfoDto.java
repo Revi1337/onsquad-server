@@ -14,4 +14,12 @@ public record SimpleMemberInfoDto(
                 member.getNickname().getValue()
         );
     }
+
+    public static SimpleMemberInfoDto from(SimpleMemberInfoDomainDto simpleMemberInfoDomainDto) {
+        return new SimpleMemberInfoDto(
+                simpleMemberInfoDomainDto.id(),
+                simpleMemberInfoDomainDto.email() != null ? simpleMemberInfoDomainDto.email().getValue() : null,
+                simpleMemberInfoDomainDto.nickname().getValue()
+        );
+    }
 }

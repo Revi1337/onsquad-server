@@ -48,7 +48,7 @@ public class SquadCommentService {
      */
     @Transactional
     public CommentDto addComment(String crewName, Long squadId, CreateCommentDto dto, Long memberId) {
-        return squadJpaRepository.findSquadWithCrewById(squadId)
+        return squadJpaRepository.findSquadByIdWithCrew(squadId)
                 .map(squad -> persistSquadCommentIfValid(crewName, dto, memberId, squad))
                 .orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOTFOUND));
     }

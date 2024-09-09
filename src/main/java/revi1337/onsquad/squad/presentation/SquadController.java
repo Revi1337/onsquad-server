@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.controller;
+package revi1337.onsquad.squad.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +11,9 @@ import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.application.SquadService;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
-import revi1337.onsquad.squad.controller.dto.request.SquadCreateRequest;
-import revi1337.onsquad.squad.controller.dto.request.SquadJoinRequest;
-import revi1337.onsquad.squad.controller.dto.response.SquadResponse;
+import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
+import revi1337.onsquad.squad.presentation.dto.request.SquadJoinRequest;
+import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,22 +46,22 @@ public class SquadController {
     }
 
     @GetMapping("/squad")
-    public ResponseEntity<RestResponse<SquadResponse>> findSquad(
+    public ResponseEntity<RestResponse<SquadInfoResponse>> findSquad(
             @RequestParam Long id
     ) {
-        SquadResponse squadResponse = SquadResponse.from(squadService.findSquad(id));
+        SquadInfoResponse squadResponse = SquadInfoResponse.from(squadService.findSquad(id));
 
         return ResponseEntity.ok(RestResponse.success(squadResponse));
     }
 
     @GetMapping("/squads")
-    public ResponseEntity<RestResponse<List<SquadResponse>>> findSquads(
+    public ResponseEntity<RestResponse<List<SquadInfoResponse>>> findSquads(
             @RequestParam String crewName,
             @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable
     ) {
-        List<SquadResponse> squadResponses = squadService.findSquads(crewName, category, pageable).stream()
-                .map(SquadResponse::from)
+        List<SquadInfoResponse> squadResponses = squadService.findSquads(crewName, category, pageable).stream()
+                .map(SquadInfoResponse::from)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(RestResponse.success(squadResponses));

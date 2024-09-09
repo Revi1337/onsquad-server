@@ -1,4 +1,4 @@
-package revi1337.onsquad.participant.domain.crew_participant;
+package revi1337.onsquad.crew_participant.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

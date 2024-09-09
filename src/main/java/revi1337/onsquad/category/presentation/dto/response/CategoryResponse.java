@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.dto.response.category;
+package revi1337.onsquad.category.presentation.dto.response;
 
 import revi1337.onsquad.category.application.dto.CategoryDto;
 

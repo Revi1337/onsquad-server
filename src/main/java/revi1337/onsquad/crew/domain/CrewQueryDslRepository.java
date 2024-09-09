@@ -1,21 +1,23 @@
 package revi1337.onsquad.crew.domain;
 
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.QCrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
-import revi1337.onsquad.crew.dto.OwnedCrewsDto;
-import revi1337.onsquad.crew.dto.QCrewWithMemberAndImageDto;
-import revi1337.onsquad.crew.dto.QOwnedCrewsDto;
+import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.querydsl.jpa.JPAExpressions.*;
 import static revi1337.onsquad.crew.domain.QCrew.crew;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
 import static revi1337.onsquad.image.domain.QImage.image;
 import static revi1337.onsquad.member.domain.QMember.member;
 
@@ -25,48 +27,64 @@ public class CrewQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<OwnedCrewsDto> findOwnedCrews(Long memberId) {
-        return jpaQueryFactory
-                .select(new QOwnedCrewsDto(
-                        crew.name,
-                        crew.detail,
-                        crew.hashTags,
-                        new CaseBuilder()
-                                .when(crew.member.id.eq(memberId))
-                                .then(true)
-                                .otherwise(false)
-                ))
-                .from(crew)
-                .rightJoin(crew.crewMembers, crewMember)
-                .where(crewMember.member.id.eq(memberId))
-                .fetch();
-    }
-
-
-    public Optional<CrewWithMemberAndImageDto> findCrewByName(Name name) {
+    public Optional<CrewInfoDomainDto> findCrewByName(Name name) {
         return Optional.ofNullable(
-                queryForFindCrewByName()
-                        .where(crew.name.eq(name))
+                jpaQueryFactory
+                        .select(new QCrewInfoDomainDto(
+                                crew.id,
+                                crew.name,
+                                crew.introduce,
+                                crew.detail,
+                                image.imageUrl,
+                                crew.kakaoLink,
+                                crew.hashTags,
+                                select(crewMember.count())
+                                        .from(crewMember)
+                                        .where(crewMember.crew.id.eq(crew.id)),
+                                new QSimpleMemberInfoDomainDto(
+                                        member.id,
+                                        member.nickname
+                                )
+                        ))
+                        .from(crew)
+                        .innerJoin(crew.image, image).on(crew.name.eq(name))
+                        .innerJoin(crew.member, member)
                         .fetchOne()
         );
     }
 
-    public List<CrewWithMemberAndImageDto> findCrewsByName() {
-        return queryForFindCrewByName()
-                .fetch();
-    }
-
-    private JPAQuery<CrewWithMemberAndImageDto> queryForFindCrewByName() {
-        return jpaQueryFactory
-                .select(new QCrewWithMemberAndImageDto(
+    public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
+        List<CrewInfoDomainDto> fetchedCrews = jpaQueryFactory
+                .select(new QCrewInfoDomainDto(
+                        crew.id,
                         crew.name,
-                        crew.detail,
+                        crew.introduce,
+                        image.imageUrl,
+                        crew.kakaoLink,
                         crew.hashTags,
-                        member.nickname,
-                        image.imageUrl
+                        select(crewMember.count())
+                                .from(crewMember)
+                                .from(crewMember)
+                                .where(crewMember.crew.id.eq(crew.id)),
+                        new QSimpleMemberInfoDomainDto(
+                                member.id,
+                                member.nickname
+                        )
                 ))
                 .from(crew)
                 .innerJoin(crew.image, image)
-                .innerJoin(crew.member, member);
+                .innerJoin(crew.member, member)
+                .where(crew.name.value.startsWithIgnoreCase(name))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(crew.createdAt.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(crew.count())
+                .from(crew)
+                .where(crew.name.value.startsWithIgnoreCase(name));
+
+        return PageableExecutionUtils.getPage(fetchedCrews, pageable, countQuery::fetchOne);
     }
 }

@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.dto;
+package revi1337.onsquad.squad.application.dto;
 
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.CrewMember;

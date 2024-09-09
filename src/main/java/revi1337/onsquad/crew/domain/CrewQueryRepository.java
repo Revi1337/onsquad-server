@@ -6,8 +6,8 @@ import java.util.Optional;
 
 public interface CrewQueryRepository {
 
-    Optional<Crew> findCrewByNameWithImage(Name name);
+    Optional<Crew> findByNameWithImage(Name name);
 
-    Optional<Crew> findCrewByNameWithCrewMembers(Name name);
+    Optional<Crew> findByNameWithCrewMembers(Name name);
 
 }

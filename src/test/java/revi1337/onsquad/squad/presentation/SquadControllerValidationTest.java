@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.controller;
+package revi1337.onsquad.squad.presentation;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +12,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import revi1337.onsquad.squad.application.SquadService;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
-import revi1337.onsquad.squad.controller.dto.request.SquadCreateRequest;
+import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 import revi1337.onsquad.support.ValidationWithRestDocsTestSupport;
 
 import java.util.List;

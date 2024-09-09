@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.dto.response;
+package revi1337.onsquad.crew_member.presentation.dto.response;
 
 import revi1337.onsquad.crew_member.application.dto.CrewMemberDto;
 import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
@@ -6,15 +6,13 @@ import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
 import java.time.LocalDateTime;
 
 public record CrewMemberResponse(
-        String nickname,
         SimpleMemberInfoResponse memberInfo,
-        LocalDateTime participateAt
+        LocalDateTime participantAt
 ) {
     public static CrewMemberResponse from(CrewMemberDto crewMemberDto) {
         return new CrewMemberResponse(
-                crewMemberDto.nickname(),
                 SimpleMemberInfoResponse.from(crewMemberDto.memberInfo()),
-                crewMemberDto.participateAt()
+                crewMemberDto.participantAt()
         );
     }
 }

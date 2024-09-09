@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.dto.category;
+package revi1337.onsquad.category.application.dto;
 
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.vo.CategoryType;

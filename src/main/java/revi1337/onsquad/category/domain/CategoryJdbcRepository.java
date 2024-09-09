@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.domain.category;
+package revi1337.onsquad.category.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
