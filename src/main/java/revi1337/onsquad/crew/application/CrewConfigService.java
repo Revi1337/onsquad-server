@@ -10,13 +10,19 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.application.dto.CrewAcceptDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.crew_hashtag.domain.CrewHashtag;
+import revi1337.onsquad.crew_hashtag.domain.CrewHashtagRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.hashtag.domain.Hashtag;
+import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.util.HashtagTypeUtil;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.crew_participant.domain.CrewParticipant;
 import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
@@ -28,18 +34,35 @@ public class CrewConfigService {
     private final CrewRepository crewRepository;
     private final CrewParticipantJpaRepository crewParticipantRepository;
     private final CrewMemberRepository crewMemberRepository;
+    private final CrewHashtagRepository crewHashtagRepository;
     private final S3BucketUploader s3BucketUploader;
 
+    // TODO AWS 가 껴있으니 트랜잭션 분리가 필요.
     @Transactional
-    public void updateCrew(Long memberId, String targetCrewName, CrewUpdateDto dto, byte[] image, String imageName) {
-        Crew crew = crewRepository.getCrewByNameWithImage(new Name(targetCrewName));
+    public void updateCrew(Long memberId, String crewName, CrewUpdateDto dto, byte[] image, String imageName) {
+        Crew crew = crewRepository.getCrewByNameWithImage(new Name(crewName));
         validateCrewPublisher(memberId, crew, dto.name());
-        uploadImageAndUpdateCrew(dto, image, imageName, crew);
+        updateCrewInfo(dto, crew);
+        s3BucketUploader.updateImage(crew.getImage().getImageUrl(), image, imageName);
+    }
+
+    private void updateCrewInfo(CrewUpdateDto dto, Crew crew) {
+        crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
+        crewRepository.saveAndFlush(crew);
+        updateCrewHashtags(dto, crew);
+    }
+
+    private void updateCrewHashtags(CrewUpdateDto dto, Crew crew) {
+        List<HashtagType> hashtagTypes = HashtagTypeUtil.extractPossible(HashtagType.fromTexts(dto.hashTags()));
+        List<Hashtag> hashtags = Hashtag.fromHashtagTypes(hashtagTypes);
+        List<Long> hashtagIds = crew.getHashtags().stream().map(CrewHashtag::getId).toList();
+        crewHashtagRepository.deleteAllByIdIn(hashtagIds);
+        crewHashtagRepository.batchInsertCrewHashtags(crew.getId(), hashtags);
     }
 
     @Transactional
     public void acceptCrewMember(Long memberId, CrewAcceptDto dto) {
-        Crew crew = crewRepository.getByName(new Name(dto.crewName()));
+        Crew crew = crewRepository.getByNameWithHashtags(new Name(dto.crewName()));
         validateCrewPublisher(memberId, crew, dto.crewName());
         crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), dto.memberId()).ifPresentOrElse(
                 crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewName()); },
@@ -49,13 +72,6 @@ public class CrewConfigService {
                     crewParticipantRepository.deleteById(crewParticipant.getId());
                 }
         );
-    }
-
-    private void uploadImageAndUpdateCrew(CrewUpdateDto dto, byte[] imageData, String imageName, Crew crew) {
-        String remoteAddress = crew.getImage().getImageUrl();
-        s3BucketUploader.updateImage(remoteAddress, imageData, imageName);
-        crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.hashTags(), dto.kakaoLink(), remoteAddress);
-        crewRepository.saveAndFlush(crew);
     }
 
     private void validateCrewPublisher(Long memberId, Crew crew, String crewName) {

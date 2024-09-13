@@ -14,16 +14,21 @@ import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.hashtag.domain.Hashtag;
+import revi1337.onsquad.hashtag.util.HashtagTypeUtil;
+import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
+import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
+import static revi1337.onsquad.member.error.MemberErrorCode.*;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -51,14 +56,16 @@ public class CrewService {
                 .toList();
     }
 
+    // TODO AWS 가 껴있기 때문에 트랜잭션 분리 필요.
     @Transactional
-    public void createNewCrew(Long memberId, CrewCreateDto crewCreateDto, byte[] image, String imageFileName) {
-        memberRepository.findById(memberId).ifPresent(
-                member -> crewRepository.findByName(new Name(crewCreateDto.name())).ifPresentOrElse(
-                        ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, crewCreateDto.name()); },
-                        () -> persistCrewAndRegisterOwner(crewCreateDto, image, imageFileName, member)
-                )
-        );
+    public void createNewCrew(Long memberId, CrewCreateDto dto, byte[] image, String imageFileName) {
+        List<HashtagType> hashtagTypes = HashtagTypeUtil.extractPossible(HashtagType.fromTexts(dto.hashTags()));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberBusinessException.NotFound(NOTFOUND, memberId));
+        crewRepository.findByName(new Name(dto.name()))
+                .ifPresent(ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, dto.name()); });
+
+        persistCrewAndRegisterOwner(dto, image, imageFileName, hashtagTypes, member);
     }
 
     @Transactional
@@ -71,11 +78,14 @@ public class CrewService {
         );
     }
 
-    private void persistCrewAndRegisterOwner(CrewCreateDto crewCreateDto, byte[] imageBinary, String imageFileName, Member member) {
+    private void persistCrewAndRegisterOwner(CrewCreateDto dto, byte[] imageBinary, String imageFileName, List<HashtagType> hashtagTypes, Member member) {
         String uploadRemoteAddress = s3BucketUploader.uploadCrew(imageBinary, imageFileName);
-        Crew crew = crewCreateDto.toEntity(new Image(uploadRemoteAddress), member);
+        Crew crew = dto.toEntity(new Image(uploadRemoteAddress), member);
         crew.addCrewMember(CrewMember.forOwner(member, LocalDateTime.now()));
         crewRepository.save(crew);
+
+        List<Hashtag> hashtags = Hashtag.fromHashtagTypes(hashtagTypes);
+        crewRepository.batchInsertCrewHashtags(crew.getId(), hashtags);
     }
 
     private void checkDifferenceCrewCreator(Crew crew, Long memberId) {

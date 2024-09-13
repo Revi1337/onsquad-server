@@ -2,7 +2,6 @@ package revi1337.onsquad.crew.application.dto;
 
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.vo.Detail;
-import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.image.domain.Image;
@@ -22,7 +21,6 @@ public record CrewCreateDto(
                 .name(new Name(name))
                 .introduce(new Introduce(introduce))
                 .detail(new Detail(detail))
-                .hashTags(new HashTags(hashTags))
                 .kakaoLink(kakaoLink)
                 .image(image)
                 .member(member)

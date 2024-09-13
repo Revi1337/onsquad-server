@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_hashtag.domain.CrewHashtagJdbcRepository;
+import revi1337.onsquad.hashtag.domain.Hashtag;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +18,7 @@ public class CrewRepositoryImpl implements CrewRepository {
 
     private final CrewJpaRepository crewJpaRepository;
     private final CrewQueryDslRepository crewQueryDslRepository;
+    private final CrewHashtagJdbcRepository crewHashtagJdbcRepository;
 
     @Override
     public Crew save(Crew crew) {
@@ -30,6 +33,11 @@ public class CrewRepositoryImpl implements CrewRepository {
     @Override
     public Optional<Crew> findByName(Name name) {
         return crewJpaRepository.findByName(name);
+    }
+
+    @Override
+    public Optional<Crew> findByNameWithHashtags(Name name) {
+        return crewJpaRepository.findByNameWithHashtags(name);
     }
 
     @Override
@@ -60,5 +68,10 @@ public class CrewRepositoryImpl implements CrewRepository {
     @Override
     public Optional<Crew> findByNameWithCrewMembers(Name name) {
         return crewJpaRepository.findByNameWithCrewMembers(name);
+    }
+
+    @Override
+    public void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags) {
+        crewHashtagJdbcRepository.batchInsertCrewHashtags(crewId, hashtags);
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.hashtag.domain.Hashtag;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,8 @@ public interface CrewRepository {
 
     Optional<Crew> findByName(Name name);
 
+    Optional<Crew> findByNameWithHashtags(Name name);
+
     boolean existsByName(Name name);
 
     List<Crew> findAllByMemberId(Long memberId);
@@ -30,6 +33,8 @@ public interface CrewRepository {
     Optional<Crew> findByNameWithImage(Name name);
 
     Optional<Crew> findByNameWithCrewMembers(Name name);
+
+    void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags);
 
     default CrewInfoDomainDto getCrewByName(Name name) {
         return findCrewByName(name)
@@ -43,6 +48,11 @@ public interface CrewRepository {
 
     default Crew getByName(Name name) {
         return findByName(name)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    }
+
+    default Crew getByNameWithHashtags(Name name) {
+        return findByNameWithHashtags(name)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
     }
 
