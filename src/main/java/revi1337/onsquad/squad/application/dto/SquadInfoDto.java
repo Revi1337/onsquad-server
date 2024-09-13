@@ -1,8 +1,8 @@
 package revi1337.onsquad.squad.application.dto;
 
+import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-import revi1337.onsquad.squad_category.application.dto.SquadCategoryDto;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public record SquadInfoDto(
         String addressDetail,
         String kakaoLink,
         String discordLink,
-        List<SquadCategoryDto> categories,
+        List<String> categories,
         SimpleMemberInfoDto squadOwner
 ) {
     public static SquadInfoDto from(SquadInfoDomainDto squadInfoDomainDto) {
@@ -31,7 +31,7 @@ public record SquadInfoDto(
                 squadInfoDomainDto.kakaoLink(),
                 squadInfoDomainDto.discordLink(),
                 squadInfoDomainDto.categories().stream()
-                        .map(SquadCategoryDto::from)
+                        .map(CategoryType::getText)
                         .toList(),
                 SimpleMemberInfoDto.from(squadInfoDomainDto.squadOwner())
         );

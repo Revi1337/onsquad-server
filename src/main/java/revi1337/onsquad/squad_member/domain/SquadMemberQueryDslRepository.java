@@ -42,7 +42,6 @@ public class SquadMemberQueryDslRepository {
     private final QCrewMember SQUAD_CREW_MEMBER = new QCrewMember("squadCrewMember");
     private final QMember CREW_CREATOR = new QMember("crewCreator");
     private final QMember SQUAD_CREATOR = new QMember("squadCreator");
-    private final SquadMemberJpaRepository squadMemberJpaRepository;
 
     public List<EnrolledSquadDomainDto> findEnrolledSquads(Long memberId) {
         List<SimpleSquadInfoDomainDto> squadInfos = jpaQueryFactory
@@ -53,7 +52,7 @@ public class SquadMemberQueryDslRepository {
                 .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
                 .innerJoin(SQUAD_CREW_MEMBER.member, SQUAD_CREATOR)
                 .innerJoin(squad.categories, squadCategory)
-//                .innerJoin(squadCategory.category, category)
+                .innerJoin(squadCategory.category, category)
                 .transform(groupBy(squad.id)
                         .list(new QSimpleSquadInfoDomainDto(
                                 crew.id,
@@ -67,10 +66,7 @@ public class SquadMemberQueryDslRepository {
                                         .when(SQUAD_CREATOR.id.eq(memberId))
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                list(new QSquadCategoryDomainDto(
-                                        category.id,
-                                        category.categoryType
-                                )),
+                                list(category.categoryType),
                                 new QSimpleMemberInfoDomainDto(
                                         SQUAD_CREATOR.id,
                                         SQUAD_CREATOR.nickname
@@ -135,10 +131,7 @@ public class SquadMemberQueryDslRepository {
                                                 .when(SQUAD_CREW_MEMBER.member.id.eq(memberId))
                                                 .then(TRUE)
                                                 .otherwise(FALSE),
-                                        set(new QSquadCategoryDomainDto(
-                                                category.id,
-                                                category.categoryType
-                                        )),
+                                        set(category.categoryType),
                                         list(new QSquadMemberDomainDto(
                                                 new QSimpleMemberInfoDomainDto(
                                                         member.id,

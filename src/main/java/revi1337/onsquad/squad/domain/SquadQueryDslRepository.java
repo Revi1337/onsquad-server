@@ -1,6 +1,5 @@
 package revi1337.onsquad.squad.domain;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -18,7 +17,6 @@ import revi1337.onsquad.squad.domain.dto.QSimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-import revi1337.onsquad.squad_category.domain.dto.QSquadCategoryDomainDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,10 +56,7 @@ public class SquadQueryDslRepository {
                                         squad.address,
                                         squad.kakaoLink,
                                         squad.discordLink,
-                                        list(new QSquadCategoryDomainDto(
-                                                category.id,
-                                                category.categoryType
-                                        )),
+                                        list(category.categoryType),
                                         new QSimpleMemberInfoDomainDto(
                                                 member.id,
                                                 member.nickname
@@ -94,10 +89,7 @@ public class SquadQueryDslRepository {
                         squad.address,
                         squad.kakaoLink,
                         squad.discordLink,
-                        list(new QSquadCategoryDomainDto(
-                                category.id,
-                                category.categoryType
-                        )),
+                        list(category.categoryType),
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
                                 member.nickname
@@ -133,10 +125,7 @@ public class SquadQueryDslRepository {
                                         .when(member.id.eq(memberId))
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                list(new QSquadCategoryDomainDto(
-                                        category.id,
-                                        category.categoryType
-                                )),
+                                list(category.categoryType),
                                 new QSimpleMemberInfoDomainDto(
                                         member.id,
                                         member.nickname

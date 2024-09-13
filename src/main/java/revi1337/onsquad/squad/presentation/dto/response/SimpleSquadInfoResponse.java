@@ -2,7 +2,6 @@ package revi1337.onsquad.squad.presentation.dto.response;
 
 import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad.application.dto.SimpleSquadInfoDto;
-import revi1337.onsquad.squad_category.presentation.dto.SquadCategoryResponse;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public record SimpleSquadInfoResponse(
         String kakaoLink,
         String discordLink,
         Boolean isOwner,
-        List<SquadCategoryResponse> categories,
+        List<String> categories,
         SimpleMemberInfoResponse squadOwner
 ) {
     public static SimpleSquadInfoResponse from(SimpleSquadInfoDto simpleSquadInfoDto) {
@@ -30,9 +29,7 @@ public record SimpleSquadInfoResponse(
                 simpleSquadInfoDto.kakaoLink(),
                 simpleSquadInfoDto.discordLink(),
                 simpleSquadInfoDto.isOwner(),
-                simpleSquadInfoDto.categories().stream()
-                        .map(SquadCategoryResponse::from)
-                        .toList(),
+                simpleSquadInfoDto.categories(),
                 SimpleMemberInfoResponse.from(simpleSquadInfoDto.squadOwner())
         );
     }

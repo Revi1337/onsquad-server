@@ -3,7 +3,6 @@ package revi1337.onsquad.squad.presentation.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-import revi1337.onsquad.squad_category.presentation.dto.SquadCategoryResponse;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public record SquadInfoResponse(
         String addressDetail,
         String kakaoLink,
         String discordLink,
-        List<SquadCategoryResponse> categories,
+        List<String> categories,
         SimpleMemberInfoResponse squadOwner
 ) {
     public static SquadInfoResponse from(SquadInfoDto squadInfoDto) {
@@ -32,9 +31,7 @@ public record SquadInfoResponse(
                 squadInfoDto.addressDetail(),
                 squadInfoDto.kakaoLink(),
                 squadInfoDto.discordLink(),
-                squadInfoDto.categories().stream()
-                        .map(SquadCategoryResponse::from)
-                        .toList(),
+                squadInfoDto.categories(),
                 SimpleMemberInfoResponse.from(squadInfoDto.squadOwner())
         );
     }

@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_participant.application.dto;
 
+import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
-import revi1337.onsquad.squad_category.application.dto.SquadCategoryDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantDomainDto;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ public record SquadParticipantDto(
         String addressDetail,
         String kakaoLink,
         String discordLink,
-        List<SquadCategoryDto> categories,
+        List<String> categories,
         SimpleMemberInfoDto squadOwner,
         RequestParticipantDto request
 ) {
@@ -31,7 +31,7 @@ public record SquadParticipantDto(
                 squadParticipantDomainDto.kakaoLink(),
                 squadParticipantDomainDto.discordLink(),
                 squadParticipantDomainDto.categories().stream()
-                        .map(SquadCategoryDto::from)
+                        .map(CategoryType::getText)
                         .toList(),
                 SimpleMemberInfoDto.from(squadParticipantDomainDto.squadOwner()),
                 RequestParticipantDto.from(squadParticipantDomainDto.request())
@@ -50,27 +50,3 @@ public record SquadParticipantDto(
         }
     }
 }
-
-
-
-
-//package revi1337.onsquad.squad_participant.application.dto;
-//
-//import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-//import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantDomainDto;
-//
-//import java.time.LocalDateTime;
-//
-//public record SquadParticipantDto(
-//        Long id,
-//        LocalDateTime requestAt,
-//        SquadInfoDto squadInfo
-//) {
-//    public static SquadParticipantDto from(SquadParticipantDomainDto squadParticipantDomainDto) {
-//        return new SquadParticipantDto(
-//                squadParticipantDomainDto.id(),
-//                squadParticipantDomainDto.requestAt(),
-//                SquadInfoDto.from(squadParticipantDomainDto.squadInfo())
-//        );
-//    }
-//}

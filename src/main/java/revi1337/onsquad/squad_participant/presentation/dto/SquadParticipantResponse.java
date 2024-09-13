@@ -1,7 +1,6 @@
 package revi1337.onsquad.squad_participant.presentation.dto;
 
 import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
-import revi1337.onsquad.squad_category.presentation.dto.SquadCategoryResponse;
 import revi1337.onsquad.squad_participant.application.dto.SquadParticipantDto;
 
 import java.time.LocalDateTime;
@@ -16,7 +15,7 @@ public record SquadParticipantResponse(
         String addressDetail,
         String kakaoLink,
         String discordLink,
-        List<SquadCategoryResponse> categories,
+        List<String> categories,
         SimpleMemberInfoResponse squadOwner,
         RequestParticipantResponse request
 ) {
@@ -30,9 +29,7 @@ public record SquadParticipantResponse(
                 squadParticipantDto.addressDetail(),
                 squadParticipantDto.kakaoLink(),
                 squadParticipantDto.discordLink(),
-                squadParticipantDto.categories().stream()
-                        .map(SquadCategoryResponse::from)
-                        .toList(),
+                squadParticipantDto.categories(),
                 SimpleMemberInfoResponse.from(squadParticipantDto.squadOwner()),
                 RequestParticipantResponse.from(squadParticipantDto.request())
         );
@@ -50,31 +47,3 @@ public record SquadParticipantResponse(
         }
     }
 }
-
-
-
-
-
-
-
-
-//package revi1337.onsquad.squad_participant.presentation.dto;
-//
-//import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
-//import revi1337.onsquad.squad_participant.application.dto.SquadParticipantDto;
-//
-//import java.time.LocalDateTime;
-//
-//public record SquadParticipantResponse(
-//        Long id,
-//        LocalDateTime requestAt,
-//        SquadInfoResponse squadInfo
-//) {
-//    public static SquadParticipantResponse from(SquadParticipantDto squadParticipantDto) {
-//        return new SquadParticipantResponse(
-//                squadParticipantDto.id(),
-//                squadParticipantDto.requestAt(),
-//                SquadInfoResponse.from(squadParticipantDto.squadInfo())
-//        );
-//    }
-//}
