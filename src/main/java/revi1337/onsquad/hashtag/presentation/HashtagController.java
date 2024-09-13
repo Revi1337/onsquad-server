@@ -15,10 +15,10 @@ import java.util.List;
 @RestController
 public class HashtagController {
 
-    private final HashtagService hashtagService;
+    private final HashtagService cachedHashtagService;
 
     @GetMapping
     public ResponseEntity<RestResponse<List<String>>> getAllCategories() {
-        return ResponseEntity.ok(RestResponse.success(hashtagService.findHashtags()));
+        return ResponseEntity.ok(RestResponse.success(cachedHashtagService.findHashtags()));
     }
 }
