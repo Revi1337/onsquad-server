@@ -42,4 +42,11 @@ public abstract class CrewDomainException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), beginTo, endTo));
         }
     }
+
+    public static class InvalidHashtag extends CrewDomainException {
+
+        public InvalidHashtag(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

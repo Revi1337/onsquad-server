@@ -34,31 +34,57 @@ values ('https://pbs.twimg.com/media/FO70Y53WYAwGmz0.jpg'),
        ('https://pbs.twimg.com/media/FO70Y53WYAwGmz0.jpg'),
        ('https://pbs.twimg.com/media/FO70Y53WYAwGmz0.jpg');
 
-insert into crew(name, introduce, detail, hashtags, kakao_link, image_id, member_id, created_at, updated_at)
-values ('크루 이름 1', '크루 소개 1', '크루 디테일 1', '해시태그 1,해시태그 2', 'https://카카오링크.com', 1, 1, CURRENT_TIMESTAMP + 1, CURRENT_TIMESTAMP + 1),
-       ('크루 이름 2', '크루 소개 2', '크루 디테일 2', '해시태그 1,해시태그 2', 'https://카카오링크.com', 2, 1, CURRENT_TIMESTAMP + 2, CURRENT_TIMESTAMP + 2),
-       ('크루 이름 3', '크루 소개 3', '크루 디테일 3', '해시태그 1,해시태그 2', 'https://카카오링크.com', 3, 1, CURRENT_TIMESTAMP + 3, CURRENT_TIMESTAMP + 3),
-       ('크루 이름 4', '크루 소개 4', '크루 디테일 4', '해시태그 1,해시태그 2', 'https://카카오링크.com', 4, 1, CURRENT_TIMESTAMP + 4, CURRENT_TIMESTAMP + 4),
+insert into crew(name, introduce, detail, kakao_link, image_id, member_id, created_at, updated_at)
+values ('크루 이름 1', '크루 소개 1', '크루 디테일 1', 'https://카카오링크.com', 1, 1, CURRENT_TIMESTAMP + 1, CURRENT_TIMESTAMP + 1),
+       ('크루 이름 2', '크루 소개 2', '크루 디테일 2', 'https://카카오링크.com', 2, 1, CURRENT_TIMESTAMP + 2, CURRENT_TIMESTAMP + 2),
+       ('크루 이름 3', '크루 소개 3', '크루 디테일 3', 'https://카카오링크.com', 3, 1, CURRENT_TIMESTAMP + 3, CURRENT_TIMESTAMP + 3),
+       ('크루 이름 4', '크루 소개 4', '크루 디테일 4', 'https://카카오링크.com', 4, 1, CURRENT_TIMESTAMP + 4, CURRENT_TIMESTAMP + 4),
 
-       ('크루 이름 5', '크루 소개 5', '크루 디테일 5', '해시태그 1,해시태그 2', 'https://카카오링크.com', 5, 2, CURRENT_TIMESTAMP + 5, CURRENT_TIMESTAMP + 5),
-       ('크루 이름 6', '크루 소개 6', '크루 디테일 6', '해시태그 1,해시태그 2', 'https://카카오링크.com', 6, 2, CURRENT_TIMESTAMP + 6, CURRENT_TIMESTAMP + 6),
-       ('크루 이름 7', '크루 소개 7', '크루 디테일 7', '해시태그 1,해시태그 2', 'https://카카오링크.com', 7, 2, CURRENT_TIMESTAMP + 7, CURRENT_TIMESTAMP + 7),
-       ('크루 이름 8', '크루 소개 8', '크루 디테일 8', '해시태그 1,해시태그 2', 'https://카카오링크.com', 8, 2, CURRENT_TIMESTAMP + 8, CURRENT_TIMESTAMP + 8),
+       ('크루 이름 5', '크루 소개 5', '크루 디테일 5', 'https://카카오링크.com', 5, 2, CURRENT_TIMESTAMP + 5, CURRENT_TIMESTAMP + 5),
+       ('크루 이름 6', '크루 소개 6', '크루 디테일 6', 'https://카카오링크.com', 6, 2, CURRENT_TIMESTAMP + 6, CURRENT_TIMESTAMP + 6),
+       ('크루 이름 7', '크루 소개 7', '크루 디테일 7', 'https://카카오링크.com', 7, 2, CURRENT_TIMESTAMP + 7, CURRENT_TIMESTAMP + 7),
+       ('크루 이름 8', '크루 소개 8', '크루 디테일 8', 'https://카카오링크.com', 8, 2, CURRENT_TIMESTAMP + 8, CURRENT_TIMESTAMP + 8),
 
-       ('크루 이름 9', '크루 소개 9', '크루 디테일 9', '해시태그 1,해시태그 2', 'https://카카오링크.com', 9, 3, CURRENT_TIMESTAMP + 9, CURRENT_TIMESTAMP + 9),
-       ('크루 이름 10', '크루 소개 10', '크루 디테일 10', '해시태그 1,해시태그 2', 'https://카카오링크.com', 10, 3, CURRENT_TIMESTAMP + 10, CURRENT_TIMESTAMP + 10),
-       ('크루 이름 11', '크루 소개 11', '크루 디테일 11', '해시태그 1,해시태그 2', 'https://카카오링크.com', 11, 3, CURRENT_TIMESTAMP + 11, CURRENT_TIMESTAMP + 11),
-       ('크루 이름 12', '크루 소개 12', '크루 디테일 12', '해시태그 1,해시태그 2', 'https://카카오링크.com', 12, 3, CURRENT_TIMESTAMP + 12, CURRENT_TIMESTAMP + 12),
+       ('크루 이름 9', '크루 소개 9', '크루 디테일 9', 'https://카카오링크.com', 9, 3, CURRENT_TIMESTAMP + 9, CURRENT_TIMESTAMP + 9),
+       ('크루 이름 10', '크루 소개 10', '크루 디테일 10', 'https://카카오링크.com', 10, 3, CURRENT_TIMESTAMP + 10, CURRENT_TIMESTAMP + 10),
+       ('크루 이름 11', '크루 소개 11', '크루 디테일 11', 'https://카카오링크.com', 11, 3, CURRENT_TIMESTAMP + 11, CURRENT_TIMESTAMP + 11),
+       ('크루 이름 12', '크루 소개 12', '크루 디테일 12', 'https://카카오링크.com', 12, 3, CURRENT_TIMESTAMP + 12, CURRENT_TIMESTAMP + 12),
 
-       ('크루 이름 13', '크루 소개 13', '크루 디테일 13', '해시태그 1,해시태그 2', 'https://카카오링크.com', 13, 4, CURRENT_TIMESTAMP + 13, CURRENT_TIMESTAMP + 13),
-       ('크루 이름 14', '크루 소개 14', '크루 디테일 14', '해시태그 1,해시태그 2', 'https://카카오링크.com', 14, 4, CURRENT_TIMESTAMP + 14, CURRENT_TIMESTAMP + 14),
-       ('크루 이름 15', '크루 소개 15', '크루 디테일 15', '해시태그 1,해시태그 2', 'https://카카오링크.com', 15, 4, CURRENT_TIMESTAMP + 15, CURRENT_TIMESTAMP + 15),
-       ('크루 이름 16', '크루 소개 16', '크루 디테일 16', '해시태그 1,해시태그 2', 'https://카카오링크.com', 16, 4, CURRENT_TIMESTAMP + 16, CURRENT_TIMESTAMP + 16),
+       ('크루 이름 13', '크루 소개 13', '크루 디테일 13', 'https://카카오링크.com', 13, 4, CURRENT_TIMESTAMP + 13, CURRENT_TIMESTAMP + 13),
+       ('크루 이름 14', '크루 소개 14', '크루 디테일 14', 'https://카카오링크.com', 14, 4, CURRENT_TIMESTAMP + 14, CURRENT_TIMESTAMP + 14),
+       ('크루 이름 15', '크루 소개 15', '크루 디테일 15', 'https://카카오링크.com', 15, 4, CURRENT_TIMESTAMP + 15, CURRENT_TIMESTAMP + 15),
+       ('크루 이름 16', '크루 소개 16', '크루 디테일 16', 'https://카카오링크.com', 16, 4, CURRENT_TIMESTAMP + 16, CURRENT_TIMESTAMP + 16),
 
-       ('크루 이름 17', '크루 소개 17', '크루 디테일 17', '해시태그 1,해시태그 2', 'https://카카오링크.com', 17, 5, CURRENT_TIMESTAMP + 17, CURRENT_TIMESTAMP + 17),
-       ('크루 이름 18', '크루 소개 18', '크루 디테일 18', '해시태그 1,해시태그 2', 'https://카카오링크.com', 18, 5, CURRENT_TIMESTAMP + 18, CURRENT_TIMESTAMP + 18),
-       ('크루 이름 19', '크루 소개 19', '크루 디테일 19', '해시태그 1,해시태그 2', 'https://카카오링크.com', 19, 5, CURRENT_TIMESTAMP + 19, CURRENT_TIMESTAMP + 19),
-       ('크루 이름 20', '크루 소개 20', '크루 디테일 20', '해시태그 1,해시태그 2', 'https://카카오링크.com', 20, 5, CURRENT_TIMESTAMP + 20, CURRENT_TIMESTAMP + 20);
+       ('크루 이름 17', '크루 소개 17', '크루 디테일 17', 'https://카카오링크.com', 17, 5, CURRENT_TIMESTAMP + 17, CURRENT_TIMESTAMP + 17),
+       ('크루 이름 18', '크루 소개 18', '크루 디테일 18', 'https://카카오링크.com', 18, 5, CURRENT_TIMESTAMP + 18, CURRENT_TIMESTAMP + 18),
+       ('크루 이름 19', '크루 소개 19', '크루 디테일 19', 'https://카카오링크.com', 19, 5, CURRENT_TIMESTAMP + 19, CURRENT_TIMESTAMP + 19),
+       ('크루 이름 20', '크루 소개 20', '크루 디테일 20', 'https://카카오링크.com', 20, 5, CURRENT_TIMESTAMP + 20, CURRENT_TIMESTAMP + 20);
+
+insert into crew_hashtag(crew_id, hashtag_id)
+values (1, 1), (1, 2), (1, 3),
+       (2, 4), (2, 5), (2, 6),
+       (3, 7), (3, 8), (3, 9),
+       (4, 10), (4, 11), (4, 12),
+
+       (5, 13), (5, 14), (5, 15),
+       (6, 16), (6, 17), (6, 18),
+       (7, 19), (7, 20), (7, 21),
+       (8, 22), (8, 23), (8, 24),
+
+       (9, 25), (9, 26), (9, 27),
+       (10, 28), (10, 29), (10, 30),
+       (11, 31), (11, 32), (11, 33),
+       (12, 34), (12, 35), (12, 36),
+
+       (13, 37), (13, 38), (13, 39),
+       (14, 40), (14, 1), (14, 2), (14, 3),
+       (15, 3), (15, 4), (15, 5),
+       (16, 6), (16, 7), (16, 8),
+
+       (17, 9), (17, 10), (17, 11),
+       (18, 12), (18, 13), (18, 14),
+       (19, 15), (19, 16), (19, 17),
+       (20, 18), (20, 19), (20, 20);
 
 insert into crew_member(crew_id, member_id, role, participate_at)
 values (1, 1, 'OWNER', CURRENT_TIMESTAMP), (1, 2, 'GENERAL', CURRENT_TIMESTAMP), (1, 3, 'GENERAL', CURRENT_TIMESTAMP), (1, 4, 'GENERAL', CURRENT_TIMESTAMP), (1, 5, 'GENERAL', CURRENT_TIMESTAMP),

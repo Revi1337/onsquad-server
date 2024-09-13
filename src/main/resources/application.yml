@@ -29,7 +29,7 @@ spring:
           use_query_cache: false
           use_second_level_cache: true
           factory_class: org.hibernate.cache.jcache.internal.JCacheRegionFactory
-      javax:
+      jakarta:
         persistence:
           sharedCache:
             mode: ENABLE_SELECTIVE
