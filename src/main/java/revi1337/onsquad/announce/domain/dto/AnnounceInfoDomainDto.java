@@ -1,0 +1,36 @@
+package revi1337.onsquad.announce.domain.dto;
+
+import com.querydsl.core.annotations.QueryProjection;
+import revi1337.onsquad.announce.domain.vo.Title;
+import revi1337.onsquad.crew_member.domain.dto.SimpleCrewMemberDomainDto;
+
+import java.time.LocalDateTime;
+
+public record AnnounceInfoDomainDto(
+        Boolean canModify,
+        Long id,
+        Title title,
+        String content,
+        LocalDateTime createdAt,
+        SimpleCrewMemberDomainDto memberInfo
+) {
+    @QueryProjection
+    public AnnounceInfoDomainDto(Boolean canModify, Long id, Title title, String content, LocalDateTime createdAt, SimpleCrewMemberDomainDto memberInfo) {
+        this.canModify = canModify;
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.memberInfo = memberInfo;
+    }
+
+    @QueryProjection
+    public AnnounceInfoDomainDto(Long id, Title title, String content, LocalDateTime createdAt, SimpleCrewMemberDomainDto memberInfo) {
+        this(null, id, title, content, createdAt, memberInfo);
+    }
+
+    @QueryProjection
+    public AnnounceInfoDomainDto(Long id, Title title, LocalDateTime createdAt, SimpleCrewMemberDomainDto memberInfo) {
+        this(id, title, null, createdAt, memberInfo);
+    }
+}
