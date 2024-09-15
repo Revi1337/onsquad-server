@@ -20,7 +20,8 @@ public enum CrewErrorCode implements ErrorCode {
     ALREADY_JOIN(400, "CR009", "이미 %s 크루에 가입된 사용자입니다."),
     ALREADY_REQUEST(400, "CR010", "%s 크루에 가입신청을 했지만 요청 수락 전 상태입니다."),
     INVALID_PUBLISHER(400, "CR011", "%s 크루 작성자와 일치하지 않습니다."),
-    OWNER_CANT_PARTICIPANT(400, "CR012", "크루를 만든 사람은 신청할 수 없습니다.");
+    OWNER_CANT_PARTICIPANT(400, "CR012", "크루를 만든 사람은 신청할 수 없습니다."),
+    NOTFOUND_CREW_ID(404, "CR0013", "id 가 %d 인 크루 게시글이 존재하지 않습니다."); // TODO NOTFOUND_CREW 랑 겹치기 때문에 나중에 꼮 처리해야 함.
 
     private final int status;
     private final String code;

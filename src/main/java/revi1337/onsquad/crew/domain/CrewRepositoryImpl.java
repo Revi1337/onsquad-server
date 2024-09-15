@@ -31,6 +31,11 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
+    public Optional<Crew> findById(Long id) {
+        return crewJpaRepository.findById(id);
+    }
+
+    @Override
     public Optional<Crew> findByName(Name name) {
         return crewJpaRepository.findByName(name);
     }

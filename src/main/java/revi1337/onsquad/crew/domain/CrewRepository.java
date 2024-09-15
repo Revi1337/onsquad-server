@@ -11,12 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
+import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW_ID;
 
 public interface CrewRepository {
 
     Crew save(Crew crew);
 
     Crew saveAndFlush(Crew crew);
+
+    Optional<Crew> findById(Long id);
 
     Optional<Crew> findByName(Name name);
 
@@ -44,6 +47,11 @@ public interface CrewRepository {
     default Crew getCrewByNameWithImage(Name name) {
         return findByNameWithImage(name)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    }
+
+    default Crew getById(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
     }
 
     default Crew getByName(Name name) {

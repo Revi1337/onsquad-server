@@ -15,6 +15,14 @@ public abstract class CrewBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
+    // TODO NotFoundByName 랑 겹치기 때문에 나중에 꼭 처리해야 함.
+    public static class NotFoundById extends CrewBusinessException {
+
+        public NotFoundById(ErrorCode errorCode, Long crewId) {
+            super(errorCode, String.format(errorCode.getDescription(), crewId));
+        }
+    }
+
     public static class NotFoundByName extends CrewBusinessException {
 
         public NotFoundByName(ErrorCode errorCode, String crewName) {
