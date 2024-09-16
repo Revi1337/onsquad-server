@@ -28,6 +28,8 @@ public class AnnounceService {
     private final CrewMemberRepository crewMemberRepository;
     private final AnnounceRepository announceRepository;
 
+    private static final Long DEFAULT_FETCH_SIZE = 4L;
+
     // TODO 권한 리팩토링 필요.
     public void createNewAnnounce(Long memberId, AnnounceCreateDto dto) {
         Crew crew = crewRepository.getById(dto.crewId());
@@ -51,11 +53,19 @@ public class AnnounceService {
         return AnnounceInfoDto.from(announceRepository.getAnnounceByCrewIdAndId(crewId, announceId, memberId));
     }
 
+    public List<AnnounceInfoDto> findAnnounces(Long memberId, Long crewId) {
+        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+
+        return announceRepository.findAnnouncesByCrewId(crewId, DEFAULT_FETCH_SIZE).stream()
+                .map(AnnounceInfoDto::from)
+                .toList();
+    }
+
     // TODO 권한 리팩토링 필요.
-    public AnnounceInfosWithAuthDto findAnnounces(Long memberId, Long crewId) {
+    public AnnounceInfosWithAuthDto findMoreAnnounces(Long memberId, Long crewId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         boolean hasAuthority = crewMember.getRole() == OWNER || crewMember.getRole() == MANAGER;
-        List<AnnounceInfoDto> announceInfos = announceRepository.findAnnouncesByCrewId(crewId).stream()
+        List<AnnounceInfoDto> announceInfos = announceRepository.findAnnouncesByCrewId(crewId, null).stream()
                 .map(AnnounceInfoDto::from)
                 .toList();
 

@@ -18,7 +18,7 @@ public interface AnnounceRepository {
 
     Optional<AnnounceInfoDomainDto> findAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId);
 
-    List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId);
+    List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId, Long limit);
 
     default AnnounceInfoDomainDto getAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
         return findAnnounceByCrewIdAndId(crewId, id, memberId)

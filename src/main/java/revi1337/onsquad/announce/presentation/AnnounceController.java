@@ -12,6 +12,8 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/crew")
 @RestController
@@ -54,12 +56,24 @@ public class AnnounceController {
     }
 
     @GetMapping("/announces")
-    public ResponseEntity<RestResponse<AnnounceInfosWithAuthResponse>> findAnnounces(
+    public ResponseEntity<RestResponse<List<AnnounceInfoResponse>>> findAnnounces(
+            @RequestParam Long crewId,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        List<AnnounceInfoResponse> announceInfoResponses = announceService.findAnnounces(authenticatedMember.toDto().getId(), crewId).stream()
+                .map(AnnounceInfoResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(announceInfoResponses));
+    }
+
+    @GetMapping("/announces/more")
+    public ResponseEntity<RestResponse<AnnounceInfosWithAuthResponse>> findMoreAnnounces(
             @RequestParam Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         AnnounceInfosWithAuthResponse announceInfosWithAuthResponse = AnnounceInfosWithAuthResponse.from(
-                announceService.findAnnounces(authenticatedMember.toDto().getId(), crewId)
+                announceService.findMoreAnnounces(authenticatedMember.toDto().getId(), crewId)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(announceInfosWithAuthResponse));

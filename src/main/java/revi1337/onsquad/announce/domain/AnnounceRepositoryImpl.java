@@ -35,7 +35,7 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     }
 
     @Override
-    public List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId) {
-        return announceQueryDslRepository.findAnnouncesByCrewId(crewId);
+    public List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId, Long limit) {
+        return announceQueryDslRepository.findAnnouncesByCrewId(crewId, limit);
     }
 }

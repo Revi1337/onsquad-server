@@ -1,6 +1,7 @@
 package revi1337.onsquad.announce.domain;
 
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,8 +23,8 @@ public class AnnounceQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId) {
-        return jpaQueryFactory
+    public List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId, Long limit) {
+        JPAQuery<AnnounceInfoDomainDto> query = jpaQueryFactory
                 .select(new QAnnounceInfoDomainDto(
                         announce.id,
                         announce.title,
@@ -43,8 +44,13 @@ public class AnnounceQueryDslRepository {
                         announce.fixed.desc(),
                         announce.fixedAt.asc(),
                         announce.createdAt.desc()
-                )
-                .fetch();
+                );
+
+        if (limit != null) {
+            return query.limit(limit).fetch();
+        }
+
+        return query.fetch();
     }
 
     public Optional<AnnounceInfoDomainDto> findAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
