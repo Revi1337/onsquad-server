@@ -20,6 +20,16 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     }
 
     @Override
+    public Announce saveAndFlush(Announce announce) {
+        return announceJpaRepository.saveAndFlush(announce);
+    }
+
+    @Override
+    public Optional<Announce> findByIdAndCrewId(Long crewId, Long id) {
+        return announceJpaRepository.findByIdAndCrewId(id, crewId);
+    }
+
+    @Override
     public Optional<AnnounceInfoDomainDto> findAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
         return announceQueryDslRepository.findAnnounceByCrewIdAndId(crewId, id, memberId);
     }

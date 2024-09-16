@@ -28,6 +28,8 @@ public class AnnounceQueryDslRepository {
                         announce.id,
                         announce.title,
                         announce.createdAt,
+                        announce.fixed,
+                        announce.fixedAt,
                         new QSimpleCrewMemberDomainDto(
                                 member.id,
                                 member.nickname,
@@ -37,7 +39,11 @@ public class AnnounceQueryDslRepository {
                 .from(announce)
                 .innerJoin(announce.crewMember, crewMember).on(announce.crew.id.eq(crewId))
                 .innerJoin(crewMember.member, member)
-                .orderBy(announce.createdAt.desc())
+                .orderBy(
+                        announce.fixed.desc(),
+                        announce.fixedAt.asc(),
+                        announce.createdAt.desc()
+                )
                 .fetch();
     }
 
@@ -53,6 +59,8 @@ public class AnnounceQueryDslRepository {
                                 announce.title,
                                 announce.content,
                                 announce.createdAt,
+                                announce.fixed,
+                                announce.fixedAt,
                                 new QSimpleCrewMemberDomainDto(
                                         member.id,
                                         member.nickname,
@@ -66,7 +74,6 @@ public class AnnounceQueryDslRepository {
                                     announce.id.eq(id)
                             )
                         .innerJoin(crewMember.member, member)
-                        .orderBy(announce.createdAt.desc())
                         .fetchOne()
         );
     }

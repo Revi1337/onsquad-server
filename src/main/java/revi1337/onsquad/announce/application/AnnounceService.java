@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceInfoDto;
+import revi1337.onsquad.announce.domain.Announce;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfosWithAuthDto;
 import revi1337.onsquad.crew.domain.Crew;
@@ -13,6 +14,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.vo.CrewRole;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static revi1337.onsquad.crew_member.domain.vo.CrewRole.*;
@@ -32,6 +34,15 @@ public class AnnounceService {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crew.getId(), memberId);
         checkMemberHasAuthority(crewMember.getRole());
         announceRepository.save(dto.toEntity(crew, crewMember));
+    }
+
+    @Transactional
+    public void fixAnnounce(Long memberId, Long crewId, Long announceId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        checkMemberIsCrewOwner(crewMember);
+        Announce announce = announceRepository.getByIdAndCrewId(crewId, announceId);
+        announce.updateFixed(true, LocalDateTime.now());
+        announceRepository.saveAndFlush(announce);
     }
 
     public AnnounceInfoDto findAnnounce(Long memberId, Long crewId, Long announceId) {
@@ -55,6 +66,13 @@ public class AnnounceService {
     private void checkMemberHasAuthority(CrewRole role) {
         if (role == GENERAL) {
             throw new IllegalArgumentException("공지사항은 크루 작성자나 매니저만 작성할 수 있습니다");
+        }
+    }
+
+    // TODO 권한 Auth 패키지에서 예외처리 필요.
+    private void checkMemberIsCrewOwner(CrewMember crewMember) {
+        if (crewMember.getRole() != OWNER) {
+            throw new IllegalArgumentException("공지사항은 고정은 크루장만 이용할 수 있습니다.");
         }
     }
 }

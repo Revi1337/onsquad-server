@@ -2,7 +2,6 @@ package revi1337.onsquad.announce.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.announce.application.AnnounceService;
@@ -26,6 +25,17 @@ public class AnnounceController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         announceService.createNewAnnounce(authenticatedMember.toDto().getId(), createRequest.toDto());
+
+        return ResponseEntity.ok().body(RestResponse.created());
+    }
+
+    @PatchMapping("/announce/fix")
+    public ResponseEntity<RestResponse<String>> fixAnnounce(
+            @RequestParam Long crewId,
+            @RequestParam Long announceId,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        announceService.fixAnnounce(authenticatedMember.toDto().getId(), crewId, announceId);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }

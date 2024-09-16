@@ -12,12 +12,21 @@ public interface AnnounceRepository {
 
     Announce save(Announce announce);
 
+    Announce saveAndFlush(Announce announce);
+
+    Optional<Announce> findByIdAndCrewId(Long crewId, Long id);
+
     Optional<AnnounceInfoDomainDto> findAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId);
 
     List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId);
 
     default AnnounceInfoDomainDto getAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
         return findAnnounceByCrewIdAndId(crewId, id, memberId)
+                .orElseThrow(() -> new AnnounceBusinessException.NotFoundById(NOT_FOUND, id));
+    }
+
+    default Announce getByIdAndCrewId(Long crewId, Long id) {
+        return findByIdAndCrewId(crewId, id)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFoundById(NOT_FOUND, id));
     }
 }

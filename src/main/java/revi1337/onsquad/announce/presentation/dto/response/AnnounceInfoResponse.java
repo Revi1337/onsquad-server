@@ -13,6 +13,8 @@ public record AnnounceInfoResponse(
         String title,
         String content,
         LocalDateTime createdAt,
+        boolean fixed,
+        LocalDateTime fixedAt,
         SimpleCrewMemberResponse memberInfo
 ) {
     public static AnnounceInfoResponse from(AnnounceInfoDto announceInfoDto) {
@@ -22,6 +24,8 @@ public record AnnounceInfoResponse(
                 announceInfoDto.title(),
                 announceInfoDto.content(),
                 announceInfoDto.createdAt(),
+                announceInfoDto.fixed(),
+                announceInfoDto.fixedAt(),
                 SimpleCrewMemberResponse.from(announceInfoDto.memberInfo())
         );
     }

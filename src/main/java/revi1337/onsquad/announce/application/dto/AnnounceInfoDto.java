@@ -11,6 +11,8 @@ public record AnnounceInfoDto(
         String title,
         String content,
         LocalDateTime createdAt,
+        boolean fixed,
+        LocalDateTime fixedAt,
         SimpleCrewMemberDto memberInfo
 ) {
     public static AnnounceInfoDto from(AnnounceInfoDomainDto announceInfoDomainDto) {
@@ -20,6 +22,8 @@ public record AnnounceInfoDto(
                 announceInfoDomainDto.title().getValue(),
                 announceInfoDomainDto.content(),
                 announceInfoDomainDto.createdAt(),
+                announceInfoDomainDto.fixed(),
+                announceInfoDomainDto.fixedAt(),
                 SimpleCrewMemberDto.from(announceInfoDomainDto.memberInfo())
         );
     }
