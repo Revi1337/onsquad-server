@@ -38,7 +38,7 @@ import static revi1337.onsquad.comment.domain.QComment.*;
 import static revi1337.onsquad.crew.domain.QCrew.*;
 import static revi1337.onsquad.member.domain.QMember.*;
 
-class CrewCrewCommentRepositoryTest extends PersistenceLayerTestSupport {
+class CrewCommentRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired private MemberRepository memberRepository;
     @Autowired private CrewJpaRepository crewJpaRepository;

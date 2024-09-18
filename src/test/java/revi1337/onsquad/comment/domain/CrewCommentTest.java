@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayName("Comment 엔티티 테스트")
-class CommentTest {
+class CrewCommentTest {
     
     @Test
     @DisplayName("댓글이 비어있으면 실패한다.")
