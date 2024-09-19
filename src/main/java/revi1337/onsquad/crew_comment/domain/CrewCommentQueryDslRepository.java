@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_comment.domain;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static revi1337.onsquad.crew_comment.domain.QCrewComment.crewComment;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
 import static revi1337.onsquad.member.domain.QMember.member;
 
 @Repository
@@ -33,7 +35,8 @@ public class CrewCommentQueryDslRepository {
     public List<CrewComment> findCommentsWithMemberByCrewId(Long crewId) {
         return jpaQueryFactory
                 .selectFrom(crewComment)
-                .innerJoin(crewComment.member, member).fetchJoin()
+                .innerJoin(crewComment.crewMember, crewMember).fetchJoin()
+                .innerJoin(crewMember.member, member).fetchJoin()
                 .leftJoin(crewComment.parent)
                 .where(crewComment.crew.id.eq(crewId))
                 .orderBy(
@@ -52,7 +55,8 @@ public class CrewCommentQueryDslRepository {
     public List<CrewComment> findLimitedParentCommentsByCrewId(Long crewId, Pageable pageable) {
         return jpaQueryFactory
                 .selectFrom(crewComment)
-                .innerJoin(crewComment.member, member).fetchJoin()
+                .innerJoin(crewComment.crewMember, crewMember).fetchJoin()
+                .innerJoin(crewMember.member, member).fetchJoin()
                 .where(
                         crewComment.crew.id.eq(crewId),
                         crewComment.parent.isNull()
@@ -77,7 +81,6 @@ public class CrewCommentQueryDslRepository {
                 "        crew_comment.*, " +
                 "        ROW_NUMBER() OVER (PARTITION BY crew_comment.parent_id ORDER BY crew_comment.created_at DESC) AS rn " +
                 "    FROM crew_comment " +
-                "    INNER JOIN member ON crew_comment.member_id = member.id " +
                 "    WHERE crew_comment.parent_id IN (:parentIds) " +
                 ") AS subquery " +
                 " WHERE subquery.rn <= (:childLimit)" +
@@ -88,12 +91,12 @@ public class CrewCommentQueryDslRepository {
                 .setParameter("childLimit", childrenSize)
                 .getResultList();
 
-        Set<Long> memberIds = resultList.stream()
-                .map(CrewComment::getId)
+        Set<Long> crewMemberIds = resultList.stream()
+                .map(crewComment -> crewComment.getCrewMember().getId())
                 .collect(Collectors.toSet());
 
-        entityManager.createQuery("select m from Member as m where m.id in :memberIds")
-                .setParameter("memberIds", memberIds)
+        entityManager.createQuery("select cm from CrewMember as cm inner join fetch cm.member where cm.id in :crewMemberIds")
+                .setParameter("crewMemberIds", crewMemberIds)
                 .getResultList();
 
         return resultList;

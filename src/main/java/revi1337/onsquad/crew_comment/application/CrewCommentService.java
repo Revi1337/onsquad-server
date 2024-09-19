@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew_comment.domain.CrewComment;
 import revi1337.onsquad.crew_comment.domain.CrewCommentRepository;
 import revi1337.onsquad.crew_comment.dto.CreateCrewCommentDto;
@@ -15,10 +13,6 @@ import revi1337.onsquad.crew_comment.dto.CrewCommentsDto;
 import revi1337.onsquad.crew_comment.error.exception.CrewCommentBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
 import java.util.*;
 import java.util.function.Function;
@@ -31,28 +25,22 @@ import static revi1337.onsquad.crew_comment.error.CrewCommentErrorCode.*;
 @Service
 public class CrewCommentService {
 
-    private final CrewRepository crewRepository;
-    private final MemberRepository memberRepository;
     private final CrewCommentRepository crewCommentRepository;
     private final CrewMemberRepository crewMemberRepository;
 
-    @Transactional
-    public CrewCommentDto addComment(Long crewId, CreateCrewCommentDto dto, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
-        Crew crew = crewRepository.getById(crewId);
-        CrewComment persistComment = crewCommentRepository.save(CrewComment.forCrew(dto.content(), crew, member));
+    public CrewCommentDto addComment(Long memberId, Long crewId, CreateCrewCommentDto dto) {
+        CrewMember crewMember = crewMemberRepository.getWithMemberByCrewIdAndMemberId(crewId, memberId);
+        CrewComment persistComment = crewCommentRepository.save(CrewComment.forCrew(dto.content(), crewMember.getCrew(), crewMember));
 
-        return CrewCommentDto.from(persistComment, member);
+        return CrewCommentDto.from(persistComment, crewMember.getMember());
     }
 
-    @Transactional
-    public CrewCommentDto addCommentReply(Long crewId, CreateCrewCommentReplyDto dto, Long memberId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+    public CrewCommentDto addCommentReply(Long memberId, Long crewId, CreateCrewCommentReplyDto dto) {
+        CrewMember crewMember = crewMemberRepository.getWithMemberByCrewIdAndMemberId(crewId, memberId);
         CrewComment parentComment = crewCommentRepository.getById(dto.parentCommentId());
         validateParentComment(crewId, dto, parentComment);
         CrewComment childComment = crewCommentRepository.save(
-                CrewComment.replyForCrew(parentComment, dto.content(), parentComment.getCrew(), crewMember.getMember())
+                CrewComment.replyForCrew(parentComment, dto.content(), parentComment.getCrew(), crewMember)
         );
 
         return CrewCommentDto.from(childComment, crewMember.getMember());
@@ -88,13 +76,13 @@ public class CrewCommentService {
 
     private Map<Long, CrewCommentsDto> convertAndMapByParentId(List<CrewComment> parentComments) {
         return parentComments.stream()
-                .map(CrewCommentsDto::from)
+                .map(parentComment -> CrewCommentsDto.from(parentComment, parentComment.getCrewMember()))
                 .collect(Collectors.toMap(CrewCommentsDto::commentId, Function.identity()));
     }
 
     private void linkChildCommentsToParent(List<CrewComment> childComments, Map<Long, CrewCommentsDto> parentCommentMap) {
         childComments.forEach(childComment -> {
-            CrewCommentsDto childDto = CrewCommentsDto.from(childComment);
+            CrewCommentsDto childDto = CrewCommentsDto.from(childComment, childComment.getCrewMember());
             CrewCommentsDto parentDto = parentCommentMap.get(childDto.parentCommentId());
             parentDto.replies().add(childDto);
         });
@@ -110,7 +98,7 @@ public class CrewCommentService {
         List<CrewCommentsDto> commentList = new ArrayList<>();
         Map<Long, CrewCommentsDto> hashMap = new HashMap<>();
         comments.forEach(comment -> {
-            CrewCommentsDto commentDto = CrewCommentsDto.from(comment);
+            CrewCommentsDto commentDto = CrewCommentsDto.from(comment, comment.getCrewMember());
             hashMap.put(commentDto.commentId(), commentDto);
             if (comment.getParent() != null) {
                 hashMap.get(comment.getParent().getId()).replies().add(commentDto);

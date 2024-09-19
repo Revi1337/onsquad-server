@@ -1,11 +1,11 @@
 package revi1337.onsquad.crew_comment.dto;
 
 import revi1337.onsquad.crew_comment.domain.CrewComment;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public record CrewCommentsDto(
@@ -21,14 +21,14 @@ public record CrewCommentsDto(
         this(parentCommentId, commentId, content, createdAt, updatedAt, memberInfo, new ArrayList<>());
     }
 
-    public static CrewCommentsDto from(CrewComment crewComment) {
+    public static CrewCommentsDto from(CrewComment crewComment, CrewMember crewMember) {
         return new CrewCommentsDto(
                 crewComment.getParent() != null ? crewComment.getParent().getId() : null,
                 crewComment.getId(),
                 crewComment.getContent(),
                 crewComment.getCreatedAt(),
                 crewComment.getUpdatedAt(),
-                SimpleMemberInfoDto.from(crewComment.getMember())
+                SimpleMemberInfoDto.from(crewMember.getMember())
         );
     }
 }

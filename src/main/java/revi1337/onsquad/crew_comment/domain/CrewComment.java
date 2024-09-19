@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_comment.error.exception.CrewCommentDomainException;
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +36,8 @@ public class CrewComment extends BaseEntity {
     private Crew crew;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "crew_member_id")
+    private CrewMember crewMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -62,28 +62,28 @@ public class CrewComment extends BaseEntity {
     }
 
     @Builder
-    private CrewComment(Long id, String content, Crew crew, Member member, CrewComment parent) {
+    private CrewComment(Long id, String content, Crew crew, CrewMember crewMember, CrewComment parent) {
         this.id = id;
         this.content = content;
         this.crew = crew;
-        this.member = member;
+        this.crewMember = crewMember;
         this.parent = parent;
     }
 
-    public static CrewComment forCrew(String content, Crew crew, Member member) {
+    public static CrewComment forCrew(String content, Crew crew, CrewMember crewMember) {
         return CrewComment.builder()
                 .content(content)
                 .crew(crew)
-                .member(member)
+                .crewMember(crewMember)
                 .build();
     }
 
-    public static CrewComment replyForCrew(CrewComment parent, String content, Crew crew, Member member) {
+    public static CrewComment replyForCrew(CrewComment parent, String content, Crew crew, CrewMember crewMember) {
         return CrewComment.builder()
                 .parent(parent)
                 .content(content)
                 .crew(crew)
-                .member(member)
+                .crewMember(crewMember)
                 .build();
     }
 

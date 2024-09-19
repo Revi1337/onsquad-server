@@ -18,6 +18,8 @@ public interface CrewMemberRepository {
 
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
+    Optional<CrewMember> findWithMemberByCrewIdAndMemberId(Long crewId, Long memberId);
+
     boolean existsCrewMemberInCrew(Long memberId, Name name);
 
     boolean existsCrewMember(Long memberId);
@@ -34,6 +36,11 @@ public interface CrewMemberRepository {
 
     default CrewMember getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT));
+    }
+
+    default CrewMember getWithMemberByCrewIdAndMemberId(Long crewId, Long memberId) {
+        return findWithMemberByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT));
     }
 }
