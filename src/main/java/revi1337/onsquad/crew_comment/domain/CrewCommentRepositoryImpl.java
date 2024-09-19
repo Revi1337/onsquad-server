@@ -13,6 +13,7 @@ public class CrewCommentRepositoryImpl implements CrewCommentRepository {
 
     private final CrewCommentJpaRepository crewCommentJpaRepository;
     private final CrewCommentQueryDslRepository crewCommentQueryDslRepository;
+    private final CrewCommentJdbcRepository crewCommentJdbcRepository;
 
     @Override
     public CrewComment save(CrewComment crewComment) {
@@ -36,6 +37,6 @@ public class CrewCommentRepositoryImpl implements CrewCommentRepository {
 
     @Override
     public List<CrewComment> findLimitedChildCommentsByParentIdIn(List<Long> parentIds, Integer childrenSize) {
-        return crewCommentQueryDslRepository.findLimitedChildCommentsByParentIdIn(parentIds, childrenSize);
+        return crewCommentJdbcRepository.findLimitedChildCommentsByParentIdIn(parentIds, childrenSize);
     }
 }
