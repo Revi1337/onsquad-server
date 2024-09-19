@@ -30,7 +30,9 @@ public class CrewCommentService {
 
     public CrewCommentDto addComment(Long memberId, Long crewId, CreateCrewCommentDto dto) {
         CrewMember crewMember = crewMemberRepository.getWithMemberByCrewIdAndMemberId(crewId, memberId);
-        CrewComment persistComment = crewCommentRepository.save(CrewComment.forCrew(dto.content(), crewMember.getCrew(), crewMember));
+        CrewComment persistComment = crewCommentRepository.save(
+                CrewComment.create(dto.content(), crewMember.getCrew(), crewMember)
+        );
 
         return CrewCommentDto.from(persistComment, crewMember.getMember());
     }
@@ -40,7 +42,7 @@ public class CrewCommentService {
         CrewComment parentComment = crewCommentRepository.getById(dto.parentCommentId());
         validateParentComment(crewId, dto, parentComment);
         CrewComment childComment = crewCommentRepository.save(
-                CrewComment.replyForCrew(parentComment, dto.content(), parentComment.getCrew(), crewMember)
+                CrewComment.createReply(parentComment, dto.content(), parentComment.getCrew(), crewMember)
         );
 
         return CrewCommentDto.from(childComment, crewMember.getMember());

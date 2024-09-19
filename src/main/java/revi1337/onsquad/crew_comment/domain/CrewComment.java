@@ -70,7 +70,7 @@ public class CrewComment extends BaseEntity {
         this.parent = parent;
     }
 
-    public static CrewComment forCrew(String content, Crew crew, CrewMember crewMember) {
+    public static CrewComment create(String content, Crew crew, CrewMember crewMember) {
         return CrewComment.builder()
                 .content(content)
                 .crew(crew)
@@ -78,7 +78,7 @@ public class CrewComment extends BaseEntity {
                 .build();
     }
 
-    public static CrewComment replyForCrew(CrewComment parent, String content, Crew crew, CrewMember crewMember) {
+    public static CrewComment createReply(CrewComment parent, String content, Crew crew, CrewMember crewMember) {
         return CrewComment.builder()
                 .parent(parent)
                 .content(content)
