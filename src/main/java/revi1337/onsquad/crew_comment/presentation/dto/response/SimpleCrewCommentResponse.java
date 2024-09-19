@@ -1,6 +1,6 @@
-package revi1337.onsquad.crew_comment.dto.response;
+package revi1337.onsquad.crew_comment.presentation.dto.response;
 
-import revi1337.onsquad.crew_comment.dto.CrewCommentDto;
+import revi1337.onsquad.crew_comment.domain.dto.CrewCommentDto;
 import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
 
 import java.time.LocalDateTime;
