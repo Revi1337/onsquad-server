@@ -1,6 +1,7 @@
 package revi1337.onsquad.crew_comment.domain;
 
 import org.springframework.data.domain.Pageable;
+import revi1337.onsquad.crew_comment.domain.dto.CrewCommentDomainDto;
 import revi1337.onsquad.crew_comment.error.exception.CrewCommentBusinessException;
 
 import java.util.List;
@@ -14,11 +15,9 @@ public interface CrewCommentRepository {
 
     Optional<CrewComment> findById(Long id);
 
-    List<CrewComment> findCommentsWithMemberByCrewId(Long crewId);
+    List<CrewCommentDomainDto> findAllWithMemberByCrewId(Long crewId);
 
-    List<CrewComment> findLimitedParentCommentsByCrewId(Long crewId, Pageable pageable);
-
-    List<CrewComment> findLimitedChildCommentsByParentIdIn(List<Long> parentIds, Integer childrenSize);
+    List<CrewCommentDomainDto> findLimitedCommentsBothOfParentsAndChildren(Long crewId, Pageable pageable, Integer childSize);
 
     default CrewComment getById(Long id) {
         return findById(id)

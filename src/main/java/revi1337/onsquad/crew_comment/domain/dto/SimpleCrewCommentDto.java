@@ -6,15 +6,15 @@ import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
 
 import java.time.LocalDateTime;
 
-public record CrewCommentDto(
+public record SimpleCrewCommentDto(
         Long id,
         String content,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         SimpleMemberInfoDto memberInfo
 ) {
-    public static CrewCommentDto from(CrewComment crewComment, Member member) {
-        return new CrewCommentDto(
+    public static SimpleCrewCommentDto from(CrewComment crewComment, Member member) {
+        return new SimpleCrewCommentDto(
                 crewComment.getId(),
                 crewComment.getContent(),
                 crewComment.getCreatedAt(),

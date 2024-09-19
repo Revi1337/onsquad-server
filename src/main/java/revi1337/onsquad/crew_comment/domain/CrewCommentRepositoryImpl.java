@@ -3,9 +3,9 @@ package revi1337.onsquad.crew_comment.domain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_comment.domain.dto.CrewCommentDomainDto;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -26,17 +26,41 @@ public class CrewCommentRepositoryImpl implements CrewCommentRepository {
     }
 
     @Override
-    public List<CrewComment> findCommentsWithMemberByCrewId(Long crewId) {
-        return crewCommentQueryDslRepository.findCommentsWithMemberByCrewId(crewId);
+    public List<CrewCommentDomainDto> findAllWithMemberByCrewId(Long crewId) {
+        List<CrewCommentDomainDto> comments = crewCommentQueryDslRepository.findCommentsWithMemberByCrewId(crewId);
+        return modifyCommentsHierarchy(comments);
+    }
+
+    private List<CrewCommentDomainDto> modifyCommentsHierarchy(List<CrewCommentDomainDto> comments) {
+        List<CrewCommentDomainDto> commentList = new ArrayList<>();
+        Map<Long, CrewCommentDomainDto> hashMap = new HashMap<>();
+        comments.forEach(comment -> {
+            hashMap.put(comment.commentId(), comment);
+            if (comment.parentCommentId() != null) {
+                hashMap.get(comment.parentCommentId()).replies().add(comment);
+            } else {
+                commentList.add(comment);
+            }
+        });
+
+        return commentList;
     }
 
     @Override
-    public List<CrewComment> findLimitedParentCommentsByCrewId(Long crewId, Pageable pageable) {
-        return crewCommentQueryDslRepository.findLimitedParentCommentsByCrewId(crewId, pageable);
+    public List<CrewCommentDomainDto> findLimitedCommentsBothOfParentsAndChildren(Long crewId, Pageable pageable, Integer childSize) {
+        Map<Long, CrewCommentDomainDto> parentComments = crewCommentQueryDslRepository.findLimitedParentCommentsByCrewId(crewId, pageable);
+        List<CrewCommentDomainDto> childComments = crewCommentJdbcRepository.findLimitedChildCommentsByParentIdIn(parentComments.keySet(), childSize);
+        linkChildCommentsToParent(parentComments, childComments);
+
+        return parentComments.values().stream()
+                .map(comment -> parentComments.get(comment.commentId()))
+                .toList();
     }
 
-    @Override
-    public List<CrewComment> findLimitedChildCommentsByParentIdIn(List<Long> parentIds, Integer childrenSize) {
-        return crewCommentJdbcRepository.findLimitedChildCommentsByParentIdIn(parentIds, childrenSize);
+    private void linkChildCommentsToParent(Map<Long, CrewCommentDomainDto> parentCommentMap, List<CrewCommentDomainDto> childComments) {
+        childComments.forEach(childComment -> {
+            CrewCommentDomainDto crewCommentDomainDto = parentCommentMap.get(childComment.parentCommentId());
+            crewCommentDomainDto.replies().add(childComment);
+        });
     }
 }

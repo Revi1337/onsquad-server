@@ -5,14 +5,20 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_comment.domain.dto.CrewCommentDomainDto;
+import revi1337.onsquad.crew_comment.domain.dto.QCrewCommentDomainDto;
+import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static revi1337.onsquad.crew_comment.domain.QCrewComment.crewComment;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static revi1337.onsquad.crew_comment.domain.QCrewComment.*;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
-import static revi1337.onsquad.member.domain.QMember.member;
+import static revi1337.onsquad.member.domain.QMember.*;
 
 @Repository
 public class CrewCommentQueryDslRepository {
@@ -31,11 +37,22 @@ public class CrewCommentQueryDslRepository {
      * @param crewId
      * @return
      */
-    public List<CrewComment> findCommentsWithMemberByCrewId(Long crewId) {
+    public List<CrewCommentDomainDto> findCommentsWithMemberByCrewId(Long crewId) {
         return jpaQueryFactory
-                .selectFrom(crewComment)
-                .innerJoin(crewComment.crewMember, crewMember).fetchJoin()
-                .innerJoin(crewMember.member, member).fetchJoin()
+                .select(new QCrewCommentDomainDto(
+                        crewComment.parent.id,
+                        crewComment.id,
+                        crewComment.content,
+                        crewComment.createdAt,
+                        crewComment.updatedAt,
+                        new QSimpleMemberInfoDomainDto(
+                                member.id,
+                                member.nickname
+                        )
+                ))
+                .from(crewComment)
+                .innerJoin(crewComment.crewMember, crewMember)
+                .innerJoin(crewMember.member, member)
                 .leftJoin(crewComment.parent)
                 .where(crewComment.crew.id.eq(crewId))
                 .orderBy(
@@ -46,16 +63,16 @@ public class CrewCommentQueryDslRepository {
     }
 
     /**
-     * 페이징처리에 맞게 부모 댓글들을 가져온다.
+     * 페이징처리에 맞게 부모 댓글들을 가져오고, id 별로 묶어서 반환한다.
      * @param crewId
      * @param pageable
      * @return
      */
-    public List<CrewComment> findLimitedParentCommentsByCrewId(Long crewId, Pageable pageable) {
+    public Map<Long, CrewCommentDomainDto> findLimitedParentCommentsByCrewId(Long crewId, Pageable pageable) {
         return jpaQueryFactory
-                .selectFrom(crewComment)
-                .innerJoin(crewComment.crewMember, crewMember).fetchJoin()
-                .innerJoin(crewMember.member, member).fetchJoin()
+                .from(crewComment)
+                .innerJoin(crewComment.crewMember, crewMember)
+                .innerJoin(crewMember.member, member)
                 .where(
                         crewComment.crew.id.eq(crewId),
                         crewComment.parent.isNull()
@@ -63,7 +80,17 @@ public class CrewCommentQueryDslRepository {
                 .orderBy(crewComment.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetch();
+                .transform(groupBy(crewComment.id)
+                        .as(new QCrewCommentDomainDto(
+                                crewComment.id,
+                                crewComment.content,
+                                crewComment.createdAt,
+                                crewComment.updatedAt,
+                                new QSimpleMemberInfoDomainDto(
+                                        member.id,
+                                        member.nickname
+                                )
+                        )));
     }
 
     /**
@@ -74,7 +101,7 @@ public class CrewCommentQueryDslRepository {
      * @param childrenSize
      * @return
      */
-    public List<CrewComment> findLimitedChildCommentsByParentIdIn(List<Long> parentIds, Integer childrenSize) {
+    public List<CrewComment> findLimitedChildCommentsByParentIdIn(Collection<Long> parentIds, Integer childrenSize) {
         String sql = "SELECT * FROM (" +
                 "    SELECT " +
                 "        crew_comment.*, " +

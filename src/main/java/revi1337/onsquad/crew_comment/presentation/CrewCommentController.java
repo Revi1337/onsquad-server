@@ -12,10 +12,10 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_comment.application.CrewCommentService;
-import revi1337.onsquad.crew_comment.dto.request.CreateCrewCommentReplyRequest;
-import revi1337.onsquad.crew_comment.dto.request.CreateCrewCommentRequest;
-import revi1337.onsquad.crew_comment.dto.response.CrewCommentResponse;
-import revi1337.onsquad.crew_comment.dto.response.CrewCommentsResponse;
+import revi1337.onsquad.crew_comment.presentation.dto.request.CreateCrewCommentReplyRequest;
+import revi1337.onsquad.crew_comment.presentation.dto.request.CreateCrewCommentRequest;
+import revi1337.onsquad.crew_comment.presentation.dto.response.CrewCommentResponse;
+import revi1337.onsquad.crew_comment.presentation.dto.response.SimpleCrewCommentResponse;
 
 import java.util.List;
 
@@ -28,12 +28,12 @@ public class CrewCommentController {
     private final CrewCommentService crewCommentService;
 
     @PostMapping("/comment/new")
-    public ResponseEntity<RestResponse<CrewCommentResponse>> addComment(
+    public ResponseEntity<RestResponse<SimpleCrewCommentResponse>> addComment(
             @RequestParam Long crewId,
             @Valid @RequestBody CreateCrewCommentRequest request,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        CrewCommentResponse commentResponse = CrewCommentResponse.from(
+        SimpleCrewCommentResponse commentResponse = SimpleCrewCommentResponse.from(
                 crewCommentService.addComment(authenticatedMember.toDto().getId(), crewId, request.toDto())
         );
 
@@ -41,12 +41,12 @@ public class CrewCommentController {
     }
 
     @PostMapping("/comment/reply/new")
-    public ResponseEntity<RestResponse<CrewCommentResponse>> addCommentReply(
+    public ResponseEntity<RestResponse<SimpleCrewCommentResponse>> addCommentReply(
             @RequestParam Long crewId,
             @Valid @RequestBody CreateCrewCommentReplyRequest request,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        CrewCommentResponse commentResponse = CrewCommentResponse.from(
+        SimpleCrewCommentResponse commentResponse = SimpleCrewCommentResponse.from(
                 crewCommentService.addCommentReply(authenticatedMember.toDto().getId(), crewId, request.toDto())
         );
 
@@ -54,26 +54,26 @@ public class CrewCommentController {
     }
 
     @GetMapping("/comments")
-    public ResponseEntity<RestResponse<List<CrewCommentsResponse>>> findComments(
+    public ResponseEntity<RestResponse<List<CrewCommentResponse>>> findComments(
             @RequestParam Long crewId,
             @Qualifier("parent") Pageable parentPageable,
             @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) Integer childSize,
             @Authenticate AuthenticatedMember ignored
     ) {
-        List<CrewCommentsResponse> commentsResponses = crewCommentService.findComments(crewId, parentPageable, childSize).stream()
-                .map(CrewCommentsResponse::from)
+        List<CrewCommentResponse> commentsResponses = crewCommentService.findComments(crewId, parentPageable, childSize).stream()
+                .map(CrewCommentResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
     }
 
     @GetMapping("/comment/all")
-    public ResponseEntity<RestResponse<List<CrewCommentsResponse>>> findAllComments(
+    public ResponseEntity<RestResponse<List<CrewCommentResponse>>> findAllComments(
             @RequestParam Long crewId,
             @Authenticate AuthenticatedMember ignored
     ) {
-        List<CrewCommentsResponse> commentsResponses = crewCommentService.findAllComments(crewId).stream()
-                .map(CrewCommentsResponse::from)
+        List<CrewCommentResponse> commentsResponses = crewCommentService.findAllComments(crewId).stream()
+                .map(CrewCommentResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
