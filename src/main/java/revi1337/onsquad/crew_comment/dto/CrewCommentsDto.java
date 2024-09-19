@@ -5,6 +5,7 @@ import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public record CrewCommentsDto(

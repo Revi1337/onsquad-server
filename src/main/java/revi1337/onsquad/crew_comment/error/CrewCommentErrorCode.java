@@ -12,7 +12,7 @@ public enum CrewCommentErrorCode implements ErrorCode {
 
     NOTFOUND_COMMENT(404, "CM002", "id 가 %d 인 댓글을 찾을 수 없습니다."),
     NOT_PARENT(400, "CM003", "id 가 %d 인 댓글은 부모댓글이 아닙니다."),
-    NOTFOUND_CREW_COMMENT(404, "CM004", "%s 크루 게시글에 id 가 %d 인 댓글을 찾을 수 없습니다.");
+    NOTFOUND_CREW_COMMENT(404, "CM004", "id 가 %d 인 크루 게시글에 id 가 %d 인 댓글을 찾을 수 없습니다.");
 
     private final int status;
     private final String code;

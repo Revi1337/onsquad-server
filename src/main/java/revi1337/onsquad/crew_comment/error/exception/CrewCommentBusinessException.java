@@ -4,7 +4,7 @@ import lombok.Getter;
 import revi1337.onsquad.common.error.ErrorCode;
 
 @Getter
-public abstract class CrewCommentBusinessException extends RuntimeException{
+public abstract class CrewCommentBusinessException extends RuntimeException {
 
     private final ErrorCode errorCode;
     private final String errorMessage;
@@ -29,10 +29,10 @@ public abstract class CrewCommentBusinessException extends RuntimeException{
         }
     }
 
-    public static class NotFoundCrewCrewComment extends CrewCommentBusinessException {
+    public static class NotFoundCrewComment extends CrewCommentBusinessException {
 
-        public NotFoundCrewCrewComment(ErrorCode errorCode, String crewName, Number commentId) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName, commentId));
+        public NotFoundCrewComment(ErrorCode errorCode, Number crewId, Number commentId) {
+            super(errorCode, String.format(errorCode.getDescription(), crewId, commentId));
         }
     }
 
