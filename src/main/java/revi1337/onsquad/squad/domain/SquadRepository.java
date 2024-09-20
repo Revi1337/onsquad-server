@@ -23,6 +23,8 @@ public interface SquadRepository {
 
     Optional<Squad> findSquadWithMembersById(Long id, Title title);
 
+    Optional<Squad> findById(Long id);
+
     Optional<SquadInfoDomainDto> findSquadById(Long id);
 
     Page<SquadInfoDomainDto> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable);
@@ -40,6 +42,11 @@ public interface SquadRepository {
     Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id);
 
     void batchInsertSquadCategories(Long squadId, List<Category> categories);
+
+    default Squad getById(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
+    }
 
     default SquadInfoDomainDto getSquadById(Long id) {
         return findSquadById(id)
