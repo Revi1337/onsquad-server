@@ -19,6 +19,8 @@ public interface CrewCommentRepository {
 
     List<CrewCommentDomainDto> findLimitedCommentsBothOfParentsAndChildren(Long crewId, Pageable pageable, Integer childSize);
 
+    List<CrewCommentDomainDto> findChildComments(Long crewId, Long parentId, Pageable pageable);
+
     default CrewComment getById(Long id) {
         return findById(id)
                 .orElseThrow(() -> new CrewCommentBusinessException.NotFoundById(NOTFOUND_COMMENT, id));

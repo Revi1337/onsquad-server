@@ -63,4 +63,9 @@ public class CrewCommentRepositoryImpl implements CrewCommentRepository {
             crewCommentDomainDto.replies().add(childComment);
         });
     }
+
+    @Override
+    public List<CrewCommentDomainDto> findChildComments(Long crewId, Long parentId, Pageable pageable) {
+        return crewCommentQueryDslRepository.findChildComments(crewId, parentId, pageable);
+    }
 }

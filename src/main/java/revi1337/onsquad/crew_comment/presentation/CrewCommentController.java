@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -54,17 +55,31 @@ public class CrewCommentController {
     }
 
     @GetMapping("/comments")
-    public ResponseEntity<RestResponse<List<CrewCommentResponse>>> findComments(
+    public ResponseEntity<RestResponse<List<CrewCommentResponse>>> findParentComments(
             @RequestParam Long crewId,
             @Qualifier("parent") Pageable parentPageable,
             @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) Integer childSize,
             @Authenticate AuthenticatedMember ignored
     ) {
-        List<CrewCommentResponse> commentsResponses = crewCommentService.findComments(crewId, parentPageable, childSize).stream()
+        List<CrewCommentResponse> commentsResponses = crewCommentService.findParentComments(crewId, parentPageable, childSize).stream()
                 .map(CrewCommentResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
+    }
+
+    @GetMapping("/comments/more")
+    public ResponseEntity<RestResponse<List<CrewCommentResponse>>> findMoreChildComments(
+            @RequestParam Long crewId,
+            @RequestParam Long parentId,
+            @PageableDefault Pageable pageable,
+            @Authenticate AuthenticatedMember ignored
+    ) {
+        List<CrewCommentResponse> childComments = crewCommentService.findMoreChildComments(crewId, parentId, pageable).stream()
+                .map(CrewCommentResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(childComments));
     }
 
     @GetMapping("/comment/all")

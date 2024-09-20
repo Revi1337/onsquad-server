@@ -46,8 +46,14 @@ public class CrewCommentService {
         return SimpleCrewCommentDto.from(childComment, crewMember.getMember());
     }
 
-    public List<CrewCommentDto> findComments(Long crewId, Pageable pageable, Integer childSize) {
+    public List<CrewCommentDto> findParentComments(Long crewId, Pageable pageable, Integer childSize) {
         return crewCommentRepository.findLimitedCommentsBothOfParentsAndChildren(crewId, pageable, childSize).stream()
+                .map(CrewCommentDto::from)
+                .toList();
+    }
+
+    public List<CrewCommentDto> findMoreChildComments(Long crewId, Long parentId, Pageable pageable) {
+        return crewCommentRepository.findChildComments(crewId, parentId, pageable).stream()
                 .map(CrewCommentDto::from)
                 .toList();
     }

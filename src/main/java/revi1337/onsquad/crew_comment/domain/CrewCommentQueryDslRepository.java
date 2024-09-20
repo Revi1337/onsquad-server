@@ -127,4 +127,29 @@ public class CrewCommentQueryDslRepository {
 
         return resultList;
     }
+
+    public List<CrewCommentDomainDto> findChildComments(Long crewId, Long parentId, Pageable pageable) {
+        return jpaQueryFactory
+                .select(new QCrewCommentDomainDto(
+                        crewComment.id,
+                        crewComment.content,
+                        crewComment.createdAt,
+                        crewComment.updatedAt,
+                        new QSimpleMemberInfoDomainDto(
+                                member.id,
+                                member.nickname
+                        )
+                ))
+                .from(crewComment)
+                .innerJoin(crewComment.crewMember, crewMember)
+                    .on(
+                            crewComment.crew.id.eq(crewId),
+                            crewComment.parent.id.eq(parentId)
+                    )
+                .innerJoin(crewMember.member, member)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(crewComment.createdAt.desc())
+                .fetch();
+    }
 }
