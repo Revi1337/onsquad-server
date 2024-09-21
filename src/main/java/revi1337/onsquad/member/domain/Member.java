@@ -22,11 +22,6 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ColumnDefault("'GENERAL'")
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
-
     @Embedded
     private Email email;
 
@@ -39,6 +34,14 @@ public class Member extends BaseEntity {
     @Embedded
     private Password password;
 
+    @ColumnDefault("'GENERAL'")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
+
+    @Enumerated(EnumType.STRING)
+    private Mbti mbti;
+
     @OneToMany(mappedBy = "member")
     private final Set<Crew> crews = new HashSet<>();
 
@@ -50,25 +53,6 @@ public class Member extends BaseEntity {
         this.address = address;
         this.nickname = nickname;
         this.password = password;
-    }
-
-    public static Member of(Email email, Address address, Nickname nickname, Password password) {
-        return Member.builder()
-                .email(email)
-                .address(address)
-                .nickname(nickname)
-                .password(password)
-                .build();
-    }
-
-    public static Member of(UserType userType, Email email, Address address, Nickname nickname, Password password) {
-        return Member.builder()
-                .userType(userType)
-                .email(email)
-                .address(address)
-                .nickname(nickname)
-                .password(password)
-                .build();
     }
 
     public void updatePassword(CharSequence encodedPassword) {

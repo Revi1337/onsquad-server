@@ -12,7 +12,7 @@ import revi1337.onsquad.member.application.MemberService;
 import revi1337.onsquad.member.presentation.dto.response.MemberInfoResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/member")
+@RequestMapping("/api/v1/my")
 @RestController
 public class MemberController {
 

@@ -15,7 +15,7 @@ public record MemberJoinRequest(
         @NotEmpty String passwordConfirm,
         @NotEmpty String nickname,
         @NotEmpty String address,
-        String addressDetail
+        @NotEmpty String addressDetail
 ) implements StringComparator {
 
     public MemberJoinDto toDto() {

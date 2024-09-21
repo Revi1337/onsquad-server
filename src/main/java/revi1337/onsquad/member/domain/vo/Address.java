@@ -10,25 +10,25 @@ import lombok.*;
 @Embeddable
 public class Address {
 
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
     private String value;
 
-    @Column(name = "address_detail")
+    @Column(name = "address_detail", nullable = false)
     private String detail;
 
     public Address(String value, String detail) {
-        this(value);
+        validate(value, detail);
+        this.value = value;
         this.detail = detail;
     }
 
-    public Address(String value) {
-        validate(value);
-        this.value = value;
-    }
-
-    private void validate(String value) {
+    private void validate(String value, String detail) {
         if (value == null) {
-            throw new NullPointerException("주소는 null 일 수 없습니다.");
+            throw new IllegalArgumentException("주소는 null 일 수 없습니다.");
+        }
+
+        if (detail == null) {
+            throw new IllegalArgumentException("상세 주소는 null 일 수 없습니다.");
         }
     }
 }
