@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
-import revi1337.onsquad.auth.dto.request.LoginRequest;
+import revi1337.onsquad.auth.application.dto.LoginRequest;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;

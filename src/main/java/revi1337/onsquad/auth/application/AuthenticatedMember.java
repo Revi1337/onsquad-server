@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.application.dto;
+package revi1337.onsquad.auth.application;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.JsonWebTokenService;
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
-import revi1337.onsquad.auth.dto.request.ReissueRequest;
-import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
+import revi1337.onsquad.auth.application.token.RefreshToken;
+import revi1337.onsquad.auth.presentation.dto.request.ReissueRequest;
+import revi1337.onsquad.auth.application.dto.JsonWebToken;
 import revi1337.onsquad.common.dto.RestResponse;
 
 @RequiredArgsConstructor
@@ -21,13 +21,13 @@ public class RefreshTokenController {
     private final JsonWebTokenService jsonWebTokenService;
 
     @PostMapping("/reissue")
-    public ResponseEntity<RestResponse<JsonWebTokenResponse>> reissueToken(
+    public ResponseEntity<RestResponse<JsonWebToken>> reissueToken(
             @Valid @RequestBody ReissueRequest reissueRequest
     ) {
-        JsonWebTokenResponse jsonWebTokenResponse = jsonWebTokenService.reissueToken(
+        JsonWebToken jsonWebToken = jsonWebTokenService.reissueToken(
                 new RefreshToken(reissueRequest.refreshToken())
         );
 
-        return ResponseEntity.ok().body(RestResponse.success(jsonWebTokenResponse));
+        return ResponseEntity.ok().body(RestResponse.success(jsonWebToken));
     }
 }

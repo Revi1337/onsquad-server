@@ -8,7 +8,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
-import revi1337.onsquad.auth.dto.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 
 import static revi1337.onsquad.auth.error.TokenErrorCode.*;

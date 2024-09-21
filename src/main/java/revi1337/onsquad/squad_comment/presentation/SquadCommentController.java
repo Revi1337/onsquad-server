@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
-import revi1337.onsquad.auth.dto.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_comment.application.SquadCommentService;
 import revi1337.onsquad.squad_comment.presentation.dto.request.CreateSquadCommentRequest;

@@ -1,7 +1,8 @@
-package revi1337.onsquad.auth.application;
+package revi1337.onsquad.auth.application.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import revi1337.onsquad.auth.application.RefreshTokenManager;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.application.token.RefreshToken;
 

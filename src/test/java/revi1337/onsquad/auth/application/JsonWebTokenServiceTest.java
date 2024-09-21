@@ -7,9 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import revi1337.onsquad.auth.domain.vo.AccessToken;
-import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
+import revi1337.onsquad.auth.application.token.AccessToken;
+import revi1337.onsquad.auth.application.dto.JsonWebToken;
+import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.Member;
@@ -42,11 +42,11 @@ class JsonWebTokenServiceTest {
         given(jsonWebTokenProvider.generateRefreshToken(anyString(), anyMap())).willReturn(refreshToken);
 
         // when
-        JsonWebTokenResponse jsonWebTokenResponse = jsonWebTokenService.generateTokenPair(memberDto);
+        JsonWebToken jsonWebToken = jsonWebTokenService.generateTokenPair(memberDto);
 
         // then
-        assertThat(jsonWebTokenResponse.refreshToken()).isEqualTo(refreshToken);
-        assertThat(jsonWebTokenResponse.accessToken()).isEqualTo(accessToken);
+        assertThat(jsonWebToken.refreshToken()).isEqualTo(refreshToken);
+        assertThat(jsonWebToken.accessToken()).isEqualTo(accessToken);
     }
 
     @DisplayName("RefreshToken 의 저장은 refreshTokenStoreService 에게 위임한다.")
@@ -82,7 +82,7 @@ class JsonWebTokenServiceTest {
         given(jsonWebTokenProvider.generateRefreshToken(anyString(), anyMap())).willReturn(newRefreshToken);
 
         // when
-        JsonWebTokenResponse response = jsonWebTokenService.reissueToken(refreshToken);
+        JsonWebToken response = jsonWebTokenService.reissueToken(refreshToken);
 
         // then
         assertThat(response.accessToken()).isEqualTo(accessToken);
@@ -150,9 +150,9 @@ class JsonWebTokenServiceTest {
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
-//import revi1337.onsquad.auth.domain.vo.AccessToken;
+//import revi1337.onsquad.auth.application.token.AccessToken;
 //import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
-//import revi1337.onsquad.auth.domain.vo.RefreshToken;
+//import revi1337.onsquad.auth.application.token.RefreshToken;
 //import revi1337.onsquad.auth.error.exception.AuthTokenException;
 //import revi1337.onsquad.factory.MemberFactory;
 //import revi1337.onsquad.member.domain.Member;

@@ -1,6 +1,6 @@
 package revi1337.onsquad.auth.application;
 
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
+import revi1337.onsquad.auth.application.token.RefreshToken;
 
 import java.util.Optional;
 

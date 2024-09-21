@@ -6,8 +6,8 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
-import revi1337.onsquad.auth.domain.vo.AccessToken;
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
+import revi1337.onsquad.auth.application.token.AccessToken;
+import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
 
 import java.nio.charset.StandardCharsets;

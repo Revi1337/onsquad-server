@@ -9,7 +9,7 @@ import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfoResponse;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfosWithAuthResponse;
 import revi1337.onsquad.auth.config.Authenticate;
-import revi1337.onsquad.auth.dto.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 
 import java.util.List;

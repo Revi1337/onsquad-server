@@ -16,8 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import revi1337.onsquad.auth.dto.request.LoginRequest;
-import revi1337.onsquad.auth.error.AuthErrorCode;
+import revi1337.onsquad.auth.application.dto.LoginRequest;
 import revi1337.onsquad.auth.error.exception.UnsupportedLoginUrlMethod;
 import revi1337.onsquad.common.dto.CommonErrorCode;
 

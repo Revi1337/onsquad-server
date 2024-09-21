@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.dto.response;
+package revi1337.onsquad.auth.presentation.dto.response;
 
 public record DuplicateNicknameResponse(
         boolean duplicate

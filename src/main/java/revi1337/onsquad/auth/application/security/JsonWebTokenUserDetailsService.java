@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import revi1337.onsquad.auth.dto.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.application.dto.MemberDto;

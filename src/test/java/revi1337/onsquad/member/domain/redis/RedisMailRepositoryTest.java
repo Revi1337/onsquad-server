@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import revi1337.onsquad.common.mail.MailStatus;
+import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.config.SpringActiveProfilesResolver;
 import revi1337.onsquad.support.TestContainerSupport;
 

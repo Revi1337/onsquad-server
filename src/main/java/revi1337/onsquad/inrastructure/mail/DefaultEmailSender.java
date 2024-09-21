@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.mail;
+package revi1337.onsquad.inrastructure.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

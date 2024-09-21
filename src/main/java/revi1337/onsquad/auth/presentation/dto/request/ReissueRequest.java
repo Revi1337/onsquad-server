@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.dto.request;
+package revi1337.onsquad.auth.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.ResultActions;
-import revi1337.onsquad.common.mail.MailStatus;
+import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.domain.Member;

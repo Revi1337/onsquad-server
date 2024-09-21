@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import revi1337.onsquad.auth.domain.redis.RedisHashTokenRepository;
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
+import revi1337.onsquad.auth.application.redis.RedisHashTokenOperation;
+import revi1337.onsquad.auth.application.redis.RedisRefreshTokenManager;
+import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.util.Optional;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class RedisRefreshTokenManagerTest extends TestContainerSupport {
 
     @Autowired private StringRedisTemplate stringRedisTemplate;
-    @Autowired private RedisHashTokenRepository redisHashTokenRepository;
+    @Autowired private RedisHashTokenOperation redisHashTokenRepository;
     @Autowired private RedisRefreshTokenManager redisRefreshTokenManager;
 
     @AfterEach

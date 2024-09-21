@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.dto.request;
+package revi1337.onsquad.auth.application.dto;
 
 public record LoginRequest(
         String email,

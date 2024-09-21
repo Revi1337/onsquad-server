@@ -3,9 +3,9 @@ package revi1337.onsquad.auth.application;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.auth.domain.vo.AccessToken;
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
-import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
+import revi1337.onsquad.auth.application.token.AccessToken;
+import revi1337.onsquad.auth.application.token.RefreshToken;
+import revi1337.onsquad.auth.application.dto.JsonWebToken;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -29,8 +29,8 @@ public class JsonWebTokenService {
     private final RefreshTokenManager redisHashRefreshTokenManager;
     private final MemberRepository memberRepository;
 
-    public JsonWebTokenResponse generateTokenPair(MemberDto dto) {
-        return JsonWebTokenResponse.of(
+    public JsonWebToken generateTokenPair(MemberDto dto) {
+        return JsonWebToken.of(
                 generateAccessToken(dto),
                 generateRefreshToken(dto)
         );
@@ -40,7 +40,7 @@ public class JsonWebTokenService {
         redisHashRefreshTokenManager.storeTemporaryToken(refreshToken, memberId);
     }
 
-    public JsonWebTokenResponse reissueToken(RefreshToken refreshToken) {
+    public JsonWebToken reissueToken(RefreshToken refreshToken) {
         Claims claims = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
         return Optional.ofNullable(claims.get("memberId", Long.class))
                 .flatMap(memberId -> redisHashRefreshTokenManager.findTemporaryToken(memberId)
@@ -70,12 +70,12 @@ public class JsonWebTokenService {
         );
     }
 
-    private JsonWebTokenResponse restoreTemporaryTokenAndCreateTokenPair(Long tokenOwnerId) {
+    private JsonWebToken restoreTemporaryTokenAndCreateTokenPair(Long tokenOwnerId) {
         Member member = memberRepository.getById(tokenOwnerId);
-        JsonWebTokenResponse jsonWebTokenResponse = generateTokenPair(MemberDto.from(member));
-        updateTemporaryToken(tokenOwnerId, jsonWebTokenResponse.refreshToken());
+        JsonWebToken jsonWebToken = generateTokenPair(MemberDto.from(member));
+        updateTemporaryToken(tokenOwnerId, jsonWebToken.refreshToken());
 
-        return jsonWebTokenResponse;
+        return jsonWebToken;
     }
 
     private void updateTemporaryToken(Long tokenOwnerId, RefreshToken newRefreshToken) {
