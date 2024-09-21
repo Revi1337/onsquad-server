@@ -21,7 +21,7 @@ import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.*;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.squad_participant.domain.SquadParticipant;
@@ -45,7 +45,7 @@ import static revi1337.onsquad.squad_member.domain.vo.SquadRole.*;
 @ExtendWith(MockitoExtension.class)
 class SquadServiceTest {
 
-    @Mock private MemberRepository memberRepository;
+    @Mock private MemberJpaRepository memberRepository;
     @Mock private SquadRepository squadRepository;
     @Mock private CategoryRepository categoryRepository;
     @Mock private CrewRepository crewRepository;

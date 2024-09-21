@@ -29,7 +29,7 @@ class MemberRepositoryTest extends PersistenceLayerTestSupport {
     private static final String TEST_NICKNAME = "nickname";
     private static final String TEST_AUTH_CODE = "1111";
 
-    @Autowired private MemberRepository memberRepository;
+    @Autowired private MemberJpaRepository memberRepository;
     @Autowired private CrewJpaRepository crewJpaRepository;
     @Autowired private CrewMemberJpaRepository crewMemberRepository;
 

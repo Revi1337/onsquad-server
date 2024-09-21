@@ -21,7 +21,7 @@ import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.*;
 import revi1337.onsquad.crew_participant.domain.CrewParticipant;
 import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
@@ -40,7 +40,7 @@ class CrewServiceTest {
 
     @Mock private CrewRepository crewRepository;
     @Mock private CrewParticipantJpaRepository crewParticipantRepository;
-    @Mock private MemberRepository memberRepository;
+    @Mock private MemberJpaRepository memberRepository;
     @Mock private S3BucketUploader s3BucketUploader;
     @InjectMocks private CrewService crewService;
 

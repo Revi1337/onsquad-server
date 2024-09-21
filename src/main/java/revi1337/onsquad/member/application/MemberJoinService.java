@@ -6,12 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.auth.error.exception.AuthJoinException;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.dto.MemberDto;
-import revi1337.onsquad.member.error.DuplicateMember;
-import revi1337.onsquad.member.error.MemberErrorCode;
 
 import java.time.Duration;
 
@@ -22,7 +20,7 @@ import static revi1337.onsquad.auth.error.AuthErrorCode.*;
 @Service
 public class MemberJoinService {
 
-    private final MemberRepository memberRepository;
+    private final MemberJpaRepository memberRepository;
     private final JoinMailService joinMailService;
     private final PasswordEncoder passwordEncoder;
 

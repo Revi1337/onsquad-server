@@ -7,8 +7,9 @@ import revi1337.onsquad.auth.domain.vo.AccessToken;
 import revi1337.onsquad.auth.domain.vo.RefreshToken;
 import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.dto.MemberDto;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,13 +71,11 @@ public class JsonWebTokenService {
     }
 
     private JsonWebTokenResponse restoreTemporaryTokenAndCreateTokenPair(Long tokenOwnerId) {
-        return memberRepository.findById(tokenOwnerId)
-                .map(member -> {
-                    JsonWebTokenResponse jsonWebTokenResponse = generateTokenPair(MemberDto.from(member));
-                    updateTemporaryToken(tokenOwnerId, jsonWebTokenResponse.refreshToken());
-                    return jsonWebTokenResponse;
-                })
-                .orElseThrow(() -> new AuthTokenException.NotFoundRefreshOwner(NOT_FOUND_REFRESH_MEMBER));
+        Member member = memberRepository.getById(tokenOwnerId);
+        JsonWebTokenResponse jsonWebTokenResponse = generateTokenPair(MemberDto.from(member));
+        updateTemporaryToken(tokenOwnerId, jsonWebTokenResponse.refreshToken());
+
+        return jsonWebTokenResponse;
     }
 
     private void updateTemporaryToken(Long tokenOwnerId, RefreshToken newRefreshToken) {

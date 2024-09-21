@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
 import revi1337.onsquad.squad_participant.domain.SquadParticipantRepository;
 import revi1337.onsquad.crew.domain.Crew;
@@ -13,7 +14,6 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.squad.domain.*;
@@ -61,13 +61,6 @@ public class SquadService {
         persistSquadIfCrewMemberIsValid(dto, member, crew);
     }
 
-    /**
-     * Squad 가 있는지 확인 (0)
-     * Squad 가 속한 Crew 가 올바른지 확인 (0)
-     * CrewMember 가 있는지 확인 (Squad 가 속한 Crew 에 Member 가 속해있는지 확인)
-     * Squad 작성자와 CrewMember 가 다른지 확인 (0)
-     * Squad 에 이미 CrewMember 가 있는지 확인 (0)
-     */
     @Transactional
     public void submitParticipationRequest(SquadJoinDto dto, Long memberId) {
         Squad squad = squadRepository.getByIdWithOwnerAndCrewAndSquadMembers(dto.squadId());

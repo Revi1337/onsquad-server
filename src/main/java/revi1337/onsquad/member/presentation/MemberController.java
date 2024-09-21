@@ -18,7 +18,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<RestResponse<MemberInfoResponse>> findMember(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {

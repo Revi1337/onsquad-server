@@ -13,7 +13,7 @@ import revi1337.onsquad.auth.domain.vo.RefreshToken;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.dto.MemberDto;
 
 import java.util.Optional;
@@ -25,7 +25,7 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class JsonWebTokenServiceTest {
 
-    @Mock private MemberRepository memberRepository;
+    @Mock private MemberJpaRepository memberRepository;
     @Mock private RefreshTokenManager refreshTokenManager;
     @Mock private JsonWebTokenProvider jsonWebTokenProvider;
     @Mock private JsonWebTokenEvaluator jsonWebTokenEvaluator;

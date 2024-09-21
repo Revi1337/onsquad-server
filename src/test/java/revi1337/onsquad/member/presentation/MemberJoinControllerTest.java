@@ -11,7 +11,7 @@ import revi1337.onsquad.common.mail.MailStatus;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.redis.RedisMailRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
@@ -30,7 +30,7 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
 
     @SpyBean private MemberJoinService memberJoinService;
     @Autowired private RedisMailRepository redisMailRepository;
-    @Autowired private MemberRepository memberRepository;
+    @Autowired private MemberJpaRepository memberRepository;
 
     @DisplayName("인증코드 발송을 진행한다.")
     @Nested

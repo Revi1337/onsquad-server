@@ -20,15 +20,13 @@ import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
+import revi1337.onsquad.member.domain.MemberRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
-import static revi1337.onsquad.member.error.MemberErrorCode.*;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -60,8 +58,7 @@ public class CrewService {
     @Transactional
     public void createNewCrew(Long memberId, CrewCreateDto dto, byte[] image, String imageFileName) {
         List<HashtagType> hashtagTypes = HashtagTypeUtil.extractPossible(HashtagType.fromTexts(dto.hashTags()));
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberBusinessException.NotFound(NOTFOUND, memberId));
+        Member member = memberRepository.getById(memberId);
         crewRepository.findByName(new Name(dto.name()))
                 .ifPresent(ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, dto.name()); });
 

@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import revi1337.onsquad.auth.dto.request.LoginRequest;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.support.IntegrationTestSupport;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("로그인 api 테스트")
 public class LoginControllerTest extends IntegrationTestSupport {
 
-    @Autowired private MemberRepository memberRepository;
+    @Autowired private MemberJpaRepository memberRepository;
 
     @DisplayName("로그인하면 AccessToken 과 RefreshToken 이 내려온다.")
     @Test

@@ -1,17 +1,27 @@
 package revi1337.onsquad.member.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberQueryRepository {
+import static revi1337.onsquad.member.error.MemberErrorCode.NOTFOUND;
 
-    boolean existsByNickname(Nickname nickname);
+public interface MemberRepository {
 
-    boolean existsByEmail(Email email);
+    Member save(Member member);
+
+    List<Member> saveAll(List<Member> members);
+
+    Member saveAndFlush(Member member);
+
+    Optional<Member> findById(Long id);
 
     Optional<Member> findByEmail(Email email);
 
+    default Member getById(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new MemberBusinessException.NotFound(NOTFOUND, id));
+    }
 }

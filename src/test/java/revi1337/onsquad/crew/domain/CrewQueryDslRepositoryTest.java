@@ -12,7 +12,7 @@ import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired private CrewJpaRepository crewJpaRepository;
-    @Autowired private MemberRepository memberRepository;
+    @Autowired private MemberJpaRepository memberRepository;
     @Autowired private CrewQueryDslRepository crewQueryDslRepository;
 
     @Test

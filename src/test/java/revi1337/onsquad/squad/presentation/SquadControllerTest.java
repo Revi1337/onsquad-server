@@ -22,7 +22,7 @@ import revi1337.onsquad.factory.ImageFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 import revi1337.onsquad.support.IntegrationTestSupport;
 
@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Squad 통합 테스트")
 class SquadControllerTest extends IntegrationTestSupport {
 
-    @Autowired private MemberRepository memberRepository;
+    @Autowired private MemberJpaRepository memberRepository;
     @Autowired private CrewRepository crewRepository;
     @Autowired private CrewMemberJpaRepository crewMemberRepository;
     @Autowired private CategoryRepository categoryRepository;
