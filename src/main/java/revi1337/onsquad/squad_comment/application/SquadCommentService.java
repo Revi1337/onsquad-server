@@ -18,9 +18,8 @@ import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessExcept
 
 import java.util.List;
 
-import static revi1337.onsquad.crew_comment.error.CrewCommentErrorCode.NOTFOUND_CREW_COMMENT;
-import static revi1337.onsquad.crew_comment.error.CrewCommentErrorCode.NOT_PARENT;
 import static revi1337.onsquad.squad.error.SquadErrorCode.*;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

@@ -7,7 +7,7 @@ import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessExcept
 import java.util.List;
 import java.util.Optional;
 
-import static revi1337.onsquad.crew_comment.error.CrewCommentErrorCode.NOTFOUND_COMMENT;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUND_COMMENT;
 
 public interface SquadCommentRepository {
 

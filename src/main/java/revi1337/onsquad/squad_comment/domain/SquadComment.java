@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
-import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentDomainException;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static revi1337.onsquad.crew_comment.error.CrewCommentErrorCode.INVALID_LENGTH;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.INVALID_LENGTH;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
