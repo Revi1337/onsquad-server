@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 
 import java.time.LocalDateTime;

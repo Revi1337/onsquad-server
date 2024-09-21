@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_comment.domain.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

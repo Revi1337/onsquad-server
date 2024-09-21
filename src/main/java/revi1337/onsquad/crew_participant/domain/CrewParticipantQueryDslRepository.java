@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_participant.domain.dto.*;
-import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
 import java.util.List;
 

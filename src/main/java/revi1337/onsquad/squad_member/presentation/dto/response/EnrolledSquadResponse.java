@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad_member.presentation.dto.response;
 
-import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SimpleSquadInfoResponse;
 import revi1337.onsquad.squad_member.application.dto.EnrolledSquadDto;
 

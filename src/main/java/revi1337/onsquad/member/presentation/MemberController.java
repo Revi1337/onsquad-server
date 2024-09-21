@@ -9,7 +9,7 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberService;
-import revi1337.onsquad.member.dto.response.MemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.MemberInfoResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/member")

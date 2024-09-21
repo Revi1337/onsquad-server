@@ -2,7 +2,7 @@ package revi1337.onsquad.crew.application.dto;
 
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 
 import java.util.List;
 

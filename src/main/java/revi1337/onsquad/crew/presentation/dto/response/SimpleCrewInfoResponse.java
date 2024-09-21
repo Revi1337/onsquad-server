@@ -2,7 +2,7 @@ package revi1337.onsquad.crew.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import revi1337.onsquad.crew.application.dto.SimpleCrewInfoDto;
-import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SimpleCrewInfoResponse(

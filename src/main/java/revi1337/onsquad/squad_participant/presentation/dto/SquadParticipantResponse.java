@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad_participant.presentation.dto;
 
-import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad_participant.application.dto.SquadParticipantDto;
 
 import java.time.LocalDateTime;

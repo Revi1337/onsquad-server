@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 import revi1337.onsquad.member.application.MemberJoinService;
-import revi1337.onsquad.member.dto.request.MemberJoinRequest;
+import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 import revi1337.onsquad.support.ValidationWithRestDocsTestSupport;
 
 import java.util.stream.Stream;

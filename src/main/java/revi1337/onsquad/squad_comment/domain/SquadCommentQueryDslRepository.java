@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad_comment.domain.dto.QSquadCommentDomainDto;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 

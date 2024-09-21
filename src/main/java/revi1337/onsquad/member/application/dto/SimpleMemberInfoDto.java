@@ -1,6 +1,7 @@
-package revi1337.onsquad.member.dto;
+package revi1337.onsquad.member.application.dto;
 
 import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 public record SimpleMemberInfoDto(
         Long id,

@@ -1,6 +1,7 @@
 package revi1337.onsquad.member.domain;
 
 import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
 import java.util.List;
@@ -19,6 +20,10 @@ public interface MemberRepository {
     Optional<Member> findById(Long id);
 
     Optional<Member> findByEmail(Email email);
+
+    boolean existsByNickname(Nickname nickname);
+
+    boolean existsByEmail(Email email);
 
     default Member getById(Long id) {
         return findById(id)

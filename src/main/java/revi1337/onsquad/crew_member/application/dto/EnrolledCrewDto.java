@@ -1,7 +1,7 @@
 package revi1337.onsquad.crew_member.application.dto;
 
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 
 public record EnrolledCrewDto(
         Long crewId,

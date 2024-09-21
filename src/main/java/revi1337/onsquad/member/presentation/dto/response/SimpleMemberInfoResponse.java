@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.dto.response;
+package revi1337.onsquad.member.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;

@@ -3,6 +3,7 @@ package revi1337.onsquad.member.domain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,5 +37,15 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public Optional<Member> findByEmail(Email email) {
         return memberJpaRepository.findByEmail(email);
+    }
+
+    @Override
+    public boolean existsByNickname(Nickname nickname) {
+        return memberJpaRepository.existsByNickname(nickname);
+    }
+
+    @Override
+    public boolean existsByEmail(Email email) {
+        return memberJpaRepository.existsByEmail(email);
     }
 }

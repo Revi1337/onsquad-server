@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad_member.presentation.dto.response;
 
-import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad_member.application.dto.SquadMemberDto;
 
 import java.time.LocalDateTime;
@@ -22,7 +22,7 @@ public record SquadMemberResponse(
 
 //package revi1337.onsquad.squad_member.presentation.dto.response;
 //
-//import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
+//import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 //import revi1337.onsquad.squad_member.application.dto.SquadMemberDto;
 //
 //import java.time.LocalDateTime;

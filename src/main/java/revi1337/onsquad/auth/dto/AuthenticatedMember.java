@@ -4,7 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import revi1337.onsquad.member.domain.vo.*;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.application.dto.MemberDto;
 
 import java.util.Collection;
 import java.util.Set;

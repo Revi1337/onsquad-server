@@ -7,7 +7,7 @@ import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 import java.util.ArrayList;
 import java.util.Collection;

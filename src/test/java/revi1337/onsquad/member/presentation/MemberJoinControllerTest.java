@@ -15,7 +15,7 @@ import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.redis.RedisMailRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.dto.request.MemberJoinRequest;
+import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 import revi1337.onsquad.support.IntegrationTestSupport;
 
 import java.time.Duration;

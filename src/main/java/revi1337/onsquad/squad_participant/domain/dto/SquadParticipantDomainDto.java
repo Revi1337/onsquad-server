@@ -3,7 +3,7 @@ package revi1337.onsquad.squad_participant.domain.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Title;
 

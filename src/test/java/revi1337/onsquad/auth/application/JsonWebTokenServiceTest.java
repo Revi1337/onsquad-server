@@ -14,7 +14,7 @@ import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.application.dto.MemberDto;
 
 import java.util.Optional;
 
@@ -157,7 +157,7 @@ class JsonWebTokenServiceTest {
 //import revi1337.onsquad.factory.MemberFactory;
 //import revi1337.onsquad.member.domain.Member;
 //import revi1337.onsquad.member.domain.MemberRepository;
-//import revi1337.onsquad.member.dto.MemberDto;
+//import revi1337.onsquad.member.application.dto.MemberDto;
 //
 //import java.util.Optional;
 //

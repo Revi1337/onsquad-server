@@ -3,7 +3,7 @@ package revi1337.onsquad.crew.domain.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 public record SimpleCrewInfoDomainDto(
         Long id,

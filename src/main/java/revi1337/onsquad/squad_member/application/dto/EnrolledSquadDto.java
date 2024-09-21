@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad_member.application.dto;
 
-import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad.application.dto.SimpleSquadInfoDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
 
@@ -32,7 +32,7 @@ public record EnrolledSquadDto(
 
 //package revi1337.onsquad.squad_member.application.dto;
 //
-//import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
+//import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 //import revi1337.onsquad.squad.application.dto.SquadInfoDto;
 //import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
 //

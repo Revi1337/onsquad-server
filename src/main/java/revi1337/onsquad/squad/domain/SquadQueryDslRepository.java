@@ -12,7 +12,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;

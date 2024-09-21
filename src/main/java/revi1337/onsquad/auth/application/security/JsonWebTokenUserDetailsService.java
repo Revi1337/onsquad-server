@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import revi1337.onsquad.auth.dto.AuthenticatedMember;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.application.dto.MemberDto;
 
 @RequiredArgsConstructor
 public class JsonWebTokenUserDetailsService implements UserDetailsService {

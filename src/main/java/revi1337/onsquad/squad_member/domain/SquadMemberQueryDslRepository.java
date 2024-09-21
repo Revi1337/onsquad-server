@@ -9,10 +9,9 @@ import revi1337.onsquad.crew.domain.dto.SimpleCrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
-import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
-import revi1337.onsquad.squad_category.domain.dto.QSquadCategoryDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.*;
 
 import java.util.ArrayList;

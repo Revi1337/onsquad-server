@@ -1,7 +1,7 @@
 package revi1337.onsquad.crew_participant.application.dto;
 
 import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 
 public record SimpleCrewParticipantRequestDto(
         SimpleMemberInfoDto memberInfo,

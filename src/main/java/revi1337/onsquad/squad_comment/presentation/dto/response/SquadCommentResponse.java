@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_comment.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
 
 import java.time.LocalDateTime;

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.member.dto.MemberInfoDto;
+import revi1337.onsquad.member.application.dto.MemberInfoDto;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

@@ -12,7 +12,7 @@ import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.Password;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.application.dto.MemberDto;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;

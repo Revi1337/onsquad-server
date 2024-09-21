@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_comment.domain.dto;
 
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad_comment.domain.SquadComment;
 
 import java.time.LocalDateTime;

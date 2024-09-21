@@ -1,8 +1,7 @@
-package revi1337.onsquad.member.dto.request;
+package revi1337.onsquad.member.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.application.dto.MemberJoinDto;
 import revi1337.onsquad.member.presentation.validator.StringComparator;
 import revi1337.onsquad.member.presentation.validator.StringValidator;
 
@@ -19,13 +18,8 @@ public record MemberJoinRequest(
         String addressDetail
 ) implements StringComparator {
 
-    public MemberDto toDto() {
-        return MemberDto.create()
-                .email(email)
-                .password(password)
-                .nickname(nickname)
-                .address(address)
-                .build();
+    public MemberJoinDto toDto() {
+        return new MemberJoinDto(email, password, passwordConfirm, nickname, address, addressDetail);
     }
 
     @Override

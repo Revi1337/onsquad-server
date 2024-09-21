@@ -9,7 +9,7 @@ import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.member.dto.MemberDto;
+import revi1337.onsquad.member.application.dto.MemberDto;
 
 import java.util.Collections;
 import java.util.HashMap;

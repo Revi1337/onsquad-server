@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad.presentation.dto.response;
 
-import revi1337.onsquad.member.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad.application.dto.SimpleSquadInfoDto;
 
 import java.util.List;

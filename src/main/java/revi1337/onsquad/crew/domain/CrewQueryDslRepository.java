@@ -12,9 +12,8 @@ import org.springframework.util.StringUtils;
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.dto.QCrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.hashtag.domain.QHashtag;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
 import java.util.*;
 
