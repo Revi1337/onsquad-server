@@ -1,18 +1,18 @@
-package revi1337.onsquad.auth.domain.redis;
+package revi1337.onsquad.auth.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Repository;
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
+import org.springframework.stereotype.Component;
+import revi1337.onsquad.auth.application.token.RefreshToken;
 
 import java.time.Duration;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-@Repository
-public class RedisHashTokenRepository {
+@Component
+public class RedisHashTokenOperation {
 
     private static final String HASH_NAME_FORMAT = "onsquad:refresh:user:id:%d";
     private static final String TOKEN_OWNER_KEY = "memberId";

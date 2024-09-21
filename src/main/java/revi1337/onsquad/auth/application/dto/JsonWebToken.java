@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.dto.response;
+package revi1337.onsquad.auth.application.dto;
 
 import revi1337.onsquad.auth.domain.vo.AccessToken;
 import revi1337.onsquad.auth.domain.vo.RefreshToken;
