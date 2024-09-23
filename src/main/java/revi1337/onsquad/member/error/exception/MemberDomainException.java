@@ -35,4 +35,11 @@ public abstract class MemberDomainException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), begin, end));
         }
     }
+
+    public static class InvalidIntroduceLength extends MemberBusinessException {
+
+        public InvalidIntroduceLength(ErrorCode errorCode, Number begin, Number end) {
+            super(errorCode, String.format(errorCode.getDescription(), begin, end));
+        }
+    }
 }
