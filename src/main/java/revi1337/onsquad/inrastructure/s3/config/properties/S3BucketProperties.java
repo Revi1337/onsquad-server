@@ -26,7 +26,8 @@ public record S3BucketProperties(
     @ConfigurationProperties("directories")
     public record Directories(
             String crewDirectory,
-            String squadDirectory
+            String squadDirectory,
+            String memberDirectory
     ) {
     }
 }
