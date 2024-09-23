@@ -32,7 +32,7 @@ public class MemberController {
         return ResponseEntity.ok().body(RestResponse.success(memberInfoResponse));
     }
 
-    @PutMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
+    @PatchMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<MemberInfoResponse>> updateMember(
             @Valid @RequestPart(name = "request") MemberUpdateRequest request,
             @RequestPart(name = "file", required = false) MultipartFile file,
