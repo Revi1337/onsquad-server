@@ -9,6 +9,7 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberService;
+import revi1337.onsquad.member.presentation.dto.request.MemberPasswordUpdateRequest;
 import revi1337.onsquad.member.presentation.dto.request.MemberUpdateRequest;
 import revi1337.onsquad.member.presentation.dto.response.MemberInfoResponse;
 
@@ -32,8 +33,18 @@ public class MemberController {
         return ResponseEntity.ok().body(RestResponse.success(memberInfoResponse));
     }
 
+    @PutMapping
+    public ResponseEntity<RestResponse<String>> updatePassword(
+            @Valid @RequestBody MemberPasswordUpdateRequest request,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        memberService.updatePassword(authenticatedMember.toDto().getId(), request.toDto());
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
     @PatchMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
-    public ResponseEntity<RestResponse<MemberInfoResponse>> updateMember(
+    public ResponseEntity<RestResponse<String>> updateMember(
             @Valid @RequestPart(name = "request") MemberUpdateRequest request,
             @RequestPart(name = "file", required = false) MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
