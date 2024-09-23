@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface CrewMemberQueryRepository {
 
-    boolean existsCrewMemberInCrew(Long memberId, Name name);
+    boolean existsByMemberIdAndCrewName(Long memberId, Name name);
 
     boolean existsCrewMember(Long memberId);
 

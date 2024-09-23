@@ -16,7 +16,7 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public boolean existsCrewMemberInCrew(Long memberId, Name name) {
+    public boolean existsByMemberIdAndCrewName(Long memberId, Name name) {
         Integer fetchOne = jpaQueryFactory
                 .selectOne()
                 .from(crewMember)

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,8 +14,10 @@ import java.util.Optional;
 @Repository
 public class CrewMemberRepositoryImpl implements CrewMemberRepository {
 
+    private static final int DEFAULT_FETCH_SIZE = 5;
     private final CrewMemberJpaRepository crewMemberJpaRepository;
     private final CrewMemberQueryDslRepository crewMemberQueryDslRepository;
+    private final CrewMemberJdbcRepository crewMemberJdbcRepository;
 
     @Override
     public CrewMember save(CrewMember crewMember) {
@@ -37,8 +40,18 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public boolean existsCrewMemberInCrew(Long memberId, Name name) {
-        return crewMemberJpaRepository.existsCrewMemberInCrew(memberId, name);
+    public boolean existsByMemberIdAndCrewName(Long memberId, Name name) {
+        return crewMemberJpaRepository.existsByMemberIdAndCrewName(memberId, name);
+    }
+
+    @Override
+    public boolean existsByMemberIdAndCrewId(Long memberId, Long crewId) {
+        return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
+    }
+
+    @Override
+    public List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId) {
+        return crewMemberJdbcRepository.findTopNCrewMembers(crewId, DEFAULT_FETCH_SIZE);
     }
 
     @Override

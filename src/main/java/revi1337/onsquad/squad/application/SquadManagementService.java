@@ -21,7 +21,7 @@ public class SquadManagementService {
     private final CrewMemberRepository crewMemberRepository;
 
     public List<SimpleSquadInfoDto> findSquadsInCrew(Long memberId, String crewName) {
-        if (!crewMemberRepository.existsCrewMemberInCrew(memberId, new Name(crewName))) {
+        if (!crewMemberRepository.existsByMemberIdAndCrewName(memberId, new Name(crewName))) {
             throw new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT);
         }
 

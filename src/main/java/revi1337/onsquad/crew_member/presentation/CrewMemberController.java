@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.crew_member.presentation.dto.response.Top5CrewMemberResponse;
 import revi1337.onsquad.crew_member.presentation.dto.response.EnrolledCrewResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
 import revi1337.onsquad.crew_member.presentation.dto.response.CrewMemberResponse;
@@ -29,6 +30,18 @@ public class CrewMemberController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(ownedCrewResponses));
+    }
+
+    @GetMapping("/crew/top")
+    public ResponseEntity<RestResponse<List<Top5CrewMemberResponse>>> findTop5CrewMembers(
+            @RequestParam Long crewId,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        List<Top5CrewMemberResponse> top5CrewMembers = crewMemberService.findTop5CrewMembers(authenticatedMember.toDto().getId(), crewId).stream()
+                .map(Top5CrewMemberResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(top5CrewMembers));
     }
 
     @GetMapping("/manage/crew/members")

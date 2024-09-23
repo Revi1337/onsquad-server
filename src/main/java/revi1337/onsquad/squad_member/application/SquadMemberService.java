@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
@@ -30,7 +29,7 @@ public class SquadMemberService {
     }
 
     public SquadWithMemberDto findSquadWithMembers(Long memberId, String crewName, Long squadId) {
-        if (!crewMemberRepository.existsCrewMemberInCrew(memberId, new Name(crewName))) {
+        if (!crewMemberRepository.existsByMemberIdAndCrewName(memberId, new Name(crewName))) {
             throw new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT);
         }
 

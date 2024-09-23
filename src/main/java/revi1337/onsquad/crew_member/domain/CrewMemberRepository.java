@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_member.domain;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 import java.util.List;
@@ -20,7 +21,11 @@ public interface CrewMemberRepository {
 
     Optional<CrewMember> findWithMemberByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    boolean existsCrewMemberInCrew(Long memberId, Name name);
+    boolean existsByMemberIdAndCrewName(Long memberId, Name name);
+
+    boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
+
+    List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId);
 
     boolean existsCrewMember(Long memberId);
 
