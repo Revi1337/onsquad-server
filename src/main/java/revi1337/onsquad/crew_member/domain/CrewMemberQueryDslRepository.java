@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_member.domain;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,7 @@ import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.QCrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.QEnrolledCrewDomainDto;
 import revi1337.onsquad.member.domain.QMember;
-import revi1337.onsquad.member.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
 import java.util.List;
 
@@ -28,15 +29,17 @@ public class CrewMemberQueryDslRepository {
     private final QMember CREW_CREATOR = new QMember("crewCreator");
 
     public List<EnrolledCrewDomainDto> findOwnedCrews(Long memberId) {
+        BooleanExpression isCrewOwner = new CaseBuilder()
+                .when(crew.member.id.eq(memberId))
+                .then(true)
+                .otherwise(false);
+
         return jpaQueryFactory
                 .select(new QEnrolledCrewDomainDto(
                         crew.id,
                         crew.name,
                         image.imageUrl,
-                        new CaseBuilder()
-                                .when(crew.member.id.eq(memberId))
-                                .then(true)
-                                .otherwise(false),
+                        isCrewOwner,
                         new QSimpleMemberInfoDomainDto(
                                 CREW_CREATOR.id,
                                 CREW_CREATOR.nickname
@@ -47,7 +50,10 @@ public class CrewMemberQueryDslRepository {
                 .innerJoin(crewMember.crew, crew)
                 .innerJoin(crew.image, image)
                 .innerJoin(crew.member, CREW_CREATOR)
-                .orderBy(crewMember.requestAt.desc())
+                .orderBy(
+                        crewMember.requestAt.desc(),
+                        isCrewOwner.desc()
+                )
                 .fetch();
     }
 

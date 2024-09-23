@@ -13,7 +13,6 @@ import revi1337.onsquad.squad_participant.domain.dto.QSquadParticipantDomainDto_
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +36,11 @@ public class SquadParticipantQueryDslRepository {
     private final QMember CREW_CREATOR = new QMember("crewCreator");
     private final QMember SQUAD_CREATOR = new QMember("squadCreator");
 
+    /**
+     * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 쪼갠다.
+     * @param memberId
+     * @return
+     */
     public List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId) {
         List<SquadParticipantDomainDto> squadParticipantDtos = jpaQueryFactory
                 .from(squadParticipant)
@@ -67,35 +71,39 @@ public class SquadParticipantQueryDslRepository {
                         ))
                 );
 
-        Map<Long, List<SquadParticipantDomainDto>> squadParticipantDatas = squadParticipantDtos.stream()
+        Map<Long, List<SquadParticipantDomainDto>> squadParticipantsMap = squadParticipantDtos.stream()
                 .collect(Collectors.groupingBy(SquadParticipantDomainDto::crewId));
 
-        List<SimpleCrewInfoDomainDto> crewDtos = jpaQueryFactory
-                .select(new QSimpleCrewInfoDomainDto(
-                        crew.id,
-                        crew.name,
-                        crew.kakaoLink,
-                        image.imageUrl,
-                        new QSimpleMemberInfoDomainDto(
-                                CREW_CREATOR.id,
-                                CREW_CREATOR.nickname
-                        )
-                ))
+        Map<Long, SimpleCrewInfoDomainDto> crewDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.image, image)
                 .innerJoin(crew.member, CREW_CREATOR)
-                .where(crew.id.in(squadParticipantDatas.keySet()))
-                .fetch();
+                .where(crew.id.in(squadParticipantsMap.keySet()))
+                .transform(groupBy(crew.id)
+                        .as(new QSimpleCrewInfoDomainDto(
+                                crew.id,
+                                crew.name,
+                                crew.kakaoLink,
+                                image.imageUrl,
+                                new QSimpleMemberInfoDomainDto(
+                                        CREW_CREATOR.id,
+                                        CREW_CREATOR.nickname
+                                )
+                        ))
+                );
 
-        ArrayList<SquadParticipantRequest> squadParticipantRequests = new ArrayList<>();
-        crewDtos.forEach(crewDto -> {
-            Long crewId = crewDto.id();
-            List<SquadParticipantDomainDto> partOfCrew = squadParticipantDatas.get(crewId);
-            squadParticipantRequests.add(new SquadParticipantRequest(
-                    crewDto.id(), crewDto.name(), crewDto.imageUrl(), crewDto.owner(), partOfCrew
-            ));
-        });
-
-        return squadParticipantRequests;
+        return squadParticipantsMap.keySet().stream()
+                .map(crewId -> {
+                    SimpleCrewInfoDomainDto crewInfo = crewDtoMap.get(crewId);
+                    List<SquadParticipantDomainDto> squadsInCrew = squadParticipantsMap.get(crewId);
+                    return new SquadParticipantRequest(
+                            crewInfo.id(),
+                            crewInfo.name(),
+                            crewInfo.imageUrl(),
+                            crewInfo.owner(),
+                            squadsInCrew
+                    );
+                })
+                .toList();
     }
 }
