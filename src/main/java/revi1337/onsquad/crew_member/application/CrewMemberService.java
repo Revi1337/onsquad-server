@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.dto.Top5CrewMemberDto;
 import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.application.dto.CrewMemberDto;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
@@ -38,12 +37,12 @@ public class CrewMemberService {
                 .toList();
     }
 
-    public List<CrewMemberDto> findCrewMembers(Long memberId, String crewName) {
-        if (!crewMemberRepository.existsByMemberIdAndCrewName(memberId, new Name(crewName))) {
+    public List<CrewMemberDto> findCrewMembers(Long memberId, Long crewId) {
+        if (!crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId)) {
             throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT);
         }
-        
-        return crewMemberRepository.findOwnCrewMembers(memberId, new Name(crewName)).stream()
+
+        return crewMemberRepository.findManagedCrewMembersByCrewId(crewId).stream()
                 .map(CrewMemberDto::from)
                 .toList();
     }

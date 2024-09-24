@@ -80,7 +80,7 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public List<CrewMemberDomainDto> findOwnCrewMembers(Long memberId, Name crewName) {
-        return crewMemberQueryDslRepository.findCrewMembersByMemberIdAndCrewName(memberId, crewName);
+    public List<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId) {
+        return crewMemberQueryDslRepository.findCrewMembersByCrewId(crewId);
     }
 }

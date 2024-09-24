@@ -6,7 +6,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.QCrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.QEnrolledCrewDomainDto;
@@ -57,7 +56,7 @@ public class CrewMemberQueryDslRepository {
                 .fetch();
     }
 
-    public List<CrewMemberDomainDto> findCrewMembersByMemberIdAndCrewName(Long memberId, Name crewName) {
+    public List<CrewMemberDomainDto> findCrewMembersByCrewId(Long crewId) {
         return jpaQueryFactory
                 .select(new QCrewMemberDomainDto(
                         new QSimpleMemberInfoDomainDto(
@@ -67,8 +66,7 @@ public class CrewMemberQueryDslRepository {
                         crewMember.requestAt
                 ))
                 .from(crewMember)
-                .innerJoin(crewMember.crew, crew).on(crew.name.eq(crewName))
-                .innerJoin(crewMember.member, member).on(crew.member.id.eq(memberId))
+                .innerJoin(crewMember.member, member).on(crewMember.crew.id.eq(crewId))
                 .orderBy(crewMember.requestAt.desc())
                 .fetch();
     }

@@ -1,7 +1,9 @@
 package revi1337.onsquad.crew_member.presentation;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
@@ -13,6 +15,7 @@ import revi1337.onsquad.crew_member.presentation.dto.response.CrewMemberResponse
 
 import java.util.List;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @RestController
@@ -46,10 +49,10 @@ public class CrewMemberController {
 
     @GetMapping("/manage/crew/members")
     public ResponseEntity<RestResponse<List<CrewMemberResponse>>> findCrewMembers(
-            @RequestParam String crewName,
+            @RequestParam @Positive Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<CrewMemberResponse> crewMemberResponse = crewMemberService.findCrewMembers(authenticatedMember.toDto().getId(), crewName)
+        List<CrewMemberResponse> crewMemberResponse = crewMemberService.findCrewMembers(authenticatedMember.toDto().getId(), crewId)
                 .stream()
                 .map(CrewMemberResponse::from)
                 .toList();
