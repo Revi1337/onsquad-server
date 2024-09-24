@@ -32,9 +32,4 @@ public record SquadWithMemberDomainDto(
         this.categories = categories;
         this.members = members;
     }
-
-    @QueryProjection
-    public SquadWithMemberDomainDto(Long id, Title title, Capacity capacity, Address address, String kakaoLink, String discordLink, Set<CategoryType> categories, List<SquadMemberDomainDto> members) {
-        this(id, title, capacity, address, kakaoLink, discordLink, null, categories, members);
-    }
 }

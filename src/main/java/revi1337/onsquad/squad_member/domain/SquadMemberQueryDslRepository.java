@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.dto.SimpleCrewInfoDomainDto;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
@@ -114,43 +113,42 @@ public class SquadMemberQueryDslRepository {
                 .toList();
     }
 
-    public Optional<SquadWithMemberDomainDto> findSquadMembers(Long memberId, Name crewName, Long squadId) {
-        Map<Long, SquadWithMemberDomainDto> transform = jpaQueryFactory
+    public Optional<SquadWithMemberDomainDto> findSquadMembers(Long memberId, Long crewId, Long squadId) {
+        Map<Long, SquadWithMemberDomainDto> results = jpaQueryFactory
                 .from(squadMember)
-                .innerJoin(squadMember.squad, squad).on(squad.id.eq(squadId))
-                .innerJoin(squad.crew, crew).on(crew.name.eq(crewName))
+                .innerJoin(squadMember.squad, squad)
+                    .on(
+                            squad.crew.id.eq(crewId),
+                            squad.id.eq(squadId)
+                    )
                 .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
+                .innerJoin(squadMember.crewMember, crewMember)
+                .innerJoin(crewMember.member, member)
                 .innerJoin(squad.categories, squadCategory)
                 .innerJoin(squadCategory.category, category)
-                .innerJoin(squad.squadMembers, NEW_SQUAD_MEMBER)
-                .innerJoin(NEW_SQUAD_MEMBER.crewMember, crewMember)
-                .innerJoin(crewMember.member, member)
-                .distinct()
+                .orderBy(squadMember.requestAt.desc())
                 .transform(groupBy(squad.id)
-                        .as(
-                                new QSquadWithMemberDomainDto(
-                                        squad.id,
-                                        squad.title,
-                                        squad.capacity,
-                                        squad.address,
-                                        squad.kakaoLink,
-                                        squad.discordLink,
-                                        new CaseBuilder()
-                                                .when(SQUAD_CREW_MEMBER.member.id.eq(memberId))
-                                                .then(TRUE)
-                                                .otherwise(FALSE),
-                                        set(category.categoryType),
-                                        list(new QSquadMemberDomainDto(
-                                                new QSimpleMemberInfoDomainDto(
-                                                        member.id,
-                                                        member.nickname
-                                                ),
-                                                squadMember.requestAt
+                        .as(new QSquadWithMemberDomainDto(
+                                squad.id,
+                                squad.title,
+                                squad.capacity,
+                                squad.address,
+                                squad.kakaoLink,
+                                squad.discordLink,
+                                new CaseBuilder()
+                                        .when(SQUAD_CREW_MEMBER.member.id.eq(memberId))
+                                        .then(TRUE)
+                                        .otherwise(FALSE),
+                                set(category.categoryType),
+                                list(new QSquadMemberDomainDto(
+                                        new QSimpleMemberInfoDomainDto(
+                                                member.id,
+                                                member.nickname
+                                        ),
+                                        squadMember.requestAt
+                                ))
+                        )));
 
-                                        ))
-                                )
-                        ));
-
-        return Optional.ofNullable(transform.get(squadId));
+        return Optional.ofNullable(results.get(squadId));
     }
 }

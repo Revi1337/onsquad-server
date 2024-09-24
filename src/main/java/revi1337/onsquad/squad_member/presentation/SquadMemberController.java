@@ -1,7 +1,9 @@
 package revi1337.onsquad.squad_member.presentation;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +17,7 @@ import revi1337.onsquad.squad_member.presentation.dto.response.SquadWithMemberRe
 
 import java.util.List;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @RestController
@@ -35,12 +38,12 @@ public class SquadMemberController {
 
     @GetMapping("/manage/squad/members")
     public ResponseEntity<RestResponse<SquadWithMemberResponse>> findSquadWithMembers(
-            @RequestParam String crewName,
+            @RequestParam @Positive Long crewId,
             @RequestParam Long squadId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         SquadWithMemberResponse squadWithSquadMembers = SquadWithMemberResponse.from(
-                squadMemberService.findSquadWithMembers(authenticatedMember.toDto().getId(), crewName, squadId)
+                squadMemberService.findSquadWithMembers(authenticatedMember.toDto().getId(), crewId, squadId)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(squadWithSquadMembers));

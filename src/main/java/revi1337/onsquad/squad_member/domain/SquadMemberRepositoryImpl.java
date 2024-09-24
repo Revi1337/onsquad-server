@@ -32,7 +32,7 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public Optional<SquadWithMemberDomainDto> findSquadWithMembers(Long memberId, Name crewName, Long squadId) {
-        return squadMemberQueryDslRepository.findSquadMembers(memberId, crewName, squadId);
+    public Optional<SquadWithMemberDomainDto> findSquadWithMembers(Long memberId, Long crewId, Long squadId) {
+        return squadMemberQueryDslRepository.findSquadMembers(memberId, crewId, squadId);
     }
 }
