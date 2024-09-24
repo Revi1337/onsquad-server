@@ -36,7 +36,8 @@ public class SquadCommentQueryDslRepository {
                         squadComment.updatedAt,
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
-                                member.nickname
+                                member.nickname,
+                                member.mbti
                         )
                 ))
                 .from(squadComment)
@@ -75,7 +76,8 @@ public class SquadCommentQueryDslRepository {
                                 squadComment.updatedAt,
                                 new QSimpleMemberInfoDomainDto(
                                         member.id,
-                                        member.nickname
+                                        member.nickname,
+                                        member.mbti
                                 )
                         )));
     }
@@ -89,7 +91,8 @@ public class SquadCommentQueryDslRepository {
                         squadComment.updatedAt,
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
-                                member.nickname
+                                member.nickname,
+                                member.mbti
                         )
                 ))
                 .from(squadComment)

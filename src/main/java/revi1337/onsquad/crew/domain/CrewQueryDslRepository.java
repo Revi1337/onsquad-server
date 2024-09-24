@@ -53,7 +53,8 @@ public class CrewQueryDslRepository {
                                         .where(crewMember.crew.id.eq(crew.id)),
                                 new QSimpleMemberInfoDomainDto(
                                         member.id,
-                                        member.nickname
+                                        member.nickname,
+                                        member.mbti
                                 )
                         ))
                 );
@@ -82,7 +83,8 @@ public class CrewQueryDslRepository {
                                         .where(crewMember.crew.id.eq(crew.id)),
                                 new QSimpleMemberInfoDomainDto(
                                         member.id,
-                                        member.nickname
+                                        member.nickname,
+                                        member.mbti
                                 )
                         ))
                 );

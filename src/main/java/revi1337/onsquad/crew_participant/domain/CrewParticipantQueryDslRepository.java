@@ -27,7 +27,8 @@ public class CrewParticipantQueryDslRepository {
                         image.imageUrl,
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
-                                member.nickname
+                                member.nickname,
+                                member.mbti
                         ),
                         new QCrewParticipantDomainDto(
                                 crewParticipant.id,
@@ -47,7 +48,8 @@ public class CrewParticipantQueryDslRepository {
                 .select(new QSimpleCrewParticipantRequest(
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
-                                member.nickname
+                                member.nickname,
+                                member.mbti
                         ),
                         new QCrewParticipantDomainDto(
                                 crewParticipant.id,

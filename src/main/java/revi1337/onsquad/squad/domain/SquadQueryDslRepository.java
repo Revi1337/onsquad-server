@@ -59,7 +59,8 @@ public class SquadQueryDslRepository {
                                         list(category.categoryType),
                                         new QSimpleMemberInfoDomainDto(
                                                 member.id,
-                                                member.nickname
+                                                member.nickname,
+                                                member.mbti
                                         )
                                 ))
                         ).get(id)
@@ -92,7 +93,8 @@ public class SquadQueryDslRepository {
                         list(category.categoryType),
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
-                                member.nickname
+                                member.nickname,
+                                member.mbti
                         )
                 )));
 
@@ -128,7 +130,8 @@ public class SquadQueryDslRepository {
                                 list(category.categoryType),
                                 new QSimpleMemberInfoDomainDto(
                                         member.id,
-                                        member.nickname
+                                        member.nickname,
+                                        member.mbti
                                 )
                         ))
                 );

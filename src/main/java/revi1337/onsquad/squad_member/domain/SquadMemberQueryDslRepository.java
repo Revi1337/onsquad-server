@@ -72,7 +72,8 @@ public class SquadMemberQueryDslRepository {
                                 list(category.categoryType),
                                 new QSimpleMemberInfoDomainDto(
                                         SQUAD_CREATOR.id,
-                                        SQUAD_CREATOR.nickname
+                                        SQUAD_CREATOR.nickname,
+                                        SQUAD_CREATOR.mbti
                                 )
                         ))
                 );
@@ -93,7 +94,8 @@ public class SquadMemberQueryDslRepository {
                                 image.imageUrl,
                                 new QSimpleMemberInfoDomainDto(
                                         CREW_CREATOR.id,
-                                        CREW_CREATOR.nickname
+                                        CREW_CREATOR.nickname,
+                                        CREW_CREATOR.mbti
                                 )
                         ))
                 );
@@ -143,7 +145,8 @@ public class SquadMemberQueryDslRepository {
                                 list(new QSquadMemberDomainDto(
                                         new QSimpleMemberInfoDomainDto(
                                                 member.id,
-                                                member.nickname
+                                                member.nickname,
+                                                member.mbti
                                         ),
                                         squadMember.requestAt
                                 ))

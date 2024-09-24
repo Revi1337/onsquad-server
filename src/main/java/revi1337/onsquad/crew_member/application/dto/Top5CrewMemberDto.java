@@ -9,6 +9,7 @@ public record Top5CrewMemberDto(
         int counter,
         Long memberId,
         String nickname,
+        String mbti,
         LocalDateTime participateAt
 ) {
     public static Top5CrewMemberDto from(Top5CrewMemberDomainDto top5CrewMemberDomainDto) {
@@ -17,6 +18,7 @@ public record Top5CrewMemberDto(
                 top5CrewMemberDomainDto.counter(),
                 top5CrewMemberDomainDto.memberId(),
                 top5CrewMemberDomainDto.nickname().getValue(),
+                top5CrewMemberDomainDto.mbti() != null ? top5CrewMemberDomainDto.mbti().name() : "",
                 top5CrewMemberDomainDto.participateAt()
         );
     }

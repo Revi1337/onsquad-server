@@ -41,7 +41,8 @@ public class CrewMemberQueryDslRepository {
                         isCrewOwner,
                         new QSimpleMemberInfoDomainDto(
                                 CREW_CREATOR.id,
-                                CREW_CREATOR.nickname
+                                CREW_CREATOR.nickname,
+                                CREW_CREATOR.mbti
                         )
                 ))
                 .from(crewMember)
@@ -61,7 +62,8 @@ public class CrewMemberQueryDslRepository {
                 .select(new QCrewMemberDomainDto(
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
-                                member.nickname
+                                member.nickname,
+                                member.mbti
                         ),
                         crewMember.requestAt
                 ))

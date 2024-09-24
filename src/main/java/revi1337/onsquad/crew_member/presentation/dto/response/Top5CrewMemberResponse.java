@@ -9,6 +9,7 @@ public record Top5CrewMemberResponse(
         int counter,
         Long memberId,
         String nickname,
+        String mbti,
         LocalDateTime participateAt
 ) {
     public static Top5CrewMemberResponse from(Top5CrewMemberDto top5CrewMemberDto) {
@@ -17,6 +18,7 @@ public record Top5CrewMemberResponse(
                 top5CrewMemberDto.counter(),
                 top5CrewMemberDto.memberId(),
                 top5CrewMemberDto.nickname(),
+                top5CrewMemberDto.mbti(),
                 top5CrewMemberDto.participateAt()
         );
     }

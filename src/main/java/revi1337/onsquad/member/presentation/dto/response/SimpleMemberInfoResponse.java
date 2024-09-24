@@ -7,13 +7,15 @@ import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 public record SimpleMemberInfoResponse(
         Long id,
         String email,
-        String nickname
+        String nickname,
+        String mbti
 ) {
     public static SimpleMemberInfoResponse from(SimpleMemberInfoDto simpleMemberInfoDto) {
         return new SimpleMemberInfoResponse(
                 simpleMemberInfoDto.id(),
                 simpleMemberInfoDto.email(),
-                simpleMemberInfoDto.nickname()
+                simpleMemberInfoDto.nickname(),
+                simpleMemberInfoDto.mbti()
         );
     }
 }
