@@ -3,7 +3,6 @@ package revi1337.onsquad.crew_participant.domain;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_participant.domain.dto.*;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
@@ -43,7 +42,7 @@ public class CrewParticipantQueryDslRepository {
                 .fetch();
     }
 
-    public List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Name name) {
+    public List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Long crewId) {
         return jpaQueryFactory
                 .select(new QSimpleCrewParticipantRequest(
                         new QSimpleMemberInfoDomainDto(
@@ -56,8 +55,7 @@ public class CrewParticipantQueryDslRepository {
                         )
                 ))
                 .from(crewParticipant)
-                .innerJoin(crewParticipant.crew, crew).on(crew.name.eq(name))
-                .innerJoin(crewParticipant.member, member)
+                .innerJoin(crewParticipant.member, member).on(crewParticipant.crew.id.eq(crewId))
                 .orderBy(crewParticipant.requestAt.desc())
                 .fetch();
     }

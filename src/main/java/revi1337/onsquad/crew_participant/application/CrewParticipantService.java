@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_participant.application.dto.CrewParticipantRequestDto;
 import revi1337.onsquad.crew_participant.application.dto.SimpleCrewParticipantRequestDto;
 import revi1337.onsquad.crew_participant.domain.CrewParticipant;
@@ -30,11 +29,11 @@ public class CrewParticipantService {
                 .toList();
     }
 
-    public List<SimpleCrewParticipantRequestDto> findCrewRequestsInMyCrew(Long memberId, String crewName) {
-        Crew crew = crewRepository.getByName(new Name(crewName));
+    public List<SimpleCrewParticipantRequestDto> findCrewRequestsInMyCrew(Long memberId, Long crewId) {
+        Crew crew = crewRepository.getById(crewId);
         validateMemberIsCrewCreator(memberId, crew);
 
-        return crewParticipantRepository.findCrewRequestsInCrew(new Name(crewName)).stream()
+        return crewParticipantRepository.findCrewRequestsInCrew(crewId).stream()
                 .map(SimpleCrewParticipantRequestDto::from)
                 .toList();
     }

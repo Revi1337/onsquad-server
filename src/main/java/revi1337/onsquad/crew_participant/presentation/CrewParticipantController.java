@@ -45,10 +45,10 @@ public class CrewParticipantController {
 
     @GetMapping("/manage/crew/requests")
     public ResponseEntity<RestResponse<List<SimpleCrewParticipantRequestResponse>>> findMyCrew(
-            @RequestParam String crewName,
+            @RequestParam Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService.findCrewRequestsInMyCrew(authenticatedMember.toDto().getId(), crewName).stream()
+        List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService.findCrewRequestsInMyCrew(authenticatedMember.toDto().getId(), crewId).stream()
                 .map(SimpleCrewParticipantRequestResponse::from)
                 .toList();
 

@@ -2,7 +2,6 @@ package revi1337.onsquad.crew_participant.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
 import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
 
@@ -54,7 +53,7 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
-    public List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Name name) {
-        return crewParticipantQueryDslRepository.findCrewRequestsInCrew(name);
+    public List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Long crewId) {
+        return crewParticipantQueryDslRepository.findCrewRequestsInCrew(crewId);
     }
 }

@@ -1,6 +1,5 @@
 package revi1337.onsquad.crew_participant.domain;
 
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
 import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
@@ -27,7 +26,7 @@ public interface CrewParticipantRepository {
 
     List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
 
-    List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Name name);
+    List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Long crewId);
 
     default CrewParticipant getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)
