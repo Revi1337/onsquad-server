@@ -54,8 +54,8 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Name crewName) {
-        return squadQueryDslRepository.findSquadsInCrew(memberId, crewName);
+    public List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Long crewId) {
+        return squadQueryDslRepository.findSquadsInCrew(memberId, crewId);
     }
 
     @Override

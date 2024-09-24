@@ -29,7 +29,7 @@ public interface SquadRepository {
 
     Page<SquadInfoDomainDto> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable);
 
-    List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Name CrewName);
+    List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Long crewId);
 
     Optional<Squad> findSquadByIdWithCrew(Long id);
 

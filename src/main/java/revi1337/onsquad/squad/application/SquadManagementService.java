@@ -20,12 +20,12 @@ public class SquadManagementService {
     private final SquadRepository squadRepository;
     private final CrewMemberRepository crewMemberRepository;
 
-    public List<SimpleSquadInfoDto> findSquadsInCrew(Long memberId, String crewName) {
-        if (!crewMemberRepository.existsByMemberIdAndCrewName(memberId, new Name(crewName))) {
+    public List<SimpleSquadInfoDto> findSquadsInCrew(Long memberId, Long crewId) {
+        if (!crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId)) {
             throw new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT);
         }
 
-        return squadRepository.findSquadsInCrew(memberId, new Name(crewName)).stream()
+        return squadRepository.findSquadsInCrew(memberId, crewId).stream()
                 .map(SimpleSquadInfoDto::from)
                 .toList();
     }

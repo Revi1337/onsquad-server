@@ -104,10 +104,10 @@ public class SquadQueryDslRepository {
         return PageableExecutionUtils.getPage(transformedResults, pageable, countQuery::fetchOne);
     }
 
-    public List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Name crewName) {
+    public List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Long crewId) {
         return jpaQueryFactory
                 .from(squad)
-                .innerJoin(squad.crew, crew).on(crew.name.eq(crewName))
+                .innerJoin(squad.crew, crew).on(squad.crew.id.eq(crewId))
                 .innerJoin(squad.crewMember, crewMember)
                 .innerJoin(crewMember.member, member)
                 .leftJoin(squad.categories, squadCategory)
