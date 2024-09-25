@@ -54,17 +54,22 @@ public class SquadCommentJdbcRepository {
     }
 
     private RowMapper<SquadCommentDomainDto> crewCommentRowMapper() {
-        return (rs, rowNum) -> new SquadCommentDomainDto(
-                rs.getLong("parent_id"),
-                rs.getLong("id"),
-                rs.getString("content"),
-                rs.getObject("created_at", LocalDateTime.class),
-                rs.getObject("updated_at", LocalDateTime.class),
-                new SimpleMemberInfoDomainDto(
-                        rs.getLong("comment_creator_id"),
-                        new Nickname(rs.getString("comment_creator_nickname")),
-                        rs.getObject("comment_creator_mbti", Mbti.class)
-                )
-        );
+        return (rs, rowNum) -> {
+            String mbtiText = rs.getString("comment_creator_mbti");
+            Mbti mbti = mbtiText != null ? Mbti.valueOf(mbtiText) : null;
+
+            return new SquadCommentDomainDto(
+                    rs.getLong("parent_id"),
+                    rs.getLong("id"),
+                    rs.getString("content"),
+                    rs.getObject("created_at", LocalDateTime.class),
+                    rs.getObject("updated_at", LocalDateTime.class),
+                    new SimpleMemberInfoDomainDto(
+                            rs.getLong("comment_creator_id"),
+                            new Nickname(rs.getString("comment_creator_nickname")),
+                            mbti
+                    )
+            );
+        };
     }
 }

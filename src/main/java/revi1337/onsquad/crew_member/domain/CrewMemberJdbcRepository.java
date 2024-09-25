@@ -65,13 +65,18 @@ public class CrewMemberJdbcRepository {
     }
 
     private RowMapper<Top5CrewMemberDomainDto> top5RowMapper() {
-        return (rs, rowNum) -> new Top5CrewMemberDomainDto(
-                rs.getInt("rank"),
-                rs.getInt("counter"),
-                rs.getLong("mem_id"),
-                new Nickname(rs.getString("mem_nickname")),
-                rs.getObject("mem_mbti", Mbti.class),
-                rs.getObject("mem_join_time", LocalDateTime.class)
-        );
+        return (rs, rowNum) -> {
+            String mbtiText = rs.getString("mem_mbti");
+            Mbti mbti = mbtiText != null ? Mbti.valueOf(mbtiText) : null;
+
+            return new Top5CrewMemberDomainDto(
+                    rs.getInt("rank"),
+                    rs.getInt("counter"),
+                    rs.getLong("mem_id"),
+                    new Nickname(rs.getString("mem_nickname")),
+                    mbti,
+                    rs.getObject("mem_join_time", LocalDateTime.class)
+            );
+        };
     }
 }
