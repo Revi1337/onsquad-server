@@ -13,20 +13,19 @@ import java.util.List;
 
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
 
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CrewMemberService {
 
     private final CrewMemberRepository crewMemberRepository;
 
+    @Transactional(readOnly = true)
     public List<EnrolledCrewDto> findOwnedCrews(Long memberId) {
         return crewMemberRepository.findOwnedCrews(memberId).stream()
                 .map(EnrolledCrewDto::from)
                 .toList();
     }
 
-    // TODO 캐싱 필요
     public List<Top5CrewMemberDto> findTop5CrewMembers(Long memberId, Long crewId) {
         if (!crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId)) {
             throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT);
@@ -37,6 +36,7 @@ public class CrewMemberService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<CrewMemberDto> findCrewMembers(Long memberId, Long crewId) {
         if (!crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId)) {
             throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT);

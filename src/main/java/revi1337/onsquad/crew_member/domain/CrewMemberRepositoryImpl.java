@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_member.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_member.aspect.RedisCache;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
@@ -9,6 +10,8 @@ import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 
 import java.util.List;
 import java.util.Optional;
+
+import static revi1337.onsquad.crew_member.aspect.RedisCache.CommunityType.CREW;
 
 @RequiredArgsConstructor
 @Repository
@@ -49,6 +52,7 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
 
+    @RedisCache(type = CREW, id = "crewId", name = "topN")
     @Override
     public List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId) {
         return crewMemberJdbcRepository.findTopNCrewMembers(crewId, DEFAULT_FETCH_SIZE);
