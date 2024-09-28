@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_member.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.backup.crew.domain.CrewTopCacheJpaRepository;
 import revi1337.onsquad.crew_member.aspect.RedisCache;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
@@ -11,16 +12,16 @@ import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.concurrent.TimeUnit.*;
 import static revi1337.onsquad.crew_member.aspect.RedisCache.CommunityType.CREW;
 
 @RequiredArgsConstructor
 @Repository
 public class CrewMemberRepositoryImpl implements CrewMemberRepository {
 
-    private static final int DEFAULT_FETCH_SIZE = 5;
-    private final CrewMemberJpaRepository crewMemberJpaRepository;
     private final CrewMemberQueryDslRepository crewMemberQueryDslRepository;
-    private final CrewMemberJdbcRepository crewMemberJdbcRepository;
+    private final CrewMemberJpaRepository crewMemberJpaRepository;
+    private final CrewTopCacheJpaRepository crewTopCacheJpaRepository;
 
     @Override
     public CrewMember save(CrewMember crewMember) {
@@ -52,10 +53,12 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
 
-    @RedisCache(type = CREW, id = "crewId", name = "topN")
+    @RedisCache(type = CREW, id = "crewId", name = "topN", unit = HOURS)
     @Override
     public List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId) {
-        return crewMemberJdbcRepository.findTopNCrewMembers(crewId, DEFAULT_FETCH_SIZE);
+        return crewTopCacheJpaRepository.findAllByCrewId(crewId).stream()
+                .map(Top5CrewMemberDomainDto::from)
+                .toList();
     }
 
     @Override
