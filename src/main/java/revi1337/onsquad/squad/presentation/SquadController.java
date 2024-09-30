@@ -1,10 +1,12 @@
 package revi1337.onsquad.squad.presentation;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
@@ -18,6 +20,7 @@ import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @RestController
@@ -56,11 +59,11 @@ public class SquadController {
 
     @GetMapping("/squads")
     public ResponseEntity<RestResponse<List<SquadInfoResponse>>> findSquads(
-            @RequestParam String crewName,
+            @RequestParam @Positive Long crewId,
             @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable
     ) {
-        List<SquadInfoResponse> squadResponses = squadService.findSquads(crewName, category, pageable).stream()
+        List<SquadInfoResponse> squadResponses = squadService.findSquads(crewId, category, pageable).stream()
                 .map(SquadInfoResponse::from)
                 .collect(Collectors.toList());
 

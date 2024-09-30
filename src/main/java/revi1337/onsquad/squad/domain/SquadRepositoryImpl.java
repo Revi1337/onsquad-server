@@ -49,8 +49,8 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Page<SquadInfoDomainDto> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable) {
-        return squadQueryDslRepository.findSquadsByCrewName(crewName, categoryType, pageable);
+    public Page<SquadInfoDomainDto> findSquadsByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
+        return squadQueryDslRepository.findSquadsByCrewId(crewId, categoryType, pageable);
     }
 
     @Override

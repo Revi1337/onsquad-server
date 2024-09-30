@@ -48,8 +48,8 @@ public class SquadService {
         return SquadInfoDto.from(squadRepository.getSquadById(id));
     }
 
-    public List<SquadInfoDto> findSquads(String crewName, CategoryCondition condition, Pageable pageable) {
-        return squadRepository.findSquadsByCrewName(new Name(crewName), condition.categoryType(), pageable).stream()
+    public List<SquadInfoDto> findSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
+        return squadRepository.findSquadsByCrewId(crewId, condition.categoryType(), pageable).stream()
                 .map(SquadInfoDto::from)
                 .collect(Collectors.toList());
     }

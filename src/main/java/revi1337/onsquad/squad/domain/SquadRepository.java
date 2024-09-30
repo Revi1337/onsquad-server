@@ -2,7 +2,6 @@ package revi1337.onsquad.squad.domain;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
@@ -27,7 +26,7 @@ public interface SquadRepository {
 
     Optional<SquadInfoDomainDto> findSquadById(Long id);
 
-    Page<SquadInfoDomainDto> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable);
+    Page<SquadInfoDomainDto> findSquadsByCrewId(Long crewId, CategoryType categoryType, Pageable pageable);
 
     List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Long crewId);
 

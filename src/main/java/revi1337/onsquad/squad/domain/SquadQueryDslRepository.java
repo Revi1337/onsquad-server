@@ -2,7 +2,6 @@ package revi1337.onsquad.squad.domain;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSimpleSquadInfoDomainDto;
@@ -23,7 +21,6 @@ import java.util.Optional;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.jpa.JPAExpressions.select;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static revi1337.onsquad.category.domain.QCategory.*;
@@ -68,40 +65,39 @@ public class SquadQueryDslRepository {
     }
 
     // TODO Join 이 한번 더 들어가지만, 처음부터 on 절로 필터링하는게 빠른지, 아니면 join 이 하나 덜 들어가지만 where 절로 필터링하는게 더 빠를까? Execution Plan 을 확인해 볼 필요가 있음.
-    public Page<SquadInfoDomainDto> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable) {
+    public Page<SquadInfoDomainDto> findSquadsByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
         List<SquadInfoDomainDto> transformedResults = jpaQueryFactory
                 .from(squad)
-                .innerJoin(squad.crewMember, crewMember)
+                .innerJoin(squad.crewMember, crewMember).on(squad.crew.id.eq(crewId))
                 .innerJoin(crewMember.member, member)
                 .leftJoin(squad.categories, squadCategory)
                 .innerJoin(squadCategory.category, category)
-                .where(
-                        squad.crew.id.eq(findCrewIdByCrewName(crewName)),
-                        categoryEq(categoryType)
-                )
+                .where(categoryEq(categoryType))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(squad.createdAt.desc())
-                .transform(groupBy(squad.id).list(new QSquadInfoDomainDto(
-                        squad.id,
-                        squad.title,
-                        squad.content,
-                        squad.capacity,
-                        squad.address,
-                        squad.kakaoLink,
-                        squad.discordLink,
-                        list(category.categoryType),
-                        new QSimpleMemberInfoDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.mbti
-                        )
-                )));
+                .transform(groupBy(squad.id)
+                        .list(new QSquadInfoDomainDto(
+                                squad.id,
+                                squad.title,
+                                squad.content,
+                                squad.capacity,
+                                squad.address,
+                                squad.kakaoLink,
+                                squad.discordLink,
+                                list(category.categoryType),
+                                new QSimpleMemberInfoDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.mbti
+                                )
+                        ))
+                );
 
         JPAQuery<Long> countQuery = jpaQueryFactory
                 .select(squad.count())
                 .from(squad)
-                .where(squad.crew.id.eq(findCrewIdByCrewName(crewName)));
+                .where(squad.crew.id.eq(crewId));
 
         return PageableExecutionUtils.getPage(transformedResults, pageable, countQuery::fetchOne);
     }
@@ -143,11 +139,5 @@ public class SquadQueryDslRepository {
         }
 
         return category.id.eq(categoryType.getPk());
-    }
-
-    private JPQLQuery<Long> findCrewIdByCrewName(Name crewName) {
-        return select(crew.id)
-                .from(crew)
-                .where(crew.name.eq(crewName));
     }
 }
