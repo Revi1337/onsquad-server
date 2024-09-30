@@ -44,8 +44,8 @@ public class CrewService {
         return crewRepository.existsByName(new Name(crewName));
     }
 
-    public CrewInfoDto findCrewByName(String crewName) {
-        return CrewInfoDto.from(crewRepository.getCrewByName(new Name(crewName)));
+    public CrewInfoDto findCrewById(Long crewId) {
+        return CrewInfoDto.from(crewRepository.getCrewById(crewId));
     }
 
     public List<CrewInfoDto> findCrewsByName(String crewName, Pageable pageable) {

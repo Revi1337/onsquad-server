@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.dto.QCrewInfoDomainDto;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
@@ -32,14 +31,14 @@ public class CrewQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Optional<CrewInfoDomainDto> findCrewByName(Name name) {
-        Map<Name, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
+    public Optional<CrewInfoDomainDto> findCrewById(Long id) {
+        Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
-                .innerJoin(crew.image, image).on(crew.name.eq(name))
+                .innerJoin(crew.member, member).on(crew.id.eq(id))
+                .innerJoin(crew.image, image)
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
-                .innerJoin(crew.member, member)
-                .transform(groupBy(crew.name)
+                .transform(groupBy(crew.id)
                         .as(new QCrewInfoDomainDto(
                                 crew.id,
                                 crew.name,
@@ -59,7 +58,7 @@ public class CrewQueryDslRepository {
                         ))
                 );
 
-        return Optional.ofNullable(crewInfoDomainDtoMap.get(name));
+        return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
     }
 
     public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {

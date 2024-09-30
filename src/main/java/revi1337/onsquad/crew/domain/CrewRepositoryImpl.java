@@ -56,8 +56,8 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<CrewInfoDomainDto> findCrewByName(Name name) {
-        return crewQueryDslRepository.findCrewByName(name);
+    public Optional<CrewInfoDomainDto> findCrewById(Long id) {
+        return crewQueryDslRepository.findCrewById(id);
     }
 
     @Override

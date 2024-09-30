@@ -29,7 +29,7 @@ public interface CrewRepository {
 
     List<Crew> findAllByMemberId(Long memberId);
 
-    Optional<CrewInfoDomainDto> findCrewByName(Name name);
+    Optional<CrewInfoDomainDto> findCrewById(Long id);
 
     Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable);
 
@@ -39,9 +39,9 @@ public interface CrewRepository {
 
     void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags);
 
-    default CrewInfoDomainDto getCrewByName(Name name) {
-        return findCrewByName(name)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    default CrewInfoDomainDto getCrewById(Long id) {
+        return findCrewById(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
     }
 
     default Crew getCrewByNameWithImage(Name name) {

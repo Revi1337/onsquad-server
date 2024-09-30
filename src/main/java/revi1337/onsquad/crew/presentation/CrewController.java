@@ -52,11 +52,21 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
+    @PostMapping("/crew/join")
+    public ResponseEntity<RestResponse<String>> joinCrew(
+            @Valid @RequestBody CrewJoinRequest crewJoinRequest,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        crewService.joinCrew(authenticatedMember.toDto().getId(), crewJoinRequest.toDto());
+
+        return ResponseEntity.ok().body(RestResponse.created());
+    }
+
     @GetMapping("/crew")
     public ResponseEntity<RestResponse<CrewInfoResponse>> findCrew(
-            @RequestParam String crewName
+            @RequestParam Long crewId
     ) {
-        CrewInfoResponse crewResponse = CrewInfoResponse.from(crewService.findCrewByName(crewName));
+        CrewInfoResponse crewResponse = CrewInfoResponse.from(crewService.findCrewById(crewId));
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
@@ -70,15 +80,5 @@ public class CrewController {
                 .map(CrewInfoResponse::from).toList();
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponses));
-    }
-
-    @PostMapping("/crew/join")
-    public ResponseEntity<RestResponse<String>> joinCrew(
-            @Valid @RequestBody CrewJoinRequest crewJoinRequest,
-            @Authenticate AuthenticatedMember authenticatedMember
-    ) {
-        crewService.joinCrew(authenticatedMember.toDto().getId(), crewJoinRequest.toDto());
-
-        return ResponseEntity.ok().body(RestResponse.created());
     }
 }
