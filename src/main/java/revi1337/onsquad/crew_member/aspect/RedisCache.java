@@ -23,6 +23,8 @@ public @interface RedisCache {
 
     TimeUnit unit() default TimeUnit.MINUTES;
 
+    boolean cacheEmptyCollection() default false;
+
     @Getter
     @RequiredArgsConstructor
     enum CommunityType {
