@@ -58,6 +58,7 @@ public class AnnounceService {
         return AnnounceInfoDto.from(announceRepository.getAnnounceByCrewIdAndId(crewId, announceId, memberId));
     }
 
+    // TODO 캐시를 AOP 로 빼던가 리팩토링 필요.
     public List<AnnounceInfoDto> findAnnounces(Long memberId, Long crewId) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         List<AnnounceInfoDto> cachedCrewAnnounceInfos = announceCacheManager.getCachedCrewAnnounceInfosById(crewId);
