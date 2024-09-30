@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
 import revi1337.onsquad.category.domain.vo.CategoryType;
@@ -30,7 +29,7 @@ public class CrewMainService {
     public CrewMainDto fetchMain(Long memberId, Long crewId, CategoryType categoryType, Pageable pageable) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
-        List<AnnounceInfoDomainDto> announces = announceRepository.findLimitedAnnouncesByCrewId(crewId);
+        List<AnnounceInfoDomainDto> announces = announceRepository.findCachedLimitedAnnouncesByCrewId(crewId);
         List<Top5CrewMemberDomainDto> topMembers = crewMemberRepository.findTop5CrewMembers(crewId);
         Page<SquadInfoDomainDto> squads = squadRepository.findSquadsByCrewId(crewId, categoryType, pageable);
 

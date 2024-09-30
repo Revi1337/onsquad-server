@@ -20,7 +20,7 @@ import java.util.List;
 @Configuration
 public class ConditionalAnnounceCacheDestroyer {
 
-    private static final String DESTROY_KEY_PATTERN = "onsquad:crew:*:announces";
+    private static final String DESTROY_KEY_PATTERN = "onsquad:crew:*:limit-announces";
     private final RedisTemplate<String, Object> redisTemplate;
 
     @EventListener(ContextClosedEvent.class)

@@ -2,36 +2,30 @@ package revi1337.onsquad.announce.application.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import revi1337.onsquad.announce.application.CacheManager;
-import revi1337.onsquad.announce.application.dto.AnnounceInfoDto;
 import revi1337.onsquad.announce.application.event.AnnounceFixedEvent;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
+import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
 
+import java.time.Duration;
 import java.util.List;
 
+// TODO RedisCacheAspect 와 겹치는 로직을 리팩토링 해야한다.
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class AnnounceFixedEventListener {
 
     private final AnnounceRepository announceRepository;
-    private final CacheManager announceCacheManager;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @TransactionalEventListener
     public void handleAnnounceFixedEvent(AnnounceFixedEvent fixedEvent) {
-        List<AnnounceInfoDto> announceInfos = getAnnounceInfos(fixedEvent);
         log.debug("[{}] Renew fixed announces caches in crew_id = {}", fixedEvent.getEventName(), fixedEvent.crewId());
-        announceCacheManager.cacheSpecificCrewAnnounceInfos(
-                fixedEvent.crewId(),
-                announceInfos
-        );
-    }
-
-    private List<AnnounceInfoDto> getAnnounceInfos(AnnounceFixedEvent fixedEvent) {
-        return announceRepository.findLimitedAnnouncesByCrewId(fixedEvent.crewId()).stream()
-                .map(AnnounceInfoDto::from)
-                .toList();
+        List<AnnounceInfoDomainDto> announceInfos = announceRepository.findLimitedAnnouncesByCrewId(fixedEvent.crewId());
+        String redisKey = String.format("onsquad:crew:%d:limit-announces", fixedEvent.crewId());
+        redisTemplate.opsForValue().set(redisKey, announceInfos, Duration.ofHours(1));
     }
 }

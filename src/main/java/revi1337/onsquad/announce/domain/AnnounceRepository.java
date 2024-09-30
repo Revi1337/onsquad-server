@@ -24,6 +24,8 @@ public interface AnnounceRepository {
 
     List<AnnounceInfoDomainDto> findLimitedAnnouncesByCrewId(Long crewId);
 
+    List<AnnounceInfoDomainDto> findCachedLimitedAnnouncesByCrewId(Long crewId);
+
     default AnnounceInfoDomainDto getAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
         return findAnnounceByCrewIdAndId(crewId, id, memberId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFoundById(NOT_FOUND, id));
