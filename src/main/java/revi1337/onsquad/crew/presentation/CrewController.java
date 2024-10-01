@@ -30,7 +30,8 @@ public class CrewController {
 
     @GetMapping("/crew/check")
     public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkCrewNameDuplicate(
-            @RequestParam String crewName
+            @RequestParam String crewName,
+            @Authenticate AuthenticatedMember ignored
     ) {
         if (crewService.checkDuplicateNickname(crewName)) {
             return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(true)));
