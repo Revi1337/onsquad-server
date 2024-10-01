@@ -51,11 +51,6 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public List<Crew> findAllByMemberId(Long memberId) {
-        return crewJpaRepository.findAllByMemberId(memberId);
-    }
-
-    @Override
     public Optional<CrewInfoDomainDto> findCrewById(Long id) {
         return crewQueryDslRepository.findCrewById(id);
     }
@@ -66,8 +61,8 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<Crew> findByNameWithImage(Name name) {
-        return crewJpaRepository.findByNameWithImage(name);
+    public Optional<Crew> findByIdWithImage(Long id) {
+        return crewJpaRepository.findByIdWithImage(id);
     }
 
     @Override

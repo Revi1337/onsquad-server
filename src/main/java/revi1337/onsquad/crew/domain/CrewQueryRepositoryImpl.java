@@ -15,13 +15,13 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Crew> findByNameWithImage(Name name) {
+    public Optional<Crew> findByIdWithImage(Long id) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .select(crew)
                         .from(crew)
                         .innerJoin(crew.image, image).fetchJoin()
-                        .where(crew.name.eq(name))
+                        .where(crew.id.eq(id))
                         .fetchOne()
         );
     }

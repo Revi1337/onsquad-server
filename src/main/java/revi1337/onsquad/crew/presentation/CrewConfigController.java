@@ -26,13 +26,13 @@ public class CrewConfigController {
 
     @PutMapping(value = "/crew", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<String>> updateCrew(
-            @RequestParam String crewName,
+            @RequestParam Long crewId,
             @Valid @RequestPart CrewUpdateRequest crewUpdateRequest,
             @RequestPart MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
         crewConfigService.updateCrew(
-                authenticatedMember.toDto().getId(), crewName, crewUpdateRequest.toDto(), file.getBytes(), file.getOriginalFilename()
+                authenticatedMember.toDto().getId(), crewId, crewUpdateRequest.toDto(), file.getBytes(), file.getOriginalFilename()
         );
 
         return ResponseEntity.ok().body(RestResponse.noContent());

@@ -27,13 +27,11 @@ public interface CrewRepository {
 
     boolean existsByName(Name name);
 
-    List<Crew> findAllByMemberId(Long memberId);
-
     Optional<CrewInfoDomainDto> findCrewById(Long id);
 
     Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable);
 
-    Optional<Crew> findByNameWithImage(Name name);
+    Optional<Crew> findByIdWithImage(Long id);
 
     Optional<Crew> findByNameWithCrewMembers(Name name);
 
@@ -44,9 +42,9 @@ public interface CrewRepository {
                 .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
     }
 
-    default Crew getCrewByNameWithImage(Name name) {
-        return findByNameWithImage(name)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    default Crew getByIdWithImage(Long id) {
+        return findByIdWithImage(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
     }
 
     default Crew getById(Long id) {

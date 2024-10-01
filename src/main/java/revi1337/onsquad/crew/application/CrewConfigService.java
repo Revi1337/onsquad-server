@@ -39,8 +39,8 @@ public class CrewConfigService {
 
     // TODO AWS 가 껴있으니 트랜잭션 분리가 필요.
     @Transactional
-    public void updateCrew(Long memberId, String crewName, CrewUpdateDto dto, byte[] image, String imageName) {
-        Crew crew = crewRepository.getCrewByNameWithImage(new Name(crewName));
+    public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto, byte[] image, String imageName) {
+        Crew crew = crewRepository.getByIdWithImage(crewId);
         validateCrewPublisher(memberId, crew, dto.name());
         updateCrewInfo(dto, crew);
         s3BucketUploader.updateImage(crew.getImage().getImageUrl(), image, imageName);
