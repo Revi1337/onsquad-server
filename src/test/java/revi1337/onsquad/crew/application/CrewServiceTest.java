@@ -9,20 +9,24 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.vo.Detail;
+import revi1337.onsquad.crew.domain.vo.HashTags;
+import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewCreateDto;
-import revi1337.onsquad.crew.dto.CrewJoinDto;
+import revi1337.onsquad.crew.application.dto.CrewCreateDto;
+import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
-import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
+import revi1337.onsquad.member.domain.vo.*;
+import revi1337.onsquad.crew_participant.domain.CrewParticipant;
+import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,14 +34,13 @@ import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CrewService 테스트")
 class CrewServiceTest {
 
     @Mock private CrewRepository crewRepository;
-    @Mock private CrewMemberRepository crewMemberRepository;
-    @Mock private MemberRepository memberRepository;
+    @Mock private CrewParticipantJpaRepository crewParticipantRepository;
+    @Mock private MemberJpaRepository memberRepository;
     @Mock private S3BucketUploader s3BucketUploader;
     @InjectMocks private CrewService crewService;
 
@@ -85,7 +88,7 @@ class CrewServiceTest {
     @Nested
     @DisplayName("createNewCrew 메소드를 테스트한다.")
     class CreateNewCrew {
-        
+
         @Test
         @DisplayName("특정한 이름의 Crew 가 있으면 크루를 생성할 수 없다.")
         public void createNewCrew1() {
@@ -101,7 +104,7 @@ class CrewServiceTest {
                     .willReturn(Optional.of(crewCreateDto.toEntity(new Image(imageRemoteAddress), member)));
 
             // when & then
-            assertThatThrownBy(() -> crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName))
+            assertThatThrownBy(() -> crewService.createNewCrew(memberId, crewCreateDto, pngImage, imageName))
                     .isInstanceOf(CrewBusinessException.AlreadyExists.class)
                     .hasMessage(String.format("%s 크루가 이미 존재하여 크루를 개설할 수 없습니다.", crewCreateDto.name()));
         }
@@ -121,7 +124,7 @@ class CrewServiceTest {
             given(s3BucketUploader.uploadCrew(pngImage, imageName)).willReturn(imageUrl);
 
             // when
-            crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);
+            crewService.createNewCrew(memberId, crewCreateDto, pngImage, imageName);
 
             // then
             then(crewRepository).should(times(1)).save(any(Crew.class));
@@ -144,7 +147,7 @@ class CrewServiceTest {
             given(s3BucketUploader.uploadCrew(pngImage, imageName)).willReturn(imageUrl);
 
             // when
-            crewService.createNewCrew(crewCreateDto, memberId, pngImage, imageName);
+            crewService.createNewCrew(memberId, crewCreateDto, pngImage, imageName);
 
             // then
             then(crewRepository).should(times(1)).save(any(Crew.class));
@@ -152,102 +155,145 @@ class CrewServiceTest {
     }
 
     @Nested
-    @DisplayName("findCrewByName 메소드를 테스트한다.")
-    class FindCrewByName {
-
-        @Test
-        @DisplayName("크루 이름에 해당하는 게시글이 없으면 실패한다.")
-        public void findCrewByName() {
-            // given
-            String name = "크루 이름";
-            Name crewName = new Name(name);
-            given(crewRepository.findCrewByName(crewName)).willReturn(Optional.empty());
-
-            // when
-            Throwable throwable = catchThrowable(() -> crewService.findCrewByName(name));
-
-            // then
-            assertThat(throwable)
-                    .isInstanceOf(CrewBusinessException.NotFoundByName.class)
-                    .hasMessage(String.format("%s 크루 게시글이 존재하지 않습니다.", name));
-            then(crewRepository).should(times(1)).findCrewByName(crewName);
-        }
-    }
-
-    @Nested
-    @DisplayName("joinCrew 메소드를 테스트한다.")
+    @DisplayName("Crew 가입 신청을 테스트한다.")
     class JoinCrew {
 
         @Test
-        @DisplayName("Member 가 Crew 에 가입신청을 했지만 PENDING 이면 실패한다.")
+        @DisplayName("Crew 생성자와 참가 신청한 Member 가 같으면 예외를 던진다.")
         public void joinCrew1() {
             Long memberId = 1L;
-            Member member = Member.builder().id(memberId).build();
-            Crew crew = Crew.builder().name(CrewFactory.NAME).member(member).build();
-            CrewMember crewMember = CrewMember.of(crew, member, JoinStatus.PENDING);
+            Member member = createMember(memberId);
+            given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+            Crew crew = createCrew(1L, "크루 이름", member);
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
-            given(crewMemberRepository.findCrewMemberByMemberId(eq(memberId))).willReturn(Optional.of(crewMember));
+            given(crewRepository.findByNameWithCrewMembers(crew.getName())).willReturn(Optional.of(crew));
 
             // when & then
-            assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
-                    .isInstanceOf(CrewBusinessException.AlreadyRequest.class)
-                    .hasMessage(String.format("%s 크루에 가입신청을 했지만 요청 수락 전 상태입니다.", crewJoinDto.crewName()));
+            assertThatThrownBy(() -> crewService.joinCrew(memberId, crewJoinDto))
+                    .isInstanceOf(CrewBusinessException.OwnerCantParticipant.class)
+                    .hasMessage("크루를 만든 사람은 신청할 수 없습니다.");
         }
 
         @Test
-        @DisplayName("Member 가 Crew 에 가입신청을 했지만 ACCEPT 면 실패한다.")
+        @DisplayName("Member 가 이미 Crew 에 소속되어 있다면 예외를 던진다.")
         public void joinCrew2() {
             Long memberId = 1L;
-            Member member = Member.builder().id(memberId).build();
-            Crew crew = Crew.builder().name(CrewFactory.NAME).member(member).build();
-            CrewMember crewMember = CrewMember.of(crew, member, JoinStatus.ACCEPT);
+            Member member = createMember(memberId);
+            given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+            Crew crew = createCrew(1L, "크루 이름", createMember(2L));
+            crew.addCrewMember(createCrewMember(crew, member));
+            given(crewRepository.findByNameWithCrewMembers(crew.getName())).willReturn(Optional.of(crew));
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
-            given(crewMemberRepository.findCrewMemberByMemberId(eq(memberId))).willReturn(Optional.of(crewMember));
 
             // when & then
-            assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
+            assertThatThrownBy(() -> crewService.joinCrew(memberId, crewJoinDto))
                     .isInstanceOf(CrewBusinessException.AlreadyJoin.class)
-                    .hasMessage(String.format("이미 %s 크루에 가입된 사용자입니다.", crewJoinDto.crewName()));
+                    .hasMessage(String.format("이미 %s 크루에 가입된 사용자입니다.", crew.getName().getValue()));
         }
 
         @Test
-        @DisplayName("Member 가 Crew 에 가입신청을 한적 없으면 성공한다.")
+        @DisplayName("이미 Crew 에 참여신청한 이력이 있다면 참가 요청 정보를 update 한다.")
         public void joinCrew3() {
-            // given
             Long memberId = 1L;
-            Member member = Member.builder().id(memberId).build();
-            Crew crew = Crew.builder().name(CrewFactory.NAME).member(member).build();
+            Member member = createMember(memberId);
+            given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+            Crew crew = createCrew(1L, "크루 이름", createMember(2L));
+            given(crewRepository.findByNameWithCrewMembers(crew.getName())).willReturn(Optional.of(crew));
+            CrewParticipant crewParticipant = createCrewParticipant(crew, member);
+            given(crewParticipantRepository.findByCrewIdAndMemberIdUsingLock(crew.getId(), memberId)).willReturn(Optional.of(crewParticipant));
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.of(crew));
-            given(crewMemberRepository.findCrewMemberByMemberId(eq(memberId))).willReturn(Optional.empty());
 
             // when
-            crewService.joinCrew(crewJoinDto, memberId);
+            crewService.joinCrew(memberId, crewJoinDto);
 
             // then
-            then(crewMemberRepository).should(times(1)).save(any(CrewMember.class));
+            then(crewParticipantRepository).should(times(1)).saveAndFlush(crewParticipant);
         }
 
         @Test
-        @DisplayName("Member 가 가입신청할 Crew 가 존재하지 않으면 실패한다.")
+        @DisplayName("Crew 에 참가 신청을 성공한다.")
         public void joinCrew4() {
-            // given
             Long memberId = 1L;
-            Member member = Member.builder().id(memberId).build();
-            Crew crew = Crew.builder().name(CrewFactory.NAME).member(member) .build();
+            Member member = createMember(memberId);
+            given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+            Crew crew = createCrew(1L, "크루 이름", createMember(2L));
+            given(crewRepository.findByNameWithCrewMembers(crew.getName())).willReturn(Optional.of(crew));
+            given(crewParticipantRepository.findByCrewIdAndMemberIdUsingLock(crew.getId(), memberId)).willReturn(Optional.empty());
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
-            given(memberRepository.findById(eq(memberId))).willReturn(Optional.of(member));
-            given(crewRepository.findByName(eq(CrewFactory.NAME))).willReturn(Optional.empty());
 
-            // when && then
-            assertThatThrownBy(() -> crewService.joinCrew(crewJoinDto, memberId))
-                    .isInstanceOf(CrewBusinessException.CannotJoin.class)
-                    .hasMessage(String.format("%s 크루가 존재하지 않아 가입신청을 할 수 없습니다.", crewJoinDto.crewName()));
+            // when
+            crewService.joinCrew(memberId, crewJoinDto);
+
+            // then
+            then(crewParticipantRepository).should(times(1)).save(any(CrewParticipant.class));
         }
+    }
+
+    public static Member createMember(Long id) {
+        return Member.builder()
+                .id(id)
+                .nickname(new Nickname("nickname"))
+                .address(new Address("어딘가", "롯데캐슬"))
+                .email(new Email("test@email.com"))
+                .password(new Password("12345!@asa"))
+                .userType(UserType.GENERAL)
+                .build();
+    }
+
+    public static Crew createCrew(Long id) {
+        return Crew.builder()
+                .id(id)
+                .name(new Name("Crew 명"))
+                .introduce(new Introduce("Crew 소개"))
+                .detail(new Detail("Crew 세부정보"))
+                .hashTags(new HashTags(List.of("해시태그1", "해시태그2", "해시태그3")))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .build();
+    }
+
+    public static Crew createCrew(Long id, String name) {
+        return Crew.builder()
+                .id(id)
+                .name(new Name(name))
+                .introduce(new Introduce("Crew 소개"))
+                .detail(new Detail("Crew 세부정보"))
+                .hashTags(new HashTags(List.of("해시태그1", "해시태그2", "해시태그3")))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .build();
+    }
+
+    public static Crew createCrew(Long id, Member member) {
+        return Crew.builder()
+                .id(id)
+                .name(new Name("Crew 명"))
+                .introduce(new Introduce("Crew 소개"))
+                .detail(new Detail("Crew 세부정보"))
+                .hashTags(new HashTags(List.of("해시태그1", "해시태그2", "해시태그3")))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .member(member)
+                .build();
+    }
+
+    public static Crew createCrew(Long id, String name, Member member) {
+        return Crew.builder()
+                .id(id)
+                .name(new Name(name))
+                .introduce(new Introduce("Crew 소개"))
+                .detail(new Detail("Crew 세부정보"))
+                .hashTags(new HashTags(List.of("해시태그1", "해시태그2", "해시태그3")))
+                .kakaoLink("카카오 오픈채팅 링크")
+                .member(member)
+                .build();
+    }
+
+    public static CrewParticipant createCrewParticipant(Crew crew, Member member) {
+        return CrewParticipant.of(crew, member, LocalDateTime.now());
+    }
+
+    public static CrewMember createCrewMember(Crew crew, Member member) {
+        return CrewMember.builder()
+                .crew(crew)
+                .member(member)
+                .build();
     }
 }

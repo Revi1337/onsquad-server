@@ -49,4 +49,11 @@ public abstract class SquadBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class NotMatchCrewInfo extends SquadBusinessException {
+
+        public NotMatchCrewInfo(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

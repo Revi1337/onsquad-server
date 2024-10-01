@@ -3,7 +3,7 @@ package revi1337.onsquad.inrastructure.s3.application;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import revi1337.onsquad.image.application.AttachmentMagicByteValidator;
 import revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -17,8 +17,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
 
 import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties.*;
@@ -26,7 +24,7 @@ import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProper
 // TODO 리팩토링 필요. 해당 클래스 코드 너무 개판.
 @Slf4j
 @RequiredArgsConstructor
-@Service
+@Component
 public class S3BucketUploader {
 
     private static final String PATH_DELIMITER = "/";
@@ -36,33 +34,33 @@ public class S3BucketUploader {
     private final S3BucketProperties s3BucketProperties;
     private final S3Client s3Client;
 
-    public String uploadCrew(byte[] content, String originalFileName) { // TODO 확장할 여지가 있을 때 객체지향적으로 해결하여 OCP 를 지켜야 한다.ㄴ
+    public String uploadCrew(byte[] content, String fileName) { // TODO 확장할 여지가 있을 때 객체지향적으로 해결하여 OCP 를 지켜야 한다.
         Directories directories = s3BucketProperties.s3().directory().directories();
-        return uploadImage(directories.crewDirectory(), content, originalFileName);
+        return uploadImage(directories.crewDirectory(), content, fileName);
     }
 
-    public String uploadSquad(byte[] content, String originalFileName) { // TODO 확장할 여지가 있을 때 객체지향적으로 해결하여 OCP 를 지켜야 한다.
+    public String uploadSquad(byte[] content, String fileName) { // TODO 확장할 여지가 있을 때 객체지향적으로 해결하여 OCP 를 지켜야 한다.
         Directories directories = s3BucketProperties.s3().directory().directories();
-        return uploadImage(directories.squadDirectory(), content, originalFileName);
+        return uploadImage(directories.squadDirectory(), content, fileName);
     }
 
-    public String uploadImage(String directoryPath, byte[] content, String originalFileName) {
+    public String uploadImage(String directoryPath, byte[] content, String fileName) {
         AttachmentMagicByteValidator.validateMagicByte(content);
         try (InputStream inputStream = new ByteArrayInputStream(content)) {
             RequestBody requestBody = RequestBody.fromInputStream(inputStream, content.length);
-            MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(originalFileName)));
-            return uploadFile(directoryPath, originalFileName, requestBody, mediaType);
+            MediaType mediaType = MediaType.parseMediaType(Files.probeContentType(Paths.get(fileName)));
+            return uploadFile(directoryPath, fileName, requestBody, mediaType);
         } catch (IOException e) {
             log.error("{} s3 업로드 실패", directoryPath, e);
-            throw new IllegalArgumentException("byte array s3업로드 예외", e); // TODO 커스텀 익셉션 필요
+            throw new IllegalArgumentException("byte array s3업로드 예외", e);
         }
     }
 
-    private String uploadFile(String directoryPath, String originalFileName, RequestBody requestBody, MediaType mediaType) {
+    private String uploadFile(String directoryPath, String fileName, RequestBody requestBody, MediaType mediaType) {
         S3 s3 = s3BucketProperties.s3();
         String rootDirectory = s3.directory().root();
-        String randomFileName = generateFileNameUsingOriginal(originalFileName);
-        String fileNameWithFullPath = buildPath(PATH_DELIMITER, rootDirectory, directoryPath, randomFileName);
+        String randomFileName = generateUuidFileName(fileName);
+        String fileNameWithFullPath = String.join(PATH_DELIMITER, rootDirectory, directoryPath, randomFileName);
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .key(fileNameWithFullPath)
                 .contentType(mediaType.toString())
@@ -91,22 +89,14 @@ public class S3BucketUploader {
 
             s3Client.putObject(putObjectRequest, requestBody);
         } catch (IOException e) {
-            throw new IllegalArgumentException("byte array s3업로드 예외", e); // TODO 커스텀 익셉션 필요
+            throw new IllegalArgumentException("byte array s3업로드 예외", e);
         }
     }
 
-    private String generateFileNameUsingOriginal(String originalFileName) {
-        int delimeterIndex = originalFileName.lastIndexOf(FILE_EXTENSION_DELIMITER) + 1;
-        String extension = originalFileName.substring(delimeterIndex);
+    private String generateUuidFileName(String fileName) {
+        int delimeterIndex = fileName.lastIndexOf(FILE_EXTENSION_DELIMITER) + 1;
+        String extension = fileName.substring(delimeterIndex);
         return UUID.randomUUID() + FILE_EXTENSION_DELIMITER + extension;
-    }
-
-    private String buildPath(String delimeter, String... paths) {
-        return String.join(delimeter, new ArrayList<>() {
-            {
-                addAll(Arrays.asList(paths));
-            }
-        });
     }
 
     private String parseUriFromUrl(String remoteAddress) {

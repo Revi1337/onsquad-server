@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import revi1337.onsquad.auth.application.JsonWebTokenService;
-import revi1337.onsquad.auth.dto.AuthenticatedMember;
-import revi1337.onsquad.auth.dto.response.JsonWebTokenResponse;
+import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.dto.JsonWebToken;
 
 import java.io.IOException;
 
@@ -28,23 +28,23 @@ public class JsonWebTokenSuccessHandler implements AuthenticationSuccessHandler 
                                         Authentication authentication) throws IOException {
         log.info("{} --> onAuthenticationSuccess", getClass().getSimpleName());
         if (authentication.getPrincipal() instanceof AuthenticatedMember authenticatedMember) {
-            JsonWebTokenResponse jsonWebTokenResponse = generateJsonWebTokenPair(authenticatedMember);
-            jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebTokenResponse.refreshToken(), authenticatedMember.id());
-            sendTokenResponseToClient(response, jsonWebTokenResponse);
+            JsonWebToken jsonWebToken = generateJsonWebTokenPair(authenticatedMember);
+            jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebToken.refreshToken(), authenticatedMember.id());
+            sendTokenResponseToClient(response, jsonWebToken);
             return;
         }
 
         throw new RuntimeException("unexpected principal type");
     }
 
-    private JsonWebTokenResponse generateJsonWebTokenPair(AuthenticatedMember authenticatedMember) {
+    private JsonWebToken generateJsonWebTokenPair(AuthenticatedMember authenticatedMember) {
         return jsonWebTokenService.generateTokenPair(authenticatedMember.toDto());
     }
 
     private void sendTokenResponseToClient(HttpServletResponse response,
-                                           JsonWebTokenResponse jsonWebTokenResponse) throws IOException {
+                                           JsonWebToken jsonWebToken) throws IOException {
         response.setContentType(APPLICATION_JSON_VALUE);
         response.getWriter()
-                .write(objectMapper.writeValueAsString(jsonWebTokenResponse));
+                .write(objectMapper.writeValueAsString(jsonWebToken));
     }
 }

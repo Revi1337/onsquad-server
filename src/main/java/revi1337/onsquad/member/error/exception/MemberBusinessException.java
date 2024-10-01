@@ -21,4 +21,11 @@ public abstract class MemberBusinessException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), memberId));
         }
     }
+
+    public static class WrongPassword extends MemberBusinessException {
+
+        public WrongPassword(ErrorCode errorCode, Number memberId) {
+            super(errorCode, String.format(errorCode.getDescription(), memberId));
+        }
+    }
 }

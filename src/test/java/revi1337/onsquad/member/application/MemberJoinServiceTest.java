@@ -8,12 +8,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import revi1337.onsquad.auth.error.exception.AuthJoinException;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.Password;
-import revi1337.onsquad.member.dto.MemberDto;
-import revi1337.onsquad.member.error.DuplicateMember;
+import revi1337.onsquad.member.application.dto.MemberDto;
 import revi1337.onsquad.support.TestContainerSupport;
 
 import java.time.Duration;
@@ -30,7 +29,7 @@ class MemberJoinServiceTest extends TestContainerSupport {
     private static final String TEST_NICKNAME = "nickname";
     private static final String TEST_AUTH_CODE = "1111";
 
-    @Mock private MemberRepository memberRepository;
+    @Mock private MemberJpaRepository memberRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private JoinMailService joinMailService;
     @InjectMocks private MemberJoinService memberJoinService;

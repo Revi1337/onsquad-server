@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import static revi1337.onsquad.crew.domain.QCrew.*;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
-import static revi1337.onsquad.member.domain.QMember.*;
 import static revi1337.onsquad.squad.domain.QSquad.*;
 import static revi1337.onsquad.squad_member.domain.QSquadMember.*;
 
@@ -32,23 +31,11 @@ public class SquadQueryRepositoryImpl implements SquadQueryRepository {
     }
 
     @Override
-    public Optional<Squad> findSquadByIdAndTitleWithMember(Long id) {
+    public Optional<Squad> findSquadByIdWithCrew(Long id) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(squad)
-                        .innerJoin(squad.crewMember, crewMember).fetchJoin()
-                        .innerJoin(crewMember.member, member).fetchJoin()
-                        .where(squad.id.eq(id))
-                        .fetchOne()
-        );
-    }
-
-    @Override
-    public Optional<Squad> findSquadWithCrewById(Long id) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(squad)
-                        .innerJoin(squad.crew, crew)
+                        .innerJoin(squad.crew, crew).fetchJoin()
                         .where(squad.id.eq(id))
                         .fetchOne()
         );
@@ -72,6 +59,31 @@ public class SquadQueryRepositoryImpl implements SquadQueryRepository {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(squad)
+                        .innerJoin(squad.squadMembers, squadMember).fetchJoin()
+                        .where(squad.id.eq(id))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<Squad> findByIdWithCrewAndCrewMembers(Long id) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(squad)
+                        .innerJoin(squad.crew, crew)
+                        .innerJoin(crew.crewMembers, crewMember)
+                        .where(squad.id.eq(id))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(squad)
+                        .innerJoin(squad.crew, crew).fetchJoin()
+                        .innerJoin(squad.crewMember, crewMember).fetchJoin()
                         .innerJoin(squad.squadMembers, squadMember).fetchJoin()
                         .where(squad.id.eq(id))
                         .fetchOne()

@@ -4,8 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import revi1337.onsquad.auth.domain.vo.AccessToken;
-import revi1337.onsquad.auth.domain.vo.RefreshToken;
+import revi1337.onsquad.auth.application.token.AccessToken;
+import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.config.PropertiesConfiguration;
 
 import java.util.Arrays;

@@ -5,11 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.squad.domain.category.Category;
-import revi1337.onsquad.squad.domain.squad_category.SquadCategoryJdbcRepository;
+import revi1337.onsquad.category.domain.Category;
+import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad_category.domain.SquadCategoryJdbcRepository;
 import revi1337.onsquad.squad.domain.vo.Title;
-import revi1337.onsquad.squad.domain.vo.category.CategoryType;
-import revi1337.onsquad.squad.dto.request.CategoryCondition;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,23 +29,38 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
+    public Squad saveAndFlush(Squad squad) {
+        return squadJpaRepository.saveAndFlush(squad);
+    }
+
+    @Override
     public Optional<Squad> findSquadWithMembersById(Long id, Title title) {
         return squadJpaRepository.findSquadWithMembersById(id, title);
     }
 
     @Override
-    public Optional<Squad> findSquadByIdAndTitleWithMember(Long id) {
-        return squadJpaRepository.findSquadByIdAndTitleWithMember(id);
+    public Optional<Squad> findById(Long id) {
+        return squadJpaRepository.findById(id);
     }
 
     @Override
-    public Page<Squad> findSquadsByCrewName(Name crewName, CategoryType categoryType, Pageable pageable) {
-        return squadQueryDslRepository.findSquadsByCrewName(crewName, categoryType, pageable);
+    public Optional<SquadInfoDomainDto> findSquadById(Long id) {
+        return squadQueryDslRepository.findSquadById(id);
     }
 
     @Override
-    public Optional<Squad> findSquadWithCrewById(Long id) {
-        return squadJpaRepository.findSquadWithCrewById(id);
+    public Page<SquadInfoDomainDto> findSquadsByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
+        return squadQueryDslRepository.findSquadsByCrewId(crewId, categoryType, pageable);
+    }
+
+    @Override
+    public List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Long crewId) {
+        return squadQueryDslRepository.findSquadsInCrew(memberId, crewId);
+    }
+
+    @Override
+    public Optional<Squad> findSquadByIdWithCrew(Long id) {
+        return squadJpaRepository.findSquadByIdWithCrew(id);
     }
 
     @Override
@@ -55,6 +71,16 @@ public class SquadRepositoryImpl implements SquadRepository {
     @Override
     public Optional<Squad> findSquadByIdWithSquadMembers(Long id) {
         return squadJpaRepository.findSquadByIdWithSquadMembers(id);
+    }
+
+    @Override
+    public Optional<Squad> findByIdWithCrewAndCrewMembers(Long id) {
+        return squadJpaRepository.findByIdWithCrewAndCrewMembers(id);
+    }
+
+    @Override
+    public Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id) {
+        return squadJpaRepository.findByIdWithOwnerAndCrewAndSquadMembers(id);
     }
 
     @Override

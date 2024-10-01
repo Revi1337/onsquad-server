@@ -7,26 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import revi1337.onsquad.common.domain.BaseEntity;
+import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.vo.CrewRole;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.member.domain.Member;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static revi1337.onsquad.crew_member.domain.vo.CrewRole.*;
-import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
 
 @DynamicInsert
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@AttributeOverrides({
-        @AttributeOverride(name = "createdAt", column = @Column(name = "request_at", nullable = false, updatable = false)),
-        @AttributeOverride(name = "updatedAt", column = @Column(name = "participate_at", nullable = false))
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "unique_crewmember_crew_member", columnNames = {"crew_id", "member_id"})
 })
-public class CrewMember extends BaseEntity {
+@AttributeOverrides({
+        @AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))
+})
+public class CrewMember extends RequestEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,49 +46,40 @@ public class CrewMember extends BaseEntity {
     @Column(nullable = false)
     private CrewRole role;
 
-    @ColumnDefault("'PENDING'")
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private JoinStatus status;
-
     @Builder
-    private CrewMember(Long id, Crew crew, Member member, JoinStatus status, CrewRole role) {
+    private CrewMember(Long id, Crew crew, Member member, CrewRole role, LocalDateTime participantAt) {
+        super(participantAt);
         this.id = id;
         this.crew = crew;
         this.member = member;
-        this.status = status == null ? PENDING : status;
         this.role = role == null ? GENERAL : role;
     }
 
-    public static CrewMember forOwner(Member member) {
+    public static CrewMember forOwner(Member member, LocalDateTime participantAt) {
         return CrewMember.builder()
                 .member(member)
-                .status(ACCEPT)
                 .role(OWNER)
+                .participantAt(participantAt)
                 .build();
     }
 
-    public static CrewMember forGeneral(Crew crew, Member member) {
+    public static CrewMember forGeneral(Crew crew, Member member, LocalDateTime participantAt) {
         return CrewMember.builder()
                 .crew(crew)
                 .member(member)
+                .participantAt(participantAt)
                 .build();
     }
 
-    public static CrewMember of(Crew crew, Member member, JoinStatus status) {
+    public static CrewMember of(Crew crew, Member member) {
         return CrewMember.builder()
                 .crew(crew)
                 .member(member)
-                .status(status)
                 .build();
     }
 
     public void addCrew(Crew crew) {
         this.crew = crew;
-    }
-
-    public void updateStatus(JoinStatus status) {
-        this.status = status;
     }
 
     @Override

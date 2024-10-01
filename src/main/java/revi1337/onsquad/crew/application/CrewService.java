@@ -1,94 +1,93 @@
 package revi1337.onsquad.crew.application;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.crew.application.dto.CrewInfoDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.dto.CrewCreateDto;
-import revi1337.onsquad.crew.dto.CrewJoinDto;
-import revi1337.onsquad.crew.dto.CrewWithMemberAndImageDto;
+import revi1337.onsquad.crew.application.dto.CrewCreateDto;
+import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
+import revi1337.onsquad.hashtag.domain.Hashtag;
+import revi1337.onsquad.hashtag.util.HashtagTypeUtil;
+import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
 import revi1337.onsquad.member.domain.MemberRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CrewService {
 
     private final CrewRepository crewRepository;
-    private final CrewMemberRepository crewMemberRepository;
     private final MemberRepository memberRepository;
+    private final CrewParticipantRepository crewParticipantRepository;
+    private final CrewMemberRepository crewMemberRepository;
     private final S3BucketUploader s3BucketUploader;
 
     public boolean checkDuplicateNickname(String crewName) {
         return crewRepository.existsByName(new Name(crewName));
     }
 
-    @Transactional
-    public void createNewCrew(CrewCreateDto crewCreateDto, Long memberId, byte[] image, String imageFileName) {
-        memberRepository.findById(memberId)
-                .ifPresent(member -> crewRepository.findByName(new Name(crewCreateDto.name()))
-                        .ifPresentOrElse(
-                                ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, crewCreateDto.name()); },
-                                () -> persistCrewAndRegisterOwner(crewCreateDto, image, imageFileName, member)
-                        )
-                );
+    public CrewInfoDto findCrewById(Long crewId) {
+        return CrewInfoDto.from(crewRepository.getCrewById(crewId));
     }
 
-    private void persistCrewAndRegisterOwner(CrewCreateDto crewCreateDto, byte[] imageBinary, String imageFileName, Member member) {
+    public List<CrewInfoDto> findCrewsByName(String crewName, Pageable pageable) {
+        return crewRepository.findCrewsByName(crewName, pageable).stream()
+                .map(CrewInfoDto::from)
+                .toList();
+    }
+
+    // TODO AWS 가 껴있기 때문에 트랜잭션 분리 필요.
+    @Transactional
+    public void createNewCrew(Long memberId, CrewCreateDto dto, byte[] image, String imageFileName) {
+        List<HashtagType> hashtagTypes = HashtagTypeUtil.extractPossible(HashtagType.fromTexts(dto.hashTags()));
+        Member member = memberRepository.getById(memberId);
+        crewRepository.findByName(new Name(dto.name()))
+                .ifPresent(ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, dto.name()); });
+
+        persistCrewAndRegisterOwner(dto, image, imageFileName, hashtagTypes, member);
+    }
+
+    @Transactional
+    public void joinCrew(Long memberId, CrewJoinDto crewJoinDto) {
+        Crew crew = crewRepository.getByName(new Name(crewJoinDto.crewName()));
+        checkDifferenceCrewCreator(crew, memberId);
+        crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), memberId).ifPresentOrElse(
+                crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crew.getName().getValue()); },
+                () -> crewParticipantRepository.upsertCrewParticipant(crew.getId(), memberId, LocalDateTime.now())
+        );
+    }
+
+    private void persistCrewAndRegisterOwner(CrewCreateDto dto, byte[] imageBinary, String imageFileName, List<HashtagType> hashtagTypes, Member member) {
         String uploadRemoteAddress = s3BucketUploader.uploadCrew(imageBinary, imageFileName);
-        Crew crew = crewCreateDto.toEntity(new Image(uploadRemoteAddress), member);
-        crew.addCrewMember(CrewMember.forOwner(member));
+        Crew crew = dto.toEntity(new Image(uploadRemoteAddress), member);
+        crew.addCrewMember(CrewMember.forOwner(member, LocalDateTime.now()));
         crewRepository.save(crew);
+
+        List<Hashtag> hashtags = Hashtag.fromHashtagTypes(hashtagTypes);
+        crewRepository.batchInsertCrewHashtags(crew.getId(), hashtags);
     }
 
-    public CrewWithMemberAndImageDto findCrewByName(String crewName) {
-        return crewRepository.findCrewByName(new Name(crewName))
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, crewName));
-    }
-
-    public List<CrewWithMemberAndImageDto> findCrewsByName() {
-        return crewRepository.findCrewsByName();
-    }
-
-    @Transactional
-    public void joinCrew(CrewJoinDto crewJoinDto, Long memberId) {
-        memberRepository.findById(memberId)
-                .ifPresent(member -> crewRepository.findByName(new Name(crewJoinDto.crewName()))
-                        .ifPresentOrElse(
-                                crew -> retrieveAndJoinCrewMember(member, crew),
-                                () -> { throw new CrewBusinessException.CannotJoin(CANNOT_JOIN, crewJoinDto.crewName()); }
-                        )
-                );
-    }
-
-    private void retrieveAndJoinCrewMember(Member member, Crew crew) {
-        crewMemberRepository.findCrewMemberByMemberId(member.getId())
-                .ifPresentOrElse(
-                        crewMember -> judgementCurrentJoinStatus(crewMember, crew.getName()),
-                        () -> crewMemberRepository.save(CrewMember.forGeneral(crew, member))
-                );
-    }
-
-    private void judgementCurrentJoinStatus(CrewMember crewMember, Name name) {
-        if (crewMember.getStatus() == JoinStatus.ACCEPT) {
-            throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, name.getValue());
-        }
-
-        if (crewMember.getStatus() == JoinStatus.PENDING) {
-            throw new CrewBusinessException.AlreadyRequest(ALREADY_REQUEST, name.getValue());
+    private void checkDifferenceCrewCreator(Crew crew, Long memberId) {
+        if (crew.getMember().getId().equals(memberId)) {
+            throw new CrewBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
         }
     }
 }

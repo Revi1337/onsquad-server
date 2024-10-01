@@ -24,15 +24,6 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
-        generate_statistics: true
-        cache:
-          use_query_cache: false
-          use_second_level_cache: true
-          factory_class: org.hibernate.cache.jcache.internal.JCacheRegionFactory
-      javax:
-        persistence:
-          sharedCache:
-            mode: ENABLE_SELECTIVE
 
   data:
     web:
@@ -65,6 +56,6 @@ logging:
   level:
     org:
       springframework:
-        jdbc: debug
+        jdbc: INFO
       hibernate:
-        SQL: debug
+        SQL: DEBUG

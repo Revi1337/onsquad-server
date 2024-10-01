@@ -3,8 +3,8 @@ package revi1337.onsquad.member.application;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.common.mail.EmailSender;
-import revi1337.onsquad.common.mail.MailStatus;
+import revi1337.onsquad.inrastructure.mail.EmailSender;
+import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.member.domain.redis.RedisMailRepository;
 
 import java.time.Duration;
@@ -14,10 +14,9 @@ import java.time.Duration;
 @Service
 public class JoinMailService {
 
+    private static final String SUBJECT = "[ONSQUAD] 회원가입 인증코드 발송 안내";
     private final EmailSender emailSender;
     private final RedisMailRepository redisMailRepository;
-
-    private static final String SUBJECT = "[ONSQUAD] 회원가입 인증코드 발송 안내";
 
     // TODO Duration 을 외부에서 주입받도록 변경 필요.
     public void sendAuthCodeToEmail(String email, String authCode) {

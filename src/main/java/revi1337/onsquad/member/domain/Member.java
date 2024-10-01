@@ -6,9 +6,12 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import revi1337.onsquad.common.domain.BaseEntity;
+import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.member.domain.vo.*;
 
-import java.util.Objects;
+import java.util.*;
+
+import static revi1337.onsquad.member.domain.vo.UserType.*;
 
 @DynamicInsert
 @DynamicUpdate
@@ -17,14 +20,13 @@ import java.util.Objects;
 @Entity
 public class Member extends BaseEntity {
 
+    private static final Introduce DEFAULT_INTRODUCE = new Introduce("[소개 없음]");
+    private static final String DEFAULT_KAKAO_LINK = "";
+    private static final String DEFAULT_PROFILE_IMAGE = "";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ColumnDefault("'GENERAL'")
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
 
     @Embedded
     private Email email;
@@ -38,33 +40,48 @@ public class Member extends BaseEntity {
     @Embedded
     private Password password;
 
+    @Embedded
+    private Introduce introduce = DEFAULT_INTRODUCE;
+
+    private String profileImage = DEFAULT_PROFILE_IMAGE;
+
+    private String kakaoLink = DEFAULT_KAKAO_LINK;
+
+    @ColumnDefault("'GENERAL'")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserType userType = GENERAL;
+
+    @Enumerated(EnumType.STRING)
+    private Mbti mbti;
+
+    @OneToMany(mappedBy = "member")
+    private final Set<Crew> crews = new HashSet<>();
+
     @Builder
-    private Member(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {
+    private Member(Long id, Email email, Address address, Nickname nickname, Password password, Introduce introduce, String profileImage, String kakaoLink, UserType userType, Mbti mbti) {
         this.id = id;
-        this.userType = userType == null ? UserType.GENERAL : userType;
         this.email = email;
         this.address = address;
         this.nickname = nickname;
         this.password = password;
+        this.introduce = introduce;
+        this.profileImage = profileImage;
+        this.kakaoLink = kakaoLink;
+        this.userType = userType;
+        this.mbti = mbti;
     }
 
-    public static Member of(Email email, Address address, Nickname nickname, Password password) {
-        return Member.builder()
-                .email(email)
-                .address(address)
-                .nickname(nickname)
-                .password(password)
-                .build();
+    public void updateProfile(Member member) {
+        this.nickname = member.getNickname();
+        this.introduce = member.getIntroduce();
+        this.mbti = member.getMbti();
+        this.kakaoLink = member.getKakaoLink();
+        this.address = member.getAddress();
     }
 
-    public static Member of(UserType userType, Email email, Address address, Nickname nickname, Password password) {
-        return Member.builder()
-                .userType(userType)
-                .email(email)
-                .address(address)
-                .nickname(nickname)
-                .password(password)
-                .build();
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public void updatePassword(CharSequence encodedPassword) {

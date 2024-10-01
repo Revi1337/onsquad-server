@@ -4,10 +4,9 @@ import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
-import revi1337.onsquad.auth.domain.vo.AccessToken;
+import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.config.PropertiesConfiguration;
 

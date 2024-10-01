@@ -8,12 +8,14 @@ public interface SquadQueryRepository {
 
     Optional<Squad> findSquadWithMembersById(Long id, Title title);
 
-    Optional<Squad> findSquadByIdAndTitleWithMember(Long id);
-
-    Optional<Squad> findSquadWithCrewById(Long id);
+    Optional<Squad> findSquadByIdWithCrew(Long id);
 
     Optional<Squad> findSquadByIdWithCrewAndCrewMembers(Long id);
 
     Optional<Squad> findSquadByIdWithSquadMembers(Long id);
+
+    Optional<Squad> findByIdWithCrewAndCrewMembers(Long id);
+
+    Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id);
 
 }

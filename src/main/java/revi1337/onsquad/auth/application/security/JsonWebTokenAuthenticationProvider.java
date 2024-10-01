@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import revi1337.onsquad.auth.dto.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthenticatedMember;
 
 @RequiredArgsConstructor
 public class JsonWebTokenAuthenticationProvider implements AuthenticationProvider {

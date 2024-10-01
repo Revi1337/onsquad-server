@@ -2,11 +2,13 @@ package revi1337.onsquad.crew.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_hashtag.domain.CrewHashtag;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
@@ -15,7 +17,6 @@ import java.util.*;
 
 import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.CascadeType.REFRESH;
-
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +27,8 @@ import static jakarta.persistence.CascadeType.REFRESH;
         }
 )
 public class Crew extends BaseEntity {
+
+    private static final int HASHTAG_BATCH_SIZE = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +43,11 @@ public class Crew extends BaseEntity {
     @Embedded
     private Detail detail;
 
-    @Embedded
-    private HashTags hashTags;
-
     private String kakaoLink;
+
+    @BatchSize(size = HASHTAG_BATCH_SIZE)
+    @OneToMany(mappedBy = "crew")
+    private final List<CrewHashtag> hashtags = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "image_id", nullable = false)
@@ -62,7 +66,6 @@ public class Crew extends BaseEntity {
         this.name = name;
         this.introduce = introduce;
         this.detail = detail;
-        this.hashTags = hashTags;
         this.image = image;
         this.kakaoLink = kakaoLink;
         this.member = member;
@@ -75,12 +78,14 @@ public class Crew extends BaseEntity {
         }
     }
 
-    public void updateCrew(String name, String introduce, String detail, Collection<String> hashTags, String kakaoLink, String imageUrl) {
+    public void updateCrew(String name, String introduce, String detail, String kakaoLink) {
         this.name = this.name.updateName(name);
         this.introduce = this.introduce.updateIntroduce(introduce);
         this.detail = this.detail.updateDetail(detail);
-        this.hashTags = this.hashTags.updateHashTags(hashTags);
         this.kakaoLink = kakaoLink;
+    }
+
+    public void updateImage(String imageUrl) {
         this.image = this.image.updateImage(imageUrl);
     }
 

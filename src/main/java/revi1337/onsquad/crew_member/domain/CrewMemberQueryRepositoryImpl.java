@@ -3,11 +3,7 @@ package revi1337.onsquad.crew_member.domain;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
-import revi1337.onsquad.crew_member.dto.EnrolledCrewMemberDto;
-import revi1337.onsquad.crew_member.dto.QEnrolledCrewMemberDto;
 
-import java.util.List;
 import java.util.Optional;
 
 import static revi1337.onsquad.crew.domain.QCrew.*;
@@ -20,12 +16,23 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    public boolean existsByMemberIdAndCrewName(Long memberId, Name name) {
+        Integer fetchOne = jpaQueryFactory
+                .selectOne()
+                .from(crewMember)
+                .innerJoin(crewMember.crew, crew).on(crew.name.eq(name))
+                .where(crewMember.member.id.eq(memberId))
+                .fetchFirst();
+
+        return fetchOne != null;
+    }
+
+    @Override
     public boolean existsCrewMember(Long memberId) {
         Integer fetchOne = jpaQueryFactory
                 .selectOne()
                 .from(crewMember)
-                .innerJoin(crewMember.member, member)
-                .where(member.id.eq(memberId))
+                .where(crewMember.member.id.eq(memberId))
                 .fetchFirst();
 
         return fetchOne != null;
@@ -38,8 +45,7 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
                 .from(crewMember)
                 .innerJoin(crewMember.member, member)
                 .where(
-                        member.id.eq(memberId),
-                        crewMember.status.eq(JoinStatus.ACCEPT)
+                        member.id.eq(memberId)
                 )
                 .fetchFirst();
 
@@ -54,26 +60,6 @@ public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository 
                         .where(crewMember.member.id.eq(memberId))
                         .fetchOne()
         );
-    }
-
-    @Override
-    public List<EnrolledCrewMemberDto> findMembersForSpecifiedCrew(Name crewName, Long memberId) {
-        return jpaQueryFactory
-                .select(new QEnrolledCrewMemberDto(
-                        crew.name,
-                        member.nickname,
-                        member.email,
-                        crewMember.status,
-                        crewMember.createdAt
-                ))
-                .from(crewMember)
-                .innerJoin(crewMember.member, member)
-                .innerJoin(crewMember.crew, crew)
-                .where(
-                        member.id.eq(memberId),
-                        crew.name.eq(crewName)
-                )
-                .fetch();
     }
 
     @Override

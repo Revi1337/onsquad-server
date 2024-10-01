@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import revi1337.onsquad.common.mail.EmailSender;
-import revi1337.onsquad.common.mail.MailStatus;
+import revi1337.onsquad.inrastructure.mail.EmailSender;
+import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.member.domain.redis.RedisMailRepository;
 
 import java.time.Duration;

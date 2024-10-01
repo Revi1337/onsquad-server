@@ -7,7 +7,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import revi1337.onsquad.auth.config.AuthenticateArgumentResolver;
 import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
-import revi1337.onsquad.squad.controller.category.converter.CategoryConditionConverter;
+import revi1337.onsquad.category.presentation.converter.CategoryConditionConverter;
 
 import java.util.List;
 

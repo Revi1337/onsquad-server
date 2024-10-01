@@ -2,6 +2,7 @@ package revi1337.onsquad.squad.domain.vo.category;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 
 import java.util.List;
 
