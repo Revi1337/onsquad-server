@@ -39,7 +39,7 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(false)));
     }
 
-    @PostMapping( value = "/crew/new", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/crew/new", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<String>> createNewCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
             @RequestPart MultipartFile file,
