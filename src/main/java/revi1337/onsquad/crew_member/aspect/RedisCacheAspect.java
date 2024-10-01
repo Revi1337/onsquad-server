@@ -59,10 +59,16 @@ public class RedisCacheAspect {
                 return objectMapper.convertValue(cachedData, genericInternalType);
             }
 
-            Object result = joinPoint.proceed();
+            Object result = joinPoint.proceed();                        // Invoke Method
 
             if (result != null) {
-                if (!(result instanceof Collection<?> collection) || (collection.isEmpty() && redisCache.cacheEmptyCollection())) {
+                boolean shouldCache;
+                if (result instanceof Collection<?> collection) {
+                    shouldCache = !collection.isEmpty() || redisCache.cacheEmptyCollection();
+                } else {
+                    shouldCache = true;
+                }
+                if (shouldCache) {
                     redisTemplate.opsForValue().set(redisKey, result, getTtlAsDuration(redisCache));
                 }
             }
