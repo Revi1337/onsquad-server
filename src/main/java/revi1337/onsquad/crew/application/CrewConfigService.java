@@ -60,11 +60,11 @@ public class CrewConfigService {
     }
 
     @Transactional
-    public void acceptCrewMember(Long memberId, Long crewId, CrewAcceptDto dto) {
-        Crew crew = crewRepository.getById(crewId);
+    public void acceptCrewMember(Long memberId, CrewAcceptDto dto) {
+        Crew crew = crewRepository.getById(dto.crewId());
         validateCrewPublisher(memberId, crew);
-        crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), dto.memberId()).ifPresentOrElse(
-                crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId); },
+        crewMemberRepository.findByCrewIdAndMemberId(dto.crewId(), dto.memberId()).ifPresentOrElse(
+                crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewId()); },
                 () -> {
                     CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crew.getId(), dto.memberId());
                     crewMemberRepository.save(CrewMember.forGeneral(crew, crewParticipant.getMember(), LocalDateTime.now()));

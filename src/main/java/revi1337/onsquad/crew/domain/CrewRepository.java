@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
-import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW_ID;
 
 public interface CrewRepository {
 
@@ -31,27 +30,27 @@ public interface CrewRepository {
 
     Optional<Crew> findByIdWithImage(Long id);
 
-    Optional<Crew> findByNameWithCrewMembers(Name name);
+    Optional<Crew> findByIdWithCrewMembers(Long id);
 
     void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags);
 
     default CrewInfoDomainDto getCrewById(Long id) {
         return findCrewById(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 
     default Crew getByIdWithImage(Long id) {
         return findByIdWithImage(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 
     default Crew getById(Long id) {
         return findById(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 
-    default Crew getByNameWithCrewMembers(Name name) {
-        return findByNameWithCrewMembers(name)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    default Crew getByIdWithCrewMembers(Long id) {
+        return findByIdWithCrewMembers(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 }

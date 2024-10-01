@@ -43,11 +43,10 @@ public class CrewConfigController {
 
     @PatchMapping("/crew/accept")
     public ResponseEntity<RestResponse<String>> acceptCrewMember(
-            @RequestParam @Positive Long crewId,
             @Valid @RequestBody CrewAcceptRequest crewAcceptRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        crewConfigService.acceptCrewMember(authenticatedMember.toDto().getId(), crewId, crewAcceptRequest.toDto());
+        crewConfigService.acceptCrewMember(authenticatedMember.toDto().getId(), crewAcceptRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

@@ -14,8 +14,6 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.squad.domain.*;
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.vo.CategoryType;
@@ -44,8 +42,8 @@ public class SquadService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadParticipantRepository squadParticipantRepository;
 
-    public SquadInfoDto findSquad(Long id) {
-        return SquadInfoDto.from(squadRepository.getSquadById(id));
+    public SquadInfoDto findSquad(Long squadId) {
+        return SquadInfoDto.from(squadRepository.getSquadById(squadId));
     }
 
     public List<SquadInfoDto> findSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
@@ -55,23 +53,23 @@ public class SquadService {
     }
 
     @Transactional
-    public void createNewSquad(SquadCreateDto dto, Long memberId) {
-        Member member = getMemberById(memberId);
-        Crew crew = crewRepository.getByNameWithCrewMembers(new Name(dto.crewName()));
+    public void createNewSquad(Long memberId, Long crewId, SquadCreateDto dto) {
+        Member member = memberRepository.getById(memberId);
+        Crew crew = crewRepository.getByIdWithCrewMembers(crewId);
         persistSquadIfCrewMemberIsValid(dto, member, crew);
     }
 
     @Transactional
-    public void submitParticipationRequest(SquadJoinDto dto, Long memberId) {
+    public void submitParticipationRequest(Long memberId, Long crewId, SquadJoinDto dto) {
         Squad squad = squadRepository.getByIdWithOwnerAndCrewAndSquadMembers(dto.squadId());
-        checkCrewInfoIsMatch(dto, squad);
+        checkCrewInfoIsMatch(crewId, squad);
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrew().getId(), memberId);
         validateSquadMetaData(squad, crewMember);
         squadParticipantRepository.upsertSquadParticipant(squad.getId(), crewMember.getId(), LocalDateTime.now());
     }
 
-    private void checkCrewInfoIsMatch(SquadJoinDto dto, Squad squad) {
-        if (!squad.getCrew().getName().equals(new Name(dto.crewName()))) {
+    private void checkCrewInfoIsMatch(Long requestCrewId, Squad squad) {
+        if (!squad.getCrew().getId().equals(requestCrewId)) {
             throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
         }
     }
@@ -93,11 +91,6 @@ public class SquadService {
                 throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
             }
         }
-    }
-
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOTFOUND, memberId));
     }
 
     private void persistSquadIfCrewMemberIsValid(SquadCreateDto dto, Member member, Crew crew) {

@@ -11,7 +11,6 @@ import revi1337.onsquad.squad.domain.vo.Title;
 import java.util.List;
 
 public record SquadCreateDto(
-        String crewName,
         String title,
         String content,
         int capacity,

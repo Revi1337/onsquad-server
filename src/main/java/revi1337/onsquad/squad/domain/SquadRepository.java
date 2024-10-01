@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-import revi1337.onsquad.squad.domain.vo.Title;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 
@@ -20,8 +19,6 @@ public interface SquadRepository {
 
     Squad saveAndFlush(Squad squad);
 
-    Optional<Squad> findSquadWithMembersById(Long id, Title title);
-
     Optional<Squad> findById(Long id);
 
     Optional<SquadInfoDomainDto> findSquadById(Long id);
@@ -32,11 +29,7 @@ public interface SquadRepository {
 
     Optional<Squad> findSquadByIdWithCrew(Long id);
 
-    Optional<Squad> findSquadByIdWithCrewAndCrewMembers(Long id);
-
     Optional<Squad> findSquadByIdWithSquadMembers(Long id);
-
-    Optional<Squad> findByIdWithCrewAndCrewMembers(Long id);
 
     Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id);
 
@@ -59,11 +52,6 @@ public interface SquadRepository {
 
     default Squad getSquadByIdWithCrew(Long id) {
         return findSquadByIdWithCrew(id)
-                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
-    }
-
-    default Squad getByIdWithCrewAndCrewMembers(Long id) {
-        return findByIdWithCrewAndCrewMembers(id)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
     }
 
