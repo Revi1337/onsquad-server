@@ -23,6 +23,8 @@ public interface CrewRepository {
 
     Optional<Crew> findByName(Name name);
 
+    Optional<Crew> findByIdWithHashtags(Long id);
+
     Optional<Crew> findByNameWithHashtags(Name name);
 
     boolean existsByName(Name name);
@@ -55,6 +57,11 @@ public interface CrewRepository {
     default Crew getByName(Name name) {
         return findByName(name)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    }
+
+    default Crew getByIdWithHashtags(Long id) {
+        return findByIdWithHashtags(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
     }
 
     default Crew getByNameWithHashtags(Name name) {

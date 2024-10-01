@@ -12,6 +12,10 @@ public interface CrewJpaRepository extends JpaRepository<Crew, Long>, CrewQueryR
 
     boolean existsByName(Name name);
 
+    @Query("select c from Crew as c inner join c.hashtags as ch where c.id = :id")
+    Optional<Crew> findByIdWithHashtags(Long id);
+
     @Query("select c from Crew as c inner join c.hashtags as ch where c.name = :name")
     Optional<Crew> findByNameWithHashtags(Name name);
+
 }

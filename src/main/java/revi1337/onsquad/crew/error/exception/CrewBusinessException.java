@@ -46,8 +46,8 @@ public abstract class CrewBusinessException extends RuntimeException {
 
     public static class AlreadyJoin extends CrewBusinessException {
 
-        public AlreadyJoin(ErrorCode errorCode, String crewName) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName));
+        public AlreadyJoin(ErrorCode errorCode, Number crewId) {
+            super(errorCode, String.format(errorCode.getDescription(), crewId));
         }
     }
 
@@ -60,8 +60,8 @@ public abstract class CrewBusinessException extends RuntimeException {
 
     public static class InvalidPublisher extends CrewBusinessException {
 
-        public InvalidPublisher(ErrorCode errorCode, String crewName) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName));
+        public InvalidPublisher(ErrorCode errorCode, Number crewId) {
+            super(errorCode, String.format(errorCode.getDescription(), crewId));
         }
     }
 

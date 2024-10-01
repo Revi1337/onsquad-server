@@ -1,8 +1,10 @@
 package revi1337.onsquad.crew.presentation;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.config.Authenticate;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/config")
 @RestController
@@ -26,7 +29,7 @@ public class CrewConfigController {
 
     @PutMapping(value = "/crew", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<String>> updateCrew(
-            @RequestParam Long crewId,
+            @RequestParam @Positive Long crewId,
             @Valid @RequestPart CrewUpdateRequest crewUpdateRequest,
             @RequestPart MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
@@ -40,10 +43,11 @@ public class CrewConfigController {
 
     @PatchMapping("/crew/accept")
     public ResponseEntity<RestResponse<String>> acceptCrewMember(
+            @RequestParam @Positive Long crewId,
             @Valid @RequestBody CrewAcceptRequest crewAcceptRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        crewConfigService.acceptCrewMember(authenticatedMember.toDto().getId(), crewAcceptRequest.toDto());
+        crewConfigService.acceptCrewMember(authenticatedMember.toDto().getId(), crewId, crewAcceptRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
