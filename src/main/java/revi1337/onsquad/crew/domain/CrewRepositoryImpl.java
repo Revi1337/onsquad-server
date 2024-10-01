@@ -41,16 +41,6 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<Crew> findByIdWithHashtags(Long id) {
-        return crewJpaRepository.findByIdWithHashtags(id);
-    }
-
-    @Override
-    public Optional<Crew> findByNameWithHashtags(Name name) {
-        return crewJpaRepository.findByNameWithHashtags(name);
-    }
-
-    @Override
     public boolean existsByName(Name name) {
         return crewJpaRepository.existsByName(name);
     }

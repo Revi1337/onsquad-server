@@ -37,24 +37,10 @@ public abstract class CrewBusinessException extends RuntimeException {
         }
     }
 
-    public static class CannotJoin extends CrewBusinessException {
-
-        public CannotJoin(ErrorCode errorCode, String crewName) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName));
-        }
-    }
-
     public static class AlreadyJoin extends CrewBusinessException {
 
         public AlreadyJoin(ErrorCode errorCode, Number crewId) {
             super(errorCode, String.format(errorCode.getDescription(), crewId));
-        }
-    }
-
-    public static class AlreadyRequest extends CrewBusinessException {
-
-        public AlreadyRequest(ErrorCode errorCode, String crewName) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName));
         }
     }
 
