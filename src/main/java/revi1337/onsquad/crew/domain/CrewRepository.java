@@ -14,6 +14,8 @@ import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
 
 public interface CrewRepository {
 
+    Crew persistCrew(Crew crew, List<Hashtag> hashtags);
+
     Crew save(Crew crew);
 
     Crew saveAndFlush(Crew crew);
@@ -31,8 +33,6 @@ public interface CrewRepository {
     Optional<Crew> findByIdWithImage(Long id);
 
     Optional<Crew> findByIdWithCrewMembers(Long id);
-
-    void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags);
 
     default CrewInfoDomainDto getCrewById(Long id) {
         return findCrewById(id)
