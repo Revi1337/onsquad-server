@@ -43,8 +43,8 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
-    public void upsertCrewParticipant(Long crewId, Long memberId, LocalDateTime now) {
-        crewParticipantJdbcRepository.upsertCrewParticipant(crewId, memberId, now);
+    public CrewParticipant upsertCrewParticipant(Long crewId, Long memberId, LocalDateTime now) {
+        return crewParticipantJdbcRepository.upsertCrewParticipant(crewId, memberId, now);
     }
 
     @Override

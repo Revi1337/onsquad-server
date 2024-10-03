@@ -37,8 +37,11 @@ public class CrewParticipant extends RequestEntity {
         this.member = member;
     }
 
-    public static CrewParticipant of(Crew crew, Member member, LocalDateTime requestAt) {
-        return new CrewParticipant(crew, member, requestAt);
+    public CrewParticipant(Long id, Crew crew, Member member, LocalDateTime requestAt) {
+        super(requestAt);
+        this.id = id;
+        this.crew = crew;
+        this.member = member;
     }
 
     @Override

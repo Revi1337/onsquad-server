@@ -1,6 +1,8 @@
 package revi1337.onsquad.crew_participant.domain;
 
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.*
 
 public interface CrewParticipantJpaRepository extends JpaRepository<CrewParticipant, Long> {
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select cp from CrewParticipant cp where cp.crew.id = :crewId and cp.member.id = :memberId")
     Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
 

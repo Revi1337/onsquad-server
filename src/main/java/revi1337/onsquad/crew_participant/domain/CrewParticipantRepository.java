@@ -22,7 +22,7 @@ public interface CrewParticipantRepository {
 
     Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    void upsertCrewParticipant(Long crewId, Long memberId, LocalDateTime now);
+    CrewParticipant upsertCrewParticipant(Long crewId, Long memberId, LocalDateTime now);
 
     List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
 

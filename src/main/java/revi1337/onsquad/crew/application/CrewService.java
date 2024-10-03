@@ -56,10 +56,10 @@ public class CrewService {
 
     @Transactional
     public void joinCrew(Long memberId, CrewJoinDto dto) {
+        Crew crew = crewRepository.getById(dto.crewId());
         crewMemberRepository.findByCrewIdAndMemberId(dto.crewId(), memberId).ifPresentOrElse(
                 crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewId()); },
                 () -> {
-                    Crew crew = crewRepository.getById(dto.crewId());
                     checkDifferenceCrewCreator(crew, memberId);
                     crewParticipantRepository.upsertCrewParticipant(crew.getId(), memberId, LocalDateTime.now());
                 }
