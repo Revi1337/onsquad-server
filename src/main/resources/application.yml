@@ -4,22 +4,8 @@ spring:
   profiles:
     default: local
 
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:db/*.sql
-
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/onsquad;MODE=MySQL
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
   jpa:
     open-in-view: false
-    hibernate:
-      ddl-auto: create
-    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
@@ -50,12 +36,4 @@ server:
     include-message: never
     include-stacktrace: never
     include-binding-errors: never
-  port: 8083
-
-logging:
-  level:
-    org:
-      springframework:
-        jdbc: INFO
-      hibernate:
-        SQL: DEBUG
+  port: 8087
