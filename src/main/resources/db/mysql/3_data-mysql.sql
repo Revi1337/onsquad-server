@@ -1,0 +1,258 @@
+insert into member(email, address, address_detail,  nickname, password, introduce, kakao_link, profile_image, created_at, updated_at)
+values ('andong@fuck.com', '어딘가1', '상세한 어딘가1', '닉네임1', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('kyounghak@fuck.com', '어딘가2', '상세한 어딘가2', '닉네임2', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('kwangwon@fuck.com', '어딘가3', '상세한 어딘가3', '닉네임3', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('hijin@fuck.com', '어딘가4', '상세한 어딘가4', '닉네임4', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('yoonji@fuck.com', '어딘가5', '상세한 어딘가5', '닉네임5', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('anonymous@fuck.com', '어딘가6', '상세한 어딘가6', '닉네임6', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('dummy1@fuck.com', '어딘가7', '상세한 어딘가7', '닉네임7', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('dummy2@fuck.com', '어딘가8', '상세한 어딘가8', '닉네임8', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('dummy3@fuck.com', '어딘가9', '상세한 어딘가9', '닉네임9', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('dummy4@fuck.com', '어딘가10', '상세한 어딘가10', '닉네임10', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('dummy5@fuck.com', '어딘가11', '상세한 어딘가11', '닉네임11', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnq_LG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('dummy6@fuck.com', '어딘가12', '상세한 어딘가12', '닉네임12', '{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.', '', '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+insert into image(image_url)
+values ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg'),
+       ('https://shellsamurai.com/wp-content/uploads/2023/04/tux.jpg');
+
+insert into crew(name, introduce, detail, kakao_link, image_id, member_id, created_at, updated_at)
+values ('크루 이름 1', '크루 소개 1', '크루 디테일 1', 'https://카카오링크.com', 1, 1, CURRENT_TIMESTAMP - INTERVAL 19 DAY, CURRENT_TIMESTAMP - INTERVAL 19 DAY),
+       ('크루 이름 2', '크루 소개 2', '크루 디테일 2', 'https://카카오링크.com', 2, 1, CURRENT_TIMESTAMP - INTERVAL 18 DAY, CURRENT_TIMESTAMP - INTERVAL 18 DAY),
+       ('크루 이름 3', '크루 소개 3', '크루 디테일 3', 'https://카카오링크.com', 3, 1, CURRENT_TIMESTAMP - INTERVAL 17 DAY, CURRENT_TIMESTAMP - INTERVAL 17 DAY),
+       ('크루 이름 4', '크루 소개 4', '크루 디테일 4', 'https://카카오링크.com', 4, 1, CURRENT_TIMESTAMP - INTERVAL 16 DAY, CURRENT_TIMESTAMP - INTERVAL 16 DAY),
+
+       ('크루 이름 5', '크루 소개 5', '크루 디테일 5', 'https://카카오링크.com', 5, 2, CURRENT_TIMESTAMP - INTERVAL 15 DAY, CURRENT_TIMESTAMP - INTERVAL 15 DAY),
+       ('크루 이름 6', '크루 소개 6', '크루 디테일 6', 'https://카카오링크.com', 6, 2, CURRENT_TIMESTAMP - INTERVAL 14 DAY, CURRENT_TIMESTAMP - INTERVAL 14 DAY),
+       ('크루 이름 7', '크루 소개 7', '크루 디테일 7', 'https://카카오링크.com', 7, 2, CURRENT_TIMESTAMP - INTERVAL 13 DAY, CURRENT_TIMESTAMP - INTERVAL 13 DAY),
+       ('크루 이름 8', '크루 소개 8', '크루 디테일 8', 'https://카카오링크.com', 8, 2, CURRENT_TIMESTAMP - INTERVAL 12 DAY, CURRENT_TIMESTAMP - INTERVAL 12 DAY),
+
+       ('크루 이름 9', '크루 소개 9', '크루 디테일 9', 'https://카카오링크.com', 9, 3, CURRENT_TIMESTAMP - INTERVAL 11 DAY, CURRENT_TIMESTAMP - INTERVAL 11 DAY),
+       ('크루 이름 10', '크루 소개 10', '크루 디테일 10', 'https://카카오링크.com', 10, 3, CURRENT_TIMESTAMP - INTERVAL 10 DAY, CURRENT_TIMESTAMP - INTERVAL 10 DAY),
+       ('크루 이름 11', '크루 소개 11', '크루 디테일 11', 'https://카카오링크.com', 11, 3, CURRENT_TIMESTAMP - INTERVAL 9 DAY, CURRENT_TIMESTAMP - INTERVAL 9 DAY),
+       ('크루 이름 12', '크루 소개 12', '크루 디테일 12', 'https://카카오링크.com', 12, 3, CURRENT_TIMESTAMP - INTERVAL 8 DAY, CURRENT_TIMESTAMP - INTERVAL 8 DAY),
+
+       ('크루 이름 13', '크루 소개 13', '크루 디테일 13', 'https://카카오링크.com', 13, 4, CURRENT_TIMESTAMP - INTERVAL 7 DAY, CURRENT_TIMESTAMP - INTERVAL 7 DAY),
+       ('크루 이름 14', '크루 소개 14', '크루 디테일 14', 'https://카카오링크.com', 14, 4, CURRENT_TIMESTAMP  - INTERVAL 6 DAY, CURRENT_TIMESTAMP  - INTERVAL 6 DAY),
+       ('크루 이름 15', '크루 소개 15', '크루 디테일 15', 'https://카카오링크.com', 15, 4, CURRENT_TIMESTAMP - INTERVAL 5 DAY, CURRENT_TIMESTAMP - INTERVAL 5 DAY),
+       ('크루 이름 16', '크루 소개 16', '크루 디테일 16', 'https://카카오링크.com', 16, 4, CURRENT_TIMESTAMP - INTERVAL 4 DAY, CURRENT_TIMESTAMP - INTERVAL 4 DAY),
+
+       ('크루 이름 17', '크루 소개 17', '크루 디테일 17', 'https://카카오링크.com', 17, 5, CURRENT_TIMESTAMP - INTERVAL 3 DAY, CURRENT_TIMESTAMP - INTERVAL 3 DAY),
+       ('크루 이름 18', '크루 소개 18', '크루 디테일 18', 'https://카카오링크.com', 18, 5, CURRENT_TIMESTAMP - INTERVAL 2 DAY, CURRENT_TIMESTAMP - INTERVAL 2 DAY),
+       ('크루 이름 19', '크루 소개 19', '크루 디테일 19', 'https://카카오링크.com', 19, 5, CURRENT_TIMESTAMP - INTERVAL 1 DAY, CURRENT_TIMESTAMP - INTERVAL 1 DAY),
+       ('크루 이름 20', '크루 소개 20', '크루 디테일 20', 'https://카카오링크.com', 20, 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+insert into crew_hashtag(crew_id, hashtag_id)
+values (1, 1), (1, 2), (1, 3),
+       (2, 4), (2, 5), (2, 6),
+       (3, 7), (3, 8), (3, 9),
+       (4, 10), (4, 11), (4, 12),
+
+       (5, 13), (5, 14), (5, 15),
+       (6, 16), (6, 17), (6, 18),
+       (7, 19), (7, 20), (7, 21),
+       (8, 22), (8, 23), (8, 24),
+
+       (9, 25), (9, 26), (9, 27),
+       (10, 28), (10, 29), (10, 30),
+       (11, 31), (11, 32), (11, 33),
+       (12, 34), (12, 35), (12, 36),
+
+       (13, 37), (13, 38), (13, 39),
+       (14, 40), (14, 1), (14, 2), (14, 3),
+       (15, 3), (15, 4), (15, 5),
+       (16, 6), (16, 7), (16, 8),
+
+       (17, 9), (17, 10), (17, 11),
+       (18, 12), (18, 13), (18, 14),
+       (19, 15), (19, 16), (19, 17),
+       (20, 18), (20, 19), (20, 20);
+
+insert into crew_member(crew_id, member_id, role, participate_at)
+values (1, 1, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 1 DAY), (1, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 2 DAY), (1, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 3 DAY), (1, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 4 DAY), (1, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 5 DAY),
+       (2, 1, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 6 DAY), (2, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 7 DAY), (2, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 8 DAY), (2, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 9 DAY), (2, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 10 DAY),
+       (3, 1, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 11 DAY), (3, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 12 DAY), (3, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 13 DAY), (3, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 14 DAY), (3, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 15 DAY),
+       (4, 1, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 16 DAY), (4, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 17 DAY), (4, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 18 DAY), (4, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 19 DAY), (4, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 20 DAY),
+
+       (5, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 21 DAY), (5, 2, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 22 DAY), (5, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 23 DAY), (5, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 24 DAY), (5, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 25 DAY),
+       (6, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 26 DAY), (6, 2, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 27 DAY), (6, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 28 DAY), (6, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 29 DAY), (6, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 30 DAY),
+       (7, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 31 DAY), (7, 2, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 32 DAY), (7, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 33 DAY), (7, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 34 DAY), (7, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 35 DAY),
+       (8, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 36 DAY), (8, 2, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 37 DAY), (8, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 38 DAY), (8, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 39 DAY), (8, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 40 DAY),
+
+       (9, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 41 DAY), (9, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 45 DAY), (9, 3, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 49 DAY), (9, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 53 DAY), (9, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 57 DAY),
+       (10, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 42 DAY), (10, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 46 DAY), (10, 3, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 50 DAY), (10, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 54 DAY), (10, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 58 DAY),
+       (11, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 43 DAY), (11, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 47 DAY), (11, 3, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 51 DAY), (11, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 55 DAY), (11, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 59 DAY),
+       (12, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 44 DAY), (12, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 48 DAY), (12, 3, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 52 DAY), (12, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 56 DAY), (12, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 60 DAY),
+
+       (13, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 61 DAY), (13, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 65 DAY), (13, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 69 DAY), (13, 4, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 73 DAY), (13, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 77 DAY),
+       (14, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 62 DAY), (14, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 66 DAY), (14, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 70 DAY), (14, 4, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 74 DAY), (14, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 78 DAY),
+       (15, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 63 DAY), (15, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 67 DAY), (15, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 71 DAY), (15, 4, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 75 DAY), (15, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 79 DAY),
+       (16, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 64 DAY), (16, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 68 DAY), (16, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 72 DAY), (16, 4, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 76 DAY), (16, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 80 DAY),
+
+       (17, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 81 DAY), (17, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 85 DAY), (17, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 89 DAY), (17, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 93 DAY), (17, 5, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 97 DAY),
+       (18, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 82 DAY), (18, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 86 DAY), (18, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 90 DAY), (18, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 94 DAY), (18, 5, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 98 DAY),
+       (19, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 83 DAY), (19, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 87 DAY), (19, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 91 DAY), (19, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 95 DAY), (19, 5, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 99 DAY),
+       (20, 1, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 84 DAY), (20, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 88 DAY), (20, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 92 DAY), (20, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 96 DAY), (20, 5, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 100 DAY);
+
+insert into squad(title, content, capacity, remain, address, address_detail, kakao_link, discord_link, created_at, updated_at, crew_member_id, crew_id)
+values ('스쿼드 타이틀 1', '스쿼드 본문 1', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 39 DAY, CURRENT_TIMESTAMP - INTERVAL 39 DAY, 1, 1),
+       ('스쿼드 타이틀 2', '스쿼드 본문 2', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 38 DAY, CURRENT_TIMESTAMP - INTERVAL 38 DAY, 5, 1),
+
+       ('스쿼드 타이틀 3', '스쿼드 본문 3', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 37 DAY, CURRENT_TIMESTAMP - INTERVAL 37 DAY, 7, 2),
+       ('스쿼드 타이틀 4', '스쿼드 본문 4', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 36 DAY, CURRENT_TIMESTAMP - INTERVAL 36 DAY, 9, 2),
+
+       ('스쿼드 타이틀 5', '스쿼드 본문 5', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 35 DAY, CURRENT_TIMESTAMP - INTERVAL 35 DAY, 13, 3),
+       ('스쿼드 타이틀 6', '스쿼드 본문 6', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 34 DAY, CURRENT_TIMESTAMP - INTERVAL 34 DAY, 15, 3),
+
+       ('스쿼드 타이틀 7', '스쿼드 본문 7', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 33 DAY, CURRENT_TIMESTAMP - INTERVAL 33 DAY, 16, 4),
+       ('스쿼드 타이틀 8', '스쿼드 본문 8', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 32 DAY, CURRENT_TIMESTAMP - INTERVAL 32 DAY, 18, 4),
+
+       ('스쿼드 타이틀 9', '스쿼드 본문 9', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 31 DAY, CURRENT_TIMESTAMP - INTERVAL 31 DAY, 21, 5),
+       ('스쿼드 타이틀 10', '스쿼드 본문 10', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 30 DAY, CURRENT_TIMESTAMP - INTERVAL 30 DAY, 22, 5),
+
+       ('스쿼드 타이틀 11', '스쿼드 본문 11', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 29 DAY, CURRENT_TIMESTAMP - INTERVAL 29 DAY, 28, 6),
+       ('스쿼드 타이틀 12', '스쿼드 본문 12', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 28 DAY, CURRENT_TIMESTAMP - INTERVAL 28 DAY, 29, 6),
+
+       ('스쿼드 타이틀 13', '스쿼드 본문 13', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 27 DAY, CURRENT_TIMESTAMP - INTERVAL 27 DAY, 35, 7),
+       ('스쿼드 타이틀 14', '스쿼드 본문 14', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 26 DAY, CURRENT_TIMESTAMP - INTERVAL 26 DAY, 31, 7),
+
+       ('스쿼드 타이틀 15', '스쿼드 본문 15', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 25 DAY, CURRENT_TIMESTAMP - INTERVAL 25 DAY, 37, 8),
+       ('스쿼드 타이틀 16', '스쿼드 본문 16', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 24 DAY, CURRENT_TIMESTAMP - INTERVAL 24 DAY, 38, 8),
+
+       ('스쿼드 타이틀 17', '스쿼드 본문 17', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 23 DAY, CURRENT_TIMESTAMP - INTERVAL 23 DAY, 41, 9),
+       ('스쿼드 타이틀 18', '스쿼드 본문 18', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 22 DAY, CURRENT_TIMESTAMP - INTERVAL 22 DAY, 42, 9),
+
+       ('스쿼드 타이틀 19', '스쿼드 본문 19', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 21 DAY, CURRENT_TIMESTAMP - INTERVAL 21 DAY, 48, 10),
+       ('스쿼드 타이틀 20', '스쿼드 본문 20', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 20 DAY, CURRENT_TIMESTAMP - INTERVAL 20 DAY, 49, 10),
+
+       ('스쿼드 타이틀 21', '스쿼드 본문 21', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 19 DAY, CURRENT_TIMESTAMP - INTERVAL 19 DAY, 55, 11),
+       ('스쿼드 타이틀 22', '스쿼드 본문 22', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 18 DAY, CURRENT_TIMESTAMP - INTERVAL 18 DAY, 51, 11),
+
+       ('스쿼드 타이틀 23', '스쿼드 본문 23', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 17 DAY, CURRENT_TIMESTAMP - INTERVAL 17 DAY, 57, 12),
+       ('스쿼드 타이틀 24', '스쿼드 본문 24', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 16 DAY, CURRENT_TIMESTAMP - INTERVAL 16 DAY, 58, 12),
+
+       ('스쿼드 타이틀 25', '스쿼드 본문 25', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 15 DAY, CURRENT_TIMESTAMP - INTERVAL 15 DAY, 61, 13),
+       ('스쿼드 타이틀 26', '스쿼드 본문 26', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 14 DAY, CURRENT_TIMESTAMP - INTERVAL 14 DAY, 62, 13),
+
+       ('스쿼드 타이틀 27', '스쿼드 본문 27', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 13 DAY, CURRENT_TIMESTAMP - INTERVAL 13 DAY, 68, 14),
+       ('스쿼드 타이틀 28', '스쿼드 본문 28', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 12 DAY, CURRENT_TIMESTAMP - INTERVAL 12 DAY, 69, 14),
+
+       ('스쿼드 타이틀 29', '스쿼드 본문 29', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 11 DAY, CURRENT_TIMESTAMP - INTERVAL 11 DAY, 75, 15),
+       ('스쿼드 타이틀 30', '스쿼드 본문 30', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 10 DAY, CURRENT_TIMESTAMP - INTERVAL 10 DAY, 71, 15),
+
+       ('스쿼드 타이틀 31', '스쿼드 본문 31', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 9 DAY, CURRENT_TIMESTAMP - INTERVAL 9 DAY, 77, 16),
+       ('스쿼드 타이틀 32', '스쿼드 본문 32', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 8 DAY, CURRENT_TIMESTAMP - INTERVAL 8 DAY, 78, 16),
+
+       ('스쿼드 타이틀 33', '스쿼드 본문 33', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 7 DAY, CURRENT_TIMESTAMP - INTERVAL 7 DAY, 81, 17),
+       ('스쿼드 타이틀 34', '스쿼드 본문 34', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 6 DAY, CURRENT_TIMESTAMP - INTERVAL 6 DAY, 82, 17),
+
+       ('스쿼드 타이틀 35', '스쿼드 본문 35', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 5 DAY, CURRENT_TIMESTAMP - INTERVAL 5 DAY, 88, 18),
+       ('스쿼드 타이틀 36', '스쿼드 본문 36', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 4 DAY, CURRENT_TIMESTAMP - INTERVAL 4 DAY, 89, 18),
+
+       ('스쿼드 타이틀 37', '스쿼드 본문 37', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 3 DAY, CURRENT_TIMESTAMP - INTERVAL 3 DAY, 95, 19),
+       ('스쿼드 타이틀 38', '스쿼드 본문 38', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 2 DAY, CURRENT_TIMESTAMP - INTERVAL 2 DAY, 91, 19),
+
+       ('스쿼드 타이틀 39', '스쿼드 본문 39', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP - INTERVAL 1 DAY, CURRENT_TIMESTAMP - INTERVAL 1 DAY, 97, 20),
+       ('스쿼드 타이틀 40', '스쿼드 본문 40', 8, 7, '어딘가', '상세한 어딘가', 'https://카카오링크.com', 'https://디스코드.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 98, 20);
+
+insert into squad_category(squad_id, category_id)
+values (1, 1),
+       (2, 3), (2, 4),
+       (3, 5), (3, 6),
+       (4, 7), (4, 8),
+       (5, 9), (5, 10),
+       (6, 11), (6, 12),
+       (7, 13), (7, 14),
+       (8, 15), (8, 16),
+       (9, 17), (9, 18),
+       (10, 19), (10, 20),
+       (11, 21), (11, 22),
+       (12, 23), (12, 24),
+       (13, 25), (13, 26),
+       (14, 27), (14, 28),
+       (15, 29), (15, 30),
+       (16, 31), (16, 32),
+       (17, 33), (17, 34),
+       (18, 1),
+       (19, 2), (19, 3),
+       (20, 4), (20, 5),
+       (21, 6), (21, 7),
+       (22, 8), (22, 9),
+       (23, 10), (23, 11),
+       (24, 12), (24, 13),
+       (25, 14), (25, 15),
+       (26, 16), (26, 17),
+       (27, 18), (27, 19),
+       (28, 20), (28, 21),
+       (29, 22), (29, 23),
+       (30, 24), (30, 25),
+       (31, 26), (31, 27),
+       (32, 28), (32, 29),
+       (33, 30), (33, 31),
+       (34, 32), (34, 33),
+       (35, 34), (35, 35),
+       (36, 1),
+       (37, 3), (37, 4),
+       (38, 5), (38, 6),
+       (39, 7), (39, 8),
+       (40, 9), (40, 10);
+
+insert into squad_member(squad_id, crew_member_id, role, status, participate_at)
+values (1, 1, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 1 SECOND), (1, 2, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 2 SECOND),
+       (2, 5, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 3 SECOND),
+       (3, 7, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 4 SECOND),
+       (4, 9, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 5 SECOND),
+       (5, 13, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 6 SECOND),
+       (6, 15, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 7 SECOND),
+       (7, 16, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 8 SECOND),
+       (8, 18, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 9 SECOND),
+       (9, 21, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 10 SECOND),
+       (10, 22, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 11 SECOND),
+       (11, 28, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 12 SECOND),
+       (12, 29, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 13 SECOND),
+       (14, 31, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 14 SECOND),
+       (13, 35, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 15 SECOND),
+       (15, 37, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 16 SECOND),
+       (16, 38, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 17 SECOND),
+       (17, 41, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 18 SECOND),
+       (18, 42, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 19 SECOND),
+       (19, 48, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 20 SECOND),
+       (20, 49, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 21 SECOND),
+       (22, 51, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 22 SECOND),
+       (21, 55, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 23 SECOND),
+       (23, 57, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 24 SECOND),
+       (24, 58, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 25 SECOND),
+       (25, 61, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 26 SECOND),
+       (26, 62, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 27 SECOND),
+       (27, 68, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 28 SECOND),
+       (28, 69, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 29 SECOND),
+       (30, 71, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 30 SECOND),
+       (29, 75, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 31 SECOND),
+       (31, 77, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 32 SECOND),
+       (32, 78, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 33 SECOND),
+       (33, 81, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 34 SECOND),
+       (34, 82, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 35 SECOND),
+       (35, 88, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 36 SECOND),
+       (36, 89, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 37 SECOND),
+       (38, 91, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 38 SECOND),
+       (37, 95, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 39 SECOND),
+       (39, 97, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 40 SECOND),
+       (40, 98, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 41 SECOND);
