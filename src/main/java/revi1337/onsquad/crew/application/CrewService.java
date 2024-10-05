@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.common.aspect.Throttling;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
@@ -25,6 +25,7 @@ import revi1337.onsquad.member.domain.MemberRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static revi1337.onsquad.common.aspect.OnSquadType.*;
 import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
 @Slf4j
@@ -54,14 +55,15 @@ public class CrewService {
         );
     }
 
-    @Transactional
+    @Throttling(type = MEMBER, id = "memberId")
     public void joinCrew(Long memberId, CrewJoinDto dto) {
         Crew crew = crewRepository.getById(dto.crewId());
         crewMemberRepository.findByCrewIdAndMemberId(dto.crewId(), memberId).ifPresentOrElse(
                 crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewId()); },
                 () -> {
                     checkDifferenceCrewCreator(crew, memberId);
-                    crewParticipantRepository.upsertCrewParticipant(crew.getId(), memberId, LocalDateTime.now());
+                    Member referenceMember = memberRepository.getReferenceById(memberId);
+                    crewParticipantRepository.upsertCrewParticipant(crew, referenceMember, LocalDateTime.now());
                 }
         );
     }

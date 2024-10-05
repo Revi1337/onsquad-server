@@ -1,8 +1,10 @@
 package revi1337.onsquad.crew_participant.domain;
 
+import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
 import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
+import revi1337.onsquad.member.domain.Member;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +24,7 @@ public interface CrewParticipantRepository {
 
     Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    CrewParticipant upsertCrewParticipant(Long crewId, Long memberId, LocalDateTime now);
+    CrewParticipant upsertCrewParticipant(Crew crew, Member member, LocalDateTime now);
 
     List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
 
