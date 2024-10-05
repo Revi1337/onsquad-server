@@ -16,7 +16,7 @@ public record Top5CrewMemberDomainDto(
     public static Top5CrewMemberDomainDto from(CrewTopCache crewTopCache) {
         return new Top5CrewMemberDomainDto(
                 crewTopCache.getCrewId(),
-                crewTopCache.getRank(),
+                crewTopCache.getRanks(),
                 crewTopCache.getCounter(),
                 crewTopCache.getMemberId(),
                 crewTopCache.getNickname(),

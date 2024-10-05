@@ -31,7 +31,7 @@ public class CrewParticipant extends RequestEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private CrewParticipant(Crew crew, Member member, LocalDateTime requestAt) {
+    public CrewParticipant(Crew crew, Member member, LocalDateTime requestAt) {
         super(requestAt);
         this.crew = crew;
         this.member = member;
