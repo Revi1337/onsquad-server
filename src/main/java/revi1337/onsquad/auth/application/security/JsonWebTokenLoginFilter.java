@@ -18,7 +18,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import revi1337.onsquad.auth.application.dto.LoginRequest;
 import revi1337.onsquad.auth.error.exception.UnsupportedLoginUrlMethod;
-import revi1337.onsquad.common.dto.CommonErrorCode;
+import revi1337.onsquad.common.error.CommonErrorCode;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

@@ -1,22 +1,23 @@
 package revi1337.onsquad.common.aspect;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.common.error.CommonErrorCode;
+import revi1337.onsquad.common.error.exception.CommonBusinessException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@Slf4j
-@Aspect
 @RequiredArgsConstructor
+@Aspect
 @Component
 public class ThrottlingAspect {
 
@@ -28,8 +29,9 @@ public class ThrottlingAspect {
         var valueOperations = stringRedisTemplate.opsForValue();
         Boolean firstRequest = valueOperations.setIfAbsent(redisKey, LocalDateTime.now().toString(), throttling.perCycle(), throttling.unit());
         if (!firstRequest) {
-            log.info("Duplicate Request");
-            throw new IllegalArgumentException("Duplicate Request");
+            throw new CommonBusinessException.RequestConflict(
+                    CommonErrorCode.REQUEST_CONFLICT, getCycleAsDuration(throttling)
+            );
         }
     }
 
@@ -60,5 +62,21 @@ public class ThrottlingAspect {
                 .mapToObj(c -> (char) c)
                 .map(c -> Character.isUpperCase(c) ? "-" + Character.toLowerCase(c) : c.toString())
                 .collect(Collectors.joining());
+    }
+
+    private String getCycleAsDuration(Throttling throttling) {
+        return throttling.perCycle() + convertAsTimeUnitString(throttling.unit());
+    }
+
+    private String convertAsTimeUnitString(TimeUnit unit) {
+        return switch (unit) {
+            case NANOSECONDS -> " nano sec";
+            case MICROSECONDS -> " micro sec";
+            case MILLISECONDS -> " milli sec";
+            case SECONDS -> " sec";
+            case MINUTES -> " min";
+            case HOURS -> " hour";
+            case DAYS -> " day";
+        };
     }
 }

@@ -6,11 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.common.dto.CommonErrorCode;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
-
-import static org.springframework.http.HttpStatus.*;
 
 @RestController
 public class RestErrorHandler implements ErrorController {
