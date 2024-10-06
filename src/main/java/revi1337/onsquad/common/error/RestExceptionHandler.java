@@ -1,6 +1,8 @@
 package revi1337.onsquad.common.error;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -47,6 +49,17 @@ public class RestExceptionHandler {
         }
         return ResponseEntity.ok()
                 .body(RestResponse.fail(errorcode, ProblemDetail.of(errorcode)));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleDataIntegrityViolationException(
+            DataIntegrityViolationException ignored,
+            HttpServletRequest httpServletRequest
+    ) {
+        CommonErrorCode commonErrorCode = CommonErrorCode.ALREADY_REQUEST;
+        ProblemDetail problemDetail = ProblemDetail.withFormat(commonErrorCode, httpServletRequest.getRequestURI());
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(commonErrorCode, problemDetail);
+        return ResponseEntity.ok().body(restResponse);
     }
 
     @ExceptionHandler(CommonBusinessException.class)
