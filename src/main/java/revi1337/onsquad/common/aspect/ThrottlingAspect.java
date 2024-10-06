@@ -5,7 +5,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.error.CommonErrorCode;
 import revi1337.onsquad.common.error.exception.CommonBusinessException;
@@ -21,13 +20,12 @@ import java.util.stream.IntStream;
 @Component
 public class ThrottlingAspect {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final RequestCacheHandlerExecutionChain handlerExecutionChain;
 
     @Before("@annotation(throttling)")
     public void checkInitialRequest(JoinPoint joinPoint, Throttling throttling) {
         String redisKey = buildRedisKey(joinPoint, throttling);
-        var valueOperations = stringRedisTemplate.opsForValue();
-        Boolean firstRequest = valueOperations.setIfAbsent(redisKey, LocalDateTime.now().toString(), throttling.perCycle(), throttling.unit());
+        boolean firstRequest = handlerExecutionChain.isFirstRequest(redisKey, LocalDateTime.now().toString(), throttling.perCycle(), throttling.unit());
         if (!firstRequest) {
             throw new CommonBusinessException.RequestConflict(
                     CommonErrorCode.REQUEST_CONFLICT, getCycleAsDuration(throttling)

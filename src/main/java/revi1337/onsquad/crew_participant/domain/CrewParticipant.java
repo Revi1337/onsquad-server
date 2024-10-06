@@ -15,7 +15,7 @@ import java.util.Objects;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "unique_crewparticipant_crew_member", columnNames = {"crew_id", "member_id"})
+        @UniqueConstraint(name = "unique_crewparticipant_crew_member", columnNames = {"crew_id", "member_id"}),
 })
 public class CrewParticipant extends RequestEntity {
 
@@ -24,11 +24,11 @@ public class CrewParticipant extends RequestEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crew_id")
+    @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     public CrewParticipant(Crew crew, Member member, LocalDateTime requestAt) {

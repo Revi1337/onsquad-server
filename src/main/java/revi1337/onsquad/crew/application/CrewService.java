@@ -55,7 +55,7 @@ public class CrewService {
         );
     }
 
-    @Throttling(type = MEMBER, id = "memberId")
+    @Throttling(type = MEMBER, id = "memberId", perCycle = 3)
     public void joinCrew(Long memberId, CrewJoinDto dto) {
         Crew crew = crewRepository.getById(dto.crewId());
         crewMemberRepository.findByCrewIdAndMemberId(dto.crewId(), memberId).ifPresentOrElse(
