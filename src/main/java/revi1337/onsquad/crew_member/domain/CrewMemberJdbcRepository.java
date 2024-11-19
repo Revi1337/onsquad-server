@@ -28,11 +28,11 @@ public class CrewMemberJdbcRepository {
     public List<Top5CrewMemberDomainDto> findTopNCrewMembers(Long crewId, int fetchSize) {
         String sql = """
                 \n
-                SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, rank
+                SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
                 FROM (
                     SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
-                            DENSE_RANK() OVER(ORDER BY counter, mem_join_time) AS rank
-                    FROM(
+                            DENSE_RANK() OVER(ORDER BY counter, mem_join_time) AS ranks
+                    FROM (
                         SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, COUNT(mem_id) AS counter
                         FROM (
                             SELECT
@@ -55,12 +55,12 @@ public class CrewMemberJdbcRepository {
                             FROM squad
                             INNER JOIN crew_member ON squad.crew_member_id = crew_member.id AND squad.crew_id = :crewId
                             INNER JOIN member ON crew_member.member_id = member.id
-                        )
+                        ) AS union_table
                         GROUP BY mem_id
-                    )
-                    ORDER BY rank
+                    ) AS count_table
+                    ORDER BY ranks
                 ) AS result
-                WHERE result.rank <= :fetchSize;
+                WHERE result.ranks <= :fetchSize;
         """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
@@ -80,11 +80,11 @@ public class CrewMemberJdbcRepository {
         String sql = """
                 \n
                 SELECT
-                    crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, rank
+                    crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
                 FROM (
                     SELECT
                         crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
-                        DENSE_RANK() OVER(PARTITION BY crew_id ORDER BY counter, mem_join_time) AS rank
+                        DENSE_RANK() OVER(PARTITION BY crew_id ORDER BY counter, mem_join_time) AS ranks
                     FROM (
                         SELECT DISTINCT
                                 crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter
@@ -113,12 +113,12 @@ public class CrewMemberJdbcRepository {
                                 FROM squad
                                 INNER JOIN crew_member ON squad.crew_member_id = crew_member.id
                                 INNER JOIN member ON crew_member.member_id = member.id
-                            )
-                        )
-                    )
-                )
-                WHERE rank <= :nSize
-                ORDER BY crew_id, rank
+                            ) AS union_table
+                        ) AS count_table
+                    ) AS distinct_table
+                ) AS rank_table
+                WHERE ranks <= :nSize
+                ORDER BY crew_id, ranks
         """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
@@ -132,7 +132,7 @@ public class CrewMemberJdbcRepository {
     private RowMapper<Top5CrewMemberDomainDto> top5RowMapper() {
         return (rs, rowNum) -> new Top5CrewMemberDomainDto(
                 rs.getLong("crew_id"),
-                rs.getInt("rank"),
+                rs.getInt("ranks"),
                 rs.getInt("counter"),
                 rs.getLong("mem_id"),
                 rs.getString("mem_nickname"),
@@ -144,7 +144,7 @@ public class CrewMemberJdbcRepository {
     private RowMapper<Top5CrewMemberDomainDto> crewTop5RowMapper() {
         return (rs, rowNum) -> new Top5CrewMemberDomainDto(
                 rs.getLong("crew_id"),
-                rs.getInt("rank"),
+                rs.getInt("ranks"),
                 rs.getInt("counter"),
                 rs.getLong("mem_id"),
                 rs.getString("mem_nickname"),

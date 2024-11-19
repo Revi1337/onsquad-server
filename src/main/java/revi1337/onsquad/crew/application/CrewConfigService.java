@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.application.dto.CrewAcceptDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
@@ -39,9 +38,9 @@ public class CrewConfigService {
 
     // TODO AWS 가 껴있으니 트랜잭션 분리가 필요.
     @Transactional
-    public void updateCrew(Long memberId, String crewName, CrewUpdateDto dto, byte[] image, String imageName) {
-        Crew crew = crewRepository.getCrewByNameWithImage(new Name(crewName));
-        validateCrewPublisher(memberId, crew, dto.name());
+    public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto, byte[] image, String imageName) {
+        Crew crew = crewRepository.getByIdWithImage(crewId);
+        validateCrewPublisher(memberId, crew);
         updateCrewInfo(dto, crew);
         s3BucketUploader.updateImage(crew.getImage().getImageUrl(), image, imageName);
     }
@@ -62,10 +61,10 @@ public class CrewConfigService {
 
     @Transactional
     public void acceptCrewMember(Long memberId, CrewAcceptDto dto) {
-        Crew crew = crewRepository.getByNameWithHashtags(new Name(dto.crewName()));
-        validateCrewPublisher(memberId, crew, dto.crewName());
-        crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), dto.memberId()).ifPresentOrElse(
-                crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewName()); },
+        Crew crew = crewRepository.getById(dto.crewId());
+        validateCrewPublisher(memberId, crew);
+        crewMemberRepository.findByCrewIdAndMemberId(dto.crewId(), dto.memberId()).ifPresentOrElse(
+                crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewId()); },
                 () -> {
                     CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crew.getId(), dto.memberId());
                     crewMemberRepository.save(CrewMember.forGeneral(crew, crewParticipant.getMember(), LocalDateTime.now()));
@@ -74,9 +73,9 @@ public class CrewConfigService {
         );
     }
 
-    private void validateCrewPublisher(Long memberId, Crew crew, String crewName) {
+    private void validateCrewPublisher(Long memberId, Crew crew) {
         if (!crew.getMember().getId().equals(memberId)) {
-            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crewName);
+            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
         }
     }
 }

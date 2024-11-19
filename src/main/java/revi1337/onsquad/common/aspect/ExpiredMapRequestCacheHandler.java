@@ -1,0 +1,30 @@
+package revi1337.onsquad.common.aspect;
+
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * DefaultRequestCacheHandler For RequestCacheHandlerExecutionChain
+ * @see RequestCacheHandlerExecutionChain
+ */
+public final class ExpiredMapRequestCacheHandler implements RequestCacheHandler {
+
+    private static final int MAX_CACHE_SIZE = 100_000;
+    private static final ExpiringMap<String, String> REQUEST_CACHE = ExpiringMap.builder()
+            .maxSize(MAX_CACHE_SIZE)
+            .variableExpiration()
+            .build();
+
+    @Override
+    public Boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
+        String cacheValue = REQUEST_CACHE.get(key);
+        if (cacheValue == null) {
+            REQUEST_CACHE.put(key, value, ExpirationPolicy.CREATED, timeout, unit);
+            return true;
+        }
+
+        return false;
+    }
+}

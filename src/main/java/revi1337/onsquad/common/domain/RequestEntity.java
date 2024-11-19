@@ -19,4 +19,8 @@ public abstract class RequestEntity {
     protected RequestEntity(LocalDateTime time) {
         this.requestAt = time;
     }
+
+    public void updateRequestAt(LocalDateTime now) {
+        this.requestAt = now;
+    }
 }

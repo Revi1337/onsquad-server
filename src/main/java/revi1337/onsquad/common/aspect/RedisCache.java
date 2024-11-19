@@ -1,7 +1,4 @@
-package revi1337.onsquad.crew_member.aspect;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+package revi1337.onsquad.common.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 @Target({ElementType.METHOD})
 public @interface RedisCache {
 
-    CommunityType type() default CommunityType.CREW;
+    OnSquadType type() default OnSquadType.CREW;
 
     String id();
 
@@ -25,16 +22,4 @@ public @interface RedisCache {
 
     boolean cacheEmptyCollection() default false;
 
-    @Getter
-    @RequiredArgsConstructor
-    enum CommunityType {
-
-        CREW("crew", "onsquad:crew:%s:%s"),
-        SQUAD("squad", "onsquad:squad:%s:%s")
-        ;
-
-        private final String text;
-        private final String format;
-
-    }
 }

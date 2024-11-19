@@ -34,10 +34,10 @@ public class CrewTopCache {
     private int counter;
 
     @Column(nullable = false)
-    private int rank;
+    private int ranks;
 
     @Builder
-    private CrewTopCache(Long id, Long crewId, Long memberId, String nickname, String mbti, LocalDateTime participateAt, int counter, int rank) {
+    private CrewTopCache(Long id, Long crewId, Long memberId, String nickname, String mbti, LocalDateTime participateAt, int counter, int ranks) {
         this.id = id;
         this.crewId = crewId;
         this.memberId = memberId;
@@ -45,7 +45,7 @@ public class CrewTopCache {
         this.mbti = mbti;
         this.participateAt = participateAt;
         this.counter = counter;
-        this.rank = rank;
+        this.ranks = ranks;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CrewTopCache {
                 .mbti(dto.mbti())
                 .participateAt(dto.participateAt())
                 .counter(dto.counter())
-                .rank(dto.rank())
+                .ranks(dto.rank())
                 .build();
     }
 }

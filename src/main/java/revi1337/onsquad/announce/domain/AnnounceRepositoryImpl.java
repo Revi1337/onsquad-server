@@ -3,13 +3,13 @@ package revi1337.onsquad.announce.domain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
-import revi1337.onsquad.crew_member.aspect.RedisCache;
+import revi1337.onsquad.common.aspect.RedisCache;
 
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.concurrent.TimeUnit.HOURS;
-import static revi1337.onsquad.crew_member.aspect.RedisCache.CommunityType.CREW;
+import static revi1337.onsquad.common.aspect.OnSquadType.CREW;
 
 @RequiredArgsConstructor
 @Repository

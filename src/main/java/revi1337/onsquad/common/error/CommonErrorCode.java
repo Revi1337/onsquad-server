@@ -1,8 +1,7 @@
-package revi1337.onsquad.common.dto;
+package revi1337.onsquad.common.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import revi1337.onsquad.common.error.ErrorCode;
 
 import java.util.EnumSet;
 
@@ -15,7 +14,9 @@ public enum CommonErrorCode implements ErrorCode {
     METHOD_NOT_SUPPORT(405, "C003", "지원하지 않는 메서드"),
     PARAMETER_TYPE_MISMATCH(400, "C004", "파라미터 타입 불일치"),
     NOT_FOUND(404, "C005", "존재하지 않는 API 요청"),
-    INTERNAL_SERVER_ERROR(500, "C006", "서버에서 처리 불가한 요청");
+    INTERNAL_SERVER_ERROR(500, "C006", "서버에서 처리 불가한 요청"),
+    REQUEST_CONFLICT(409, "C007", "중복 요청 발생. %s 후에 재시도해주세요."),
+    ALREADY_REQUEST(409, "C008", "이미 처리된 요청입니다. uri : %s");
 
     private final int status;
     private final String code;

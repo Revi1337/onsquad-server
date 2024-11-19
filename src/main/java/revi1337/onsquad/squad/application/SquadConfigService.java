@@ -30,10 +30,10 @@ public class SquadConfigService {
 
     // TODO 일단 동시성 문제는 나중에 해결
     @Transactional
-    public void acceptSquadMember(SquadAcceptDto dto) {
+    public void acceptSquadMember(Long crewId, SquadAcceptDto dto) {
         Squad squad = squadRepository.getSquadByIdWithCrew(dto.squadId());
-        checkCrewInfoMatch(dto, squad);
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrew().getId(), dto.requestMemberId());
+        checkCrewInfoMatch(crewId, squad);
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrew().getId(), dto.memberId());
         squadParticipantRepository.findBySquadIdAndCrewMemberId(squad.getId(), crewMember.getId()).ifPresentOrElse(
                 squadParticipant -> {
                     squadParticipantRepository.delete(squadParticipant);
@@ -44,8 +44,8 @@ public class SquadConfigService {
         );
     }
 
-    private void checkCrewInfoMatch(SquadAcceptDto dto, Squad squad) {
-        if (!squad.getCrew().getName().equals(new Name(dto.requestCrewName()))) {
+    private void checkCrewInfoMatch(Long requestCrewId, Squad squad) {
+        if (!squad.getCrew().getId().equals(requestCrewId)) {
             throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
         }
     }

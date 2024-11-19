@@ -17,6 +17,8 @@ public interface MemberRepository {
 
     Member saveAndFlush(Member member);
 
+    Member getReferenceById(Long id);
+
     Optional<Member> findById(Long id);
 
     Optional<Member> findByEmail(Email email);

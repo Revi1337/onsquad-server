@@ -106,7 +106,7 @@ public class CrewQueryDslRepository {
         JPAQuery<Long> countQuery = jpaQueryFactory
                 .select(crew.count())
                 .from(crew)
-                .where(crew.name.value.startsWithIgnoreCase(name));
+                .where(crewNameStartsWith(name));
 
         return PageableExecutionUtils.getPage(transformedCrewInfos, pageable, countQuery::fetchOne);
     }

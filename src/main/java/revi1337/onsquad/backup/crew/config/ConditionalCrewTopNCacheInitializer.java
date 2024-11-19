@@ -2,6 +2,7 @@ package revi1337.onsquad.backup.crew.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,11 +14,12 @@ import revi1337.onsquad.crew_member.domain.CrewMemberJdbcRepository;
 
 import java.time.LocalDate;
 
-@Profile({"local", "default"})
 @Slf4j
+@ConditionalOnProperty(value = "spring.sql.init.mode", havingValue = "always")
+@Profile({"local", "default"})
 @RequiredArgsConstructor
 @Configuration
-public class ConditionalOnProfileCrewTopNCacheInitializer {
+public class ConditionalCrewTopNCacheInitializer {
 
     private final CrewTopCacheRepository crewTopCacheRepository;
     private final CrewMemberJdbcRepository crewMemberJdbcRepository;

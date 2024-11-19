@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
-import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW_ID;
 
 public interface CrewRepository {
+
+    Crew persistCrew(Crew crew, List<Hashtag> hashtags);
 
     Crew save(Crew crew);
 
@@ -23,49 +24,33 @@ public interface CrewRepository {
 
     Optional<Crew> findByName(Name name);
 
-    Optional<Crew> findByNameWithHashtags(Name name);
-
     boolean existsByName(Name name);
-
-    List<Crew> findAllByMemberId(Long memberId);
 
     Optional<CrewInfoDomainDto> findCrewById(Long id);
 
     Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable);
 
-    Optional<Crew> findByNameWithImage(Name name);
+    Optional<Crew> findByIdWithImage(Long id);
 
-    Optional<Crew> findByNameWithCrewMembers(Name name);
-
-    void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags);
+    Optional<Crew> findByIdWithCrewMembers(Long id);
 
     default CrewInfoDomainDto getCrewById(Long id) {
         return findCrewById(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 
-    default Crew getCrewByNameWithImage(Name name) {
-        return findByNameWithImage(name)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    default Crew getByIdWithImage(Long id) {
+        return findByIdWithImage(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 
     default Crew getById(Long id) {
         return findById(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW_ID, id));
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 
-    default Crew getByName(Name name) {
-        return findByName(name)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
-    }
-
-    default Crew getByNameWithHashtags(Name name) {
-        return findByNameWithHashtags(name)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
-    }
-
-    default Crew getByNameWithCrewMembers(Name name) {
-        return findByNameWithCrewMembers(name)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundByName(NOTFOUND_CREW, name.getValue()));
+    default Crew getByIdWithCrewMembers(Long id) {
+        return findByIdWithCrewMembers(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 }

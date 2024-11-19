@@ -13,7 +13,7 @@ public class CrewTopCacheJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public void batchInsertCrewTop(List<CrewTopCache> crewTopCaches) {
-        String sql = "INSERT INTO crew_top_cache(crew_id, member_id, nickname, mbti, participate_at, counter, rank) " +
+        String sql = "INSERT INTO crew_top_cache(crew_id, member_id, nickname, mbti, participate_at, counter, ranks) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(
@@ -27,9 +27,8 @@ public class CrewTopCacheJdbcRepository {
                     ps.setString(4, crewTopCache.getMbti());
                     ps.setObject(5, crewTopCache.getParticipateAt());
                     ps.setInt(6, crewTopCache.getCounter());
-                    ps.setInt(7, crewTopCache.getRank());
+                    ps.setInt(7, crewTopCache.getRanks());
                 }
         );
     }
-
 }

@@ -7,7 +7,6 @@ import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import java.util.List;
 
 public record SquadCreateRequest(
-        @NotEmpty String crewName,
         @NotEmpty String title,
         @NotEmpty String content,
         @Positive int capacity,
@@ -18,6 +17,6 @@ public record SquadCreateRequest(
         String discordLink
 ) {
     public SquadCreateDto toDto() {
-        return new SquadCreateDto(crewName, title, content, capacity, address, addressDetail, categories, kakaoLink, discordLink);
+        return new SquadCreateDto(title, content, capacity, address, addressDetail, categories, kakaoLink, discordLink);
     }
 }

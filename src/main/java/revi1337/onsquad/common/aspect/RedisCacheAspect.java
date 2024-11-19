@@ -1,8 +1,7 @@
-package revi1337.onsquad.crew_member.aspect;
+package revi1337.onsquad.common.aspect;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -10,7 +9,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew_member.aspect.RedisCache.CommunityType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -32,9 +30,9 @@ public class RedisCacheAspect {
     @Around("@annotation(redisCache)")
     public Object handleRedisCache(ProceedingJoinPoint joinPoint, RedisCache redisCache) {
         try {
-            CommunityType communityType = redisCache.type();
+            OnSquadType onsquadType = redisCache.type();
             MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-            String redisKey = getRedisKey(joinPoint, redisCache, methodSignature, communityType);
+            String redisKey = getRedisKey(joinPoint, redisCache, methodSignature, onsquadType);
             Object cachedData = redisTemplate.opsForValue().get(redisKey);
 
             Method method = methodSignature.getMethod();
@@ -79,10 +77,10 @@ public class RedisCacheAspect {
         }
     }
 
-    private String getRedisKey(ProceedingJoinPoint joinPoint, RedisCache redisCache, MethodSignature methodSignature, CommunityType communityType) {
+    private String getRedisKey(ProceedingJoinPoint joinPoint, RedisCache redisCache, MethodSignature methodSignature, OnSquadType onsquadType) {
         Map<String, Object> parameterMap = mapParametersToValues(methodSignature, joinPoint.getArgs());
         Object communityTypeId = retrieveIdentifier(redisCache.id(), parameterMap);
-        return String.format(communityType.getFormat(), communityTypeId, redisCache.name());
+        return String.format(onsquadType.getFormat(), communityTypeId, redisCache.name());
     }
 
     private Map<String, Object> mapParametersToValues(MethodSignature methodSignature, Object[] argumentValues) {

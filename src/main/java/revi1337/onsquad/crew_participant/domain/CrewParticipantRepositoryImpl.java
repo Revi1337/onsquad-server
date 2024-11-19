@@ -2,8 +2,11 @@ package revi1337.onsquad.crew_participant.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
 import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
+import revi1337.onsquad.member.domain.Member;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,9 +45,15 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
         return crewParticipantJpaRepository.findByCrewIdAndMemberId(crewId, memberId);
     }
 
+    @Transactional
     @Override
-    public void upsertCrewParticipant(Long crewId, Long memberId, LocalDateTime now) {
-        crewParticipantJdbcRepository.upsertCrewParticipant(crewId, memberId, now);
+    public CrewParticipant upsertCrewParticipant(Crew crew, Member member, LocalDateTime now) {
+        return crewParticipantJpaRepository.findByCrewIdAndMemberId(crew.getId(), member.getId())
+                .map(crewParticipant -> {
+                    crewParticipant.updateRequestAt(now);
+                    return crewParticipantJpaRepository.saveAndFlush(crewParticipant);
+                })
+                .orElseGet(() -> crewParticipantJpaRepository.save(new CrewParticipant(crew, member, now)));
     }
 
     @Override

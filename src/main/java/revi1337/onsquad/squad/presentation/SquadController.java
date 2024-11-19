@@ -30,20 +30,22 @@ public class SquadController {
 
     @PostMapping("/squad/new")
     public ResponseEntity<RestResponse<String>> createNewSquad(
+            @RequestParam @Positive Long crewId,
             @Valid @RequestBody SquadCreateRequest squadCreateRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        squadService.createNewSquad(squadCreateRequest.toDto(), authenticatedMember.toDto().getId());
+        squadService.createNewSquad(authenticatedMember.toDto().getId(), crewId, squadCreateRequest.toDto());
 
         return ResponseEntity.ok(RestResponse.created());
     }
 
     @PostMapping("/squad/join")
     public ResponseEntity<RestResponse<String>> joinSquad(
+            @RequestParam @Positive Long crewId,
             @Valid @RequestBody SquadJoinRequest joinRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        squadService.submitParticipationRequest(joinRequest.toDto(), authenticatedMember.toDto().getId());
+        squadService.submitParticipationRequest(authenticatedMember.toDto().getId(), crewId, joinRequest.toDto());
 
         return ResponseEntity.ok(RestResponse.noContent());
     }

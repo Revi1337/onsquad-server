@@ -40,4 +40,8 @@ public record ProblemDetail(
     public static ProblemDetail of(ErrorCode code, String errorMessage) {
         return new ProblemDetail(code.getCode(), errorMessage, null, null);
     }
+
+    public static ProblemDetail withFormat(ErrorCode code, String errorMessage) {
+        return new ProblemDetail(code.getCode(), String.format(code.getDescription(), errorMessage), null, null);
+    }
 }
