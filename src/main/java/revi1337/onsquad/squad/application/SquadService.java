@@ -1,6 +1,5 @@
 package revi1337.onsquad.squad.application;
 
-import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICIPANT;
 import static revi1337.onsquad.squad.error.SquadErrorCode.ALREADY_JOIN;
 import static revi1337.onsquad.squad.error.SquadErrorCode.NOTMATCH_CREWINFO;
 import static revi1337.onsquad.squad.error.SquadErrorCode.OWNER_CANT_PARTICIPANT;
@@ -20,8 +19,6 @@ import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
@@ -55,9 +52,10 @@ public class SquadService {
 
     @Transactional
     public void createNewSquad(Long memberId, Long crewId, SquadCreateDto dto) {
-        Member member = memberRepository.getById(memberId);
-        Crew crew = crewRepository.getByIdWithCrewMembers(crewId);
-        persistSquadIfCrewMemberIsValid(dto, member, crew);
+        memberRepository.getById(memberId);
+        Crew crew = crewRepository.getById(crewId);
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        persistSquad(dto, crewMember, crew);
     }
 
     @Transactional
@@ -67,6 +65,23 @@ public class SquadService {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrew().getId(), memberId);
         validateSquadMetaData(squad, crewMember);
         squadParticipantRepository.upsertSquadParticipant(squad.getId(), crewMember.getId(), LocalDateTime.now());
+    }
+
+    private void persistSquad(SquadCreateDto dto, CrewMember crewMember, Crew crew) {
+        Squad persistedSquad = insertSquadAndRegisterAdmin(dto, crewMember, crew);
+        batchInsertSquadCategories(dto, persistedSquad);
+    }
+
+    private Squad insertSquadAndRegisterAdmin(SquadCreateDto dto, CrewMember crewMember, Crew crew) {
+        Squad squad = dto.toEntity(crewMember, crew);
+        squad.addSquadMember(SquadMember.forLeader(crewMember, LocalDateTime.now()));
+        return squadRepository.save(squad);
+    }
+
+    private void batchInsertSquadCategories(SquadCreateDto dto, Squad persistedSquad) {
+        List<CategoryType> categoryTypes = CategoryTypeUtil.extractPossible(CategoryType.fromTexts(dto.categories()));
+        List<Category> categories = Category.fromCategoryTypes(categoryTypes);
+        squadRepository.batchInsertSquadCategories(persistedSquad.getId(), categories);
     }
 
     private void checkCrewInfoIsMatch(Long requestCrewId, Squad squad) {
@@ -92,26 +107,5 @@ public class SquadService {
                 throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
             }
         }
-    }
-
-    private void persistSquadIfCrewMemberIsValid(SquadCreateDto dto, Member member, Crew crew) {
-        crew.getCrewMembers().stream()
-                .filter(crewMember -> crewMember.getMember().equals(member))
-                .findFirst()
-                .ifPresentOrElse(
-                        crewMember -> persistSquadAndRegisterAdmin(dto, crewMember, crew),
-                        () -> {
-                            throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT);
-                        }
-                );
-    }
-
-    private void persistSquadAndRegisterAdmin(SquadCreateDto dto, CrewMember crewMember, Crew crew) {
-        Squad squad = dto.toEntity(crewMember, crew);
-        squad.addSquadMember(SquadMember.forLeader(crewMember, LocalDateTime.now()));
-        Squad persistedSquad = squadRepository.save(squad);
-        List<CategoryType> categoryTypes = CategoryTypeUtil.extractPossible(CategoryType.fromTexts(dto.categories()));
-        List<Category> categories = Category.fromCategoryTypes(categoryTypes);
-        squadRepository.batchInsertSquadCategories(persistedSquad.getId(), categories);
     }
 }
