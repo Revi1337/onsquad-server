@@ -1,5 +1,8 @@
 package revi1337.onsquad.squad_member.application;
 
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICIPANT;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,10 +12,6 @@ import revi1337.onsquad.squad_member.application.dto.EnrolledSquadDto;
 import revi1337.onsquad.squad_member.application.dto.SquadWithMemberDto;
 import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
 import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
-
-import java.util.List;
-
-import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

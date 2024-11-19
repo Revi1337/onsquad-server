@@ -7,7 +7,8 @@ public record SimpleCrewParticipantRequestResponse(
         SimpleMemberInfoResponse memberInfo,
         CrewParticipantResponse request
 ) {
-    public static SimpleCrewParticipantRequestResponse from(SimpleCrewParticipantRequestDto simpleCrewParticipantRequestDto) {
+    public static SimpleCrewParticipantRequestResponse from(
+            SimpleCrewParticipantRequestDto simpleCrewParticipantRequestDto) {
         return new SimpleCrewParticipantRequestResponse(
                 SimpleMemberInfoResponse.from(simpleCrewParticipantRequestDto.memberInfo()),
                 CrewParticipantResponse.from(simpleCrewParticipantRequestDto.request())

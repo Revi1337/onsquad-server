@@ -14,7 +14,8 @@ public record S3BucketProperties(
             String accessKey,
             String secretKey,
             @NestedConfigurationProperty DirectoryProperties directory
-    ) {}
+    ) {
+    }
 
     @ConfigurationProperties("directory")
     public record DirectoryProperties(

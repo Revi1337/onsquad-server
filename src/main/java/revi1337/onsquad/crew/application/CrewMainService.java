@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +15,6 @@ import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service

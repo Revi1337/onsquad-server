@@ -1,10 +1,9 @@
 package revi1337.onsquad.squad_member.application.dto;
 
+import java.util.List;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad.application.dto.SimpleSquadInfoDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
-
-import java.util.List;
 
 public record EnrolledSquadDto(
         Long crewId,
@@ -25,10 +24,6 @@ public record EnrolledSquadDto(
         );
     }
 }
-
-
-
-
 
 //package revi1337.onsquad.squad_member.application.dto;
 //

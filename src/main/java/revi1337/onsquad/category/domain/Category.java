@@ -1,14 +1,17 @@
 package revi1337.onsquad.category.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,8 +42,12 @@ public class Category {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Category category)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Category category)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), category.getId());
     }
 

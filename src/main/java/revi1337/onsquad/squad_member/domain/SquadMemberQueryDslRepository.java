@@ -1,7 +1,25 @@
 package revi1337.onsquad.squad_member.domain;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.group.GroupBy.set;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static revi1337.onsquad.category.domain.QCategory.category;
+import static revi1337.onsquad.crew.domain.QCrew.crew;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.image.domain.QImage.image;
+import static revi1337.onsquad.member.domain.QMember.member;
+import static revi1337.onsquad.squad.domain.QSquad.squad;
+import static revi1337.onsquad.squad_category.domain.QSquadCategory.squadCategory;
+import static revi1337.onsquad.squad_member.domain.QSquadMember.squadMember;
+
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
@@ -11,23 +29,10 @@ import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.querydsl.core.group.GroupBy.*;
-import static java.lang.Boolean.*;
-import static revi1337.onsquad.category.domain.QCategory.*;
-import static revi1337.onsquad.crew.domain.QCrew.crew;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
-import static revi1337.onsquad.image.domain.QImage.*;
-import static revi1337.onsquad.member.domain.QMember.*;
-import static revi1337.onsquad.squad.domain.QSquad.squad;
-import static revi1337.onsquad.squad_category.domain.QSquadCategory.*;
-import static revi1337.onsquad.squad_member.domain.QSquadMember.*;
+import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.QSquadMemberDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.QSquadWithMemberDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -42,6 +47,7 @@ public class SquadMemberQueryDslRepository {
 
     /**
      * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 쪼갠다.
+     *
      * @param memberId
      * @return
      */
@@ -119,10 +125,10 @@ public class SquadMemberQueryDslRepository {
         Map<Long, SquadWithMemberDomainDto> results = jpaQueryFactory
                 .from(squadMember)
                 .innerJoin(squadMember.squad, squad)
-                    .on(
-                            squad.crew.id.eq(crewId),
-                            squad.id.eq(squadId)
-                    )
+                .on(
+                        squad.crew.id.eq(crewId),
+                        squad.id.eq(squadId)
+                )
                 .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
                 .innerJoin(squadMember.crewMember, crewMember)
                 .innerJoin(crewMember.member, member)

@@ -1,5 +1,10 @@
 package revi1337.onsquad.auth.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,17 +13,12 @@ import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.config.PropertiesConfiguration;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DisplayName("JsonWebTokenProvider 테스트")
 @Import(JsonWebTokenProvider.class)
 public class JsonWebTokenProviderTest extends PropertiesConfiguration {
 
-    @Autowired private JsonWebTokenProvider jsonWebTokenProvider;
+    @Autowired
+    private JsonWebTokenProvider jsonWebTokenProvider;
 
     @DisplayName("AccessToken 이 잘 만들어지는지 확인한다")
     @Test

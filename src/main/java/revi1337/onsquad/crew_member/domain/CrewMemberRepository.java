@@ -1,15 +1,14 @@
 package revi1337.onsquad.crew_member.domain;
 
-import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
-import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICIPANT;
 
 import java.util.List;
 import java.util.Optional;
-
-import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICIPANT;
+import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 public interface CrewMemberRepository {
 

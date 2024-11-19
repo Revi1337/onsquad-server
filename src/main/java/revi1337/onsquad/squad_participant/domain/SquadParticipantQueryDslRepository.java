@@ -1,6 +1,19 @@
 package revi1337.onsquad.squad_participant.domain;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static revi1337.onsquad.category.domain.QCategory.category;
+import static revi1337.onsquad.crew.domain.QCrew.crew;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.image.domain.QImage.image;
+import static revi1337.onsquad.squad.domain.QSquad.squad;
+import static revi1337.onsquad.squad_category.domain.QSquadCategory.squadCategory;
+import static revi1337.onsquad.squad_participant.domain.QSquadParticipant.squadParticipant;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
@@ -12,19 +25,6 @@ import revi1337.onsquad.squad_participant.domain.dto.QSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QSquadParticipantDomainDto_RequestParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.querydsl.core.group.GroupBy.*;
-import static revi1337.onsquad.category.domain.QCategory.category;
-import static revi1337.onsquad.crew.domain.QCrew.*;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
-import static revi1337.onsquad.image.domain.QImage.image;
-import static revi1337.onsquad.squad.domain.QSquad.*;
-import static revi1337.onsquad.squad_category.domain.QSquadCategory.squadCategory;
-import static revi1337.onsquad.squad_participant.domain.QSquadParticipant.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -38,6 +38,7 @@ public class SquadParticipantQueryDslRepository {
 
     /**
      * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 쪼갠다.
+     *
      * @param memberId
      * @return
      */

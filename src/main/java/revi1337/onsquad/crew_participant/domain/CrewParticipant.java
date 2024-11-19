@@ -1,15 +1,22 @@
 package revi1337.onsquad.crew_participant.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.member.domain.Member;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Getter
 @Entity
@@ -46,8 +53,12 @@ public class CrewParticipant extends RequestEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CrewParticipant that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CrewParticipant that)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), that.getId());
     }
 

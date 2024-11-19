@@ -1,5 +1,8 @@
 package revi1337.onsquad.auth.config;
 
+import static revi1337.onsquad.auth.error.TokenErrorCode.EMPTY_TOKEN;
+import static revi1337.onsquad.auth.error.TokenErrorCode.INVALID_TOKEN_FORMAT;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
@@ -7,11 +10,9 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
-
-import static revi1337.onsquad.auth.error.TokenErrorCode.*;
 
 @RequiredArgsConstructor
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {
@@ -28,7 +29,8 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String authorizationHeader = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
         validateAuthorizationHeader(authorizationHeader);
 

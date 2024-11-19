@@ -1,12 +1,12 @@
 package revi1337.onsquad.common.aspect;
 
+import java.util.concurrent.TimeUnit;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * DefaultRequestCacheHandler For RequestCacheHandlerExecutionChain
+ *
  * @see RequestCacheHandlerExecutionChain
  */
 public final class ExpiredMapRequestCacheHandler implements RequestCacheHandler {

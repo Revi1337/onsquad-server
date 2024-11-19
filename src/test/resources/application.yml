@@ -9,7 +9,7 @@ spring:
       mode: never
 
   datasource:
-#    url: jdbc:h2:mem:~/onsquad;MODE=MySQL
+    #    url: jdbc:h2:mem:~/onsquad;MODE=MySQL
     url: jdbc:h2:tcp://localhost/~/onsquad-test;MODE=MySQL
     username: sa
     password:

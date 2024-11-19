@@ -1,9 +1,8 @@
 package revi1337.onsquad.common.error;
 
+import java.util.EnumSet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.EnumSet;
 
 @Getter
 @AllArgsConstructor

@@ -1,5 +1,17 @@
 package revi1337.onsquad.squad.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.PENDING;
+import static revi1337.onsquad.squad_member.domain.vo.SquadRole.GENERAL;
+
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,48 +34,54 @@ import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.MemberFactory;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.member.domain.vo.*;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
+import revi1337.onsquad.member.domain.vo.UserType;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
-import revi1337.onsquad.squad_participant.domain.SquadParticipant;
-import revi1337.onsquad.squad_participant.domain.SquadParticipantJpaRepository;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad.domain.vo.*;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import revi1337.onsquad.squad.application.dto.SquadJoinDto;
+import revi1337.onsquad.squad.domain.Squad;
+import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.squad.domain.vo.Capacity;
+import revi1337.onsquad.squad.domain.vo.Content;
+import revi1337.onsquad.squad.domain.vo.Title;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.*;
-import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.PENDING;
-import static revi1337.onsquad.squad_member.domain.vo.SquadRole.*;
+import revi1337.onsquad.squad_participant.domain.SquadParticipant;
+import revi1337.onsquad.squad_participant.domain.SquadParticipantJpaRepository;
 
 @ExtendWith(MockitoExtension.class)
 class SquadServiceTest {
 
-    @Mock private MemberJpaRepository memberRepository;
-    @Mock private SquadRepository squadRepository;
-    @Mock private CategoryRepository categoryRepository;
-    @Mock private CrewRepository crewRepository;
-    @Mock private SquadParticipantJpaRepository squadParticipantRepository;
-    @InjectMocks private SquadService squadService;
+    @Mock
+    private MemberJpaRepository memberRepository;
+    @Mock
+    private SquadRepository squadRepository;
+    @Mock
+    private CategoryRepository categoryRepository;
+    @Mock
+    private CrewRepository crewRepository;
+    @Mock
+    private SquadParticipantJpaRepository squadParticipantRepository;
+    @InjectMocks
+    private SquadService squadService;
 
     @Test
     @DisplayName("Squad 가 생성되는지 확인한다.")
     public void createNewSquad() {
         // given
-        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
+        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"),
+                "카카오링크", "디스코드링크");
         Long memberId = 1L;
         Member member = MemberFactory.defaultMember().id(memberId).build();
         Crew crew = CrewFactory.defaultCrew().member(member).build();
         CrewMember crewMember = CrewMember.of(crew, member);
         crew.getCrewMembers().add(crewMember);
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(
+                Optional.of(crew));
         given(squadRepository.save(any(Squad.class))).willReturn(squadCreateDto.toEntity(crewMember, crew));
         List<CategoryType> categoryTypes = CategoryType.fromTexts(squadCreateDto.categories());
         List<Category> categories = Category.fromCategoryTypes(categoryTypes);
@@ -81,7 +99,8 @@ class SquadServiceTest {
     @DisplayName("Squad 를 생성하기 전에 Member 가 없으면 예외를 던진다.")
     public void createNewSquad2() {
         // given
-        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
+        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"),
+                "카카오링크", "디스코드링크");
         Long memberId = 1L;
         given(memberRepository.findById(memberId)).willReturn(Optional.empty());
 
@@ -95,12 +114,14 @@ class SquadServiceTest {
     @DisplayName("Squad 를 생성하기 전에 Crew 가 없으면 예외를 던진다.")
     public void createNewSquad3() {
         // given
-        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
+        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"),
+                "카카오링크", "디스코드링크");
         Long memberId = 1L;
         Member member = MemberFactory.defaultMember().id(memberId).build();
         Crew crew = CrewFactory.defaultCrew().member(member).build();
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(Optional.empty());
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(
+                Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> squadService.createNewSquad(squadCreateDto, memberId))
@@ -112,12 +133,14 @@ class SquadServiceTest {
     @DisplayName("Squad 를 생성하기 전에 Crew 에 Member 가 속해있지 않으면 예외를 던진다.")
     public void createNewSquad4() {
         // given
-        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
+        SquadCreateDto squadCreateDto = new SquadCreateDto("크루 1", "스쿼드 이름", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"),
+                "카카오링크", "디스코드링크");
         Long memberId = 1L;
         Member member = MemberFactory.defaultMember().id(memberId).build();
         Crew crew = CrewFactory.defaultCrew().member(member).build();
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(Optional.of(crew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadCreateDto.crewName()))).willReturn(
+                Optional.of(crew));
 
         // when & then
         assertThatThrownBy(() -> squadService.createNewSquad(squadCreateDto, memberId))
@@ -136,10 +159,12 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(
+                Optional.of(findCrew));
         Squad findSquad = createSquad(1L, findCrew, createCrewMember(2L, createCrew(2L), createMember(3L)));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
-        given(squadParticipantRepository.findBySquadIdAndCrewMemberId(anyLong(), anyLong())).willReturn(Optional.empty());
+        given(squadParticipantRepository.findBySquadIdAndCrewMemberId(anyLong(), anyLong())).willReturn(
+                Optional.empty());
 
         // when
         squadService.submitParticipationRequest(squadJoinDto, requestMemberId);
@@ -158,7 +183,8 @@ class SquadServiceTest {
         Member findMember = createMember(1L);
         given(memberRepository.findById(requestMemberId)).willReturn(Optional.of(findMember));
         Crew findCrew = createCrew(1L, findMember);
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(
+                Optional.of(findCrew));
 
         // when & then
         assertThatThrownBy(() -> squadService.submitParticipationRequest(squadJoinDto, requestMemberId))
@@ -178,7 +204,8 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(
+                Optional.of(findCrew));
         Squad findSquad = createSquad(3L, findCrew, createCrewMember(1L));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
@@ -200,7 +227,8 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(
+                Optional.of(findCrew));
         Squad findSquad = createSquad(1L, createCrew(1L, "dummy_name"), createCrewMember(3L));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
@@ -222,9 +250,11 @@ class SquadServiceTest {
         Crew findCrew = createCrew(1L, findMember);
         CrewMember findCrewMember = createCrewMember(1L, findCrew, findMember);
         findCrew.addCrewMember(findCrewMember);
-        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(Optional.of(findCrew));
+        given(crewRepository.findByNameWithCrewMembers(new Name(squadJoinDto.crewName()))).willReturn(
+                Optional.of(findCrew));
         Squad findSquad = createSquad(1L, createCrew(1L), createCrewMember(3L));
-        findSquad.addSquadMember(createSquadMember(1L, createCrewMember(1L)), createSquadMember(2L, createCrewMember(2L)));
+        findSquad.addSquadMember(createSquadMember(1L, createCrewMember(1L)),
+                createSquadMember(2L, createCrewMember(2L)));
         given(squadRepository.getSquadByIdWithSquadMembers(squadJoinDto.squadId())).willReturn(findSquad);
 
         // when & then

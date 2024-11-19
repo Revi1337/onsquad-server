@@ -1,10 +1,9 @@
 package revi1337.onsquad.crew_member.domain.vo;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.EnumSet;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor

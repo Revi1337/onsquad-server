@@ -1,7 +1,12 @@
 package revi1337.onsquad.member.domain.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import revi1337.onsquad.member.domain.vo.*;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Introduce;
+import revi1337.onsquad.member.domain.vo.Mbti;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 public record MemberInfoDomainDto(
         Long id,
@@ -15,7 +20,17 @@ public record MemberInfoDomainDto(
         Address address
 ) {
     @QueryProjection
-    public MemberInfoDomainDto(Long id, Email email, Nickname nickname, Introduce introduce, Mbti mbti, String kakaoLink, String profileImage, UserType userType, Address address) {
+    public MemberInfoDomainDto(
+            Long id,
+            Email email,
+            Nickname nickname,
+            Introduce introduce,
+            Mbti mbti,
+            String kakaoLink,
+            String profileImage,
+            UserType userType,
+            Address address
+    ) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;

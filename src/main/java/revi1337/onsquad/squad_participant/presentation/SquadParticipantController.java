@@ -1,16 +1,19 @@
 package revi1337.onsquad.squad_participant.presentation;
 
 import jakarta.validation.constraints.Positive;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import revi1337.onsquad.auth.config.Authenticate;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_participant.application.SquadParticipantService;
 import revi1337.onsquad.squad_participant.presentation.dto.SquadParticipantRequestResponse;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -23,7 +26,8 @@ public class SquadParticipantController {
     public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> findSquadMemberRequests(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<SquadParticipantRequestResponse> requestResponses = squadParticipantService.findSquadParticipants(authenticatedMember.toDto().getId()).stream()
+        List<SquadParticipantRequestResponse> requestResponses = squadParticipantService.findSquadParticipants(
+                        authenticatedMember.toDto().getId()).stream()
                 .map(SquadParticipantRequestResponse::from)
                 .toList();
 

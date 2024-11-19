@@ -1,5 +1,13 @@
 package revi1337.onsquad.squad.presentation;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,23 +34,19 @@ import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 import revi1337.onsquad.support.IntegrationTestSupport;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @DisplayName("Squad 통합 테스트")
 class SquadControllerTest extends IntegrationTestSupport {
 
-    @Autowired private MemberJpaRepository memberRepository;
-    @Autowired private CrewRepository crewRepository;
-    @Autowired private CrewMemberJpaRepository crewMemberRepository;
-    @Autowired private CategoryRepository categoryRepository;
-    @Autowired private JsonWebTokenProvider jsonWebTokenProvider;
+    @Autowired
+    private MemberJpaRepository memberRepository;
+    @Autowired
+    private CrewRepository crewRepository;
+    @Autowired
+    private CrewMemberJpaRepository crewMemberRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private JsonWebTokenProvider jsonWebTokenProvider;
 
     @Nested
     @DisplayName("CreateNewSquad 메소드를 테스트한다.")
@@ -52,7 +56,8 @@ class SquadControllerTest extends IntegrationTestSupport {
 
         @BeforeEach
         void tearDown() {
-            this.accessToken = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT, Collections.singletonMap("memberId", 1L)).value();
+            this.accessToken = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT,
+                    Collections.singletonMap("memberId", 1L)).value();
             this.accessToken = "Bearer " + this.accessToken;
         }
 
@@ -69,7 +74,8 @@ class SquadControllerTest extends IntegrationTestSupport {
             memberRepository.save(member);
             crewRepository.save(crew);
             crewMemberRepository.save(crewMember);
-            SquadCreateRequest squadCreateRequest = new SquadCreateRequest(crew.getName().getValue(), "스쿼드 제목", "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
+            SquadCreateRequest squadCreateRequest = new SquadCreateRequest(crew.getName().getValue(), "스쿼드 제목",
+                    "스쿼드 내용", 8, "주소", "상세주소", List.of("등산"), "카카오링크", "디스코드링크");
 
             // when && then
             mockMvc.perform(
@@ -83,8 +89,6 @@ class SquadControllerTest extends IntegrationTestSupport {
         }
     }
 }
-
-
 
 //package revi1337.onsquad.squad.controller;
 //

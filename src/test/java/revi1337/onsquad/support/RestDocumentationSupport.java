@@ -27,9 +27,12 @@ public abstract class RestDocumentationSupport {
     protected static final String AUTHORIZATION_HEADER_KEY = HttpHeaders.AUTHORIZATION;
     protected static final String AUTHORIZATION_HEADER_VALUE = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJpZGVudGlmaWVyIjoxLCJzdWIiOiJhY2Nlc3NfdG9rZW4iLCJpc3MiOiJPTlNRVUFELVNFUlZFUiIsImlhdCI6MTcxODE5MTI4NSwiZXhwIjoxNzE4MTkxMjkwfQ.HHA_2BPtDb1BPD-mOKUj9eHED3BqyHryGulwa1di2PK-Kt-fiFpaAUJjrTCLu9cZHLzmGgn47gXUBw6H8arXPg";
 
-    @Autowired protected MockMvc mockMvc;
-    @Autowired protected ObjectMapper objectMapper;
-    @MockBean private JsonWebTokenEvaluator jsonWebTokenEvaluator;
+    @Autowired
+    protected MockMvc mockMvc;
+    @Autowired
+    protected ObjectMapper objectMapper;
+    @MockBean
+    private JsonWebTokenEvaluator jsonWebTokenEvaluator;
 
     @BeforeEach
     protected void setUp(

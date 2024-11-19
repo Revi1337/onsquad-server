@@ -1,18 +1,21 @@
 package revi1337.onsquad.crew_participant.presentation;
 
 import jakarta.validation.constraints.Positive;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import revi1337.onsquad.auth.config.Authenticate;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_participant.application.CrewParticipantService;
 import revi1337.onsquad.crew_participant.presentation.dto.response.CrewParticipantRequestResponse;
 import revi1337.onsquad.crew_participant.presentation.dto.response.SimpleCrewParticipantRequestResponse;
-
-import java.util.List;
 
 @Validated
 @RequiredArgsConstructor
@@ -26,7 +29,8 @@ public class CrewParticipantController {
     public ResponseEntity<RestResponse<List<CrewParticipantRequestResponse>>> findMyCrewRequests(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<CrewParticipantRequestResponse> crewParticipantRequestResponse = crewParticipantService.findMyCrewRequests(authenticatedMember.toDto().getId()).stream()
+        List<CrewParticipantRequestResponse> crewParticipantRequestResponse = crewParticipantService.findMyCrewRequests(
+                        authenticatedMember.toDto().getId()).stream()
                 .map(CrewParticipantRequestResponse::from)
                 .toList();
 
@@ -48,7 +52,8 @@ public class CrewParticipantController {
             @RequestParam Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService.findCrewRequestsInMyCrew(authenticatedMember.toDto().getId(), crewId).stream()
+        List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService.findCrewRequestsInMyCrew(
+                        authenticatedMember.toDto().getId(), crewId).stream()
                 .map(SimpleCrewParticipantRequestResponse::from)
                 .toList();
 

@@ -1,9 +1,8 @@
 package revi1337.onsquad.squad_participant.presentation.dto;
 
+import java.util.List;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad_participant.application.dto.SquadParticipantRequestDto;
-
-import java.util.List;
 
 public record SquadParticipantRequestResponse(
         Long crewId,
@@ -24,11 +23,6 @@ public record SquadParticipantRequestResponse(
         );
     }
 }
-
-
-
-
-
 
 //package revi1337.onsquad.squad_participant.presentation.dto;
 //

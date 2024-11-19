@@ -1,5 +1,8 @@
 package revi1337.onsquad.crew_participant.application;
 
+import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.CANT_SEE_PARTICIPANTS;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,10 +13,6 @@ import revi1337.onsquad.crew_participant.application.dto.SimpleCrewParticipantRe
 import revi1337.onsquad.crew_participant.domain.CrewParticipant;
 import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
-
-import java.util.List;
-
-import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

@@ -1,11 +1,15 @@
 package revi1337.onsquad.squad.domain.vo;
 
+import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
+import static revi1337.onsquad.squad.error.SquadErrorCode.NOT_ENOUGH_LEFT;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import revi1337.onsquad.squad.error.exception.SquadDomainException;
-
-import static revi1337.onsquad.squad.error.SquadErrorCode.*;
 
 @Getter
 @EqualsAndHashCode

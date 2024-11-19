@@ -1,10 +1,9 @@
 package revi1337.onsquad.squad_member.application.dto;
 
-import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
 
 public record SquadWithMemberDto(
         Long id,

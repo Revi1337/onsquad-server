@@ -1,10 +1,9 @@
 package revi1337.onsquad.squad_comment.application.dto;
 
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 
 public record SquadCommentDto(
         Long parentCommentId,

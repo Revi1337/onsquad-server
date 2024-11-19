@@ -1,11 +1,10 @@
 package revi1337.onsquad.crew.presentation.dto.response;
 
+import java.util.List;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfoResponse;
 import revi1337.onsquad.crew.application.dto.CrewMainDto;
 import revi1337.onsquad.crew_member.presentation.dto.response.Top5CrewMemberResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
-
-import java.util.List;
 
 public record CrewMainResponse(
         CrewInfoResponse crew,

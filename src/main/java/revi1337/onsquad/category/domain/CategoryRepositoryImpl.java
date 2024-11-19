@@ -1,11 +1,10 @@
 package revi1337.onsquad.category.domain;
 
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository

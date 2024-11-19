@@ -1,7 +1,11 @@
 package revi1337.onsquad.factory;
 
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.vo.*;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 public class MemberFactory {
 

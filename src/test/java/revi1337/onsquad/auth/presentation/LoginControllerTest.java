@@ -1,5 +1,16 @@
 package revi1337.onsquad.auth.presentation;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,25 +24,18 @@ import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.support.IntegrationTestSupport;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @DisplayName("로그인 api 테스트")
 public class LoginControllerTest extends IntegrationTestSupport {
 
-    @Autowired private MemberJpaRepository memberRepository;
+    @Autowired
+    private MemberJpaRepository memberRepository;
 
     @DisplayName("로그인하면 AccessToken 과 RefreshToken 이 내려온다.")
     @Test
     public void loginTest() throws Exception {
         // given
-        Member member = MemberFactory.defaultMember().email(new Email(TEST_EMAIL)).password(new Password(TEST_BCRYPT_PASSWORD)).build();
+        Member member = MemberFactory.defaultMember().email(new Email(TEST_EMAIL))
+                .password(new Password(TEST_BCRYPT_PASSWORD)).build();
         memberRepository.save(member);
         LoginRequest loginRequest = LoginRequest.of(TEST_EMAIL, TEST_PASSWORD);
 

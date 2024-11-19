@@ -1,18 +1,19 @@
 package revi1337.onsquad.member.domain.redis;
 
-import org.junit.jupiter.api.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.Duration;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.config.SpringActiveProfilesResolver;
+import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.support.TestContainerSupport;
-
-import java.time.Duration;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("RedisMailRepository 테스트")
 @Import(RedisMailRepository.class)
@@ -20,8 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
 class RedisMailRepositoryTest extends TestContainerSupport {
 
-    @Autowired private StringRedisTemplate stringRedisTemplate;
-    @Autowired private RedisMailRepository redisMailRepository;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private RedisMailRepository redisMailRepository;
 
     private static final String TEST_EMAIL = "test@email.com";
     private static final String TEST_AUTH_CODE = "1111";

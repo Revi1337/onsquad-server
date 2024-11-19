@@ -3,7 +3,11 @@ package revi1337.onsquad.member.application.dto;
 import lombok.Builder;
 import lombok.Getter;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.vo.*;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 @Getter
 public class MemberDto {
@@ -26,7 +30,15 @@ public class MemberDto {
     }
 
     @Builder(builderClassName = "MemberDtoValueBuilder", builderMethodName = "create")
-    private MemberDto(Long id, String userType, String email, String address, String addressDetail, String nickname, String password) {
+    private MemberDto(
+            Long id,
+            String userType,
+            String email,
+            String address,
+            String addressDetail,
+            String nickname,
+            String password
+    ) {
         this.id = id;
         this.userType = userType == null ? UserType.GENERAL : UserType.valueOf(userType);
         this.email = new Email(email);

@@ -1,13 +1,12 @@
 package revi1337.onsquad.common.error;
 
 import jakarta.validation.ConstraintViolationException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.validation.BindException;
-import revi1337.onsquad.common.dto.ProblemDetail;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.BindException;
+import revi1337.onsquad.common.dto.ProblemDetail;
 
 @RequiredArgsConstructor
 public class ValidationExceptionTranslator {

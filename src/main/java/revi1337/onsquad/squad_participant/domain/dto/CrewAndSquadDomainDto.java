@@ -12,7 +12,8 @@ public record CrewAndSquadDomainDto(
         SquadInfoDomainDto squadInfo
 ) {
     @QueryProjection
-    public CrewAndSquadDomainDto(Long crewId, Name crewName, SimpleMemberInfoDomainDto crewOwner, SquadInfoDomainDto squadInfo) {
+    public CrewAndSquadDomainDto(Long crewId, Name crewName, SimpleMemberInfoDomainDto crewOwner,
+                                 SquadInfoDomainDto squadInfo) {
         this.crewId = crewId;
         this.crewName = crewName;
         this.crewOwner = crewOwner;

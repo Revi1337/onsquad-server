@@ -12,5 +12,5 @@ import revi1337.onsquad.config.TestQueryDslConfig;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(scripts = {"classpath:/h2-truncate.sql"})
 @DataJpaTest(showSql = false)
-public abstract class PersistenceLayerTestSupport { 
+public abstract class PersistenceLayerTestSupport {
 }

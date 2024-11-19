@@ -1,13 +1,16 @@
 package revi1337.onsquad.auth.application;
 
+import java.util.Collection;
+import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import revi1337.onsquad.member.domain.vo.*;
 import revi1337.onsquad.member.application.dto.MemberDto;
-
-import java.util.Collection;
-import java.util.Set;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 public record AuthenticatedMember(
         Long id,
@@ -21,6 +24,7 @@ public record AuthenticatedMember(
 
     /**
      * Only Used For @Authenticated HandlerMethodArgumentResolver
+     *
      * @param id
      * @return
      */
@@ -29,7 +33,8 @@ public record AuthenticatedMember(
     }
 
     // TODO 권한이 도입되면 리팩토링 필요.
-    public static AuthenticatedMember of(Long id, UserType userType, Email email, Address address, Nickname nickname, Password password) {
+    public static AuthenticatedMember of(Long id, UserType userType, Email email, Address address, Nickname nickname,
+                                         Password password) {
         Set<SimpleGrantedAuthority> roles = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
         return new AuthenticatedMember(
                 id,

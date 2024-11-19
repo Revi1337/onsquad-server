@@ -1,6 +1,26 @@
 package revi1337.onsquad.squad_member.domain;
 
-import jakarta.persistence.*;
+import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.ACCEPT;
+import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.PENDING;
+import static revi1337.onsquad.squad_member.domain.vo.SquadRole.GENERAL;
+import static revi1337.onsquad.squad_member.domain.vo.SquadRole.LEADER;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,12 +32,6 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.vo.JoinStatus;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad_member.domain.vo.SquadRole;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-
-import static revi1337.onsquad.crew_member.domain.vo.JoinStatus.*;
-import static revi1337.onsquad.squad_member.domain.vo.SquadRole.*;
 
 @DynamicInsert
 @Getter
@@ -54,7 +68,8 @@ public class SquadMember extends RequestEntity {
     private JoinStatus status;
 
     @Builder
-    private SquadMember(Long id, Squad squad, CrewMember crewMember, SquadRole role, JoinStatus status, LocalDateTime participantAt) {
+    private SquadMember(Long id, Squad squad, CrewMember crewMember, SquadRole role, JoinStatus status,
+                        LocalDateTime participantAt) {
         super(participantAt);
         this.id = id;
         this.squad = squad;
@@ -85,8 +100,12 @@ public class SquadMember extends RequestEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SquadMember that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SquadMember that)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), that.getId());
     }
 

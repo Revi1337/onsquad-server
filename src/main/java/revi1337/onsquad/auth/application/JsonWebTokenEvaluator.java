@@ -1,25 +1,26 @@
 package revi1337.onsquad.auth.application;
 
+import static revi1337.onsquad.auth.error.TokenErrorCode.INVALID_TOKEN_SIGNATURE;
+import static revi1337.onsquad.auth.error.TokenErrorCode.TOKEN_EXPIRED;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.springframework.stereotype.Component;
-import revi1337.onsquad.auth.config.properties.TokenProperties;
-import revi1337.onsquad.auth.error.exception.AuthTokenException;
-
 import java.security.Key;
 import java.util.function.Function;
-
-import static revi1337.onsquad.auth.config.properties.TokenProperties.*;
-import static revi1337.onsquad.auth.error.TokenErrorCode.*;
+import org.springframework.stereotype.Component;
+import revi1337.onsquad.auth.config.properties.TokenProperties;
+import revi1337.onsquad.auth.config.properties.TokenProperties.AccessTokenAttributes;
+import revi1337.onsquad.auth.config.properties.TokenProperties.RefreshTokenAttributes;
+import revi1337.onsquad.auth.error.exception.AuthTokenException;
 
 @Component
 public class JsonWebTokenEvaluator {
 
-    private AccessTokenAttributes accessTokenAttributes;
-    private RefreshTokenAttributes refreshTokenAttributes;
+    private final AccessTokenAttributes accessTokenAttributes;
+    private final RefreshTokenAttributes refreshTokenAttributes;
 
     public JsonWebTokenEvaluator(TokenProperties tokenProperties) {
         this.accessTokenAttributes = tokenProperties.accessTokenAttributes();

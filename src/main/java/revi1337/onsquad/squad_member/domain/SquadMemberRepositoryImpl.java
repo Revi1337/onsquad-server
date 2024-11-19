@@ -1,13 +1,11 @@
 package revi1337.onsquad.squad_member.domain;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
-
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
 
 @RequiredArgsConstructor
 @Repository

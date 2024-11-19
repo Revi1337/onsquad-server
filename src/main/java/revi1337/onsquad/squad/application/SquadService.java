@@ -1,35 +1,36 @@
 package revi1337.onsquad.squad.application;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-import revi1337.onsquad.squad_participant.domain.SquadParticipantRepository;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.squad.domain.*;
-import revi1337.onsquad.category.domain.Category;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.application.dto.SquadCreateDto;
-import revi1337.onsquad.squad.application.dto.SquadJoinDto;
-import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
-import revi1337.onsquad.category.util.CategoryTypeUtil;
-import revi1337.onsquad.squad_member.domain.SquadMember;
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICIPANT;
+import static revi1337.onsquad.squad.error.SquadErrorCode.ALREADY_JOIN;
+import static revi1337.onsquad.squad.error.SquadErrorCode.NOTMATCH_CREWINFO;
+import static revi1337.onsquad.squad.error.SquadErrorCode.OWNER_CANT_PARTICIPANT;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.*;
-import static revi1337.onsquad.squad.error.SquadErrorCode.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.category.domain.Category;
+import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
+import revi1337.onsquad.category.util.CategoryTypeUtil;
+import revi1337.onsquad.crew.domain.Crew;
+import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.squad.application.dto.SquadCreateDto;
+import revi1337.onsquad.squad.application.dto.SquadInfoDto;
+import revi1337.onsquad.squad.application.dto.SquadJoinDto;
+import revi1337.onsquad.squad.domain.Squad;
+import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.squad.error.exception.SquadBusinessException;
+import revi1337.onsquad.squad_member.domain.SquadMember;
+import revi1337.onsquad.squad_participant.domain.SquadParticipantRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -99,7 +100,9 @@ public class SquadService {
                 .findFirst()
                 .ifPresentOrElse(
                         crewMember -> persistSquadAndRegisterAdmin(dto, crewMember, crew),
-                        () -> { throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT); }
+                        () -> {
+                            throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT);
+                        }
                 );
     }
 

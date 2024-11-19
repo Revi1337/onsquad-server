@@ -1,13 +1,12 @@
 package revi1337.onsquad.member.domain;
 
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
+import static revi1337.onsquad.member.error.MemberErrorCode.NOTFOUND;
 
 import java.util.List;
 import java.util.Optional;
-
-import static revi1337.onsquad.member.error.MemberErrorCode.NOTFOUND;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
 public interface MemberRepository {
 

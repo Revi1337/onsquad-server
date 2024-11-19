@@ -1,14 +1,13 @@
 package revi1337.onsquad.crew_member.domain;
 
+import static revi1337.onsquad.crew.domain.QCrew.crew;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.member.domain.QMember.member;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.crew.domain.vo.Name;
-
-import java.util.Optional;
-
-import static revi1337.onsquad.crew.domain.QCrew.*;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
-import static revi1337.onsquad.member.domain.QMember.*;
 
 @RequiredArgsConstructor
 public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository {

@@ -1,8 +1,7 @@
 package revi1337.onsquad.announce.domain.dto;
 
-import revi1337.onsquad.announce.application.dto.AnnounceInfoDto;
-
 import java.util.List;
+import revi1337.onsquad.announce.application.dto.AnnounceInfoDto;
 
 public record AnnounceInfosWithAuthDto(
         boolean hasAuthority,

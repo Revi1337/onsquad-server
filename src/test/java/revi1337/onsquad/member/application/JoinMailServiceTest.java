@@ -1,5 +1,15 @@
 package revi1337.onsquad.member.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.willDoNothing;
+
+import java.time.Duration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,18 +20,16 @@ import revi1337.onsquad.inrastructure.mail.EmailSender;
 import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.member.domain.redis.RedisMailRepository;
 
-import java.time.Duration;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.*;
-
 @DisplayName("회원가입 메일서비스 테스트")
 @ExtendWith(MockitoExtension.class)
 public class JoinMailServiceTest {
 
-    @Mock private EmailSender emailSender;
-    @Mock private RedisMailRepository redisMailRepository;
-    @InjectMocks private JoinMailService joinMailService;
+    @Mock
+    private EmailSender emailSender;
+    @Mock
+    private RedisMailRepository redisMailRepository;
+    @InjectMocks
+    private JoinMailService joinMailService;
 
     private static final String TEST_EMAIL = "test@email.com";
     private static final String TEST_AUTH_CODE = "1111";

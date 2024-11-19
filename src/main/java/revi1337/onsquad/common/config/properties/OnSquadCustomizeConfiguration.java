@@ -11,7 +11,9 @@ import revi1337.onsquad.common.aspect.RequestCacheHandlerExecutionChain;
 public class OnSquadCustomizeConfiguration {
 
     @Bean
-    public RequestCacheHandlerExecutionChain requestCacheHandlerExecutionChain(StringRedisTemplate stringRedisTemplate) {
+    public RequestCacheHandlerExecutionChain requestCacheHandlerExecutionChain(
+            StringRedisTemplate stringRedisTemplate
+    ) {
         RequestCacheHandlerExecutionChain handlerExecutionChain = new RequestCacheHandlerExecutionChain();
         handlerExecutionChain.addRequestCacheHandlerBefore(
                 new RedisRequestCacheHandler(stringRedisTemplate),

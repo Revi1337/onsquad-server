@@ -1,10 +1,9 @@
 package revi1337.onsquad.squad.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SquadInfoResponse(

@@ -1,5 +1,7 @@
 package revi1337.onsquad.support;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +21,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import revi1337.onsquad.config.SpringActiveProfilesResolver;
 
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
 @Sql("classpath:h2-truncate.sql")
 @ExtendWith({RestDocumentationExtension.class})
 @AutoConfigureMockMvc
@@ -37,8 +37,10 @@ public abstract class IntegrationTestSupport extends TestContainerSupport {
     protected static final String ACCESS_TOKEN_SUBJECT = "access_token";
     protected static final String REFRESH_TOKEN_SUBJECT = "refresh_token";
 
-    @Autowired protected MockMvc mockMvc;
-    @Autowired protected ObjectMapper objectMapper;
+    @Autowired
+    protected MockMvc mockMvc;
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     @BeforeEach
     protected void setUp(

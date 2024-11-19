@@ -1,14 +1,13 @@
 package revi1337.onsquad.squad_participant.domain.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
-import revi1337.onsquad.squad.domain.vo.Capacity;
-import revi1337.onsquad.squad.domain.vo.Title;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.squad.domain.vo.Capacity;
+import revi1337.onsquad.squad.domain.vo.Title;
 
 public record SquadParticipantDomainDto(
         Long crewId,
@@ -23,7 +22,9 @@ public record SquadParticipantDomainDto(
         RequestParticipantDomainDto request
 ) {
     @QueryProjection
-    public SquadParticipantDomainDto(Long crewId, Long id, Title title, Capacity capacity, Address address, String kakaoLink, String discordLink, List<CategoryType> categories, SimpleMemberInfoDomainDto squadOwner, RequestParticipantDomainDto request) {
+    public SquadParticipantDomainDto(Long crewId, Long id, Title title, Capacity capacity, Address address,
+                                     String kakaoLink, String discordLink, List<CategoryType> categories,
+                                     SimpleMemberInfoDomainDto squadOwner, RequestParticipantDomainDto request) {
         this.crewId = crewId;
         this.id = id;
         this.title = title;

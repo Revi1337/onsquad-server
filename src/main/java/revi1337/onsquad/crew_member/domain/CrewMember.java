@@ -1,6 +1,24 @@
 package revi1337.onsquad.crew_member.domain;
 
-import jakarta.persistence.*;
+import static revi1337.onsquad.crew_member.domain.vo.CrewRole.GENERAL;
+import static revi1337.onsquad.crew_member.domain.vo.CrewRole.OWNER;
+
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,11 +29,6 @@ import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.vo.CrewRole;
 import revi1337.onsquad.member.domain.Member;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-
-import static revi1337.onsquad.crew_member.domain.vo.CrewRole.*;
 
 @DynamicInsert
 @Getter
@@ -84,8 +97,12 @@ public class CrewMember extends RequestEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CrewMember that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CrewMember that)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), that.getId());
     }
 

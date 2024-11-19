@@ -1,5 +1,10 @@
 package revi1337.onsquad.auth.application;
 
+import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_MEMBER;
+import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_NICKNAME;
+import static revi1337.onsquad.auth.error.AuthErrorCode.NON_AUTHENTICATE_EMAIL;
+
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,10 +17,6 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
-
-import java.time.Duration;
-
-import static revi1337.onsquad.auth.error.AuthErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

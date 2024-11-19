@@ -1,9 +1,8 @@
 package revi1337.onsquad.squad_member.application.dto;
 
+import java.time.LocalDateTime;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
-
-import java.time.LocalDateTime;
 
 public record SquadMemberDto(
         SimpleMemberInfoDto memberInfo,
@@ -16,9 +15,6 @@ public record SquadMemberDto(
         );
     }
 }
-
-
-
 
 //package revi1337.onsquad.squad_member.application.dto;
 //

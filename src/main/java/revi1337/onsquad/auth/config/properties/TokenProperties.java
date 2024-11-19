@@ -1,10 +1,9 @@
 package revi1337.onsquad.auth.config.properties;
 
+import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-
-import java.time.Duration;
 
 @ConfigurationProperties("onsquad.token")
 public record TokenProperties(

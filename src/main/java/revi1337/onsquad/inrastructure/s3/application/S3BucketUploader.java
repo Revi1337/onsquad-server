@@ -1,14 +1,7 @@
 package revi1337.onsquad.inrastructure.s3.application;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
-import revi1337.onsquad.image.application.AttachmentMagicByteValidator;
-import revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties.Directories;
+import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties.S3;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,8 +11,15 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
-
-import static revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import revi1337.onsquad.image.application.AttachmentMagicByteValidator;
+import revi1337.onsquad.inrastructure.s3.config.properties.S3BucketProperties;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 // TODO 리팩토링 필요. 해당 클래스 코드 너무 개판.
 @Slf4j

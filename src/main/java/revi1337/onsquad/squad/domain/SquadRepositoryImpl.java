@@ -1,17 +1,16 @@
 package revi1337.onsquad.squad.domain;
 
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.Category;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
 import revi1337.onsquad.squad_category.domain.SquadCategoryJdbcRepository;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository

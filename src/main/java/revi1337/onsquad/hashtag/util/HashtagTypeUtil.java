@@ -1,12 +1,11 @@
 package revi1337.onsquad.hashtag.util;
 
-import revi1337.onsquad.crew.error.exception.CrewDomainException;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_HASHTAG;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_HASHTAG;
+import revi1337.onsquad.crew.error.exception.CrewDomainException;
+import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 
 public abstract class HashtagTypeUtil {
 

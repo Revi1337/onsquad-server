@@ -1,5 +1,8 @@
 package revi1337.onsquad.backup.crew.schedule;
 
+import static revi1337.onsquad.common.config.properties.ApiProperties.CrewTopN;
+
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +14,6 @@ import revi1337.onsquad.backup.crew.domain.CrewTopCache;
 import revi1337.onsquad.backup.crew.domain.CrewTopCacheRepository;
 import revi1337.onsquad.common.config.properties.ApiProperties;
 import revi1337.onsquad.crew_member.domain.CrewMemberJdbcRepository;
-
-import java.time.LocalDate;
-
-import static revi1337.onsquad.common.config.properties.ApiProperties.*;
 
 @Slf4j
 @RequiredArgsConstructor

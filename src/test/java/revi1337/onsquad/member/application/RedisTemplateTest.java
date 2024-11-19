@@ -1,5 +1,8 @@
 package revi1337.onsquad.member.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,10 +12,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import revi1337.onsquad.config.SpringActiveProfilesResolver;
 import revi1337.onsquad.support.TestContainerSupport;
-
-import java.time.Duration;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Redis 정상동작 테스트")
 @DataRedisTest

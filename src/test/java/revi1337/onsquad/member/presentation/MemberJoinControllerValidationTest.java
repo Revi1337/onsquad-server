@@ -1,5 +1,22 @@
 package revi1337.onsquad.member.presentation;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,22 +31,6 @@ import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 import revi1337.onsquad.support.ValidationWithRestDocsTestSupport;
 
-import java.util.stream.Stream;
-
-import static org.mockito.BDDMockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @DisplayName("회원가입 api Validation 테스트")
 @WebMvcTest(MemberJoinController.class)
 class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSupport {
@@ -39,7 +40,8 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
     private static final String TEST_AUTH_CODE = "1111";
     private static final String TEST_NICKNAME = "nickname";
 
-    @MockBean private MemberJoinService memberJoinService;
+    @MockBean
+    private MemberJoinService memberJoinService;
 
     @DisplayName("인증코드를 발송한다.")
     @Nested
@@ -229,11 +231,16 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
         static Stream<Arguments> parameterizedJoinMemberArguments() {
             return Stream.of(
                     Arguments.of(new MemberJoinRequest("", "password", "password", "nickname", "anywhere", "우장산 롯데캐슬")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "", "password", "nickname", "anywhere", "우장산 롯데캐슬")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "", "nickname", "anywhere", "우장산 롯데캐슬")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "", "anywhere", "우장산 롯데캐슬")),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "anywhere", null)),
-                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "", "우장산 롯데캐슬"))
+                    Arguments.of(
+                            new MemberJoinRequest("test@mail.com", "", "password", "nickname", "anywhere", "우장산 롯데캐슬")),
+                    Arguments.of(
+                            new MemberJoinRequest("test@mail.com", "password", "", "nickname", "anywhere", "우장산 롯데캐슬")),
+                    Arguments.of(
+                            new MemberJoinRequest("test@mail.com", "password", "password", "", "anywhere", "우장산 롯데캐슬")),
+                    Arguments.of(new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "anywhere",
+                            null)),
+                    Arguments.of(
+                            new MemberJoinRequest("test@mail.com", "password", "password", "nickname", "", "우장산 롯데캐슬"))
             );
         }
 
@@ -266,10 +273,12 @@ class MemberJoinControllerValidationTest extends ValidationWithRestDocsTestSuppo
                                     requestFields(
                                             fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                                             fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
-                                            fieldWithPath("passwordConfirm").type(JsonFieldType.STRING).description("비밀번호 확인"),
+                                            fieldWithPath("passwordConfirm").type(JsonFieldType.STRING)
+                                                    .description("비밀번호 확인"),
                                             fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
                                             fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
-                                            fieldWithPath("addressDetail").type(JsonFieldType.STRING).description("상세 주소").optional()
+                                            fieldWithPath("addressDetail").type(JsonFieldType.STRING)
+                                                    .description("상세 주소").optional()
                                     )
                             )
                     );

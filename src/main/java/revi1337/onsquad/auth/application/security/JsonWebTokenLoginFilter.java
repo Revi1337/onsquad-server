@@ -5,6 +5,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,18 +23,15 @@ import revi1337.onsquad.auth.application.dto.LoginRequest;
 import revi1337.onsquad.auth.error.exception.UnsupportedLoginUrlMethod;
 import revi1337.onsquad.common.error.CommonErrorCode;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-
 @Slf4j
 public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFilter {
 
-    private final ObjectMapper objectMapper;
-
     private static final String DEFAULT_LOGIN_URL = "/api/v1/auth/login";
     private static final String ALLOW_HTTP_METHOD = "POST";
-    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher(DEFAULT_LOGIN_URL, ALLOW_HTTP_METHOD);
+    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
+            new AntPathRequestMatcher(DEFAULT_LOGIN_URL, ALLOW_HTTP_METHOD);
+
+    private final ObjectMapper objectMapper;
 
     public JsonWebTokenLoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
@@ -64,7 +64,8 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
-                                                HttpServletResponse response) throws AuthenticationException, IOException {
+                                                HttpServletResponse response)
+            throws AuthenticationException, IOException {
         LoginRequest loginRequest = objectMapper.readValue(
                 StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8), LoginRequest.class
         );
@@ -85,7 +86,8 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException, ServletException {
         log.info("{} --> unsuccessfulAuthentication", getClass().getSimpleName());
         super.unsuccessfulAuthentication(request, response, failed);
     }

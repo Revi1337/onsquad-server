@@ -1,14 +1,13 @@
 package revi1337.onsquad.auth.application.redis;
 
+import java.time.Duration;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.application.token.RefreshToken;
-
-import java.time.Duration;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component

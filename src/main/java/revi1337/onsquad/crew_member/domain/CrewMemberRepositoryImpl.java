@@ -1,19 +1,18 @@
 package revi1337.onsquad.crew_member.domain;
 
+import static java.util.concurrent.TimeUnit.HOURS;
+import static revi1337.onsquad.common.aspect.OnSquadType.CREW;
+
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.backup.crew.domain.CrewTopCacheJpaRepository;
 import revi1337.onsquad.common.aspect.RedisCache;
-import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.concurrent.TimeUnit.*;
-import static revi1337.onsquad.common.aspect.OnSquadType.CREW;
 
 @RequiredArgsConstructor
 @Repository

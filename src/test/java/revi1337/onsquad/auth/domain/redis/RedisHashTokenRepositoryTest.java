@@ -1,5 +1,10 @@
 package revi1337.onsquad.auth.domain.redis;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import java.time.Duration;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +16,14 @@ import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.config.SpringActiveProfilesResolver;
 import revi1337.onsquad.support.TestContainerSupport;
 
-import java.time.Duration;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 @DisplayName("RedisTokenRepository 테스트")
 @Import(RedisHashTokenOperation.class)
 @DataRedisTest
 @ActiveProfiles(resolver = SpringActiveProfilesResolver.class)
 class RedisHashTokenRepositoryTest extends TestContainerSupport {
 
-    @Autowired private RedisHashTokenOperation redisHashTokenRepository;
+    @Autowired
+    private RedisHashTokenOperation redisHashTokenRepository;
 
     @DisplayName("RefreshToken 이 저장되는지 확인한다.")
     @Test

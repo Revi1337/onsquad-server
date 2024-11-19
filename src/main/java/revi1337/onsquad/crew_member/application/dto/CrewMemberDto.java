@@ -1,9 +1,8 @@
 package revi1337.onsquad.crew_member.application.dto;
 
+import java.time.LocalDateTime;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
-
-import java.time.LocalDateTime;
 
 public record CrewMemberDto(
         SimpleMemberInfoDto memberInfo,

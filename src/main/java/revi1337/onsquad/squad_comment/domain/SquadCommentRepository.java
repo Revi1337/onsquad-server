@@ -1,13 +1,12 @@
 package revi1337.onsquad.squad_comment.domain;
 
-import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
-import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUND_COMMENT;
 
 import java.util.List;
 import java.util.Optional;
-
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUND_COMMENT;
+import org.springframework.data.domain.Pageable;
+import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
 
 public interface SquadCommentRepository {
 
@@ -17,7 +16,8 @@ public interface SquadCommentRepository {
 
     List<SquadCommentDomainDto> findAllWithMemberByCrewId(Long squadId);
 
-    List<SquadCommentDomainDto> findLimitedCommentsBothOfParentsAndChildren(Long squadId, Pageable pageable, Integer childSize);
+    List<SquadCommentDomainDto> findLimitedCommentsBothOfParentsAndChildren(Long squadId, Pageable pageable,
+                                                                            Integer childSize);
 
     List<SquadCommentDomainDto> findChildComments(Long squadId, Long parentId, Pageable pageable);
 

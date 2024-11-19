@@ -6,7 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
@@ -30,7 +33,8 @@ public class CrewMainController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         CrewMainResponse crewMainResponse = CrewMainResponse.from(
-                crewMainService.fetchMain(authenticatedMember.toDto().getId(), crewId, category.categoryType(), pageable)
+                crewMainService.fetchMain(authenticatedMember.toDto().getId(), crewId, category.categoryType(),
+                        pageable)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(crewMainResponse));

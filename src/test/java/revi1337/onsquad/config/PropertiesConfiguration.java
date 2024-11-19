@@ -1,5 +1,7 @@
 package revi1337.onsquad.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -12,15 +14,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(initializers = PropertiesConfiguration.PropertyContextInitializer.class)
 public abstract class PropertiesConfiguration {
 
-    @Autowired protected TokenProperties tokenProperties;
-    @Autowired protected OnsquadProperties onsquadProperties;
+    @Autowired
+    protected TokenProperties tokenProperties;
+    @Autowired
+    protected OnsquadProperties onsquadProperties;
 
     @Configuration
     @EnableConfigurationProperties({TokenProperties.class, OnsquadProperties.class})
@@ -39,9 +40,11 @@ public abstract class PropertiesConfiguration {
         public void initialize(ConfigurableApplicationContext applicationContext) {
             Map<String, String> properties = new HashMap<>();
             properties.put("spring.application.name", APPLICATION_NAME);
-            properties.put("onsquad.token.access-token-attributes.token-attributes.secret-key", ACCESS_TOKEN_SECRET_KEY);
+            properties.put("onsquad.token.access-token-attributes.token-attributes.secret-key",
+                    ACCESS_TOKEN_SECRET_KEY);
             properties.put("onsquad.token.access-token-attributes.token-attributes.expired", ACCESS_TOKEN_EXPIRED);
-            properties.put("onsquad.token.refresh-token-attributes.token-attributes.secret-key", REFRESH_TOKEN_SECRET_KEY);
+            properties.put("onsquad.token.refresh-token-attributes.token-attributes.secret-key",
+                    REFRESH_TOKEN_SECRET_KEY);
             properties.put("onsquad.token.refresh-token-attributes.token-attributes.expired", REFRESH_TOKEN_EXPIRED);
 
             TestPropertyValues.of(properties).applyTo(applicationContext);

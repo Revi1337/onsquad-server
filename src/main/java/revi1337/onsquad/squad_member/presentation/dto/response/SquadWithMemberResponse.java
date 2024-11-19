@@ -1,8 +1,7 @@
 package revi1337.onsquad.squad_member.presentation.dto.response;
 
-import revi1337.onsquad.squad_member.application.dto.SquadWithMemberDto;
-
 import java.util.List;
+import revi1337.onsquad.squad_member.application.dto.SquadWithMemberDto;
 
 public record SquadWithMemberResponse(
         Long id,

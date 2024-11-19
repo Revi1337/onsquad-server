@@ -1,18 +1,23 @@
 package revi1337.onsquad.announce.presentation;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.announce.application.AnnounceService;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfoResponse;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfosWithAuthResponse;
-import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/crew")
@@ -60,7 +65,8 @@ public class AnnounceController {
             @RequestParam Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<AnnounceInfoResponse> announceInfoResponses = announceService.findAnnounces(authenticatedMember.toDto().getId(), crewId).stream()
+        List<AnnounceInfoResponse> announceInfoResponses = announceService.findAnnounces(
+                        authenticatedMember.toDto().getId(), crewId).stream()
                 .map(AnnounceInfoResponse::from)
                 .toList();
 

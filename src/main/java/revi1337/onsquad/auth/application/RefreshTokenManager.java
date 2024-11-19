@@ -1,8 +1,7 @@
 package revi1337.onsquad.auth.application;
 
-import revi1337.onsquad.auth.application.token.RefreshToken;
-
 import java.util.Optional;
+import revi1337.onsquad.auth.application.token.RefreshToken;
 
 public interface RefreshTokenManager {
 
@@ -13,5 +12,5 @@ public interface RefreshTokenManager {
     void updateTemporaryToken(Long memberId, RefreshToken refreshToken);
 
     void removeTemporaryToken(Long memberId);
-    
+
 }

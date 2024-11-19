@@ -1,10 +1,9 @@
 package revi1337.onsquad.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import revi1337.onsquad.common.error.ErrorCode;
-
 import java.util.List;
 import java.util.Map;
+import revi1337.onsquad.common.error.ErrorCode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProblemDetail(

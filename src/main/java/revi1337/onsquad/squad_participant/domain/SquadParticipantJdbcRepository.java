@@ -1,10 +1,9 @@
 package revi1337.onsquad.squad_participant.domain;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Repository

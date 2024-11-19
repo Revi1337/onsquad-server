@@ -1,5 +1,10 @@
 package revi1337.onsquad.common.error;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
@@ -7,9 +12,6 @@ import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.common.dto.RestResponse;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 class RestErrorHandlerTest {

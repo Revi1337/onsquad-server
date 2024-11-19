@@ -9,6 +9,6 @@ public class SpringActiveProfilesResolver implements ActiveProfilesResolver {
     @Override
     public String[] resolve(Class<?> testClass) {
         String property = System.getProperty(SPRING_PROFILES_ACTIVE);
-        return new String[] {property};
+        return new String[]{property};
     }
 }

@@ -2,9 +2,8 @@ package revi1337.onsquad.squad.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
-import revi1337.onsquad.squad.application.dto.SquadCreateDto;
-
 import java.util.List;
+import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 
 public record SquadCreateRequest(
         @NotEmpty String title,

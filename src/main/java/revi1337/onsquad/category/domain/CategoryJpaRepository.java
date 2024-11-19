@@ -1,10 +1,9 @@
 package revi1337.onsquad.category.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.jpa.repository.JpaRepository;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 
 public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
 

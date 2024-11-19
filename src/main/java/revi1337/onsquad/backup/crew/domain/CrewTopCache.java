@@ -1,11 +1,17 @@
 package revi1337.onsquad.backup.crew.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
-import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 
 @Entity
 @Getter
@@ -37,7 +43,16 @@ public class CrewTopCache {
     private int ranks;
 
     @Builder
-    private CrewTopCache(Long id, Long crewId, Long memberId, String nickname, String mbti, LocalDateTime participateAt, int counter, int ranks) {
+    private CrewTopCache(
+            Long id,
+            Long crewId,
+            Long memberId,
+            String nickname,
+            String mbti,
+            LocalDateTime participateAt,
+            int counter,
+            int ranks
+    ) {
         this.id = id;
         this.crewId = crewId;
         this.memberId = memberId;
@@ -50,8 +65,12 @@ public class CrewTopCache {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CrewTopCache that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CrewTopCache that)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), that.getId());
     }
 

@@ -1,10 +1,13 @@
 package revi1337.onsquad.hashtag.domain.vo;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
@@ -55,7 +58,9 @@ public enum HashtagType {
     private final Long pk;
 
     private static final Map<String, HashtagType> hashtagHashMap = Collections.unmodifiableMap(new HashMap<>() {
-        { unmodifiableList().forEach(hashtag -> put(hashtag.getText(), hashtag)); }
+        {
+            unmodifiableList().forEach(hashtag -> put(hashtag.getText(), hashtag));
+        }
     });
 
     public static List<HashtagType> unmodifiableList() {

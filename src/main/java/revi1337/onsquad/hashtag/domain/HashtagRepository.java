@@ -1,10 +1,9 @@
 package revi1337.onsquad.hashtag.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.jpa.repository.JpaRepository;
+import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 
 public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
 

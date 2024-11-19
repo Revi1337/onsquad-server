@@ -1,8 +1,7 @@
 package revi1337.onsquad.crew_participant.application.dto;
 
-import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantDomainDto;
-
 import java.time.LocalDateTime;
+import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantDomainDto;
 
 public record CrewParticipantDto(
         Long id,

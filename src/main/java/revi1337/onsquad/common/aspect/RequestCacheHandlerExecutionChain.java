@@ -1,9 +1,8 @@
 package revi1337.onsquad.common.aspect;
 
-import java.util.Objects;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
@@ -14,7 +13,8 @@ public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
         addDefaultCacheHandler();
     }
 
-    public void addRequestCacheHandlerBefore(RequestCacheHandler requestCacheHandler, Class<? extends RequestCacheHandler> clazz) {
+    public void addRequestCacheHandlerBefore(RequestCacheHandler requestCacheHandler,
+                                             Class<? extends RequestCacheHandler> clazz) {
         for (int i = 0; i < requestCacheHandlers.size(); i++) {
             RequestCacheHandler currentHandler = requestCacheHandlers.get(i);
             if (clazz.isAssignableFrom(currentHandler.getClass())) {

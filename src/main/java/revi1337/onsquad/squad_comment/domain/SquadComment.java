@@ -1,6 +1,19 @@
 package revi1337.onsquad.squad_comment.domain;
 
-import jakarta.persistence.*;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.INVALID_LENGTH;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,12 +22,6 @@ import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentDomainException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.INVALID_LENGTH;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -89,8 +96,12 @@ public class SquadComment extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SquadComment comment)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SquadComment comment)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), comment.getId());
     }
 

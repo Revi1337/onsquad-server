@@ -1,10 +1,9 @@
 package revi1337.onsquad.squad_member.presentation.dto.response;
 
+import java.util.List;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SimpleSquadInfoResponse;
 import revi1337.onsquad.squad_member.application.dto.EnrolledSquadDto;
-
-import java.util.List;
 
 public record EnrolledSquadResponse(
         Long crewId,
