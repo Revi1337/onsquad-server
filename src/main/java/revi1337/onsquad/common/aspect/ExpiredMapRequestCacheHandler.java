@@ -5,15 +5,20 @@ import net.jodah.expiringmap.ExpiringMap;
 
 import java.util.concurrent.TimeUnit;
 
-public class ExpiredMapRequestCacheHandler implements RequestCacheHandler {
+/**
+ * DefaultRequestCacheHandler For RequestCacheHandlerExecutionChain
+ * @see RequestCacheHandlerExecutionChain
+ */
+public final class ExpiredMapRequestCacheHandler implements RequestCacheHandler {
 
+    private static final int MAX_CACHE_SIZE = 100_000;
     private static final ExpiringMap<String, String> REQUEST_CACHE = ExpiringMap.builder()
-            .maxSize(10000)
+            .maxSize(MAX_CACHE_SIZE)
             .variableExpiration()
             .build();
 
     @Override
-    public boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
+    public Boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
         String cacheValue = REQUEST_CACHE.get(key);
         if (cacheValue == null) {
             REQUEST_CACHE.put(key, value, ExpirationPolicy.CREATED, timeout, unit);

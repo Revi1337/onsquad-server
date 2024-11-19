@@ -39,8 +39,7 @@ public class ThrottlingAspect {
         String redisKeyFormat = throttling.type().getFormat();
 
         if (throttling.name().isEmpty()) {
-            String methodName = methodSignature.getMethod().getName();
-            String kebabMethodName = convertCamelToKebab(methodName);
+            String kebabMethodName = convertCamelToKebab(methodSignature);
             return String.format(redisKeyFormat, parameterMap.get(throttling.id()), kebabMethodName);
         }
 
@@ -55,7 +54,9 @@ public class ThrottlingAspect {
                 .collect(Collectors.toUnmodifiableMap(i -> parameterNames[i], i -> argumentValues[i]));
     }
 
-    private String convertCamelToKebab(String methodName) {
+    private String convertCamelToKebab(MethodSignature methodSignature) {
+        String methodName = methodSignature.getMethod().getName();
+
         return methodName.chars()
                 .mapToObj(c -> (char) c)
                 .map(c -> Character.isUpperCase(c) ? "-" + Character.toLowerCase(c) : c.toString())

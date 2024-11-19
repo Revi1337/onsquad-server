@@ -13,9 +13,9 @@ public class OnSquadCustomizeConfiguration {
     @Bean
     public RequestCacheHandlerExecutionChain requestCacheHandlerExecutionChain(StringRedisTemplate stringRedisTemplate) {
         RequestCacheHandlerExecutionChain handlerExecutionChain = new RequestCacheHandlerExecutionChain();
-        handlerExecutionChain.addRequestCacheHandler(
+        handlerExecutionChain.addRequestCacheHandlerBefore(
                 new RedisRequestCacheHandler(stringRedisTemplate),
-                new ExpiredMapRequestCacheHandler()
+                ExpiredMapRequestCacheHandler.class
         );
 
         return handlerExecutionChain;

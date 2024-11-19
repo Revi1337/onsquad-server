@@ -4,6 +4,6 @@ import java.util.concurrent.TimeUnit;
 
 public interface RequestCacheHandler {
 
-    boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit);
+    Boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit);
 
 }

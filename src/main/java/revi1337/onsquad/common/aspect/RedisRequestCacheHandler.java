@@ -14,13 +14,13 @@ public class RedisRequestCacheHandler implements RequestCacheHandler {
     private final StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
+    public Boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
         try {
             var valueOperations = stringRedisTemplate.opsForValue();
             return valueOperations.setIfAbsent(key, value, timeout, unit);
         } catch (RedisConnectionFailureException exception) {
-            log.debug("[Redis 연결 실패] 다음 RequestCacheHandler 를 적용합니다.");
-            throw new IllegalArgumentException(exception);
+            log.debug("[Redis 연결 실패] 다음 캐싱후보군을 적용합니다.");
+            return null;
         }
     }
 }

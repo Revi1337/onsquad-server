@@ -1,6 +1,6 @@
 package revi1337.onsquad.common.aspect;
 
-import org.springframework.util.CollectionUtils;
+import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,29 +10,30 @@ public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
 
     private final List<RequestCacheHandler> requestCacheHandlers = new ArrayList<>();
 
-    public void addRequestCacheHandler(RequestCacheHandler... requestCacheHandler) {
-        CollectionUtils.mergeArrayIntoCollection(requestCacheHandler, requestCacheHandlers);
+    public RequestCacheHandlerExecutionChain() {
+        addDefaultCacheHandler();
+    }
+
+    public void addRequestCacheHandlerBefore(RequestCacheHandler requestCacheHandler, Class<? extends RequestCacheHandler> clazz) {
+        for (int i = 0; i < requestCacheHandlers.size(); i++) {
+            RequestCacheHandler currentHandler = requestCacheHandlers.get(i);
+            if (clazz.isAssignableFrom(currentHandler.getClass())) {
+                requestCacheHandlers.add(i, requestCacheHandler);
+                return;
+            }
+        }
     }
 
     @Override
-    public boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
-        if (requestCacheHandlers.isEmpty()) {
-            return true;
-        }
-        int throwCount = requestCacheHandlers.size();
-        for (RequestCacheHandler requestCacheHandler : requestCacheHandlers) {
-            try {
-                if (requestCacheHandler.isFirstRequest(key, value, timeout, unit)) {
-                    return true;
-                }
-            } catch (Throwable ignored) {
-                throwCount -= 1;
-            }
-        }
-        if (throwCount == 0) {
-            throw new IllegalStateException("모든 캐싱 전략에 실패하였습니다.");
-        }
+    public Boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
+        return requestCacheHandlers.stream()
+                .map(handler -> handler.isFirstRequest(key, value, timeout, unit))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("[모든 캐싱 후보군을 사용할 수 없습니다.]"));
+    }
 
-        return false;
+    private void addDefaultCacheHandler() {
+        requestCacheHandlers.add(new ExpiredMapRequestCacheHandler());
     }
 }
