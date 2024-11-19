@@ -1,8 +1,7 @@
 package revi1337.onsquad.announce.presentation.dto.response;
 
-import revi1337.onsquad.announce.domain.dto.AnnounceInfosWithAuthDto;
-
 import java.util.List;
+import revi1337.onsquad.announce.domain.dto.AnnounceInfosWithAuthDto;
 
 public record AnnounceInfosWithAuthResponse(
         boolean hasAuthority,

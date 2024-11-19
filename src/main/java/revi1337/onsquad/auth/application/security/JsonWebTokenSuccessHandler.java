@@ -1,19 +1,18 @@
 package revi1337.onsquad.auth.application.security;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import revi1337.onsquad.auth.application.JsonWebTokenService;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.JsonWebTokenService;
 import revi1337.onsquad.auth.application.dto.JsonWebToken;
-
-import java.io.IOException;
-
-import static org.springframework.http.MediaType.*;
 
 @RequiredArgsConstructor
 @Slf4j

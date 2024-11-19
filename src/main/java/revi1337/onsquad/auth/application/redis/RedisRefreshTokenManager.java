@@ -1,13 +1,12 @@
 package revi1337.onsquad.auth.application.redis;
 
+import java.time.Duration;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.auth.application.RefreshTokenManager;
-import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.application.token.RefreshToken;
-
-import java.time.Duration;
-import java.util.Optional;
+import revi1337.onsquad.auth.config.properties.TokenProperties;
 
 @RequiredArgsConstructor
 @Service

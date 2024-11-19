@@ -1,11 +1,15 @@
 package revi1337.onsquad.crew.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.domain.dto.CrewWithMemberAndImageDto;
+import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.factory.CrewFactory;
 import revi1337.onsquad.factory.ImageFactory;
@@ -15,17 +19,15 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 @Import(CrewQueryDslRepository.class)
 class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
 
-    @Autowired private CrewJpaRepository crewJpaRepository;
-    @Autowired private MemberJpaRepository memberRepository;
-    @Autowired private CrewQueryDslRepository crewQueryDslRepository;
+    @Autowired
+    private CrewJpaRepository crewJpaRepository;
+    @Autowired
+    private MemberJpaRepository memberRepository;
+    @Autowired
+    private CrewQueryDslRepository crewQueryDslRepository;
 
     @Test
     @DisplayName("특정 사용자가 생성한 Crew 들을 조회한다.")
@@ -64,7 +66,8 @@ class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
         crewJpaRepository.save(crew);
 
         // when
-        CrewWithMemberAndImageDto crewWithMemberAndImageDto = crewQueryDslRepository.findCrewByName(CrewFactory.NAME).get();
+        CrewWithMemberAndImageDto crewWithMemberAndImageDto = crewQueryDslRepository.findCrewByName(CrewFactory.NAME)
+                .get();
 
         // then
         assertSoftly(softly -> {

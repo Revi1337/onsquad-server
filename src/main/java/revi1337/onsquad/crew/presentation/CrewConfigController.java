@@ -1,23 +1,28 @@
 package revi1337.onsquad.crew.presentation;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewConfigService;
 import revi1337.onsquad.crew.presentation.dto.request.CrewAcceptRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
-
-import java.io.IOException;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @Validated
 @RequiredArgsConstructor
@@ -35,7 +40,8 @@ public class CrewConfigController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
         crewConfigService.updateCrew(
-                authenticatedMember.toDto().getId(), crewId, crewUpdateRequest.toDto(), file.getBytes(), file.getOriginalFilename()
+                authenticatedMember.toDto().getId(), crewId, crewUpdateRequest.toDto(), file.getBytes(),
+                file.getOriginalFilename()
         );
 
         return ResponseEntity.ok().body(RestResponse.noContent());

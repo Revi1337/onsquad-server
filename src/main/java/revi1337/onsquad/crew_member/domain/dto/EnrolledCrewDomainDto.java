@@ -12,7 +12,13 @@ public record EnrolledCrewDomainDto(
         SimpleMemberInfoDomainDto crewOwner
 ) {
     @QueryProjection
-    public EnrolledCrewDomainDto(Long crewId, Name crewName, String imageUrl, boolean isOwner, SimpleMemberInfoDomainDto crewOwner) {
+    public EnrolledCrewDomainDto(
+            Long crewId,
+            Name crewName,
+            String imageUrl,
+            boolean isOwner,
+            SimpleMemberInfoDomainDto crewOwner
+    ) {
         this.crewId = crewId;
         this.crewName = crewName;
         this.imageUrl = imageUrl;

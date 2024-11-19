@@ -1,19 +1,18 @@
 package revi1337.onsquad.member.presentation.validator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 
 class ConstraintStringValidatorTest {
 

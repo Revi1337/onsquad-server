@@ -1,5 +1,10 @@
 package revi1337.onsquad.squad_comment.application;
 
+import static revi1337.onsquad.squad.error.SquadErrorCode.NOTMATCH_CREWINFO;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUND_CREW_COMMENT;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOT_PARENT;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,11 +20,6 @@ import revi1337.onsquad.squad_comment.domain.SquadComment;
 import revi1337.onsquad.squad_comment.domain.SquadCommentRepository;
 import revi1337.onsquad.squad_comment.domain.dto.SimpleSquadCommentDto;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
-
-import java.util.List;
-
-import static revi1337.onsquad.squad.error.SquadErrorCode.*;
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -41,7 +41,8 @@ public class SquadCommentService {
         return persistCommentReply(squadId, dto, squad, crewMember);
     }
 
-    public List<SquadCommentDto> findParentComments(Long memberId, Long crewId, Long squadId, Pageable pageable, Integer childSize) {
+    public List<SquadCommentDto> findParentComments(Long memberId, Long crewId, Long squadId, Pageable pageable,
+                                                    Integer childSize) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
         return squadCommentRepository.findLimitedCommentsBothOfParentsAndChildren(squadId, pageable, childSize).stream()
@@ -49,7 +50,8 @@ public class SquadCommentService {
                 .toList();
     }
 
-    public List<SquadCommentDto> findMoreChildComments(Long memberId, Long crewId, Long squadId, Long parentId, Pageable pageable) {
+    public List<SquadCommentDto> findMoreChildComments(Long memberId, Long crewId, Long squadId, Long parentId,
+                                                       Pageable pageable) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
         return squadCommentRepository.findChildComments(squadId, parentId, pageable).stream()
@@ -72,7 +74,8 @@ public class SquadCommentService {
         return SimpleSquadCommentDto.from(persistComment, crewMember.getMember());
     }
 
-    private SimpleSquadCommentDto persistCommentReply(Long squadId, CreateSquadCommentDto dto, Squad squad, CrewMember crewMember) {
+    private SimpleSquadCommentDto persistCommentReply(Long squadId, CreateSquadCommentDto dto, Squad squad,
+                                                      CrewMember crewMember) {
         SquadComment parentComment = squadCommentRepository.getById(dto.parentId());
         validateParentComment(squadId, dto, parentComment);
         SquadComment rawCommentReply = SquadComment.createReply(parentComment, dto.content(), squad, crewMember);
@@ -93,7 +96,8 @@ public class SquadCommentService {
         }
 
         if (!comment.getSquad().getId().equals(squadId)) {
-            throw new SquadCommentBusinessException.NotFoundSquadComment(NOTFOUND_CREW_COMMENT, squadId, dto.parentId());
+            throw new SquadCommentBusinessException.NotFoundSquadComment(NOTFOUND_CREW_COMMENT, squadId,
+                    dto.parentId());
         }
     }
 }

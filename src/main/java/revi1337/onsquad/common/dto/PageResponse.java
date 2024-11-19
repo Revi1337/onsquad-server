@@ -1,8 +1,7 @@
 package revi1337.onsquad.common.dto;
 
-import org.springframework.data.domain.Page;
-
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 public record PageResponse<T>(
         int size,

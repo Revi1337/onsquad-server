@@ -1,12 +1,11 @@
 package revi1337.onsquad.squad_participant.domain;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
 
 @RequiredArgsConstructor
 @Repository

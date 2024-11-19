@@ -1,14 +1,13 @@
 package revi1337.onsquad.crew_participant.domain;
 
+import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.NEVER_REQUESTED;
+
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
-
-import java.util.Optional;
-
-import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.*;
 
 public interface CrewParticipantJpaRepository extends JpaRepository<CrewParticipant, Long> {
 

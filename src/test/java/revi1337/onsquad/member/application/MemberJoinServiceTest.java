@@ -1,5 +1,16 @@
 package revi1337.onsquad.member.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.willDoNothing;
+
+import java.time.Duration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,17 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import revi1337.onsquad.auth.error.exception.AuthJoinException;
+import revi1337.onsquad.member.application.dto.MemberDto;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.Password;
-import revi1337.onsquad.member.application.dto.MemberDto;
 import revi1337.onsquad.support.TestContainerSupport;
-
-import java.time.Duration;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 @DisplayName("회원가입 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -29,10 +35,14 @@ class MemberJoinServiceTest extends TestContainerSupport {
     private static final String TEST_NICKNAME = "nickname";
     private static final String TEST_AUTH_CODE = "1111";
 
-    @Mock private MemberJpaRepository memberRepository;
-    @Mock private PasswordEncoder passwordEncoder;
-    @Mock private JoinMailService joinMailService;
-    @InjectMocks private MemberJoinService memberJoinService;
+    @Mock
+    private MemberJpaRepository memberRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private JoinMailService joinMailService;
+    @InjectMocks
+    private MemberJoinService memberJoinService;
 
     @DisplayName("이메일 인증코드 전송이 잘 동작하는지 확인한다.")
     @Test
@@ -132,7 +142,8 @@ class MemberJoinServiceTest extends TestContainerSupport {
     @Test
     public void joinMember2() {
         // given
-        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).nickname(new Nickname(TEST_NICKNAME)).build();
+        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).nickname(new Nickname(TEST_NICKNAME))
+                .build();
         given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
         given(joinMailService.isValidMailStatus(TEST_EMAIL)).willReturn(false);
 
@@ -147,7 +158,8 @@ class MemberJoinServiceTest extends TestContainerSupport {
     @Test
     public void joinMember3() {
         // given
-        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).nickname(new Nickname(TEST_NICKNAME)).build();
+        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).nickname(new Nickname(TEST_NICKNAME))
+                .build();
         given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
         given(joinMailService.isValidMailStatus(TEST_EMAIL)).willReturn(true);
         given(memberRepository.existsByEmail(memberDto.getEmail())).willReturn(true);
@@ -163,7 +175,8 @@ class MemberJoinServiceTest extends TestContainerSupport {
     @Test
     public void joinMember4() {
         // given
-        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).password(new Password(TEST_PASSWORD)).build();
+        MemberDto memberDto = MemberDto.builder().email(new Email(TEST_EMAIL)).password(new Password(TEST_PASSWORD))
+                .build();
         given(memberRepository.existsByNickname(memberDto.getNickname())).willReturn(false);
         given(joinMailService.isValidMailStatus(TEST_EMAIL)).willReturn(true);
         given(memberRepository.existsByEmail(memberDto.getEmail())).willReturn(false);

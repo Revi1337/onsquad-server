@@ -1,20 +1,20 @@
 package revi1337.onsquad.member.application;
 
+import static revi1337.onsquad.member.error.MemberErrorCode.WRONG_PASSWORD;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import revi1337.onsquad.member.application.dto.MemberInfoDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 import revi1337.onsquad.member.application.event.MemberUpdateEvent;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.member.application.dto.MemberInfoDto;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
-
-import static revi1337.onsquad.member.error.MemberErrorCode.*;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

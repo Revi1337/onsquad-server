@@ -1,5 +1,18 @@
 package revi1337.onsquad.common.error;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.snippet.Attributes.attributes;
+import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -11,16 +24,6 @@ import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.PayloadSubsectionExtractor;
 import org.springframework.test.web.servlet.ResultActions;
 import revi1337.onsquad.support.RestDocumentationSupport;
-
-import java.util.*;
-
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.snippet.Attributes.attributes;
-import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RestErrorHandlerTest.class)
 public class RestErrorHandlerDocumentationTest extends RestDocumentationSupport {
@@ -52,9 +55,9 @@ public class RestErrorHandlerDocumentationTest extends RestDocumentationSupport 
     }
 
     private static CodeResponseFieldsSnippet codeResponseFields(String type,
-                                                               PayloadSubsectionExtractor<?> subsectionExtractor,
-                                                               Map<String, Object> attributes,
-                                                               FieldDescriptor... descriptors) {
+                                                                PayloadSubsectionExtractor<?> subsectionExtractor,
+                                                                Map<String, Object> attributes,
+                                                                FieldDescriptor... descriptors) {
         return new CodeResponseFieldsSnippet(
                 type,
                 Arrays.asList(descriptors),

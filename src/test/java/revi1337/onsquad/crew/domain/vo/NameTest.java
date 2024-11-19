@@ -1,15 +1,14 @@
 package revi1337.onsquad.crew.domain.vo;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import revi1337.onsquad.crew.error.exception.CrewDomainException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import revi1337.onsquad.crew.error.exception.CrewDomainException;
 
 @DisplayName("크루명 vo 테스트")
 class NameTest {

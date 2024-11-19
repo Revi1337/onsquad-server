@@ -1,8 +1,7 @@
 package revi1337.onsquad.crew_hashtag.domain;
 
-import revi1337.onsquad.hashtag.domain.Hashtag;
-
 import java.util.List;
+import revi1337.onsquad.hashtag.domain.Hashtag;
 
 public interface CrewHashtagRepository {
 

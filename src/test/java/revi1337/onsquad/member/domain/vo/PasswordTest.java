@@ -1,12 +1,12 @@
 package revi1337.onsquad.member.domain.vo;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.error.exception.MemberDomainException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import revi1337.onsquad.member.error.exception.MemberDomainException;
 
 @DisplayName("Password vo 테스트")
 class PasswordTest {

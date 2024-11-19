@@ -26,7 +26,8 @@ public class JsonWebTokenFailureHandler implements AuthenticationFailureHandler 
                                         HttpServletResponse response,
                                         AuthenticationException exception) {
         if (exception instanceof UnsupportedLoginUrlMethod unsupportedLoginUrlMethod) {
-            handlerExceptionResolver.resolveException(request, response, null, (Exception) unsupportedLoginUrlMethod.getCause());
+            handlerExceptionResolver.resolveException(request, response, null,
+                    (Exception) unsupportedLoginUrlMethod.getCause());
             return;
         }
 

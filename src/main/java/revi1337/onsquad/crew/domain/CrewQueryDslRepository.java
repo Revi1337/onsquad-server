@@ -1,8 +1,21 @@
 package revi1337.onsquad.crew.domain;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.jpa.JPAExpressions.select;
+import static revi1337.onsquad.crew.domain.QCrew.crew;
+import static revi1337.onsquad.crew_hashtag.domain.QCrewHashtag.crewHashtag;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.hashtag.domain.QHashtag.hashtag;
+import static revi1337.onsquad.image.domain.QImage.image;
+import static revi1337.onsquad.member.domain.QMember.member;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,17 +26,6 @@ import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.dto.QCrewInfoDomainDto;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
-
-import java.util.*;
-
-import static com.querydsl.core.group.GroupBy.*;
-import static com.querydsl.jpa.JPAExpressions.*;
-import static revi1337.onsquad.crew.domain.QCrew.crew;
-import static revi1337.onsquad.crew_hashtag.domain.QCrewHashtag.*;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
-import static revi1337.onsquad.hashtag.domain.QHashtag.*;
-import static revi1337.onsquad.image.domain.QImage.image;
-import static revi1337.onsquad.member.domain.QMember.member;
 
 @RequiredArgsConstructor
 @Repository

@@ -14,7 +14,8 @@ public record SimpleCrewInfoDomainDto(
         SimpleMemberInfoDomainDto owner
 ) {
     @QueryProjection
-    public SimpleCrewInfoDomainDto(Long id, Name name, Introduce introduce, String kakaoLink, String imageUrl, SimpleMemberInfoDomainDto owner) {
+    public SimpleCrewInfoDomainDto(Long id, Name name, Introduce introduce, String kakaoLink, String imageUrl,
+                                   SimpleMemberInfoDomainDto owner) {
         this.id = id;
         this.name = name;
         this.introduce = introduce;
@@ -24,7 +25,8 @@ public record SimpleCrewInfoDomainDto(
     }
 
     @QueryProjection
-    public SimpleCrewInfoDomainDto(Long id, Name name, String kakaoLink, String imageUrl, SimpleMemberInfoDomainDto owner) {
+    public SimpleCrewInfoDomainDto(Long id, Name name, String kakaoLink, String imageUrl,
+                                   SimpleMemberInfoDomainDto owner) {
         this(id, name, null, kakaoLink, imageUrl, owner);
     }
 }

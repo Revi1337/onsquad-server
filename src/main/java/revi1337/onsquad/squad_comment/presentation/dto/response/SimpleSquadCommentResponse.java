@@ -1,9 +1,8 @@
 package revi1337.onsquad.squad_comment.presentation.dto.response;
 
+import java.time.LocalDateTime;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad_comment.domain.dto.SimpleSquadCommentDto;
-
-import java.time.LocalDateTime;
 
 public record SimpleSquadCommentResponse(
         Long id,

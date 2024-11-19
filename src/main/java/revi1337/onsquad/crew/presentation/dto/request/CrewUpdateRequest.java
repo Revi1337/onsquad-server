@@ -1,9 +1,8 @@
 package revi1337.onsquad.crew.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
-
 import java.util.List;
+import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 
 public record CrewUpdateRequest(
         @NotEmpty String name,

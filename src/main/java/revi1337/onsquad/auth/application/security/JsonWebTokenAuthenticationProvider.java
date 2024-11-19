@@ -13,15 +13,17 @@ import revi1337.onsquad.auth.application.AuthenticatedMember;
 @RequiredArgsConstructor
 public class JsonWebTokenAuthenticationProvider implements AuthenticationProvider {
 
+    private static final String BAD_CREDENTIALS = "invalid user credentials";
+
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
-    private static final String BAD_CREDENTIALS = "invalid user credentials";
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String emailPrincipal = authentication.getPrincipal().toString();
-        AuthenticatedMember authenticatedMember = (AuthenticatedMember) userDetailsService.loadUserByUsername(emailPrincipal);
+        AuthenticatedMember authenticatedMember = (AuthenticatedMember) userDetailsService.loadUserByUsername(
+                emailPrincipal);
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), authenticatedMember.getPassword())) {
             throw new BadCredentialsException(BAD_CREDENTIALS);
         }

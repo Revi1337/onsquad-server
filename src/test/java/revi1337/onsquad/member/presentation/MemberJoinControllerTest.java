@@ -1,5 +1,15 @@
 package revi1337.onsquad.member.presentation;
 
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.Duration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -7,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.ResultActions;
-import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.factory.MemberFactory;
+import revi1337.onsquad.inrastructure.mail.MailStatus;
 import revi1337.onsquad.member.application.MemberJoinService;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
@@ -18,19 +28,15 @@ import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 import revi1337.onsquad.support.IntegrationTestSupport;
 
-import java.time.Duration;
-
-import static org.mockito.BDDMockito.*;
-import static org.springframework.http.MediaType.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @DisplayName("회원가입 api 테스트")
 class MemberJoinControllerTest extends IntegrationTestSupport {
 
-    @SpyBean private MemberJoinService memberJoinService;
-    @Autowired private RedisMailRepository redisMailRepository;
-    @Autowired private MemberJpaRepository memberRepository;
+    @SpyBean
+    private MemberJoinService memberJoinService;
+    @Autowired
+    private RedisMailRepository redisMailRepository;
+    @Autowired
+    private MemberJpaRepository memberRepository;
 
     @DisplayName("인증코드 발송을 진행한다.")
     @Nested
@@ -213,7 +219,8 @@ class MemberJoinControllerTest extends IntegrationTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(401))
                     .andExpect(jsonPath("$.success").value(false))
-                    .andExpect(jsonPath("$.error.message").value(String.format("%s 닉네임은 이미 사용중입니다.", member.getNickname().getValue())));
+                    .andExpect(jsonPath("$.error.message").value(
+                            String.format("%s 닉네임은 이미 사용중입니다.", member.getNickname().getValue())));
         }
 
         @DisplayName("이메일이 중복되면 회원가입에 실패한다.")

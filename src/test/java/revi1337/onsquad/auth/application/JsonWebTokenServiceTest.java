@@ -1,35 +1,45 @@
 package revi1337.onsquad.auth.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.anyMap;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.mock;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+
 import io.jsonwebtoken.Claims;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.application.dto.JsonWebToken;
+import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 import revi1337.onsquad.factory.MemberFactory;
+import revi1337.onsquad.member.application.dto.MemberDto;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.member.application.dto.MemberDto;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 @DisplayName("JsonWebTokenService 테스트")
 @ExtendWith(MockitoExtension.class)
 class JsonWebTokenServiceTest {
 
-    @Mock private MemberJpaRepository memberRepository;
-    @Mock private RefreshTokenManager refreshTokenManager;
-    @Mock private JsonWebTokenProvider jsonWebTokenProvider;
-    @Mock private JsonWebTokenEvaluator jsonWebTokenEvaluator;
-    @InjectMocks private JsonWebTokenService jsonWebTokenService;
+    @Mock
+    private MemberJpaRepository memberRepository;
+    @Mock
+    private RefreshTokenManager refreshTokenManager;
+    @Mock
+    private JsonWebTokenProvider jsonWebTokenProvider;
+    @Mock
+    private JsonWebTokenEvaluator jsonWebTokenEvaluator;
+    @InjectMocks
+    private JsonWebTokenService jsonWebTokenService;
 
     @DisplayName("AccessToken 과 RefreshToken 을 포함한 TokenPair 가 만들어지는지 확인한다.")
     @Test
@@ -128,18 +138,6 @@ class JsonWebTokenServiceTest {
                 .isInstanceOf(AuthTokenException.NotFoundRefreshOwner.class);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 //package revi1337.onsquad.auth.application;
 //

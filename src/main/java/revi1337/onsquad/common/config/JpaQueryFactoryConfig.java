@@ -1,6 +1,5 @@
 package revi1337.onsquad.common.config;
 
-import com.blazebit.persistence.querydsl.JPQLNextOps;
 import com.blazebit.persistence.querydsl.JPQLNextTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.sql.SQLOps;

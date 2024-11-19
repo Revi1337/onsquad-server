@@ -2,7 +2,9 @@ package revi1337.onsquad.factory;
 
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.vo.*;
+import revi1337.onsquad.squad.domain.vo.Capacity;
+import revi1337.onsquad.squad.domain.vo.Content;
+import revi1337.onsquad.squad.domain.vo.Title;
 
 public class SquadFactory {
 

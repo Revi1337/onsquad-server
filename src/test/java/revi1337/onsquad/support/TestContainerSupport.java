@@ -1,13 +1,12 @@
 package revi1337.onsquad.support;
 
 import com.redis.testcontainers.RedisContainer;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ContextConfiguration(initializers = TestContainerSupport.IntegrationTestInitializer.class)
 public abstract class TestContainerSupport {

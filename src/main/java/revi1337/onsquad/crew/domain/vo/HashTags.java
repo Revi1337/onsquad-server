@@ -1,13 +1,19 @@
 package revi1337.onsquad.crew.domain.vo;
 
+import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_HASHTAGS_SIZE;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import revi1337.onsquad.crew.error.exception.CrewDomainException;
-
-import java.util.*;
-
-import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
 @Getter
 @EqualsAndHashCode

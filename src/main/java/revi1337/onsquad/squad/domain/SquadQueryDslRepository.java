@@ -1,9 +1,22 @@
 package revi1337.onsquad.squad.domain;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static revi1337.onsquad.category.domain.QCategory.category;
+import static revi1337.onsquad.crew.domain.QCrew.crew;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.member.domain.QMember.member;
+import static revi1337.onsquad.squad.domain.QSquad.squad;
+import static revi1337.onsquad.squad_category.domain.QSquadCategory.squadCategory;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,20 +28,6 @@ import revi1337.onsquad.squad.domain.dto.QSimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static revi1337.onsquad.category.domain.QCategory.*;
-import static revi1337.onsquad.crew.domain.QCrew.crew;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
-import static revi1337.onsquad.member.domain.QMember.member;
-import static revi1337.onsquad.squad.domain.QSquad.squad;
-import static revi1337.onsquad.squad_category.domain.QSquadCategory.*;
 
 @RequiredArgsConstructor
 @Repository

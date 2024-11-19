@@ -1,9 +1,9 @@
 package revi1337.onsquad.image.application;
 
+import static revi1337.onsquad.image.error.AttachmentErrorCode.UNSUPPORTED_MAGIC_BYTE;
+
 import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.image.error.exception.AttachmentValidationException;
-
-import static revi1337.onsquad.image.error.AttachmentErrorCode.UNSUPPORTED_MAGIC_BYTE;
 
 public abstract class AttachmentMagicByteValidator {
 

@@ -1,25 +1,31 @@
 package revi1337.onsquad.crew.presentation;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewService;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewJoinRequest;
 import revi1337.onsquad.crew.presentation.dto.response.CrewInfoResponse;
 import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
-
-import java.io.IOException;
-import java.util.List;
-
-import static org.springframework.http.MediaType.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -47,7 +53,8 @@ public class CrewController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) throws IOException {
         crewService.createNewCrew(
-                authenticatedMember.toDto().getId(), crewCreateRequest.toDto(), file.getBytes(), file.getOriginalFilename()
+                authenticatedMember.toDto().getId(), crewCreateRequest.toDto(), file.getBytes(),
+                file.getOriginalFilename()
         );
 
         return ResponseEntity.ok().body(RestResponse.created());

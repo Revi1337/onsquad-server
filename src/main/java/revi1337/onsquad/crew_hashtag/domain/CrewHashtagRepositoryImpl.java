@@ -1,10 +1,9 @@
 package revi1337.onsquad.crew_hashtag.domain;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.hashtag.domain.Hashtag;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Repository

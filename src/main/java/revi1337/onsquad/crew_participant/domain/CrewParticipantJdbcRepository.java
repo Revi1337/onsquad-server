@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_participant.domain;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -9,8 +10,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.member.domain.Member;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Repository

@@ -1,5 +1,9 @@
 package revi1337.onsquad.crew_member.domain;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -7,11 +11,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
-
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
@@ -21,47 +20,47 @@ public class CrewMemberJdbcRepository {
 
     /**
      * @param crewId
-     * @deprecated This API is no longer used.
      * @see #findAllTopNCrewMembers
+     * @deprecated This API is no longer used.
      */
     @Deprecated
     public List<Top5CrewMemberDomainDto> findTopNCrewMembers(Long crewId, int fetchSize) {
         String sql = """
-                \n
-                SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
-                FROM (
-                    SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
-                            DENSE_RANK() OVER(ORDER BY counter, mem_join_time) AS ranks
-                    FROM (
-                        SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, COUNT(mem_id) AS counter
+                        \n
+                        SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
                         FROM (
-                            SELECT
-                                crew_member.crew_id AS crew_id,
-                                member.id AS mem_id,
-                                member.nickname AS mem_nickname,
-                                member.mbti AS mem_mbti,
-                                crew_member.participate_at AS mem_join_time
-                            FROM squad_comment
-                            INNER JOIN crew_member ON squad_comment.crew_member_id = crew_member.id AND crew_member.crew_id = :crewId
-                            INNER JOIN member ON crew_member.member_id = member.id
-                
-                            UNION ALL
-                            SELECT
-                                crew_member.crew_id,
-                                member.id,
-                                member.nickname,
-                                member.mbti,
-                                crew_member.participate_at
-                            FROM squad
-                            INNER JOIN crew_member ON squad.crew_member_id = crew_member.id AND squad.crew_id = :crewId
-                            INNER JOIN member ON crew_member.member_id = member.id
-                        ) AS union_table
-                        GROUP BY mem_id
-                    ) AS count_table
-                    ORDER BY ranks
-                ) AS result
-                WHERE result.ranks <= :fetchSize;
-        """;
+                            SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
+                                    DENSE_RANK() OVER(ORDER BY counter, mem_join_time) AS ranks
+                            FROM (
+                                SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, COUNT(mem_id) AS counter
+                                FROM (
+                                    SELECT
+                                        crew_member.crew_id AS crew_id,
+                                        member.id AS mem_id,
+                                        member.nickname AS mem_nickname,
+                                        member.mbti AS mem_mbti,
+                                        crew_member.participate_at AS mem_join_time
+                                    FROM squad_comment
+                                    INNER JOIN crew_member ON squad_comment.crew_member_id = crew_member.id AND crew_member.crew_id = :crewId
+                                    INNER JOIN member ON crew_member.member_id = member.id
+                        
+                                    UNION ALL
+                                    SELECT
+                                        crew_member.crew_id,
+                                        member.id,
+                                        member.nickname,
+                                        member.mbti,
+                                        crew_member.participate_at
+                                    FROM squad
+                                    INNER JOIN crew_member ON squad.crew_member_id = crew_member.id AND squad.crew_id = :crewId
+                                    INNER JOIN member ON crew_member.member_id = member.id
+                                ) AS union_table
+                                GROUP BY mem_id
+                            ) AS count_table
+                            ORDER BY ranks
+                        ) AS result
+                        WHERE result.ranks <= :fetchSize;
+                """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
                 .addValue("crewId", crewId)
@@ -72,54 +71,55 @@ public class CrewMemberJdbcRepository {
 
     /**
      * For more information, visit <a href="https://www.h2database.com/html/functions-window.html">this link</a>.
+     *
      * @param from
      * @param to
      * @param nSize
      */
     public List<Top5CrewMemberDomainDto> findAllTopNCrewMembers(LocalDate from, LocalDate to, Integer nSize) {
         String sql = """
-                \n
-                SELECT
-                    crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
-                FROM (
-                    SELECT
-                        crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
-                        DENSE_RANK() OVER(PARTITION BY crew_id ORDER BY counter, mem_join_time) AS ranks
-                    FROM (
-                        SELECT DISTINCT
-                                crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter
+                        \n
+                        SELECT
+                            crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
                         FROM (
                             SELECT
-                                crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time,
-                                COUNT(*) OVER (PARTITION BY crew_id, mem_id) AS counter
+                                crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
+                                DENSE_RANK() OVER(PARTITION BY crew_id ORDER BY counter, mem_join_time) AS ranks
                             FROM (
-                                SELECT
-                                    crew_member.crew_id AS crew_id,
-                                    member.id AS mem_id,
-                                    member.nickname AS mem_nickname,
-                                    member.mbti AS mem_mbti,
-                                    crew_member.participate_at AS mem_join_time
-                                FROM squad_comment
-                                INNER JOIN crew_member ON squad_comment.crew_member_id = crew_member.id AND squad_comment.created_at BETWEEN :from AND :to
-                                INNER JOIN member ON crew_member.member_id = member.id
-                            
-                                UNION ALL
-                                SELECT
-                                    crew_member.crew_id,
-                                    member.id,
-                                    member.nickname,
-                                    member.mbti,
-                                    crew_member.participate_at
-                                FROM squad
-                                INNER JOIN crew_member ON squad.crew_member_id = crew_member.id
-                                INNER JOIN member ON crew_member.member_id = member.id
-                            ) AS union_table
-                        ) AS count_table
-                    ) AS distinct_table
-                ) AS rank_table
-                WHERE ranks <= :nSize
-                ORDER BY crew_id, ranks
-        """;
+                                SELECT DISTINCT
+                                        crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter
+                                FROM (
+                                    SELECT
+                                        crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time,
+                                        COUNT(*) OVER (PARTITION BY crew_id, mem_id) AS counter
+                                    FROM (
+                                        SELECT
+                                            crew_member.crew_id AS crew_id,
+                                            member.id AS mem_id,
+                                            member.nickname AS mem_nickname,
+                                            member.mbti AS mem_mbti,
+                                            crew_member.participate_at AS mem_join_time
+                                        FROM squad_comment
+                                        INNER JOIN crew_member ON squad_comment.crew_member_id = crew_member.id AND squad_comment.created_at BETWEEN :from AND :to
+                                        INNER JOIN member ON crew_member.member_id = member.id
+                                    
+                                        UNION ALL
+                                        SELECT
+                                            crew_member.crew_id,
+                                            member.id,
+                                            member.nickname,
+                                            member.mbti,
+                                            crew_member.participate_at
+                                        FROM squad
+                                        INNER JOIN crew_member ON squad.crew_member_id = crew_member.id
+                                        INNER JOIN member ON crew_member.member_id = member.id
+                                    ) AS union_table
+                                ) AS count_table
+                            ) AS distinct_table
+                        ) AS rank_table
+                        WHERE ranks <= :nSize
+                        ORDER BY crew_id, ranks
+                """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
                 .addValue("from", Date.valueOf(from))

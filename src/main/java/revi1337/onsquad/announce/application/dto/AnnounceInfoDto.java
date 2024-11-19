@@ -1,9 +1,8 @@
 package revi1337.onsquad.announce.application.dto;
 
+import java.time.LocalDateTime;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
 import revi1337.onsquad.crew_member.application.dto.SimpleCrewMemberDto;
-
-import java.time.LocalDateTime;
 
 public record AnnounceInfoDto(
         Boolean canModify,

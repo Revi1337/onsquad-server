@@ -1,11 +1,10 @@
 package revi1337.onsquad.squad_participant.application.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantDomainDto;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public record SquadParticipantDto(
         Long id,
@@ -42,7 +41,8 @@ public record SquadParticipantDto(
             Long id,
             LocalDateTime requestAt
     ) {
-        public static RequestParticipantDto from(SquadParticipantDomainDto.RequestParticipantDomainDto requestParticipantDomainDto) {
+        public static RequestParticipantDto from(
+                SquadParticipantDomainDto.RequestParticipantDomainDto requestParticipantDomainDto) {
             return new RequestParticipantDto(
                     requestParticipantDomainDto.id(),
                     requestParticipantDomainDto.requestAt()

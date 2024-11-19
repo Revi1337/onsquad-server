@@ -1,5 +1,6 @@
 package revi1337.onsquad.squad.application.dto;
 
+import java.util.List;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.vo.Address;
@@ -7,8 +8,6 @@ import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Content;
 import revi1337.onsquad.squad.domain.vo.Title;
-
-import java.util.List;
 
 public record SquadCreateDto(
         String title,

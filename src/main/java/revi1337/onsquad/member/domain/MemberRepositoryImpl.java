@@ -1,12 +1,11 @@
 package revi1337.onsquad.member.domain;
 
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository

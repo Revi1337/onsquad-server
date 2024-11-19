@@ -1,20 +1,19 @@
 package revi1337.onsquad.squad_comment.domain;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
@@ -22,7 +21,8 @@ public class SquadCommentJdbcRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<SquadCommentDomainDto> findLimitedChildCommentsByParentIdIn(Collection<Long> parentIds, Integer childrenSize) {
+    public List<SquadCommentDomainDto> findLimitedChildCommentsByParentIdIn(Collection<Long> parentIds,
+                                                                            Integer childrenSize) {
         String sql = "SELECT * FROM (" +
                 "    SELECT " +
                 "        squad_comment.parent_id, " +
@@ -34,7 +34,8 @@ public class SquadCommentJdbcRepository {
                 "        member.id AS comment_creator_id, " +
                 "        member.nickname AS comment_creator_nickname, " +
                 "        member.mbti AS comment_creator_mbti, " +
-                "        ROW_NUMBER() OVER (PARTITION BY squad_comment.parent_id ORDER BY squad_comment.created_at DESC) AS rn " +
+                "        ROW_NUMBER() OVER (PARTITION BY squad_comment.parent_id ORDER BY squad_comment.created_at DESC) AS rn "
+                +
                 "    FROM squad_comment " +
                 "    INNER JOIN crew_member ON squad_comment.crew_member_id = crew_member.id " +
                 "    INNER JOIN member ON crew_member.member_id = member.id " +

@@ -1,15 +1,14 @@
 package revi1337.onsquad.image.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.io.IOException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 import revi1337.onsquad.image.error.exception.AttachmentValidationException;
-
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("AttachmentMagicByteValidator 테스트")
 class AttachmentMagicByteValidatorTest {

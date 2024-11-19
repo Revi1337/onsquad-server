@@ -1,8 +1,7 @@
 package revi1337.onsquad.crew_member.domain;
 
-import revi1337.onsquad.crew.domain.vo.Name;
-
 import java.util.Optional;
+import revi1337.onsquad.crew.domain.vo.Name;
 
 public interface CrewMemberQueryRepository {
 

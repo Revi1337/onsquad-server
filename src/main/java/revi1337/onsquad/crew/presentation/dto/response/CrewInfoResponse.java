@@ -1,11 +1,10 @@
 package revi1337.onsquad.crew.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import revi1337.onsquad.crew.application.dto.CrewInfoDto;
-import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
-
 import java.util.ArrayList;
 import java.util.List;
+import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CrewInfoResponse(

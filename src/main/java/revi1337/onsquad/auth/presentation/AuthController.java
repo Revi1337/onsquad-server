@@ -6,12 +6,17 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthService;
-import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 import revi1337.onsquad.auth.presentation.dto.response.DuplicateNicknameResponse;
 import revi1337.onsquad.auth.presentation.dto.response.EmailValidResponse;
+import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 
 @Validated
 @RequiredArgsConstructor

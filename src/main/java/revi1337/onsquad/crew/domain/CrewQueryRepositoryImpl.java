@@ -1,12 +1,11 @@
 package revi1337.onsquad.crew.domain;
 
+import static revi1337.onsquad.crew.domain.QCrew.crew;
+import static revi1337.onsquad.image.domain.QImage.image;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Optional;
-
-import static revi1337.onsquad.crew.domain.QCrew.*;
-import static revi1337.onsquad.image.domain.QImage.*;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CrewQueryRepositoryImpl implements CrewQueryRepository {

@@ -16,7 +16,7 @@ public class S3ClientConfig {
     private final S3BucketProperties s3BucketProperties;
 
     @Bean
-    public S3Client amazonS3(){
+    public S3Client amazonS3() {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(
                 s3BucketProperties.s3().accessKey(), s3BucketProperties.s3().secretKey()
         );

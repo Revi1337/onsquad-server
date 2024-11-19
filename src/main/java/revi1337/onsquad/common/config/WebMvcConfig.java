@@ -1,15 +1,14 @@
 package revi1337.onsquad.common.config;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import revi1337.onsquad.auth.config.AuthenticateArgumentResolver;
 import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
+import revi1337.onsquad.auth.config.AuthenticateArgumentResolver;
 import revi1337.onsquad.category.presentation.converter.CategoryConditionConverter;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Configuration

@@ -1,11 +1,10 @@
 package revi1337.onsquad.squad_category.domain;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.Category;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Repository

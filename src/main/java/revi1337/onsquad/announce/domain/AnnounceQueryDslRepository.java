@@ -1,21 +1,21 @@
 package revi1337.onsquad.announce.domain;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static revi1337.onsquad.announce.domain.QAnnounce.announce;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.member.domain.QMember.member;
+
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
 import revi1337.onsquad.announce.domain.dto.QAnnounceInfoDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.QSimpleCrewMemberDomainDto;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.lang.Boolean.*;
-import static revi1337.onsquad.announce.domain.QAnnounce.*;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.*;
-import static revi1337.onsquad.member.domain.QMember.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -75,10 +75,10 @@ public class AnnounceQueryDslRepository {
                         ))
                         .from(announce)
                         .innerJoin(announce.crewMember, crewMember)
-                            .on(
-                                    announce.crew.id.eq(crewId),
-                                    announce.id.eq(id)
-                            )
+                        .on(
+                                announce.crew.id.eq(crewId),
+                                announce.id.eq(id)
+                        )
                         .innerJoin(crewMember.member, member)
                         .fetchOne()
         );

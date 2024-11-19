@@ -1,13 +1,12 @@
 package revi1337.onsquad.squad_member.domain;
 
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
-import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
+import static revi1337.onsquad.squad.error.SquadErrorCode.NOTFOUND;
 
 import java.util.List;
 import java.util.Optional;
-
-import static revi1337.onsquad.squad.error.SquadErrorCode.*;
+import revi1337.onsquad.squad.error.exception.SquadBusinessException;
+import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
 
 public interface SquadMemberRepository {
 

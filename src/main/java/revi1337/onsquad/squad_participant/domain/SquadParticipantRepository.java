@@ -1,13 +1,12 @@
 package revi1337.onsquad.squad_participant.domain;
 
-import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
-import revi1337.onsquad.squad_participant.error.exception.SquadParticipantBusinessException;
+import static revi1337.onsquad.squad_participant.error.SquadParticipantErrorCode.NEVER_REQUESTED;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static revi1337.onsquad.squad_participant.error.SquadParticipantErrorCode.NEVER_REQUESTED;
+import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
+import revi1337.onsquad.squad_participant.error.exception.SquadParticipantBusinessException;
 
 public interface SquadParticipantRepository {
 

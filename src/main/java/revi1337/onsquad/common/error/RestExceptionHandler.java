@@ -44,7 +44,7 @@ public class RestExceptionHandler {
             errorcode = CommonErrorCode.PARAMETER_TYPE_MISMATCH;
         } else if (exception instanceof MissingServletRequestParameterException) {
             errorcode = CommonErrorCode.MISSING_PARAMETER;
-        } else if (exception instanceof HttpRequestMethodNotSupportedException){
+        } else if (exception instanceof HttpRequestMethodNotSupportedException) {
             errorcode = CommonErrorCode.METHOD_NOT_SUPPORT;
         }
         return ResponseEntity.ok()

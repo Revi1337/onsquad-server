@@ -1,16 +1,15 @@
 package revi1337.onsquad.crew.domain;
 
+import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
+
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.hashtag.domain.Hashtag;
-
-import java.util.List;
-import java.util.Optional;
-
-import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
 
 public interface CrewRepository {
 

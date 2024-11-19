@@ -1,5 +1,10 @@
 package revi1337.onsquad.common.aspect;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -8,12 +13,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.error.CommonErrorCode;
 import revi1337.onsquad.common.error.exception.CommonBusinessException;
-
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Aspect
@@ -25,7 +24,8 @@ public class ThrottlingAspect {
     @Before("@annotation(throttling)")
     public void checkInitialRequest(JoinPoint joinPoint, Throttling throttling) {
         String redisKey = buildRedisKey(joinPoint, throttling);
-        boolean firstRequest = handlerExecutionChain.isFirstRequest(redisKey, LocalDateTime.now().toString(), throttling.perCycle(), throttling.unit());
+        boolean firstRequest = handlerExecutionChain.isFirstRequest(redisKey, LocalDateTime.now().toString(),
+                throttling.perCycle(), throttling.unit());
         if (!firstRequest) {
             throw new CommonBusinessException.RequestConflict(
                     CommonErrorCode.REQUEST_CONFLICT, getCycleAsDuration(throttling)

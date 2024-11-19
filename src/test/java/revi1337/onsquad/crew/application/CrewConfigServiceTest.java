@@ -1,5 +1,16 @@
 package revi1337.onsquad.crew.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.willDoNothing;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -7,43 +18,44 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import revi1337.onsquad.crew.application.dto.CrewAcceptDto;
+import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.application.dto.CrewAcceptDto;
-import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.crew_participant.domain.CrewParticipant;
+import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.vo.*;
-import revi1337.onsquad.crew_participant.domain.CrewParticipant;
-import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.*;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CrewConfigService 테스트")
 class CrewConfigServiceTest {
 
-    @Mock private CrewRepository crewRepository;
-    @Mock private CrewMemberJpaRepository crewMemberRepository;
-    @Mock private CrewParticipantJpaRepository crewParticipantRepository;
-    @Mock private S3BucketUploader s3BucketUploader;
-    @InjectMocks private CrewConfigService crewConfigService;
+    @Mock
+    private CrewRepository crewRepository;
+    @Mock
+    private CrewMemberJpaRepository crewMemberRepository;
+    @Mock
+    private CrewParticipantJpaRepository crewParticipantRepository;
+    @Mock
+    private S3BucketUploader s3BucketUploader;
+    @InjectMocks
+    private CrewConfigService crewConfigService;
 
     @Nested
     @DisplayName("Crew 모집 게시글을 테스트한다.")
@@ -54,7 +66,8 @@ class CrewConfigServiceTest {
         public void updateCrew1() {
             // given
             String targetCrewName = "변경하려는 크루 이름";
-            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"), "카카오링크");
+            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"),
+                    "카카오링크");
             Long memberId = 1L;
             byte[] image = SupportAttachmentType.PNG.getMagicByte();
             String testImageName = "테스트 이미지 이름";
@@ -62,7 +75,8 @@ class CrewConfigServiceTest {
             given(crewRepository.getCrewByNameWithImage(new Name(targetCrewName))).willReturn(crew);
 
             // when && then
-            assertThatThrownBy(() -> crewConfigService.updateCrew(memberId, targetCrewName, crewUpdateDto, image, testImageName))
+            assertThatThrownBy(
+                    () -> crewConfigService.updateCrew(memberId, targetCrewName, crewUpdateDto, image, testImageName))
                     .isExactlyInstanceOf(CrewBusinessException.InvalidPublisher.class);
         }
 
@@ -71,7 +85,8 @@ class CrewConfigServiceTest {
         public void updateCrew2() {
             // given
             String targetCrewName = "변경하려는 크루 이름";
-            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"), "카카오링크");
+            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"),
+                    "카카오링크");
             Long memberId = 1L;
             byte[] image = SupportAttachmentType.PNG.getMagicByte();
             String testImageUrl = "테스트 이미지 이름";
@@ -98,7 +113,8 @@ class CrewConfigServiceTest {
         public void updateCrew3() {
             // given
             String targetCrewName = "변경하려는 크루 이름";
-            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"), "변경 카카오톡 링크");
+            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"),
+                    "변경 카카오톡 링크");
             Long memberId = 1L;
             byte[] image = SupportAttachmentType.PNG.getMagicByte();
             String testImageUrl = "테스트 이미지 이름";
@@ -125,7 +141,8 @@ class CrewConfigServiceTest {
         public void updateCrew4() {
             // given
             String targetCrewName = "변경하려는 크루 이름";
-            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"), null);
+            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"),
+                    null);
             Long memberId = 1L;
             byte[] image = SupportAttachmentType.PNG.getMagicByte();
             String testImageUrl = "테스트 이미지 이름";
@@ -152,7 +169,8 @@ class CrewConfigServiceTest {
         public void updateCrew5() {
             // given
             String targetCrewName = "변경하려는 크루 이름";
-            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"), "변경 카카오톡 링크");
+            CrewUpdateDto crewUpdateDto = new CrewUpdateDto("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("태그1", "태그2"),
+                    "변경 카카오톡 링크");
             Long memberId = 1L;
             byte[] image = SupportAttachmentType.PNG.getMagicByte();
             String testImageUrl = "테스트 이미지 이름";
@@ -347,7 +365,8 @@ class CrewConfigServiceTest {
                 .build();
     }
 
-    private static Crew createCrew(Long id, Member member, String imageRemoteAddress, List<String> hashTag, String kakaoLink) {
+    private static Crew createCrew(Long id, Member member, String imageRemoteAddress, List<String> hashTag,
+                                   String kakaoLink) {
         return Crew.builder()
                 .id(id)
                 .name(new Name("Crew 명"))

@@ -1,23 +1,22 @@
 package revi1337.onsquad.crew_member.domain;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.QCrewMemberDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.QEnrolledCrewDomainDto;
-import revi1337.onsquad.member.domain.QMember;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
-
-import java.util.List;
-
 import static revi1337.onsquad.crew.domain.QCrew.crew;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
 import static revi1337.onsquad.image.domain.QImage.image;
 import static revi1337.onsquad.member.domain.QMember.member;
+
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.QCrewMemberDomainDto;
+import revi1337.onsquad.crew_member.domain.dto.QEnrolledCrewDomainDto;
+import revi1337.onsquad.member.domain.QMember;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
 @RequiredArgsConstructor
 @Repository

@@ -2,14 +2,13 @@ package revi1337.onsquad.member.presentation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.util.ReflectionUtils;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.util.Map;
 import java.util.Objects;
+import org.springframework.util.ReflectionUtils;
 
 public class ConstraintStringValidator implements ConstraintValidator<StringValidator, StringComparator> {
 

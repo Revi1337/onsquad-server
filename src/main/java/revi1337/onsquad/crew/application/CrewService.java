@@ -1,32 +1,33 @@
 package revi1337.onsquad.crew.application;
 
+import static revi1337.onsquad.common.aspect.OnSquadType.MEMBER;
+import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_EXISTS;
+import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_JOIN;
+import static revi1337.onsquad.crew.error.CrewErrorCode.OWNER_CANT_PARTICIPANT;
+
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.common.aspect.Throttling;
+import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.application.dto.CrewCreateDto;
-import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
 import revi1337.onsquad.hashtag.domain.Hashtag;
-import revi1337.onsquad.hashtag.util.HashtagTypeUtil;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.util.HashtagTypeUtil;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.inrastructure.s3.application.DefaultS3FileManager;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
 import revi1337.onsquad.member.domain.MemberRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static revi1337.onsquad.common.aspect.OnSquadType.*;
-import static revi1337.onsquad.crew.error.CrewErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,7 +48,9 @@ public class CrewService {
         List<HashtagType> hashtagTypes = HashtagTypeUtil.extractPossible(HashtagType.fromTexts(dto.hashTags()));
         Member member = memberRepository.getById(memberId);
         crewRepository.findByName(new Name(dto.name())).ifPresentOrElse(
-                ignored -> { throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, dto.name()); },
+                ignored -> {
+                    throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, dto.name());
+                },
                 () -> {
                     Image crewImage = new Image(crewS3FileManager.uploadFile(image, imageFileName));
                     crewRepository.persistCrew(dto.toEntity(crewImage, member), Hashtag.fromHashtagTypes(hashtagTypes));
@@ -59,7 +62,9 @@ public class CrewService {
     public void joinCrew(Long memberId, CrewJoinDto dto) {
         Crew crew = crewRepository.getById(dto.crewId());
         crewMemberRepository.findByCrewIdAndMemberId(dto.crewId(), memberId).ifPresentOrElse(
-                crewMember -> { throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewId()); },
+                crewMember -> {
+                    throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewId());
+                },
                 () -> {
                     checkDifferenceCrewCreator(crew, memberId);
                     Member referenceMember = memberRepository.getReferenceById(memberId);

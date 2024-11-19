@@ -31,7 +31,9 @@ public class MemberUpdateEventListener {
             if (member.getProfileImage().isEmpty()) {
                 uploadUrl = memberS3FileManager.uploadFile(file.getBytes(), file.getOriginalFilename());
             } else {
-                uploadUrl = memberS3FileManager.updateFile(member.getProfileImage(), file.getBytes(), file.getOriginalFilename());
+                uploadUrl = memberS3FileManager.updateFile(
+                        member.getProfileImage(), file.getBytes(), file.getOriginalFilename()
+                );
             }
             member.updateProfileImage(uploadUrl);
             memberRepository.saveAndFlush(member);

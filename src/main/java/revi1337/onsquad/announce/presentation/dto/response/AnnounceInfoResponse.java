@@ -1,10 +1,9 @@
 package revi1337.onsquad.announce.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 import revi1337.onsquad.announce.application.dto.AnnounceInfoDto;
 import revi1337.onsquad.crew_member.presentation.dto.response.SimpleCrewMemberResponse;
-
-import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record AnnounceInfoResponse(

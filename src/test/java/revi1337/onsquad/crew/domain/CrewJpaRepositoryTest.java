@@ -1,5 +1,10 @@
 package revi1337.onsquad.crew.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +20,15 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 
 class CrewJpaRepositoryTest extends PersistenceLayerTestSupport {
 
-    @Autowired private CrewJpaRepository crewJpaRepository;
-    @Autowired private MemberJpaRepository memberRepository;
-    @Autowired private CrewMemberJpaRepository crewMemberRepository;
+    @Autowired
+    private CrewJpaRepository crewJpaRepository;
+    @Autowired
+    private MemberJpaRepository memberRepository;
+    @Autowired
+    private CrewMemberJpaRepository crewMemberRepository;
 
     @Test
     @DisplayName("Crew 이름으로 Crew 명이 중복되는지 확인한다. (1)")
@@ -71,7 +73,8 @@ class CrewJpaRepositoryTest extends PersistenceLayerTestSupport {
         crewJpaRepository.save(crew);
 
         // when
-        crew.updateCrew("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("해시태그1", "해시태그2"), "변경 카카오 링크", imageRemoteAddress);
+        crew.updateCrew("변경 크루 이름", "변경 크루 소개", "변경 크루 디테일", List.of("해시태그1", "해시태그2"), "변경 카카오 링크",
+                imageRemoteAddress);
         crewJpaRepository.saveAndFlush(crew);
 
         // then

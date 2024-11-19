@@ -1,11 +1,14 @@
 package revi1337.onsquad.image.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
 
 @Getter
 @Entity
@@ -32,8 +35,12 @@ public class Image {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Image data)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Image data)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), data.getId());
     }
 

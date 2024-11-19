@@ -3,21 +3,21 @@ package revi1337.onsquad.auth.application;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import revi1337.onsquad.auth.config.properties.TokenProperties;
-import revi1337.onsquad.auth.application.token.AccessToken;
-import revi1337.onsquad.auth.application.token.RefreshToken;
-import revi1337.onsquad.common.config.properties.OnsquadProperties;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
-
-import static revi1337.onsquad.auth.config.properties.TokenProperties.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import revi1337.onsquad.auth.application.token.AccessToken;
+import revi1337.onsquad.auth.application.token.RefreshToken;
+import revi1337.onsquad.auth.config.properties.TokenProperties;
+import revi1337.onsquad.auth.config.properties.TokenProperties.AccessTokenAttributes;
+import revi1337.onsquad.auth.config.properties.TokenProperties.RefreshTokenAttributes;
+import revi1337.onsquad.auth.config.properties.TokenProperties.TokenAttributes;
+import revi1337.onsquad.common.config.properties.OnsquadProperties;
 
 @RequiredArgsConstructor
 @Component

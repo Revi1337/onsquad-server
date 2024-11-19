@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import revi1337.onsquad.common.error.ErrorCode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record RestResponse<T> (
+public record RestResponse<T>(
         int status,
         boolean success,
         T data,

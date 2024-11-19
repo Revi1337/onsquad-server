@@ -1,17 +1,35 @@
 package revi1337.onsquad.member.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import static revi1337.onsquad.member.domain.vo.UserType.GENERAL;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.member.domain.vo.*;
-
-import java.util.*;
-
-import static revi1337.onsquad.member.domain.vo.UserType.*;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Introduce;
+import revi1337.onsquad.member.domain.vo.Mbti;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 @DynamicInsert
 @DynamicUpdate
@@ -59,7 +77,8 @@ public class Member extends BaseEntity {
     private final Set<Crew> crews = new HashSet<>();
 
     @Builder
-    private Member(Long id, Email email, Address address, Nickname nickname, Password password, Introduce introduce, String profileImage, String kakaoLink, UserType userType, Mbti mbti) {
+    private Member(Long id, Email email, Address address, Nickname nickname, Password password, Introduce introduce,
+                   String profileImage, String kakaoLink, UserType userType, Mbti mbti) {
         this.id = id;
         this.email = email;
         this.address = address;
@@ -90,8 +109,12 @@ public class Member extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Member member)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Member member)) {
+            return false;
+        }
         return id != null && Objects.equals(getId(), member.getId());
     }
 

@@ -1,10 +1,13 @@
 package revi1337.onsquad.category.domain.vo;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
@@ -14,7 +17,7 @@ public enum CategoryType {
     GAME("게임", 2L),
     BADMINTON("배드민턴", 3L),
     TENNIS("테니스", 4L),
-    FUTSAL("풋살",5L),
+    FUTSAL("풋살", 5L),
     SOCCER("축구", 6L),
     PINGPONG("탁구", 7L),
     BILLIARDS("당구", 8L),
@@ -50,7 +53,9 @@ public enum CategoryType {
     private final Long pk;
 
     private static final Map<String, CategoryType> categoryHashMap = Collections.unmodifiableMap(new HashMap<>() {
-        { unmodifiableList().forEach(category -> put(category.getText(), category)); }
+        {
+            unmodifiableList().forEach(category -> put(category.getText(), category));
+        }
     });
 
     public static List<CategoryType> unmodifiableList() {

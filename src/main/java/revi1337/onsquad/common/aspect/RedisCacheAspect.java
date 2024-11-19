@@ -2,6 +2,15 @@ package revi1337.onsquad.common.aspect;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -9,15 +18,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Aspect
 @RequiredArgsConstructor
@@ -47,7 +47,8 @@ public class RedisCacheAspect {
                 if (genericReturnType.getRawType() instanceof Class<?> genericPrimitiveType) {
                     if (Collection.class.isAssignableFrom(genericPrimitiveType)) {
                         genericInternalType = objectMapper.getTypeFactory()
-                                .constructCollectionType((Class<? extends Collection>) genericPrimitiveType, actualGenericClass);
+                                .constructCollectionType((Class<? extends Collection>) genericPrimitiveType,
+                                        actualGenericClass);
                     } else {
                         genericInternalType = objectMapper.getTypeFactory()
                                 .constructParametricType(genericPrimitiveType, actualGenericClass);
@@ -77,7 +78,8 @@ public class RedisCacheAspect {
         }
     }
 
-    private String getRedisKey(ProceedingJoinPoint joinPoint, RedisCache redisCache, MethodSignature methodSignature, OnSquadType onsquadType) {
+    private String getRedisKey(ProceedingJoinPoint joinPoint, RedisCache redisCache, MethodSignature methodSignature,
+                               OnSquadType onsquadType) {
         Map<String, Object> parameterMap = mapParametersToValues(methodSignature, joinPoint.getArgs());
         Object communityTypeId = retrieveIdentifier(redisCache.id(), parameterMap);
         return String.format(onsquadType.getFormat(), communityTypeId, redisCache.name());

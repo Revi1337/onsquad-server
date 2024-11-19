@@ -1,20 +1,19 @@
 package revi1337.onsquad.squad_comment.domain;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
+import static revi1337.onsquad.member.domain.QMember.member;
+import static revi1337.onsquad.squad_comment.domain.QSquadComment.squadComment;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad_comment.domain.dto.QSquadCommentDomainDto;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
-
-import java.util.List;
-import java.util.Map;
-
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
-import static revi1337.onsquad.member.domain.QMember.member;
-import static revi1337.onsquad.squad_comment.domain.QSquadComment.squadComment;
 
 @RequiredArgsConstructor
 @Repository
@@ -24,6 +23,7 @@ public class SquadCommentQueryDslRepository {
 
     /**
      * 모든 댓글(부모, 자식)들을 모두 가져온다.
+     *
      * @return
      */
     public List<SquadCommentDomainDto> findCommentsWithMemberByCrewId(Long squadId) {
@@ -53,6 +53,7 @@ public class SquadCommentQueryDslRepository {
 
     /**
      * 페이징처리에 맞게 부모 댓글들을 가져오고, id 별로 묶어서 반환한다.
+     *
      * @param pageable
      * @return
      */
@@ -60,10 +61,10 @@ public class SquadCommentQueryDslRepository {
         return jpaQueryFactory
                 .from(squadComment)
                 .innerJoin(squadComment.crewMember, crewMember)
-                    .on(
-                            squadComment.squad.id.eq(squadId),
-                            squadComment.parent.isNull()
-                    )
+                .on(
+                        squadComment.squad.id.eq(squadId),
+                        squadComment.parent.isNull()
+                )
                 .innerJoin(crewMember.member, member)
                 .orderBy(squadComment.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -97,10 +98,10 @@ public class SquadCommentQueryDslRepository {
                 ))
                 .from(squadComment)
                 .innerJoin(squadComment.crewMember, crewMember)
-                    .on(
-                            squadComment.squad.id.eq(squadId),
-                            squadComment.parent.id.eq(parentId)
-                    )
+                .on(
+                        squadComment.squad.id.eq(squadId),
+                        squadComment.parent.id.eq(parentId)
+                )
                 .innerJoin(crewMember.member, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

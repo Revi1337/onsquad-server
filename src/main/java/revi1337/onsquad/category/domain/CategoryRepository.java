@@ -1,9 +1,8 @@
 package revi1337.onsquad.category.domain;
 
-import revi1337.onsquad.category.domain.vo.CategoryType;
-
 import java.util.List;
 import java.util.Optional;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 
 public interface CategoryRepository {
 

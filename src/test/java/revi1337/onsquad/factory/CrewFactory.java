@@ -1,12 +1,11 @@
 package revi1337.onsquad.factory;
 
+import java.util.List;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
-
-import java.util.List;
 
 public class CrewFactory {
 

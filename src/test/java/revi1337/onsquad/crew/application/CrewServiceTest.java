@@ -1,5 +1,15 @@
 package revi1337.onsquad.crew.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.times;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -7,42 +17,43 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import revi1337.onsquad.crew.application.dto.CrewCreateDto;
+import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew.application.dto.CrewCreateDto;
-import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.crew_participant.domain.CrewParticipant;
+import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.image.domain.vo.SupportAttachmentType;
 import revi1337.onsquad.inrastructure.s3.application.S3BucketUploader;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.member.domain.vo.*;
-import revi1337.onsquad.crew_participant.domain.CrewParticipant;
-import revi1337.onsquad.crew_participant.domain.CrewParticipantJpaRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.*;
+import revi1337.onsquad.member.domain.vo.Address;
+import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CrewService 테스트")
 class CrewServiceTest {
 
-    @Mock private CrewRepository crewRepository;
-    @Mock private CrewParticipantJpaRepository crewParticipantRepository;
-    @Mock private MemberJpaRepository memberRepository;
-    @Mock private S3BucketUploader s3BucketUploader;
-    @InjectMocks private CrewService crewService;
+    @Mock
+    private CrewRepository crewRepository;
+    @Mock
+    private CrewParticipantJpaRepository crewParticipantRepository;
+    @Mock
+    private MemberJpaRepository memberRepository;
+    @Mock
+    private S3BucketUploader s3BucketUploader;
+    @InjectMocks
+    private CrewService crewService;
 
     @Nested
     @DisplayName("checkDuplicateNickname 메소드를 테스트한다.")
@@ -143,7 +154,8 @@ class CrewServiceTest {
             Member member = Member.builder().id(memberId).build();
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             given(crewRepository.findByName(new Name(crewCreateDto.name()))).willReturn(Optional.empty());
-            given(crewRepository.save(any(Crew.class))).willReturn(crewCreateDto.toEntity(new Image(imageRemoteAddress), member));
+            given(crewRepository.save(any(Crew.class))).willReturn(
+                    crewCreateDto.toEntity(new Image(imageRemoteAddress), member));
             given(s3BucketUploader.uploadCrew(pngImage, imageName)).willReturn(imageUrl);
 
             // when
@@ -200,7 +212,8 @@ class CrewServiceTest {
             Crew crew = createCrew(1L, "크루 이름", createMember(2L));
             given(crewRepository.findByNameWithCrewMembers(crew.getName())).willReturn(Optional.of(crew));
             CrewParticipant crewParticipant = createCrewParticipant(crew, member);
-            given(crewParticipantRepository.findByCrewIdAndMemberIdUsingLock(crew.getId(), memberId)).willReturn(Optional.of(crewParticipant));
+            given(crewParticipantRepository.findByCrewIdAndMemberIdUsingLock(crew.getId(), memberId)).willReturn(
+                    Optional.of(crewParticipant));
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
 
             // when
@@ -218,7 +231,8 @@ class CrewServiceTest {
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
             Crew crew = createCrew(1L, "크루 이름", createMember(2L));
             given(crewRepository.findByNameWithCrewMembers(crew.getName())).willReturn(Optional.of(crew));
-            given(crewParticipantRepository.findByCrewIdAndMemberIdUsingLock(crew.getId(), memberId)).willReturn(Optional.empty());
+            given(crewParticipantRepository.findByCrewIdAndMemberIdUsingLock(crew.getId(), memberId)).willReturn(
+                    Optional.empty());
             CrewJoinDto crewJoinDto = new CrewJoinDto(crew.getName().getValue());
 
             // when

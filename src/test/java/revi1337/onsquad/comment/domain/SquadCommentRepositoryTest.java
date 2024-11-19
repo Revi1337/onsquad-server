@@ -1,5 +1,10 @@
 package revi1337.onsquad.comment.domain;
 
+import static com.blazebit.persistence.querydsl.JPQLNextExpressions.select;
+import static revi1337.onsquad.comment.domain.QComment.*;
+import static revi1337.onsquad.crew.domain.QCrew.crew;
+import static revi1337.onsquad.member.domain.QMember.member;
+
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.querydsl.BlazeJPAQuery;
 import com.blazebit.persistence.querydsl.BlazeJPAQueryFactory;
@@ -10,6 +15,17 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.sql.SQLExpressions;
 import jakarta.persistence.EntityManager;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,26 +43,22 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.support.PersistenceLayerTestSupport;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static com.blazebit.persistence.querydsl.JPQLNextExpressions.select;
-import static revi1337.onsquad.comment.domain.QComment.*;
-import static revi1337.onsquad.crew.domain.QCrew.*;
-import static revi1337.onsquad.member.domain.QMember.*;
-
 class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
 
-    @Autowired private MemberJpaRepository memberRepository;
-    @Autowired private CrewJpaRepository crewJpaRepository;
-    @Autowired private CommentRepository commentRepository;
-    @Autowired private EntityManager entityManager;
-    @Autowired private JPAQueryFactory jpaQueryFactory;
-    @Autowired private CriteriaBuilderFactory cbf;
-    @Autowired private BlazeJPAQueryFactory blazeQueryFactory;
+    @Autowired
+    private MemberJpaRepository memberRepository;
+    @Autowired
+    private CrewJpaRepository crewJpaRepository;
+    @Autowired
+    private CommentRepository commentRepository;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private JPAQueryFactory jpaQueryFactory;
+    @Autowired
+    private CriteriaBuilderFactory cbf;
+    @Autowired
+    private BlazeJPAQueryFactory blazeQueryFactory;
 
 //    @BeforeEach
 //    public void testEntity() {
@@ -470,7 +482,8 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
                 .map(Comment::getId)
                 .toList();
 
-        Map<Comment, List<Comment>> groupedByParents = commentRepository.findGroupedChildCommentsByParentIdIn(parentIds);
+        Map<Comment, List<Comment>> groupedByParents = commentRepository.findGroupedChildCommentsByParentIdIn(
+                parentIds);
 
         // 최상위 부모 엔티티를 CommentsDto로 변환
         Map<Long, CommentsDto> commentDtoMap = parentComments.stream()
@@ -516,7 +529,9 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 3", crew1, member3);
         Comment comment4 = Comment.forCrew("댓글 2", crew1, member4);
         Comment comment5 = Comment.forCrew("댓글 1", crew1, member5);
-        memberRepository.saveAll(List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12));
+        memberRepository.saveAll(
+                List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10,
+                        member11, member12));
         crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member6);
@@ -551,7 +566,6 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
 
         entityManager.flush();
         entityManager.clear();
-
 
         List<Comment> parentComments = commentRepository.findParentCommentsByCrewName(new Name("크루 이름 1"));
         List<Long> parentIds = parentComments.stream()
@@ -606,7 +620,8 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
         for (Tuple tuple : rn) {
             Comment findComment = tuple.get(0, Comment.class);
             System.out.println("parent comment id : " + findComment.getParent().getId());
-            System.out.println(String.format("---> comment id : %d, row_number : %d \n", findComment.getId(), tuple.get(1, Long.class)));
+            System.out.println(String.format("---> comment id : %d, row_number : %d \n", findComment.getId(),
+                    tuple.get(1, Long.class)));
         }
     }
 
@@ -635,7 +650,9 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 3", crew1, member3);
         Comment comment4 = Comment.forCrew("댓글 2", crew1, member4);
         Comment comment5 = Comment.forCrew("댓글 1", crew1, member5);
-        memberRepository.saveAll(List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12));
+        memberRepository.saveAll(
+                List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10,
+                        member11, member12));
         crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member6);
@@ -689,7 +706,8 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
         for (Tuple tuple : rn) {
             Comment findComment = tuple.get(0, Comment.class);
             System.out.println("parent comment id : " + findComment.getParent().getId());
-            System.out.println(String.format("---> comment id : %d, row_number : %d \n", findComment.getId(), tuple.get(1, Long.class)));
+            System.out.println(String.format("---> comment id : %d, row_number : %d \n", findComment.getId(),
+                    tuple.get(1, Long.class)));
         }
     }
 
@@ -717,7 +735,9 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
         Comment comment3 = Comment.forCrew("댓글 3", crew1, member3);
         Comment comment4 = Comment.forCrew("댓글 2", crew1, member4);
         Comment comment5 = Comment.forCrew("댓글 1", crew1, member5);
-        memberRepository.saveAll(List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10, member11, member12));
+        memberRepository.saveAll(
+                List.of(member1, member2, member3, member4, member5, member6, member7, member8, member9, member10,
+                        member11, member12));
         crewJpaRepository.saveAll(List.of(crew1, crew2));
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4, comment5));
         Comment reply1 = Comment.replyForCrew(comment1, "대댓글 1", crew1, member6);
@@ -753,7 +773,6 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
         entityManager.flush();
         entityManager.clear();
 
-
         List<Comment> root1 = blazeQueryFactory
                 .select(comment)
                 .from(JPAExpressions.select(comment)
@@ -765,7 +784,8 @@ class SquadCommentRepositoryTest extends PersistenceLayerTestSupport {
         NamedWindow blep = new NamedWindow("whihi").partitionBy(comment.parent.id);
         BlazeJPAQuery<Tuple> query = new BlazeJPAQuery<Tuple>(entityManager, cbf).from(comment)
                 .window(blep)
-                .select(comment.content.as("blep"), JPQLNextExpressions.rowNumber().over(blep), JPQLNextExpressions.lastValue(comment.content).over(blep))
+                .select(comment.content.as("blep"), JPQLNextExpressions.rowNumber().over(blep),
+                        JPQLNextExpressions.lastValue(comment.content).over(blep))
                 .where(comment.id.in(select(sub.id).from(sub)));
         List<Tuple> fetch = query.fetch();
     }

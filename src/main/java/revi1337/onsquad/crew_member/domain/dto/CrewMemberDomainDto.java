@@ -1,9 +1,8 @@
 package revi1337.onsquad.crew_member.domain.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
-
 import java.time.LocalDateTime;
+import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 public record CrewMemberDomainDto(
         SimpleMemberInfoDomainDto memberInfo,
