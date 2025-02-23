@@ -41,10 +41,9 @@ public class SquadQueryRepositoryImpl implements SquadQueryRepository {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(squad)
-                        .innerJoin(squad.crew, crew).fetchJoin()
+                        .innerJoin(squad.crew, crew).on(squad.id.eq(id))
                         .innerJoin(squad.crewMember, crewMember).fetchJoin()
                         .innerJoin(squad.squadMembers, squadMember).fetchJoin()
-                        .where(squad.id.eq(id))
                         .fetchOne()
         );
     }

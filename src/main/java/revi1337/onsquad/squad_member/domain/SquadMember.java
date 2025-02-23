@@ -99,18 +99,22 @@ public class SquadMember extends RequestEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (!(o instanceof SquadMember that)) {
+        if (!(object instanceof SquadMember that)) {
             return false;
         }
-        return id != null && Objects.equals(getId(), that.getId());
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode(id);
+    }
+
+    public boolean isSameCrewMemberId(Long crewMemberId) {
+        return this.crewMember.getId().equals(crewMemberId);
     }
 }

@@ -40,16 +40,6 @@ public class SquadService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadParticipantRepository squadParticipantRepository;
 
-    public SquadInfoDto findSquad(Long squadId) {
-        return SquadInfoDto.from(squadRepository.getSquadById(squadId));
-    }
-
-    public List<SquadInfoDto> findSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
-        return squadRepository.findSquadsByCrewId(crewId, condition.categoryType(), pageable).stream()
-                .map(SquadInfoDto::from)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public void createNewSquad(Long memberId, Long crewId, SquadCreateDto dto) {
         memberRepository.getById(memberId);
@@ -61,10 +51,20 @@ public class SquadService {
     @Transactional
     public void submitParticipationRequest(Long memberId, Long crewId, SquadJoinDto dto) {
         Squad squad = squadRepository.getByIdWithOwnerAndCrewAndSquadMembers(dto.squadId());
-        checkCrewInfoIsMatch(crewId, squad);
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrew().getId(), memberId);
-        validateSquadMetaData(squad, crewMember);
+        checkSquadBelongsToCrew(crewId, squad);
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrewId(), memberId);
+        validateSquadMembers(squad, crewMember);
         squadParticipantRepository.upsertSquadParticipant(squad.getId(), crewMember.getId(), LocalDateTime.now());
+    }
+
+    public SquadInfoDto findSquad(Long squadId) {
+        return SquadInfoDto.from(squadRepository.getSquadById(squadId));
+    }
+
+    public List<SquadInfoDto> findSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
+        return squadRepository.findSquadsByCrewId(crewId, condition.categoryType(), pageable).stream()
+                .map(SquadInfoDto::from)
+                .collect(Collectors.toList());
     }
 
     private void persistSquad(SquadCreateDto dto, CrewMember crewMember, Crew crew) {
@@ -79,33 +79,32 @@ public class SquadService {
     }
 
     private void batchInsertSquadCategories(SquadCreateDto dto, Squad persistedSquad) {
-        List<CategoryType> categoryTypes = CategoryTypeUtil.extractPossible(CategoryType.fromTexts(dto.categories()));
-        List<Category> categories = Category.fromCategoryTypes(categoryTypes);
+        List<CategoryType> categoryTypes = CategoryType.fromTexts(dto.categories());
+        List<CategoryType> possibleCategoryTypes = CategoryTypeUtil.extractPossible(categoryTypes);
+        List<Category> categories = Category.fromCategoryTypes(possibleCategoryTypes);
         squadRepository.batchInsertSquadCategories(persistedSquad.getId(), categories);
     }
 
-    private void checkCrewInfoIsMatch(Long requestCrewId, Squad squad) {
-        if (!squad.getCrew().getId().equals(requestCrewId)) {
+    private void checkSquadBelongsToCrew(Long requestCrewId, Squad squad) {
+        if (squad.isNotSameCrewId(requestCrewId)) {
             throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
         }
     }
 
-    private void validateSquadMetaData(Squad squad, CrewMember crewMember) {
+    private void validateSquadMembers(Squad squad, CrewMember crewMember) {
         checkDifferenceSquadCreator(squad, crewMember);
-        checkAlreadyJoined(squad, crewMember);
+        checkCrewMemberAlreadyInSquad(squad, crewMember);
     }
 
     private void checkDifferenceSquadCreator(Squad squad, CrewMember crewMember) {
-        if (squad.getCrewMember().equals(crewMember)) {
+        if (crewMember.isOwnerOfSquad(squad.getOwnerId())) {
             throw new SquadBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
         }
     }
 
-    private void checkAlreadyJoined(Squad squad, CrewMember crewMember) {
-        for (SquadMember squadMember : squad.getSquadMembers()) {
-            if (squadMember.getCrewMember().getId().equals(crewMember.getId())) {
-                throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
-            }
+    private void checkCrewMemberAlreadyInSquad(Squad squad, CrewMember crewMember) {
+        if (squad.isSquadMemberAlreadyParticipant(crewMember.getId())) {
+            throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
         }
     }
 }

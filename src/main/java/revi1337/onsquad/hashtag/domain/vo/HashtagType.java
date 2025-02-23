@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -57,7 +56,7 @@ public enum HashtagType {
     private final String text;
     private final Long pk;
 
-    private static final Map<String, HashtagType> hashtagHashMap = Collections.unmodifiableMap(new HashMap<>() {
+    private static final Map<String, HashtagType> hashtagTypeStorage = Collections.unmodifiableMap(new HashMap<>() {
         {
             unmodifiableList().forEach(hashtag -> put(hashtag.getText(), hashtag));
         }
@@ -69,11 +68,11 @@ public enum HashtagType {
 
     public static List<HashtagType> fromTexts(List<String> hashtagTexts) {
         return new LinkedHashSet<>(hashtagTexts).stream()
-                .map(HashtagType::mapFromText)
-                .collect(Collectors.toList());
+                .map(HashtagType::fromText)
+                .toList();
     }
 
-    public static HashtagType mapFromText(String hashtagText) {
-        return hashtagHashMap.get(hashtagText);
+    public static HashtagType fromText(String hashtagText) {
+        return hashtagTypeStorage.get(hashtagText.toUpperCase());
     }
 }

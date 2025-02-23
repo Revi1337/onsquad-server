@@ -4,7 +4,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 import jakarta.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +38,7 @@ public class CrewController {
             @RequestParam String crewName,
             @Authenticate AuthenticatedMember ignored
     ) {
-        if (crewService.checkDuplicateNickname(crewName)) {
+        if (crewService.isDuplicateCrewName(crewName)) {
             return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(true)));
         }
 
@@ -49,13 +48,10 @@ public class CrewController {
     @PostMapping(value = "/crew/new", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<String>> createNewCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
-            @RequestPart MultipartFile file,
+            @RequestPart(required = false) MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
-    ) throws IOException {
-        crewService.createNewCrew(
-                authenticatedMember.toDto().getId(), crewCreateRequest.toDto(), file.getBytes(),
-                file.getOriginalFilename()
-        );
+    ) {
+        crewService.createNewCrew(authenticatedMember.toDto().getId(), crewCreateRequest.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -72,9 +68,12 @@ public class CrewController {
 
     @GetMapping("/crew")
     public ResponseEntity<RestResponse<CrewInfoResponse>> findCrew(
-            @RequestParam Long crewId
+            @RequestParam Long crewId,
+            @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        CrewInfoResponse crewResponse = CrewInfoResponse.from(crewService.findCrewById(crewId));
+        CrewInfoResponse crewResponse = CrewInfoResponse.from(
+                crewService.findCrewById(authenticatedMember.toDto().getId(), crewId)
+        );
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
@@ -85,7 +84,8 @@ public class CrewController {
             @PageableDefault Pageable pageable
     ) {
         List<CrewInfoResponse> crewResponses = crewService.findCrewsByName(crewName, pageable).stream()
-                .map(CrewInfoResponse::from).toList();
+                .map(CrewInfoResponse::from)
+                .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponses));
     }

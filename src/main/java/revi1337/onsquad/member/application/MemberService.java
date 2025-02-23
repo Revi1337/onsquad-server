@@ -2,6 +2,7 @@ package revi1337.onsquad.member.application;
 
 import static revi1337.onsquad.member.error.MemberErrorCode.WRONG_PASSWORD;
 
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,8 +48,18 @@ public class MemberService {
         Member member = memberRepository.getById(memberId);
         member.updateProfile(dto.toEntity());
         memberRepository.saveAndFlush(member);
-        if (file != null && !file.isEmpty()) {
-            applicationEventPublisher.publishEvent(new MemberUpdateEvent(member, file));
+        publishEventIfMultipartAvailable(file, member);
+    }
+
+    private void publishEventIfMultipartAvailable(MultipartFile file, Member member) {
+        if (file == null || file.isEmpty()) {
+            return;
+        }
+        try {
+            applicationEventPublisher.publishEvent(
+                    new MemberUpdateEvent(member.getId(), file.getBytes(), file.getOriginalFilename())
+            );
+        } catch (IOException ignored) {
         }
     }
 }

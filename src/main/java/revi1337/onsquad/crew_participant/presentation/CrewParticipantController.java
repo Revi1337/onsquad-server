@@ -29,8 +29,8 @@ public class CrewParticipantController {
     public ResponseEntity<RestResponse<List<CrewParticipantRequestResponse>>> findMyCrewRequests(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<CrewParticipantRequestResponse> crewParticipantRequestResponse = crewParticipantService.findMyCrewRequests(
-                        authenticatedMember.toDto().getId()).stream()
+        List<CrewParticipantRequestResponse> crewParticipantRequestResponse = crewParticipantService
+                .findMyCrewRequests(authenticatedMember.toDto().getId()).stream()
                 .map(CrewParticipantRequestResponse::from)
                 .toList();
 
@@ -48,12 +48,12 @@ public class CrewParticipantController {
     }
 
     @GetMapping("/manage/crew/requests")
-    public ResponseEntity<RestResponse<List<SimpleCrewParticipantRequestResponse>>> findMyCrew(
-            @RequestParam Long crewId,
+    public ResponseEntity<RestResponse<List<SimpleCrewParticipantRequestResponse>>> findRequestsInMyCrew(
+            @RequestParam @Positive Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService.findCrewRequestsInMyCrew(
-                        authenticatedMember.toDto().getId(), crewId).stream()
+        List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService
+                .findRequestsInMyCrew(authenticatedMember.toDto().getId(), crewId).stream()
                 .map(SimpleCrewParticipantRequestResponse::from)
                 .toList();
 

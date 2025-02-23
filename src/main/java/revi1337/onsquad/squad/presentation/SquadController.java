@@ -3,7 +3,6 @@ package revi1337.onsquad.squad.presentation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -71,7 +70,7 @@ public class SquadController {
     ) {
         List<SquadInfoResponse> squadResponses = squadService.findSquads(crewId, category, pageable).stream()
                 .map(SquadInfoResponse::from)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(RestResponse.success(squadResponses));
     }

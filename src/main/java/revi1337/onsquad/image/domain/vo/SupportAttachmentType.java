@@ -32,6 +32,10 @@ public enum SupportAttachmentType {
                     (byte) 0x65, (byte) 0x72, (byte) 0x73, (byte) 0x69, (byte) 0x6F, (byte) 0x6E, (byte) 0x3D},
             new int[][]{}
     ),
+    SVG2(
+            new byte[]{(byte) 0x3c, (byte) 0x73, (byte) 0x76, (byte) 0x67},
+            new int[][]{}
+    ),
     WEBP(
             new byte[]{(byte) 0x52, (byte) 0x49, (byte) 0x46, (byte) 0x46, (byte) 0x90, (byte) 0x90, (byte) 0x90,
                     (byte) 0x90, (byte) 0x57, (byte) 0x45, (byte) 0x42, (byte) 0x50},

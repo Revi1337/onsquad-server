@@ -40,7 +40,6 @@ public class Member extends BaseEntity {
 
     private static final Introduce DEFAULT_INTRODUCE = new Introduce("[소개 없음]");
     private static final String DEFAULT_KAKAO_LINK = "";
-    private static final String DEFAULT_PROFILE_IMAGE = "";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,7 +60,7 @@ public class Member extends BaseEntity {
     @Embedded
     private Introduce introduce = DEFAULT_INTRODUCE;
 
-    private String profileImage = DEFAULT_PROFILE_IMAGE;
+    private String profileImage;
 
     private String kakaoLink = DEFAULT_KAKAO_LINK;
 

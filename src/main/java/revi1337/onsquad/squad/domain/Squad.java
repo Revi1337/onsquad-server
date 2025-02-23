@@ -97,18 +97,43 @@ public class Squad extends BaseEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (!(o instanceof Squad squad)) {
+        if (!(object instanceof Squad squad)) {
             return false;
         }
-        return id != null && Objects.equals(getId(), squad.getId());
+        return id != null && Objects.equals(id, squad.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode(id);
+    }
+
+    public boolean isSquadMemberAlreadyParticipant(Long crewMemberId) {
+        for (SquadMember squadMember : this.squadMembers) {
+            if (squadMember.isSameCrewMemberId(crewMemberId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isNotSameCrewId(Long crewId) {
+        return !isSameCrewId(crewId);
+    }
+
+    public boolean isSameCrewId(Long crewId) {
+        return getCrewId().equals(crewId);
+    }
+
+    public Long getCrewId() {
+        return crew.getId();
+    }
+
+    public Long getOwnerId() {
+        return crewMember.getId();
     }
 }

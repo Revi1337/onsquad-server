@@ -23,10 +23,10 @@ public class SquadParticipantController {
     private final SquadParticipantService squadParticipantService;
 
     @GetMapping("/my/squad/requests")
-    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> findSquadMemberRequests(
+    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> findMySquadRequests(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<SquadParticipantRequestResponse> requestResponses = squadParticipantService.findSquadParticipants(
+        List<SquadParticipantRequestResponse> requestResponses = squadParticipantService.findMySquadRequests(
                         authenticatedMember.toDto().getId()).stream()
                 .map(SquadParticipantRequestResponse::from)
                 .toList();
@@ -43,5 +43,14 @@ public class SquadParticipantController {
         squadParticipantService.rejectSquadRequest(authenticatedMember.toDto().getId(), crewId, squadId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
+    @GetMapping("/my/squad/manage/requests")
+    public void findRequestsInMySquad(
+            @RequestParam @Positive Long crewId,
+            @RequestParam @Positive Long squadId,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        squadParticipantService.findRequestsInMySquad(authenticatedMember.toDto().getId(), crewId, squadId);
     }
 }
