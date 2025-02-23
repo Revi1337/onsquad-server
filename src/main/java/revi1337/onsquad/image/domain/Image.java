@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// TODO 과연 Image 를 Entity 로 관리해야할까..?
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

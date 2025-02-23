@@ -105,7 +105,14 @@ public class Crew extends BaseEntity {
         this.kakaoLink = kakaoLink;
     }
 
+    public boolean hasNotImage() {
+        return image == null;
+    }
+
     public void updateImage(String imageUrl) {
+        if (hasNotImage()) {
+            this.image = new Image(imageUrl);
+        }
         this.image = this.image.updateImage(imageUrl);
     }
 

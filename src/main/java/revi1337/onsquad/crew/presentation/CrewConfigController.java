@@ -5,7 +5,6 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,13 +35,10 @@ public class CrewConfigController {
     public ResponseEntity<RestResponse<String>> updateCrew(
             @RequestParam @Positive Long crewId,
             @Valid @RequestPart CrewUpdateRequest crewUpdateRequest,
-            @RequestPart MultipartFile file,
+            @RequestPart(name = "file", required = false) MultipartFile file,
             @Authenticate AuthenticatedMember authenticatedMember
-    ) throws IOException {
-        crewConfigService.updateCrew(
-                authenticatedMember.toDto().getId(), crewId, crewUpdateRequest.toDto(), file.getBytes(),
-                file.getOriginalFilename()
-        );
+    ) {
+        crewConfigService.updateCrew(authenticatedMember.toDto().getId(), crewId, crewUpdateRequest.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
