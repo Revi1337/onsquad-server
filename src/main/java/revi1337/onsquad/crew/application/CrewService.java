@@ -86,6 +86,10 @@ public class CrewService {
         );
     }
 
+    public CrewInfoDto findCrewById(Long crewId) {
+        return CrewInfoDto.from(crewRepository.getCrewById(crewId));
+    }
+
     public CrewInfoDto findCrewById(Long memberId, Long crewId) {
         return CrewInfoDto.from(
                 crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId),

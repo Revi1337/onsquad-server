@@ -69,12 +69,15 @@ public class CrewController {
     @GetMapping("/crew")
     public ResponseEntity<RestResponse<CrewInfoResponse>> findCrew(
             @RequestParam Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate(required = false) AuthenticatedMember authenticatedMember
     ) {
-        CrewInfoResponse crewResponse = CrewInfoResponse.from(
-                crewService.findCrewById(authenticatedMember.toDto().getId(), crewId)
-        );
+        final CrewInfoResponse crewResponse;
+        if (authenticatedMember == null) {
+            crewResponse = CrewInfoResponse.from(crewService.findCrewById(crewId));
+            return ResponseEntity.ok().body(RestResponse.success(crewResponse));
+        }
 
+        crewResponse = CrewInfoResponse.from(crewService.findCrewById(authenticatedMember.toDto().getId(), crewId));
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
 

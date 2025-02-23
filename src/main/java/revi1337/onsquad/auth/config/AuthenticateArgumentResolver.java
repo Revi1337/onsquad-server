@@ -30,10 +30,13 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String authorizationHeader = webRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        validateAuthorizationHeader(authorizationHeader);
+        if (isTokenDoesntRequired(parameter) && isAuthorizationHeaderNull(authorizationHeader)) {
+            return null;
+        }
 
+        validateAuthorizationHeader(authorizationHeader);
         String accessToken = authorizationHeader.split(" ")[TOKEN_INDEX];
         Long memberId = jsonWebTokenEvaluator.extractSpecificClaim(
                 jsonWebTokenEvaluator.verifyAccessToken(accessToken),
@@ -43,13 +46,26 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
         return AuthenticatedMember.of(memberId);
     }
 
+    private boolean isTokenDoesntRequired(MethodParameter parameter) {
+        Authenticate annotation = parameter.getParameterAnnotation(Authenticate.class);
+        return !annotation.required();
+    }
+
     private void validateAuthorizationHeader(String authorizationHeader) {
-        if (authorizationHeader == null) {
+        if (isAuthorizationHeaderNull(authorizationHeader)) {
             throw new AuthTokenException.NeedToken(EMPTY_TOKEN);
         }
 
-        if (!authorizationHeader.startsWith(TOKEN_PREFIX)) {
+        if (isAuthorizationHeaderPrefixInvalid(authorizationHeader)) {
             throw new AuthTokenException.InvalidTokenFormat(INVALID_TOKEN_FORMAT);
         }
+    }
+
+    private boolean isAuthorizationHeaderNull(String authorizationHeader) {
+        return authorizationHeader == null;
+    }
+
+    private boolean isAuthorizationHeaderPrefixInvalid(String authorizationHeader) {
+        return !authorizationHeader.startsWith(TOKEN_PREFIX);
     }
 }
