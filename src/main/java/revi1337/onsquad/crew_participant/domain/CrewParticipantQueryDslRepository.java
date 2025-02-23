@@ -40,7 +40,7 @@ public class CrewParticipantQueryDslRepository {
                 ))
                 .from(crewParticipant)
                 .innerJoin(crewParticipant.crew, crew).on(crewParticipant.member.id.eq(memberId))
-                .innerJoin(crew.image, image)
+                .leftJoin(crew.image, image)
                 .innerJoin(crew.member, member)
                 .orderBy(crewParticipant.requestAt.desc())
                 .fetch();

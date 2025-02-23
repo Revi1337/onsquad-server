@@ -37,7 +37,7 @@ public class CrewQueryDslRepository {
         Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member).on(crew.id.eq(id))
-                .innerJoin(crew.image, image)
+                .leftJoin(crew.image, image)
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
                 .transform(groupBy(crew.id)
@@ -67,7 +67,7 @@ public class CrewQueryDslRepository {
         Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member).on(crew.id.eq(id))
-                .innerJoin(crew.image, image)
+                .leftJoin(crew.image, image)
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
                 .transform(groupBy(crew.id)
@@ -96,7 +96,7 @@ public class CrewQueryDslRepository {
     public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
         List<CrewInfoDomainDto> transformedCrewInfos = jpaQueryFactory
                 .from(crew)
-                .innerJoin(crew.image, image)
+                .leftJoin(crew.image, image)
                 .innerJoin(crew.member, member)
                 .where(crewNameStartsWith(name))
                 .orderBy(crew.createdAt.desc())

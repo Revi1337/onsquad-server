@@ -23,7 +23,7 @@ public record CrewInfoDto(
                 crewInfoDomainDto.getName().getValue(),
                 crewInfoDomainDto.getIntroduce().getValue(),
                 crewInfoDomainDto.getDetail() != null ? crewInfoDomainDto.getDetail().getValue() : null,
-                crewInfoDomainDto.getImageUrl(),
+                crewInfoDomainDto.getImageUrl() != null ? crewInfoDomainDto.getImageUrl() : "",
                 crewInfoDomainDto.getKakaoLink(),
                 crewInfoDomainDto.getHashtagTypes().stream()
                         .map(HashtagType::getText)
@@ -40,7 +40,7 @@ public record CrewInfoDto(
                 crewInfoDomainDto.getName().getValue(),
                 crewInfoDomainDto.getIntroduce().getValue(),
                 crewInfoDomainDto.getDetail() != null ? crewInfoDomainDto.getDetail().getValue() : null,
-                crewInfoDomainDto.getImageUrl(),
+                crewInfoDomainDto.getImageUrl() != null ? crewInfoDomainDto.getImageUrl() : "",
                 crewInfoDomainDto.getKakaoLink(),
                 crewInfoDomainDto.getHashtagTypes().stream()
                         .map(HashtagType::getText)

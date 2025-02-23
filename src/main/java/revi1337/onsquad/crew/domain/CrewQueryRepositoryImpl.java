@@ -18,7 +18,7 @@ public class CrewQueryRepositoryImpl implements CrewQueryRepository {
                 jpaQueryFactory
                         .select(crew)
                         .from(crew)
-                        .innerJoin(crew.image, image).fetchJoin()
+                        .leftJoin(crew.image, image).fetchJoin()
                         .where(crew.id.eq(id))
                         .fetchOne()
         );

@@ -89,7 +89,7 @@ public class SquadMemberQueryDslRepository {
 
         Map<Long, SimpleCrewInfoDomainDto> crewDtoMap = jpaQueryFactory
                 .from(crew)
-                .innerJoin(crew.image, image)
+                .leftJoin(crew.image, image)
                 .innerJoin(crew.member, CREW_CREATOR)
                 .where(crew.id.in(squadMembersMap.keySet()))
                 .transform(groupBy(crew.id)
