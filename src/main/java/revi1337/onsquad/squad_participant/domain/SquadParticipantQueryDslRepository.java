@@ -6,6 +6,7 @@ import static revi1337.onsquad.category.domain.QCategory.category;
 import static revi1337.onsquad.crew.domain.QCrew.crew;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
 import static revi1337.onsquad.image.domain.QImage.image;
+import static revi1337.onsquad.member.domain.QMember.member;
 import static revi1337.onsquad.squad.domain.QSquad.squad;
 import static revi1337.onsquad.squad_category.domain.QSquadCategory.squadCategory;
 import static revi1337.onsquad.squad_participant.domain.QSquadParticipant.squadParticipant;
@@ -21,8 +22,10 @@ import revi1337.onsquad.crew.domain.dto.SimpleCrewInfoDomainDto;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.squad_participant.domain.dto.QSimpleSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QSquadParticipantDomainDto_RequestParticipantDomainDto;
+import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
 
@@ -108,5 +111,21 @@ public class SquadParticipantQueryDslRepository {
                     );
                 })
                 .toList();
+    }
+
+    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId) {
+        return jpaQueryFactory
+                .select(new QSimpleSquadParticipantDomainDto(
+                        new QSimpleMemberInfoDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.mbti
+                        ),
+                        squadParticipant.requestAt
+                ))
+                .from(squadParticipant)
+                .innerJoin(squadParticipant.crewMember, crewMember).on(squadParticipant.squad.id.eq(squadId))
+                .innerJoin(crewMember.member, member)
+                .fetch();
     }
 }

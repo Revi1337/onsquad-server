@@ -94,6 +94,14 @@ public class SquadMember extends RequestEntity {
                 .build();
     }
 
+    public boolean isNotLeader() {
+        return !isLeader();
+    }
+
+    public boolean isLeader() {
+        return this.role == LEADER;
+    }
+
     public void addSquad(Squad squad) {
         this.squad = squad;
     }

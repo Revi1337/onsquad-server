@@ -21,4 +21,11 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class NotLeader extends SquadMemberBusinessException {
+
+        public NotLeader(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

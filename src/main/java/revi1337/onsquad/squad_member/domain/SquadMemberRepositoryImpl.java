@@ -32,6 +32,11 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
+    public Optional<SquadMember> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
+        return squadMemberJpaRepository.findBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    }
+
+    @Override
     public List<SquadMemberDomainDto> fetchAllBySquadId(Long squadId) {
         return squadMemberQueryDslRepository.fetchAllBySquadId(squadId);
     }

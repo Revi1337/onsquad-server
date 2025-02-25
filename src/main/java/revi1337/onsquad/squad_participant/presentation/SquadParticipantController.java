@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_participant.application.SquadParticipantService;
+import revi1337.onsquad.squad_participant.presentation.dto.SimpleSquadParticipantResponse;
 import revi1337.onsquad.squad_participant.presentation.dto.SquadParticipantRequestResponse;
 
 @RequiredArgsConstructor
@@ -52,5 +54,19 @@ public class SquadParticipantController {
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         squadParticipantService.findRequestsInMySquad(authenticatedMember.toDto().getId(), crewId, squadId);
+    }
+
+    @GetMapping("/crews/{crewId}/squads/{squadId}/requests")
+    public ResponseEntity<RestResponse<List<SimpleSquadParticipantResponse>>> fetchRequestsInSquad(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        List<SimpleSquadParticipantResponse> simpleSquadParticipantResponses = squadParticipantService
+                .fetchRequestsInSquad(authenticatedMember.toDto().getId(), crewId, squadId).stream()
+                .map(SimpleSquadParticipantResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(simpleSquadParticipantResponses));
     }
 }
