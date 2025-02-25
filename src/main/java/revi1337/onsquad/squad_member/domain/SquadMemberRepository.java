@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadInMembersDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
 
 public interface SquadMemberRepository {
@@ -14,7 +16,13 @@ public interface SquadMemberRepository {
 
     SquadMember saveAndFlush(SquadMember squadMember);
 
+    boolean existsBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
+
+    List<SquadMemberDomainDto> fetchAllBySquadId(Long squadId);
+
     List<EnrolledSquadDomainDto> findEnrolledSquads(Long memberId);
+
+    SquadInMembersDomainDto fetchAllWithCrewAndCategoriesBySquadId(Long crewMemberId, Long squadId);
 
     Optional<SquadWithMemberDomainDto> findSquadWithMembers(Long memberId, Long crewId, Long squadId);
 

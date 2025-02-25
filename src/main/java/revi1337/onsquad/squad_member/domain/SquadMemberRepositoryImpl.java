@@ -5,6 +5,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadInMembersDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
 
 @RequiredArgsConstructor
@@ -25,8 +27,24 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
+    public boolean existsBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
+        return squadMemberJpaRepository.existsBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    }
+
+    @Override
+    public List<SquadMemberDomainDto> fetchAllBySquadId(Long squadId) {
+        return squadMemberQueryDslRepository.fetchAllBySquadId(squadId);
+    }
+
+    @Override
     public List<EnrolledSquadDomainDto> findEnrolledSquads(Long memberId) {
         return squadMemberQueryDslRepository.findEnrolledSquads(memberId);
+    }
+
+    @Override
+    public SquadInMembersDomainDto fetchAllWithCrewAndCategoriesBySquadId(Long crewMemberId, Long squadId) {
+//        return squadMemberQueryDslRepository.fetchAllWithCrewAndCategoriesBySquadId2(crewMemberId, squadId); {
+        return squadMemberQueryDslRepository.fetchAllWithCrewAndCategoriesBySquadId(crewMemberId, squadId);
     }
 
     @Override

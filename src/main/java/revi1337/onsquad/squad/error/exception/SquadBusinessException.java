@@ -36,10 +36,10 @@ public abstract class SquadBusinessException extends RuntimeException {
         }
     }
 
-    public static class NotInCrew extends SquadBusinessException {
+    public static class NotInSquad extends SquadBusinessException {
 
-        public NotInCrew(ErrorCode errorCode, String crewName) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName));
+        public NotInSquad(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 

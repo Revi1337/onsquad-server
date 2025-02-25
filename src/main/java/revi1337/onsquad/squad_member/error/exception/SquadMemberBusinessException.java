@@ -14,4 +14,11 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
         this.errorCode = errorCode;
         this.errorMessage = finalErrorMessage;
     }
+
+    public static class NotInSquad extends SquadMemberBusinessException {
+
+        public NotInSquad(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }
