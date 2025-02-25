@@ -37,7 +37,37 @@ public class CrewQueryDslRepository {
         Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member).on(crew.id.eq(id))
-                .innerJoin(crew.image, image)
+                .leftJoin(crew.image, image)
+                .leftJoin(crew.hashtags, crewHashtag)
+                .leftJoin(crewHashtag.hashtag, hashtag)
+                .transform(groupBy(crew.id)
+                        .as(new QCrewInfoDomainDto(
+                                crew.id,
+                                crew.name,
+                                crew.introduce,
+                                crew.detail,
+                                image.imageUrl,
+                                crew.kakaoLink,
+                                list(hashtag.hashtagType),
+                                select(crewMember.count())
+                                        .from(crewMember)
+                                        .where(crewMember.crew.id.eq(crew.id)),
+                                new QSimpleMemberInfoDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.mbti
+                                )
+                        ))
+                );
+
+        return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
+    }
+
+    public Optional<CrewInfoDomainDto> findCrewWithJoinStatusByIdAndMemberId(Long id) {
+        Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
+                .from(crew)
+                .innerJoin(crew.member, member).on(crew.id.eq(id))
+                .leftJoin(crew.image, image)
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
                 .transform(groupBy(crew.id)
@@ -66,7 +96,7 @@ public class CrewQueryDslRepository {
     public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
         List<CrewInfoDomainDto> transformedCrewInfos = jpaQueryFactory
                 .from(crew)
-                .innerJoin(crew.image, image)
+                .leftJoin(crew.image, image)
                 .innerJoin(crew.member, member)
                 .where(crewNameStartsWith(name))
                 .orderBy(crew.createdAt.desc())

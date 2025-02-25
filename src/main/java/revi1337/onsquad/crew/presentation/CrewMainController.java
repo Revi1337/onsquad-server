@@ -25,6 +25,7 @@ public class CrewMainController {
 
     private final CrewMainService crewMainService;
 
+    // TODO @RequestParam CategoryCondition category 이거 왜 필수값이지? 고민필요.
     @GetMapping("/main")
     public ResponseEntity<RestResponse<CrewMainResponse>> fetchMain(
             @RequestParam @Positive Long crewId,

@@ -1,40 +1,22 @@
 package revi1337.onsquad.squad_member.presentation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDateTime;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 import revi1337.onsquad.squad_member.application.dto.SquadMemberDto;
 
+@JsonInclude(Include.NON_NULL)
 public record SquadMemberResponse(
         SimpleMemberInfoResponse memberInfo,
-        LocalDateTime participantAt
+        LocalDateTime participantAt,
+        Boolean matchCurrentUser
 ) {
     public static SquadMemberResponse from(SquadMemberDto squadMemberDto) {
         return new SquadMemberResponse(
                 SimpleMemberInfoResponse.from(squadMemberDto.memberInfo()),
-                squadMemberDto.participantAt()
+                squadMemberDto.participantAt(),
+                squadMemberDto.matchCurrentUser()
         );
     }
 }
-
-//package revi1337.onsquad.squad_member.presentation.dto.response;
-//
-//import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
-//import revi1337.onsquad.squad_member.application.dto.SquadMemberDto;
-//
-//import java.time.LocalDateTime;
-//
-//public record SquadMemberResponse(
-//        Long squadId,
-//        String squadTitle,
-//        SimpleMemberInfoResponse memberInfo,
-//        LocalDateTime participantAt
-//) {
-//    public static SquadMemberResponse from(SquadMemberDto squadMemberDto) {
-//        return new SquadMemberResponse(
-//                squadMemberDto.squadId(),
-//                squadMemberDto.squadTitle(),
-//                SimpleMemberInfoResponse.from(squadMemberDto.memberInfo()),
-//                squadMemberDto.participantAt()
-//        );
-//    }
-//}

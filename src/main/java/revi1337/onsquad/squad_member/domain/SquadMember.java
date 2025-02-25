@@ -94,23 +94,35 @@ public class SquadMember extends RequestEntity {
                 .build();
     }
 
+    public boolean isNotLeader() {
+        return !isLeader();
+    }
+
+    public boolean isLeader() {
+        return this.role == LEADER;
+    }
+
     public void addSquad(Squad squad) {
         this.squad = squad;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (!(o instanceof SquadMember that)) {
+        if (!(object instanceof SquadMember that)) {
             return false;
         }
-        return id != null && Objects.equals(getId(), that.getId());
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode(id);
+    }
+
+    public boolean isSameCrewMemberId(Long crewMemberId) {
+        return this.crewMember.getId().equals(crewMemberId);
     }
 }

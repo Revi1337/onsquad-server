@@ -15,7 +15,7 @@ public abstract class HashtagTypeUtil {
                 .collect(Collectors.toList());
     }
 
-    private static void validateHashtag(HashtagType hashtagType) {
+    public static void validateHashtag(HashtagType hashtagType) {
         if (hashtagType == null) {
             throw new CrewDomainException.InvalidHashtag(INVALID_HASHTAG);
         }

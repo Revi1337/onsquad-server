@@ -28,18 +28,18 @@ public class CrewParticipantService {
                 .toList();
     }
 
-    public List<SimpleCrewParticipantRequestDto> findCrewRequestsInMyCrew(Long memberId, Long crewId) {
+    public void rejectCrewRequest(Long memberId, Long crewId) {
+        CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crewId, memberId);
+        crewParticipantRepository.deleteById(crewParticipant.getId());
+    }
+
+    public List<SimpleCrewParticipantRequestDto> findRequestsInMyCrew(Long memberId, Long crewId) {
         Crew crew = crewRepository.getById(crewId);
         validateMemberIsCrewCreator(memberId, crew);
 
         return crewParticipantRepository.findCrewRequestsInCrew(crewId).stream()
                 .map(SimpleCrewParticipantRequestDto::from)
                 .toList();
-    }
-
-    public void rejectCrewRequest(Long memberId, Long crewId) {
-        CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crewId, memberId);
-        crewParticipantRepository.deleteById(crewParticipant.getId());
     }
 
     private void validateMemberIsCrewCreator(Long memberId, Crew crew) {

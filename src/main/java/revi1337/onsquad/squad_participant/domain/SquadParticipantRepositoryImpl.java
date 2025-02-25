@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
 
 @RequiredArgsConstructor
@@ -14,7 +15,6 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     private final SquadParticipantJpaRepository squadParticipantJpaRepository;
     private final SquadParticipantJdbcRepository squadParticipantJdbcRepository;
     private final SquadParticipantQueryDslRepository squadParticipantQueryDslRepository;
-
 
     @Override
     public SquadParticipant save(SquadParticipant squadParticipant) {
@@ -59,5 +59,10 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     @Override
     public List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId) {
         return squadParticipantQueryDslRepository.findSquadParticipantRequestsByMemberId(memberId);
+    }
+
+    @Override
+    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId) {
+        return squadParticipantQueryDslRepository.fetchAllWithMemberBySquadId(squadId);
     }
 }

@@ -48,7 +48,7 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public boolean existsByMemberIdAndCrewId(Long memberId, Long crewId) {
+    public Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId) {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
 

@@ -15,7 +15,8 @@ public record CrewInfoResponse(
         String imageUrl,
         String kakaoLink,
         List<Object> hashtags,
-        SimpleMemberInfoResponse crewOwner
+        SimpleMemberInfoResponse crewOwner,
+        Boolean alreadyJoin
 ) {
     public static CrewInfoResponse from(CrewInfoDto crewInfoDto) {
         ArrayList<Object> hashTags = new ArrayList<>();
@@ -30,7 +31,8 @@ public record CrewInfoResponse(
                 crewInfoDto.imageUrl(),
                 crewInfoDto.kakaoLink(),
                 hashTags,
-                SimpleMemberInfoResponse.from(crewInfoDto.crewOwner())
+                SimpleMemberInfoResponse.from(crewInfoDto.crewOwner()),
+                crewInfoDto.alreadyJoin()
         );
     }
 }

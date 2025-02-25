@@ -67,8 +67,9 @@ public class Crew extends BaseEntity {
     @OneToMany(mappedBy = "crew")
     private final List<CrewHashtag> hashtags = new ArrayList<>();
 
+    // TODO Image 를 nullable = True 로 바꾸었기 때문에 Image 가 들어가는 쿼리를 leftJoin() 으로 바꿔야 한다.
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name = "image_id", nullable = false)
+    @JoinColumn(name = "image_id")
     private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -104,7 +105,14 @@ public class Crew extends BaseEntity {
         this.kakaoLink = kakaoLink;
     }
 
+    public boolean hasNotImage() {
+        return image == null;
+    }
+
     public void updateImage(String imageUrl) {
+        if (hasNotImage()) {
+            this.image = new Image(imageUrl);
+        }
         this.image = this.image.updateImage(imageUrl);
     }
 

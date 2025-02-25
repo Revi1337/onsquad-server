@@ -22,7 +22,7 @@ public interface CrewMemberRepository {
 
     boolean existsByMemberIdAndCrewName(Long memberId, Name name);
 
-    boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
+    Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
 
     List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId);
 
