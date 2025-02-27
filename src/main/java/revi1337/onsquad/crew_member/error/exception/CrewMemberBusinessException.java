@@ -21,4 +21,11 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class NotOwner extends CrewMemberBusinessException {
+
+        public NotOwner(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

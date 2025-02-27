@@ -114,4 +114,12 @@ public class CrewMember extends RequestEntity {
     public boolean isOwnerOfSquad(Long squadId) {
         return id.equals(squadId);
     }
+
+    public boolean isNotOwner() {
+        return !isOwner();
+    }
+
+    public boolean isOwner() {
+        return role == OWNER;
+    }
 }
