@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadInMembersDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadMembersWithSquadDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -53,7 +53,7 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public Optional<SquadWithMemberDomainDto> findSquadWithMembers(Long memberId, Long crewId, Long squadId) {
+    public Optional<SquadMembersWithSquadDomainDto> fetchMembersWithSquad(Long memberId, Long crewId, Long squadId) {
         return squadMemberQueryDslRepository.findSquadMembers(memberId, crewId, squadId);
     }
 }

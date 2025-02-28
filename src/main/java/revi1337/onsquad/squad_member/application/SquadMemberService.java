@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad_member.application;
 
-import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICIPANT;
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
 import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.NOT_IN_SQUAD;
 
 import java.util.List;
@@ -12,9 +12,8 @@ import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad_member.application.dto.EnrolledSquadDto;
 import revi1337.onsquad.squad_member.application.dto.SquadInMembersDto;
-import revi1337.onsquad.squad_member.application.dto.SquadWithMemberDto;
+import revi1337.onsquad.squad_member.application.dto.SquadMembersWithSquadDto;
 import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
-import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 
 @Transactional(readOnly = true)
@@ -31,15 +30,15 @@ public class SquadMemberService {
                 .toList();
     }
 
-    public SquadWithMemberDto findSquadWithMembers(Long memberId, Long crewId, Long squadId) {
-        if (!crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId)) {
-            throw new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT);
+    public SquadMembersWithSquadDto findSquadWithMembers(Long memberId, Long crewId, Long squadId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
         }
 
-        SquadWithMemberDomainDto squadWithMembers =
-                squadMemberRepository.getSquadWithMembers(memberId, crewId, squadId);
-
-        return SquadWithMemberDto.from(squadWithMembers);
+        return SquadMembersWithSquadDto.from(
+                squadMemberRepository.getMembersWithSquad(memberId, crewId, squadId)
+        );
     }
 
     public SquadInMembersDto fetchMembersInSquad(Long memberId, Long crewId, Long squadId) {
