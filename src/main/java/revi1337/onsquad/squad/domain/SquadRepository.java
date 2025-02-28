@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoWithOwnerFlagDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 
@@ -24,7 +24,7 @@ public interface SquadRepository {
 
     Page<SquadInfoDomainDto> findSquadsByCrewId(Long crewId, CategoryType categoryType, Pageable pageable);
 
-    List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Long crewId);
+    Page<SimpleSquadInfoWithOwnerFlagDomainDto> fetchSquadsWithOwnerFlag(Long memberId, Long crewId, Pageable pageable);
 
     Optional<Squad> findSquadByIdWithCrew(Long id);
 
