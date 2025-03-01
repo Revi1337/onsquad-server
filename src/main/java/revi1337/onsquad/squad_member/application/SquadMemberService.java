@@ -1,7 +1,6 @@
 package revi1337.onsquad.squad_member.application;
 
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
-import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.NOT_IN_SQUAD;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,8 @@ import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad_member.application.dto.EnrolledSquadDto;
 import revi1337.onsquad.squad_member.application.dto.SquadInMembersDto;
 import revi1337.onsquad.squad_member.application.dto.SquadMembersWithSquadDto;
+import revi1337.onsquad.squad_member.domain.SquadMember;
 import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
-import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -43,9 +42,7 @@ public class SquadMemberService {
 
     public SquadInMembersDto fetchMembersInSquad(Long memberId, Long crewId, Long squadId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        if (!squadMemberRepository.existsBySquadIdAndCrewMemberId(squadId, crewMember.getId())) {
-            throw new SquadMemberBusinessException.NotInSquad(NOT_IN_SQUAD);
-        }
+        SquadMember ignored = squadMemberRepository.getBySquadIdAndCrewMemberId(squadId, crewMember.getId());
 
         return SquadInMembersDto.from(
                 memberId,
