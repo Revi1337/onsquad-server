@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
@@ -62,7 +63,7 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     }
 
     @Override
-    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId) {
-        return squadParticipantQueryDslRepository.fetchAllWithMemberBySquadId(squadId);
+    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId, Pageable pageable) {
+        return squadParticipantQueryDslRepository.fetchAllWithMemberBySquadId(squadId, pageable);
     }
 }

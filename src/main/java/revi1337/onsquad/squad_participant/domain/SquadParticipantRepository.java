@@ -5,6 +5,7 @@ import static revi1337.onsquad.squad_participant.error.SquadParticipantErrorCode
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
 import revi1337.onsquad.squad_participant.error.exception.SquadParticipantBusinessException;
@@ -29,7 +30,7 @@ public interface SquadParticipantRepository {
 
     List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId);
 
-    List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId);
+    List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId, Pageable pageable);
 
     default SquadParticipant getByCrewIdAndSquadIdAndMemberId(Long crewId, Long squadId, Long memberId) {
         return findByCrewIdAndSquadIdAndMemberId(crewId, squadId, memberId)
