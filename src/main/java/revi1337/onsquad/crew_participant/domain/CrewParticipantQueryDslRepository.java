@@ -26,7 +26,7 @@ public class CrewParticipantQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<CrewParticipantRequest> findMyCrewRequests(Long memberId) {
+    public List<CrewParticipantRequest> fetchAllCrewRequestsByMemberId(Long memberId) {
         return jpaQueryFactory
                 .select(new QCrewParticipantRequest(
                         crew.id,

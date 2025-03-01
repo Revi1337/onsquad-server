@@ -28,11 +28,11 @@ public class CrewParticipantController {
     private final CrewParticipantService crewParticipantService;
 
     @GetMapping("/my/crew/requests")
-    public ResponseEntity<RestResponse<List<CrewParticipantRequestResponse>>> findMyCrewRequests(
+    public ResponseEntity<RestResponse<List<CrewParticipantRequestResponse>>> fetchAllCrewRequests(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         List<CrewParticipantRequestResponse> crewParticipantRequestResponse = crewParticipantService
-                .findMyCrewRequests(authenticatedMember.toDto().getId()).stream()
+                .fetchAllCrewRequests(authenticatedMember.toDto().getId()).stream()
                 .map(CrewParticipantRequestResponse::from)
                 .toList();
 
