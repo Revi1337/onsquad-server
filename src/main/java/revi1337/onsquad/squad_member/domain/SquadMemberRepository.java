@@ -24,7 +24,7 @@ public interface SquadMemberRepository {
 
     List<SquadMemberDomainDto> fetchAllBySquadId(Long squadId);
 
-    List<EnrolledSquadDomainDto> findEnrolledSquads(Long memberId);
+    List<EnrolledSquadDomainDto> fetchAllJoinedSquadsByMemberId(Long memberId);
 
     SquadInMembersDomainDto fetchAllWithCrewAndCategoriesBySquadId(Long crewMemberId, Long squadId);
 

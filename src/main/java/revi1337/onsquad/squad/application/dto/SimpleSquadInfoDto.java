@@ -10,10 +10,6 @@ public record SimpleSquadInfoDto(
         String title,
         int capacity,
         int remain,
-        String address,
-        String addressDetail,
-        String kakaoLink,
-        String discordLink,
         Boolean isOwner,
         List<String> categories,
         SimpleMemberInfoDto squadOwner
@@ -24,10 +20,6 @@ public record SimpleSquadInfoDto(
                 simpleSquadInfoDomainDto.title().getValue(),
                 simpleSquadInfoDomainDto.capacity().getValue(),
                 simpleSquadInfoDomainDto.capacity().getRemain(),
-                simpleSquadInfoDomainDto.address().getValue(),
-                simpleSquadInfoDomainDto.address().getDetail(),
-                simpleSquadInfoDomainDto.kakaoLink(),
-                simpleSquadInfoDomainDto.discordLink(),
                 simpleSquadInfoDomainDto.isOwner(),
                 simpleSquadInfoDomainDto.categories().stream()
                         .map(CategoryType::getText)

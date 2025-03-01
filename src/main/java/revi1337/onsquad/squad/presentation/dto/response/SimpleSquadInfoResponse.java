@@ -9,10 +9,6 @@ public record SimpleSquadInfoResponse(
         String title,
         int capacity,
         int remain,
-        String address,
-        String addressDetail,
-        String kakaoLink,
-        String discordLink,
         Boolean isOwner,
         List<String> categories,
         SimpleMemberInfoResponse squadOwner
@@ -23,10 +19,6 @@ public record SimpleSquadInfoResponse(
                 simpleSquadInfoDto.title(),
                 simpleSquadInfoDto.capacity(),
                 simpleSquadInfoDto.remain(),
-                simpleSquadInfoDto.address(),
-                simpleSquadInfoDto.addressDetail(),
-                simpleSquadInfoDto.kakaoLink(),
-                simpleSquadInfoDto.discordLink(),
                 simpleSquadInfoDto.isOwner(),
                 simpleSquadInfoDto.categories(),
                 SimpleMemberInfoResponse.from(simpleSquadInfoDto.squadOwner())
