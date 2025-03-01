@@ -5,24 +5,24 @@ import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 public record EnrolledCrewDomainDto(
-        Long crewId,
-        Name crewName,
+        Long id,
+        Name name,
         String imageUrl,
         boolean isOwner,
-        SimpleMemberInfoDomainDto crewOwner
+        SimpleMemberInfoDomainDto owner
 ) {
     @QueryProjection
     public EnrolledCrewDomainDto(
-            Long crewId,
-            Name crewName,
+            Long id,
+            Name name,
             String imageUrl,
             boolean isOwner,
-            SimpleMemberInfoDomainDto crewOwner
+            SimpleMemberInfoDomainDto owner
     ) {
-        this.crewId = crewId;
-        this.crewName = crewName;
+        this.id = id;
+        this.name = name;
         this.imageUrl = imageUrl;
         this.isOwner = isOwner;
-        this.crewOwner = crewOwner;
+        this.owner = owner;
     }
 }

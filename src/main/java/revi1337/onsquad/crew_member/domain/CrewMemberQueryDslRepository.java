@@ -26,9 +26,9 @@ public class CrewMemberQueryDslRepository {
 
     private final QMember CREW_CREATOR = new QMember("crewCreator");
 
-    public List<EnrolledCrewDomainDto> findOwnedCrews(Long memberId) {
+    public List<EnrolledCrewDomainDto> fetchAllJoinedCrewsByMemberId(Long memberId) {
         BooleanExpression isCrewOwner = new CaseBuilder()
-                .when(crew.member.id.eq(memberId))
+                .when(CREW_CREATOR.id.eq(memberId))
                 .then(true)
                 .otherwise(false);
 
@@ -45,8 +45,7 @@ public class CrewMemberQueryDslRepository {
                         )
                 ))
                 .from(crewMember)
-                .innerJoin(crewMember.member, member).on(member.id.eq(memberId))
-                .innerJoin(crewMember.crew, crew)
+                .innerJoin(crewMember.crew, crew).on(crewMember.member.id.eq(memberId))
                 .leftJoin(crew.image, image)
                 .innerJoin(crew.member, CREW_CREATOR)
                 .orderBy(
