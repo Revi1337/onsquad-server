@@ -51,9 +51,10 @@ public class SquadParticipantQueryDslRepository {
                 .from(squadParticipant)
                 .innerJoin(squadParticipant.crewMember, crewMember).on(crewMember.member.id.eq(memberId))
                 .innerJoin(squadParticipant.squad, squad)
-                .innerJoin(squad.crewMember.member, SQUAD_CREATOR)
+                .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
+                .innerJoin(SQUAD_CREW_MEMBER.member, SQUAD_CREATOR)
                 .innerJoin(squad.categories, squadCategory)
-//                .innerJoin(squadCategory.category, category)
+                .innerJoin(squadCategory.category, category)
                 .orderBy(squadParticipant.requestAt.desc())
                 .transform(groupBy(squad.id)
                         .list(new QSquadParticipantDomainDto(
@@ -61,9 +62,6 @@ public class SquadParticipantQueryDslRepository {
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
-                                squad.address,
-                                squad.kakaoLink,
-                                squad.discordLink,
                                 list(category.categoryType),
                                 new QSimpleMemberInfoDomainDto(
                                         SQUAD_CREATOR.id,

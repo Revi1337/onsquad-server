@@ -27,11 +27,11 @@ public class SquadParticipantController {
     private final SquadParticipantService squadParticipantService;
 
     @GetMapping("/my/squad/requests")
-    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> findMySquadRequests(
+    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> fetchAllSquadRequests(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<SquadParticipantRequestResponse> requestResponses = squadParticipantService.findMySquadRequests(
-                        authenticatedMember.toDto().getId()).stream()
+        List<SquadParticipantRequestResponse> requestResponses = squadParticipantService
+                .fetchAllSquadRequests(authenticatedMember.toDto().getId()).stream()
                 .map(SquadParticipantRequestResponse::from)
                 .toList();
 

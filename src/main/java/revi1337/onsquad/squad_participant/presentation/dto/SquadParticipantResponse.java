@@ -10,12 +10,8 @@ public record SquadParticipantResponse(
         String title,
         int capacity,
         int remain,
-        String address,
-        String addressDetail,
-        String kakaoLink,
-        String discordLink,
         List<String> categories,
-        SimpleMemberInfoResponse squadOwner,
+        SimpleMemberInfoResponse owner,
         RequestParticipantResponse request
 ) {
     public static SquadParticipantResponse from(SquadParticipantDto squadParticipantDto) {
@@ -24,10 +20,6 @@ public record SquadParticipantResponse(
                 squadParticipantDto.title(),
                 squadParticipantDto.capacity(),
                 squadParticipantDto.remain(),
-                squadParticipantDto.address(),
-                squadParticipantDto.addressDetail(),
-                squadParticipantDto.kakaoLink(),
-                squadParticipantDto.discordLink(),
                 squadParticipantDto.categories(),
                 SimpleMemberInfoResponse.from(squadParticipantDto.squadOwner()),
                 RequestParticipantResponse.from(squadParticipantDto.request())

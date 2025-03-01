@@ -32,7 +32,7 @@ public class SquadParticipantService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadMemberRepository squadMemberRepository;
 
-    public List<SquadParticipantRequestDto> findMySquadRequests(Long memberId) {
+    public List<SquadParticipantRequestDto> fetchAllSquadRequests(Long memberId) {
         return squadParticipantRepository.findSquadParticipantRequestsByMemberId(memberId).stream()
                 .map(SquadParticipantRequestDto::from)
                 .toList();
