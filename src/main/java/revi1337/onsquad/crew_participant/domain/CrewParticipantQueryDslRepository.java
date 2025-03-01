@@ -5,9 +5,13 @@ import static revi1337.onsquad.crew_participant.domain.QCrewParticipant.crewPart
 import static revi1337.onsquad.image.domain.QImage.image;
 import static revi1337.onsquad.member.domain.QMember.member;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
 import revi1337.onsquad.crew_participant.domain.dto.QCrewParticipantDomainDto;
@@ -46,8 +50,8 @@ public class CrewParticipantQueryDslRepository {
                 .fetch();
     }
 
-    public List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Long crewId) {
-        return jpaQueryFactory
+    public Page<SimpleCrewParticipantRequest> fetchCrewRequests(Long crewId, Pageable pageable) {
+        List<SimpleCrewParticipantRequest> results = jpaQueryFactory
                 .select(new QSimpleCrewParticipantRequest(
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
@@ -62,6 +66,15 @@ public class CrewParticipantQueryDslRepository {
                 .from(crewParticipant)
                 .innerJoin(crewParticipant.member, member).on(crewParticipant.crew.id.eq(crewId))
                 .orderBy(crewParticipant.requestAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(crewParticipant.id.count())
+                .from(crewParticipant)
+                .where(crewParticipant.crew.id.eq(crewId));
+
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 }

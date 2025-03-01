@@ -5,6 +5,8 @@ import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.N
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
 import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
@@ -27,7 +29,7 @@ public interface CrewParticipantRepository {
 
     List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
 
-    List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Long crewId);
+    Page<SimpleCrewParticipantRequest> fetchCrewRequests(Long crewId, Pageable pageable);
 
     default CrewParticipant getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)

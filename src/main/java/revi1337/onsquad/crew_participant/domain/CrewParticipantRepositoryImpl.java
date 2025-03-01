@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.Crew;
@@ -61,7 +63,7 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
-    public List<SimpleCrewParticipantRequest> findCrewRequestsInCrew(Long crewId) {
-        return crewParticipantQueryDslRepository.findCrewRequestsInCrew(crewId);
+    public Page<SimpleCrewParticipantRequest> fetchCrewRequests(Long crewId, Pageable pageable) {
+        return crewParticipantQueryDslRepository.fetchCrewRequests(crewId, pageable);
     }
 }

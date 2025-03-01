@@ -1,18 +1,19 @@
 package revi1337.onsquad.crew_participant.application;
 
-import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.CANT_SEE_PARTICIPANTS;
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.crew_participant.application.dto.CrewParticipantRequestDto;
 import revi1337.onsquad.crew_participant.application.dto.SimpleCrewParticipantRequestDto;
 import revi1337.onsquad.crew_participant.domain.CrewParticipant;
 import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
-import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusiness
 public class CrewParticipantService {
 
     private final CrewParticipantRepository crewParticipantRepository;
-    private final CrewRepository crewRepository;
+    private final CrewMemberRepository crewMemberRepository;
 
     public List<CrewParticipantRequestDto> findMyCrewRequests(Long memberId) {
         return crewParticipantRepository.findMyCrewRequests(memberId).stream()
@@ -33,18 +34,14 @@ public class CrewParticipantService {
         crewParticipantRepository.deleteById(crewParticipant.getId());
     }
 
-    public List<SimpleCrewParticipantRequestDto> findRequestsInMyCrew(Long memberId, Long crewId) {
-        Crew crew = crewRepository.getById(crewId);
-        validateMemberIsCrewCreator(memberId, crew);
+    public List<SimpleCrewParticipantRequestDto> fetchCrewRequests(Long memberId, Long crewId, Pageable pageable) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
+        }
 
-        return crewParticipantRepository.findCrewRequestsInCrew(crewId).stream()
+        return crewParticipantRepository.fetchCrewRequests(crewId, pageable).stream()
                 .map(SimpleCrewParticipantRequestDto::from)
                 .toList();
-    }
-
-    private void validateMemberIsCrewCreator(Long memberId, Crew crew) {
-        if (!crew.getMember().getId().equals(memberId)) {
-            throw new CrewParticipantBusinessException.CantSeeParticipant(CANT_SEE_PARTICIPANTS);
-        }
     }
 }
