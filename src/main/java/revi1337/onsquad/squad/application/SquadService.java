@@ -57,7 +57,8 @@ public class SquadService {
         squadParticipantRepository.upsertSquadParticipant(squad.getId(), crewMember.getId(), LocalDateTime.now());
     }
 
-    public SquadInfoDto findSquad(Long squadId) {
+    public SquadInfoDto findSquad(Long memberId, Long crewId, Long squadId) {
+        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         return SquadInfoDto.from(squadRepository.getSquadById(squadId));
     }
 
