@@ -1,8 +1,7 @@
 package revi1337.onsquad.squad_comment.application;
 
 import static revi1337.onsquad.squad.error.SquadErrorCode.NOTMATCH_CREWINFO;
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUND_CREW_COMMENT;
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOT_PARENT;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NON_MATCH_SQUAD_ID;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +13,12 @@ import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
-import revi1337.onsquad.squad_comment.application.dto.CreateSquadCommentDto;
 import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
 import revi1337.onsquad.squad_comment.domain.SquadComment;
 import revi1337.onsquad.squad_comment.domain.SquadCommentRepository;
-import revi1337.onsquad.squad_comment.domain.dto.SimpleSquadCommentDto;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
 
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class SquadCommentService {
@@ -30,20 +27,32 @@ public class SquadCommentService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadRepository squadRepository;
 
-    public SimpleSquadCommentDto addComment(Long memberId, Long crewId, Long squadId, CreateSquadCommentDto dto) {
-        CrewMember crewMember = crewMemberRepository.getWithMemberByCrewIdAndMemberId(crewId, memberId);
+    public Long addComment(Long memberId, Long crewId, Long squadId, String content) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         Squad squad = squadRepository.getById(squadId);
         validateSquadInCrew(crewId, squad);
-        if (dto.parentId() == null) {
-            return persistComment(dto, squad, crewMember);
-        }
 
-        return persistCommentReply(squadId, dto, squad, crewMember);
+        SquadComment comment = SquadComment.create(content, squad, crewMember);
+        SquadComment persistComment = squadCommentRepository.save(comment);
+
+        return persistComment.getId();
+    }
+
+    public Long addCommentReply(Long memberId, Long crewId, Long squadId, Long parentId, String content) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        Squad squad = squadRepository.getById(squadId);
+        validateSquadInCrew(crewId, squad);
+
+        SquadComment parentComment = squadCommentRepository.getById(parentId);
+        validateHasSameSquadId(squadId, parentComment);
+        SquadComment comment = SquadComment.createReply(parentComment, content, squad, crewMember);
+        SquadComment persistComment = squadCommentRepository.save(comment);
+
+        return persistComment.getId();
     }
 
     public List<SquadCommentDto> fetchParentCommentsWithChildren(Long memberId, Long crewId, Long squadId,
-                                                                 Pageable pageable,
-                                                                 int childSize) {
+                                                                 Pageable pageable, int childSize) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
         return squadCommentRepository.fetchPageableParentCommentsWithLimitChildren(squadId, pageable, childSize)
@@ -52,8 +61,8 @@ public class SquadCommentService {
                 .toList();
     }
 
-    public List<SquadCommentDto> findMoreChildComments(Long memberId, Long crewId, Long squadId, Long parentId,
-                                                       Pageable pageable) {
+    public List<SquadCommentDto> findMoreChildComments(Long memberId, Long crewId, Long squadId,
+                                                       Long parentId, Pageable pageable) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
         return squadCommentRepository.findChildComments(squadId, parentId, pageable).stream()
@@ -69,37 +78,15 @@ public class SquadCommentService {
                 .toList();
     }
 
-    private SimpleSquadCommentDto persistComment(CreateSquadCommentDto dto, Squad squad, CrewMember crewMember) {
-        SquadComment rawComment = SquadComment.create(dto.content(), squad, crewMember);
-        SquadComment persistComment = squadCommentRepository.save(rawComment);
-
-        return SimpleSquadCommentDto.from(persistComment, crewMember.getMember());
-    }
-
-    private SimpleSquadCommentDto persistCommentReply(Long squadId, CreateSquadCommentDto dto, Squad squad,
-                                                      CrewMember crewMember) {
-        SquadComment parentComment = squadCommentRepository.getById(dto.parentId());
-        validateParentComment(squadId, dto, parentComment);
-        SquadComment rawCommentReply = SquadComment.createReply(parentComment, dto.content(), squad, crewMember);
-        SquadComment persistCommentReply = squadCommentRepository.save(rawCommentReply);
-
-        return SimpleSquadCommentDto.from(persistCommentReply, crewMember.getMember());
-    }
-
     private void validateSquadInCrew(Long crewId, Squad squad) {
-        if (!squad.getCrew().getId().equals(crewId)) {
+        if (squad.hasNotSameCrewId(crewId)) {
             throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
         }
     }
 
-    private void validateParentComment(Long squadId, CreateSquadCommentDto dto, SquadComment comment) {
-        if (comment.getParent() != null) {
-            throw new SquadCommentBusinessException.NotParent(NOT_PARENT, dto.parentId());
-        }
-
-        if (!comment.getSquad().getId().equals(squadId)) {
-            throw new SquadCommentBusinessException.NotFoundSquadComment(NOTFOUND_CREW_COMMENT, squadId,
-                    dto.parentId());
+    private void validateHasSameSquadId(Long squadId, SquadComment parentComment) {
+        if (parentComment.hasNotSameSquadId(squadId)) {
+            throw new SquadCommentBusinessException.NonMatchSquadId(NON_MATCH_SQUAD_ID);
         }
     }
 }

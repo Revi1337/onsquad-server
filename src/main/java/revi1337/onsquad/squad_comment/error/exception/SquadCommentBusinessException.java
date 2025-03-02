@@ -22,6 +22,13 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
         }
     }
 
+    public static class NonMatchSquadId extends SquadCommentBusinessException {
+
+        public NonMatchSquadId(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
     public static class NotParent extends SquadCommentBusinessException {
 
         public NotParent(ErrorCode errorCode, Number commentId) {

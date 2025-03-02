@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad_comment.presentation;
 
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
@@ -16,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_comment.application.SquadCommentService;
 import revi1337.onsquad.squad_comment.presentation.dto.request.CreateSquadCommentRequest;
-import revi1337.onsquad.squad_comment.presentation.dto.response.SimpleSquadCommentResponse;
 import revi1337.onsquad.squad_comment.presentation.dto.response.SquadCommentResponse;
 
 @Validated
@@ -32,18 +33,39 @@ public class SquadCommentController {
 
     private final SquadCommentService squadCommentService;
 
-    @PostMapping("/squad/comment")
-    public ResponseEntity<RestResponse<SimpleSquadCommentResponse>> addCommentReply(
-            @RequestParam Long crewId,
-            @RequestParam Long squadId,
-            @Valid @RequestBody CreateSquadCommentRequest request,
-            @Authenticate AuthenticatedMember authenticatedMember
+    @PostMapping("/crews/{crewId}/squads/{squadId}/comments")
+    public ResponseEntity<RestResponse<String>> addComment(
+            @Authenticate AuthenticatedMember authenticatedMember,
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @Valid @RequestBody CreateSquadCommentRequest request
     ) {
-        SimpleSquadCommentResponse commentResponse = SimpleSquadCommentResponse.from(
-                squadCommentService.addComment(authenticatedMember.toDto().getId(), crewId, squadId, request.toDto())
+        Long commentId = squadCommentService.addComment(
+                authenticatedMember.toDto().getId(), crewId, squadId, request.content()
+        );
+        URI uri = buildLocationPath(
+                "/crews/{crewId}/squads/{squadId}/comments/{commentId}", crewId, squadId, commentId
         );
 
-        return ResponseEntity.ok().body(RestResponse.created(commentResponse));
+        return ResponseEntity.ok().location(uri).body(RestResponse.created());
+    }
+
+    @PostMapping("/crews/{crewId}/squads/{squadId}/comments/{commentId}")
+    public ResponseEntity<RestResponse<String>> addCommentReply(
+            @Authenticate AuthenticatedMember authenticatedMember,
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @PathVariable Long commentId,
+            @Valid @RequestBody CreateSquadCommentRequest request
+    ) {
+        Long childCommentId = squadCommentService.addCommentReply(
+                authenticatedMember.toDto().getId(), crewId, squadId, commentId, request.content()
+        );
+        URI uri = buildLocationPath(
+                "/crews/{crewId}/squads/{squadId}/comments/{commentId}", crewId, squadId, childCommentId
+        );
+
+        return ResponseEntity.ok().location(uri).body(RestResponse.created());
     }
 
     @GetMapping("/crews/{crewId}/squads/{squadId}/comments")
@@ -91,5 +113,11 @@ public class SquadCommentController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
+    }
+
+    private URI buildLocationPath(String path, Object... args) {
+        return UriComponentsBuilder.fromPath(path)
+                .buildAndExpand(args)
+                .toUri();
     }
 }
