@@ -1,7 +1,6 @@
 package revi1337.onsquad.squad_comment.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +20,8 @@ public class SquadCommentJdbcRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<SquadCommentDomainDto> findLimitedChildCommentsByParentIdIn(Collection<Long> parentIds,
-                                                                            Integer childrenSize) {
+    public List<SquadCommentDomainDto> fetchLimitChildCommentsByParentIdIn(Collection<Long> parentIds,
+                                                                           int childrenSize) {
         String sql = "SELECT * FROM (" +
                 "    SELECT " +
                 "        squad_comment.parent_id, " +
@@ -44,9 +43,6 @@ public class SquadCommentJdbcRepository {
                 " WHERE subquery.rn <= (:childLimit)" +
                 " ORDER BY subquery.rn ASC";
 
-        if (parentIds.isEmpty()) {
-            return new ArrayList<>();
-        }
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
                 .addValue("parentIds", parentIds)
                 .addValue("childLimit", childrenSize);

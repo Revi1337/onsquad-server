@@ -29,7 +29,7 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
-    public List<SquadCommentDomainDto> findAllWithMemberByCrewId(Long squadId) {
+    public List<SquadCommentDomainDto> findAllWithMemberBySquadId(Long squadId) {
         List<SquadCommentDomainDto> comments = squadCommentQueryDslRepository.findCommentsWithMemberByCrewId(squadId);
         return modifyCommentsHierarchy(comments);
     }
@@ -50,12 +50,15 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
-    public List<SquadCommentDomainDto> findLimitedCommentsBothOfParentsAndChildren(Long squadId, Pageable pageable,
-                                                                                   Integer childSize) {
-        Map<Long, SquadCommentDomainDto> parentComments = squadCommentQueryDslRepository.findLimitedParentCommentsByCrewId(
-                squadId, pageable);
-        List<SquadCommentDomainDto> childComments = squadCommentJdbcRepository.findLimitedChildCommentsByParentIdIn(
-                parentComments.keySet(), childSize);
+    public List<SquadCommentDomainDto> fetchPageableParentCommentsWithLimitChildren(Long squadId, Pageable pageable,
+                                                                                    int childSize) {
+        Map<Long, SquadCommentDomainDto> parentComments = squadCommentQueryDslRepository
+                .fetchPageableParentCommentsBySquadId(squadId, pageable);
+        if (parentComments.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<SquadCommentDomainDto> childComments = squadCommentJdbcRepository
+                .fetchLimitChildCommentsByParentIdIn(parentComments.keySet(), childSize);
         linkChildCommentsToParent(parentComments, childComments);
 
         return parentComments.values().stream()

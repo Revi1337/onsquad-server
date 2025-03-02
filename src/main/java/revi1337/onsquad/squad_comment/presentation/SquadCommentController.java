@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,13 +26,13 @@ import revi1337.onsquad.squad_comment.presentation.dto.response.SquadCommentResp
 
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/squad")
+@RequestMapping("/api/v1")
 @RestController
 public class SquadCommentController {
 
     private final SquadCommentService squadCommentService;
 
-    @PostMapping("/comment")
+    @PostMapping("/squad/comment")
     public ResponseEntity<RestResponse<SimpleSquadCommentResponse>> addCommentReply(
             @RequestParam Long crewId,
             @RequestParam Long squadId,
@@ -45,15 +46,16 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.created(commentResponse));
     }
 
-    @GetMapping("/comments")
-    public ResponseEntity<RestResponse<List<SquadCommentResponse>>> findParentComments(
-            @RequestParam Long crewId,
-            @RequestParam Long squadId,
+    @GetMapping("/crews/{crewId}/squads/{squadId}/comments")
+    public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchParentCommentsWithChildren(
+            @Authenticate AuthenticatedMember authenticatedMember,
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
             @Qualifier("parent") Pageable parentPageable,
-            @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) Integer childSize,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) int childSize
     ) {
-        List<SquadCommentResponse> commentsResponses = squadCommentService.findParentComments(
+        List<SquadCommentResponse> commentsResponses = squadCommentService
+                .fetchParentCommentsWithChildren(
                         authenticatedMember.toDto().getId(), crewId, squadId, parentPageable, childSize).stream()
                 .map(SquadCommentResponse::from)
                 .toList();
@@ -61,7 +63,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
     }
 
-    @GetMapping("/comments/more")
+    @GetMapping("/squad/comments")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> findMoreChildComments(
             @RequestParam Long crewId,
             @RequestParam Long squadId,
@@ -77,7 +79,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.success(childComments));
     }
 
-    @GetMapping("/comment/all")
+    @GetMapping("/squad/comment/all")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> findAllComments(
             @RequestParam Long crewId,
             @RequestParam Long squadId,

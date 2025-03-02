@@ -41,11 +41,13 @@ public class SquadCommentService {
         return persistCommentReply(squadId, dto, squad, crewMember);
     }
 
-    public List<SquadCommentDto> findParentComments(Long memberId, Long crewId, Long squadId, Pageable pageable,
-                                                    Integer childSize) {
+    public List<SquadCommentDto> fetchParentCommentsWithChildren(Long memberId, Long crewId, Long squadId,
+                                                                 Pageable pageable,
+                                                                 int childSize) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
-        return squadCommentRepository.findLimitedCommentsBothOfParentsAndChildren(squadId, pageable, childSize).stream()
+        return squadCommentRepository.fetchPageableParentCommentsWithLimitChildren(squadId, pageable, childSize)
+                .stream()
                 .map(SquadCommentDto::from)
                 .toList();
     }
@@ -62,7 +64,7 @@ public class SquadCommentService {
     public List<SquadCommentDto> findAllComments(Long memberId, Long crewId, Long squadId) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
-        return squadCommentRepository.findAllWithMemberByCrewId(squadId).stream()
+        return squadCommentRepository.findAllWithMemberBySquadId(squadId).stream()
                 .map(SquadCommentDto::from)
                 .toList();
     }

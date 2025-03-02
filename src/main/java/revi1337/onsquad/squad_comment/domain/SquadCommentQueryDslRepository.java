@@ -23,8 +23,6 @@ public class SquadCommentQueryDslRepository {
 
     /**
      * 모든 댓글(부모, 자식)들을 모두 가져온다.
-     *
-     * @return
      */
     public List<SquadCommentDomainDto> findCommentsWithMemberByCrewId(Long squadId) {
         return jpaQueryFactory
@@ -53,11 +51,8 @@ public class SquadCommentQueryDslRepository {
 
     /**
      * 페이징처리에 맞게 부모 댓글들을 가져오고, id 별로 묶어서 반환한다.
-     *
-     * @param pageable
-     * @return
      */
-    public Map<Long, SquadCommentDomainDto> findLimitedParentCommentsByCrewId(Long squadId, Pageable pageable) {
+    public Map<Long, SquadCommentDomainDto> fetchPageableParentCommentsBySquadId(Long squadId, Pageable pageable) {
         return jpaQueryFactory
                 .from(squadComment)
                 .innerJoin(squadComment.crewMember, crewMember)
