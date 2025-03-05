@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties("onsquad.oauth2")
 public record OAuth2ClientProperties(
-        Map<String, OAuth2Properties> clients
+        Map<SupportOAuth2Platform, OAuth2Properties> clients
 ) {
     public record OAuth2Properties(
             String clientName,
