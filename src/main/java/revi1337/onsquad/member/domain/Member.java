@@ -40,6 +40,7 @@ public class Member extends BaseEntity {
 
     private static final Introduce DEFAULT_INTRODUCE = new Introduce("[소개 없음]");
     private static final String DEFAULT_KAKAO_LINK = "";
+    private static final Address DEFAULT_ADDRESS = new Address("어딘가", "상세한 어딘가");
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,6 +75,18 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private final Set<Crew> crews = new HashSet<>();
+
+    public static Member createOAuth2User(String email, String nickname,
+                                          String profileImage, String password, UserType userType) {
+        return Member.builder()
+                .email(new Email(email))
+                .nickname(new Nickname(nickname))
+                .password(new Password((CharSequence) password))
+                .address(DEFAULT_ADDRESS)
+                .profileImage(profileImage)
+                .userType(userType)
+                .build();
+    }
 
     @Builder
     private Member(Long id, Email email, Address address, Nickname nickname, Password password, Introduce introduce,
