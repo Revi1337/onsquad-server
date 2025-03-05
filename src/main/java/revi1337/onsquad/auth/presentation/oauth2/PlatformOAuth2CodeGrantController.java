@@ -32,7 +32,7 @@ public class PlatformOAuth2CodeGrantController {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         AccessToken accessToken = oAuth2Platform.provideAccessToken(baseUrl, code, oAuth2ClientProperties);
         PlatformUserProfile platformUserProfile = oAuth2Platform
-                .provideUserProfile(baseUrl, accessToken, oAuth2ClientProperties);
+                .provideUserProfile(accessToken, oAuth2ClientProperties);
 
         JsonWebToken jsonWebToken = oAuth2LoginService.loginOAuth2User(platformUserProfile);
         URI redirectUri = buildRedirectUri(jsonWebToken);

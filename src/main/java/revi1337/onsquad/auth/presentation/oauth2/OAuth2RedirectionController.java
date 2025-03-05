@@ -26,4 +26,3 @@ public class OAuth2RedirectionController {
         return ResponseEntity.status(HttpStatus.FOUND).location(compositeAuthorizationEndpoint).build();
     }
 }
-
