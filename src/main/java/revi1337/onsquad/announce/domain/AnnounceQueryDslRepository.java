@@ -28,6 +28,7 @@ public class AnnounceQueryDslRepository {
                 .select(new QAnnounceInfoDomainDto(
                         announce.id,
                         announce.title,
+                        announce.content,
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
