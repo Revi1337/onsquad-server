@@ -13,7 +13,10 @@ public class OnsquadProperties {
     @Value("${spring.application.name:onsquad}")
     private String applicationName;
 
-    public OnsquadProperties(String applicationName) {
+    private String frontendBaseUrl;
+
+    public OnsquadProperties(String applicationName, String frontendBaseUrl) {
         this.applicationName = applicationName;
+        this.frontendBaseUrl = frontendBaseUrl;
     }
 }

@@ -1,7 +1,6 @@
 package revi1337.onsquad.auth.application;
 
 import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_MEMBER;
-import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_NICKNAME;
 import static revi1337.onsquad.auth.error.AuthErrorCode.NON_AUTHENTICATE_EMAIL;
 
 import java.time.Duration;
@@ -49,9 +48,9 @@ public class AuthService {
     }
 
     private void verifyAttribute(MemberJoinDto dto) {
-        if (memberRepository.existsByNickname(new Nickname(dto.nickname()))) {
-            throw new AuthJoinException.DuplicateNickname(DUPLICATE_NICKNAME, dto.nickname());
-        }
+//        if (memberRepository.existsByNickname(new Nickname(dto.nickname()))) {
+//            throw new AuthJoinException.DuplicateNickname(DUPLICATE_NICKNAME, dto.nickname());
+//        }
 
         if (!joinMailService.isValidMailStatus(dto.email())) {
             throw new AuthJoinException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
