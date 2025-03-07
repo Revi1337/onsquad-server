@@ -16,7 +16,7 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_member.application.SquadMemberService;
 import revi1337.onsquad.squad_member.presentation.dto.response.EnrolledSquadResponse;
 import revi1337.onsquad.squad_member.presentation.dto.response.SquadInMembersResponse;
-import revi1337.onsquad.squad_member.presentation.dto.response.SquadWithMemberResponse;
+import revi1337.onsquad.squad_member.presentation.dto.response.SquadMembersWithSquadResponse;
 
 @Validated
 @RequiredArgsConstructor
@@ -39,12 +39,12 @@ public class SquadMemberController {
     }
 
     @GetMapping("/manage/squad/members")
-    public ResponseEntity<RestResponse<SquadWithMemberResponse>> findSquadWithMembers(
+    public ResponseEntity<RestResponse<SquadMembersWithSquadResponse>> findSquadWithMembers(
+            @Authenticate AuthenticatedMember authenticatedMember,
             @RequestParam @Positive Long crewId,
-            @RequestParam Long squadId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @RequestParam Long squadId
     ) {
-        SquadWithMemberResponse squadWithSquadMembers = SquadWithMemberResponse.from(
+        SquadMembersWithSquadResponse squadWithSquadMembers = SquadMembersWithSquadResponse.from(
                 squadMemberService.findSquadWithMembers(authenticatedMember.toDto().getId(), crewId, squadId)
         );
 

@@ -2,7 +2,6 @@ package revi1337.onsquad.squad_member.domain;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.core.group.GroupBy.set;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static revi1337.onsquad.category.domain.QCategory.category;
@@ -33,10 +32,10 @@ import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.QSquadInMembersDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.QSquadMemberDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.QSquadWithMemberDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.QSquadMembersWithSquadDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadInMembersDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadMembersWithSquadDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -125,33 +124,28 @@ public class SquadMemberQueryDslRepository {
                 .toList();
     }
 
-    public Optional<SquadWithMemberDomainDto> findSquadMembers(Long memberId, Long crewId, Long squadId) {
-        Map<Long, SquadWithMemberDomainDto> results = jpaQueryFactory
+    public Optional<SquadMembersWithSquadDomainDto> findSquadMembers(Long memberId, Long crewId, Long squadId) {
+        Map<Long, SquadMembersWithSquadDomainDto> result = jpaQueryFactory
                 .from(squadMember)
-                .innerJoin(squadMember.squad, squad)
-                .on(
-                        squad.crew.id.eq(crewId),
-                        squad.id.eq(squadId)
-                )
+                .innerJoin(squadMember.squad, squad).on(squad.crew.id.eq(crewId), squad.id.eq(squadId))
                 .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
+                .innerJoin(SQUAD_CREW_MEMBER.member, SQUAD_CREATOR)
                 .innerJoin(squadMember.crewMember, crewMember)
                 .innerJoin(crewMember.member, member)
-                .innerJoin(squad.categories, squadCategory)
-                .innerJoin(squadCategory.category, category)
-                .orderBy(squadMember.requestAt.desc())
                 .transform(groupBy(squad.id)
-                        .as(new QSquadWithMemberDomainDto(
+                        .as(new QSquadMembersWithSquadDomainDto(
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
-                                squad.address,
-                                squad.kakaoLink,
-                                squad.discordLink,
                                 new CaseBuilder()
                                         .when(SQUAD_CREW_MEMBER.member.id.eq(memberId))
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                set(category.categoryType),
+                                new QSimpleMemberInfoDomainDto(
+                                        SQUAD_CREATOR.id,
+                                        SQUAD_CREATOR.nickname,
+                                        SQUAD_CREATOR.mbti
+                                ),
                                 list(new QSquadMemberDomainDto(
                                         new QSimpleMemberInfoDomainDto(
                                                 member.id,
@@ -162,7 +156,20 @@ public class SquadMemberQueryDslRepository {
                                 ))
                         )));
 
-        return Optional.ofNullable(results.get(squadId));
+        if (result.get(squadId) != null) {
+            List<CategoryType> categories = jpaQueryFactory
+                    .select(category.categoryType)
+                    .from(squadCategory)
+                    .innerJoin(squadCategory.category, category)
+                    .where(squadCategory.squad.id.eq(squadId))
+                    .fetch();
+
+            SquadMembersWithSquadDomainDto squadMembersWithSquadDomainDto = result.get(squadId);
+            squadMembersWithSquadDomainDto.setCategories(categories);
+            return Optional.of(squadMembersWithSquadDomainDto);
+        }
+
+        return Optional.empty();
     }
 
     // TODO fetchAllWithCrewAndCategoriesBySquadId2 에서 카테고리 분리 (fetchAllWithCrewAndCategoriesBySquadId22 와 비교 필요.)

@@ -3,6 +3,8 @@ package revi1337.onsquad.squad.presentation;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +15,7 @@ import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.application.SquadManagementService;
-import revi1337.onsquad.squad.presentation.dto.response.SimpleSquadInfoResponse;
+import revi1337.onsquad.squad.presentation.dto.response.SimpleSquadInfoWithOwnerFlagResponse;
 
 @Validated
 @RequiredArgsConstructor
@@ -24,15 +26,16 @@ public class SquadManagementController {
     private final SquadManagementService squadManagementService;
 
     @GetMapping("/manage/squads")
-    public ResponseEntity<RestResponse<List<SimpleSquadInfoResponse>>> findSquadsInCrew(
+    public ResponseEntity<RestResponse<List<SimpleSquadInfoWithOwnerFlagResponse>>> fetchSquadsWithOwnerFlag(
+            @Authenticate AuthenticatedMember authenticatedMember,
             @RequestParam @Positive Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @PageableDefault(size = 5) Pageable pageable
     ) {
-        List<SimpleSquadInfoResponse> squadInfoResponses = squadManagementService.findSquadsInCrew(
-                        authenticatedMember.toDto().getId(), crewId).stream()
-                .map(SimpleSquadInfoResponse::from)
+        List<SimpleSquadInfoWithOwnerFlagResponse> simpleSquadInfoWithOwnerFlagResponses = squadManagementService
+                .fetchSquadsWithOwnerFlag(authenticatedMember.toDto().getId(), crewId, pageable).stream()
+                .map(SimpleSquadInfoWithOwnerFlagResponse::from)
                 .toList();
 
-        return ResponseEntity.ok().body(RestResponse.success(squadInfoResponses));
+        return ResponseEntity.ok().body(RestResponse.success(simpleSquadInfoWithOwnerFlagResponses));
     }
 }

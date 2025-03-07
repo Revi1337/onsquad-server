@@ -5,13 +5,15 @@ import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoRespons
 import revi1337.onsquad.squad_participant.application.dto.SimpleSquadParticipantDto;
 
 public record SimpleSquadParticipantResponse(
-        SimpleMemberInfoResponse memberInfo,
-        LocalDateTime requestAt
+        Long id,
+        LocalDateTime requestAt,
+        SimpleMemberInfoResponse memberInfo
 ) {
     public static SimpleSquadParticipantResponse from(SimpleSquadParticipantDto simpleSquadParticipantDto) {
         return new SimpleSquadParticipantResponse(
-                SimpleMemberInfoResponse.from(simpleSquadParticipantDto.memberInfo()),
-                simpleSquadParticipantDto.requestAt()
+                simpleSquadParticipantDto.id(),
+                simpleSquadParticipantDto.requestAt(),
+                SimpleMemberInfoResponse.from(simpleSquadParticipantDto.memberInfo())
         );
     }
 }

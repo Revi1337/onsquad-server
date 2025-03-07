@@ -4,6 +4,7 @@ import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.NOT_LEADE
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.Crew;
@@ -48,14 +49,16 @@ public class SquadParticipantService {
         Squad squad = squadRepository.getById(squadId);
     }
 
-    public List<SimpleSquadParticipantDto> fetchRequestsInSquad(Long memberId, Long crewId, Long squadId) {
+    public List<SimpleSquadParticipantDto> fetchRequestsInSquad(
+            Long memberId, Long crewId, Long squadId, Pageable pageable
+    ) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         SquadMember squadMember = squadMemberRepository.getBySquadIdAndCrewMemberId(squadId, crewMember.getId());
         if (squadMember.isNotLeader()) {
             throw new SquadMemberBusinessException.NotLeader(NOT_LEADER);
         }
 
-        return squadParticipantRepository.fetchAllWithMemberBySquadId(squadId).stream()
+        return squadParticipantRepository.fetchAllWithMemberBySquadId(squadId, pageable).stream()
                 .map(SimpleSquadParticipantDto::from)
                 .toList();
     }

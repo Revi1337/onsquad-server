@@ -3,6 +3,8 @@ package revi1337.onsquad.crew_participant.presentation;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,12 +50,13 @@ public class CrewParticipantController {
     }
 
     @GetMapping("/manage/crew/requests")
-    public ResponseEntity<RestResponse<List<SimpleCrewParticipantRequestResponse>>> findRequestsInMyCrew(
+    public ResponseEntity<RestResponse<List<SimpleCrewParticipantRequestResponse>>> fetchCrewRequests(
+            @Authenticate AuthenticatedMember authenticatedMember,
             @RequestParam @Positive Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @PageableDefault Pageable pageable
     ) {
         List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService
-                .findRequestsInMyCrew(authenticatedMember.toDto().getId(), crewId).stream()
+                .fetchCrewRequests(authenticatedMember.toDto().getId(), crewId, pageable).stream()
                 .map(SimpleCrewParticipantRequestResponse::from)
                 .toList();
 

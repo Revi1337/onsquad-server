@@ -5,13 +5,15 @@ import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomainDto;
 
 public record SimpleSquadParticipantDto(
-        SimpleMemberInfoDto memberInfo,
-        LocalDateTime requestAt
+        Long id,
+        LocalDateTime requestAt,
+        SimpleMemberInfoDto memberInfo
 ) {
     public static SimpleSquadParticipantDto from(SimpleSquadParticipantDomainDto simpleSquadParticipantDomainDto) {
         return new SimpleSquadParticipantDto(
-                SimpleMemberInfoDto.from(simpleSquadParticipantDomainDto.memberInfo()),
-                simpleSquadParticipantDomainDto.requestAt()
+                simpleSquadParticipantDomainDto.id(),
+                simpleSquadParticipantDomainDto.requestAt(),
+                SimpleMemberInfoDto.from(simpleSquadParticipantDomainDto.memberInfo())
         );
     }
 }

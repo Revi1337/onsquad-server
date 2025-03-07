@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoWithOwnerFlagDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
 import revi1337.onsquad.squad_category.domain.SquadCategoryJdbcRepository;
 
@@ -46,8 +46,10 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public List<SimpleSquadInfoDomainDto> findSquadsInCrew(Long memberId, Long crewId) {
-        return squadQueryDslRepository.findSquadsInCrew(memberId, crewId);
+    public Page<SimpleSquadInfoWithOwnerFlagDomainDto> fetchSquadsWithOwnerFlag(
+            Long memberId, Long crewId, Pageable pageable
+    ) {
+        return squadQueryDslRepository.fetchSquadsWithOwnerFlagByMemberIdAndCrewId(memberId, crewId, pageable);
     }
 
     @Override

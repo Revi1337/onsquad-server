@@ -9,7 +9,7 @@ import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadInMembersDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadWithMemberDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.SquadMembersWithSquadDomainDto;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException.NotLeader;
 
 public interface SquadMemberRepository {
@@ -28,10 +28,10 @@ public interface SquadMemberRepository {
 
     SquadInMembersDomainDto fetchAllWithCrewAndCategoriesBySquadId(Long crewMemberId, Long squadId);
 
-    Optional<SquadWithMemberDomainDto> findSquadWithMembers(Long memberId, Long crewId, Long squadId);
+    Optional<SquadMembersWithSquadDomainDto> fetchMembersWithSquad(Long memberId, Long crewId, Long squadId);
 
-    default SquadWithMemberDomainDto getSquadWithMembers(Long memberId, Long crewId, Long squadId) {
-        return findSquadWithMembers(memberId, crewId, squadId)
+    default SquadMembersWithSquadDomainDto getMembersWithSquad(Long memberId, Long crewId, Long squadId) {
+        return fetchMembersWithSquad(memberId, crewId, squadId)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
     }
 

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.dto.SimpleCrewInfoDomainDto;
@@ -113,19 +114,23 @@ public class SquadParticipantQueryDslRepository {
                 .toList();
     }
 
-    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId) {
+    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId, Pageable pageable) {
         return jpaQueryFactory
                 .select(new QSimpleSquadParticipantDomainDto(
+                        squadParticipant.id,
+                        squadParticipant.requestAt,
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.mbti
-                        ),
-                        squadParticipant.requestAt
+                        )
                 ))
                 .from(squadParticipant)
                 .innerJoin(squadParticipant.crewMember, crewMember).on(squadParticipant.squad.id.eq(squadId))
                 .innerJoin(crewMember.member, member)
+                .orderBy(squadParticipant.requestAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 }
