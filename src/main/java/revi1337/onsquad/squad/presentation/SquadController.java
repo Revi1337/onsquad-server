@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,11 +54,15 @@ public class SquadController {
         return ResponseEntity.ok(RestResponse.noContent());
     }
 
-    @GetMapping("/squad")
+    @GetMapping("/crews/{crewId}/squads/{squadId}")
     public ResponseEntity<RestResponse<SquadInfoResponse>> findSquad(
-            @RequestParam Long id
+            @Authenticate AuthenticatedMember authenticatedMember,
+            @PathVariable Long crewId,
+            @PathVariable Long squadId
     ) {
-        SquadInfoResponse squadResponse = SquadInfoResponse.from(squadService.findSquad(id));
+        SquadInfoResponse squadResponse = SquadInfoResponse.from(
+                squadService.findSquad(authenticatedMember.toDto().getId(), crewId, squadId)
+        );
 
         return ResponseEntity.ok(RestResponse.success(squadResponse));
     }

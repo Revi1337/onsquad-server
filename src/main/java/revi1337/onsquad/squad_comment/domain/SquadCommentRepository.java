@@ -14,10 +14,10 @@ public interface SquadCommentRepository {
 
     Optional<SquadComment> findById(Long id);
 
-    List<SquadCommentDomainDto> findAllWithMemberByCrewId(Long squadId);
+    List<SquadCommentDomainDto> findAllWithMemberBySquadId(Long squadId);
 
-    List<SquadCommentDomainDto> findLimitedCommentsBothOfParentsAndChildren(Long squadId, Pageable pageable,
-                                                                            Integer childSize);
+    List<SquadCommentDomainDto> fetchPageableParentCommentsWithLimitChildren(Long squadId, Pageable pageable,
+                                                                             int childSize);
 
     List<SquadCommentDomainDto> findChildComments(Long squadId, Long parentId, Pageable pageable);
 

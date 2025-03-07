@@ -96,6 +96,14 @@ public class Squad extends BaseEntity {
         }
     }
 
+    public boolean hasNotSameCrewId(Long crewId) {
+        return !hasSameCrewId(crewId);
+    }
+
+    public boolean hasSameCrewId(Long crewId) {
+        return crewId.equals(crew.getId());
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {

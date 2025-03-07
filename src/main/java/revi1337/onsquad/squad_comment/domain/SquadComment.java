@@ -53,23 +53,9 @@ public class SquadComment extends BaseEntity {
     @OneToMany(mappedBy = "parent")
     private final List<SquadComment> replies = new ArrayList<>();
 
-    public SquadComment(String content) {
-        validate(content);
-        this.content = content;
-    }
-
-    private void validate(String content) {
-        if (content == null) {
-            throw new NullPointerException("댓글은 null 일 수 없습니다.");
-        }
-
-        if (content.isEmpty() || content.length() > MAX_LENGTH) {
-            throw new SquadCommentDomainException.InvalidLength(INVALID_LENGTH, MAX_LENGTH);
-        }
-    }
-
     @Builder
     private SquadComment(Long id, String content, Squad squad, CrewMember crewMember, SquadComment parent) {
+        validate(content);
         this.id = id;
         this.content = content;
         this.squad = squad;
@@ -108,5 +94,23 @@ public class SquadComment extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    public boolean hasNotSameSquadId(Long squadId) {
+        return !hasSameSquadId(squadId);
+    }
+
+    public boolean hasSameSquadId(Long squadId) {
+        return squadId.equals(squad.getId());
+    }
+
+    private void validate(String content) {
+        if (content == null) {
+            throw new NullPointerException("댓글은 null 일 수 없습니다.");
+        }
+
+        if (content.isEmpty() || content.length() > MAX_LENGTH) {
+            throw new SquadCommentDomainException.InvalidLength(INVALID_LENGTH, MAX_LENGTH);
+        }
     }
 }
