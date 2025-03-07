@@ -19,8 +19,8 @@ public class CrewMemberService {
     private final CrewMemberRepository crewMemberRepository;
 
     @Transactional(readOnly = true)
-    public List<EnrolledCrewDto> findOwnedCrews(Long memberId) {
-        return crewMemberRepository.findOwnedCrews(memberId).stream()
+    public List<EnrolledCrewDto> fetchAllJoinedCrews(Long memberId) {
+        return crewMemberRepository.fetchAllJoinedCrewsByMemberId(memberId).stream()
                 .map(EnrolledCrewDto::from)
                 .toList();
     }

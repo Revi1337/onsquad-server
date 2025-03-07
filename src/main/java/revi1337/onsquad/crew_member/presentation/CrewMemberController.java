@@ -26,11 +26,11 @@ public class CrewMemberController {
     private final CrewMemberService crewMemberService;
 
     @GetMapping("/my/crews")
-    public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> findOwnedCrews(
+    public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchAllJoinedCrews(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        List<EnrolledCrewResponse> ownedCrewResponses = crewMemberService.findOwnedCrews(
-                        authenticatedMember.toDto().getId())
+        List<EnrolledCrewResponse> ownedCrewResponses = crewMemberService
+                .fetchAllJoinedCrews(authenticatedMember.toDto().getId())
                 .stream()
                 .map(EnrolledCrewResponse::from)
                 .toList();

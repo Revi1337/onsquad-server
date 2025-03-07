@@ -23,8 +23,8 @@ public class CrewParticipantService {
     private final CrewParticipantRepository crewParticipantRepository;
     private final CrewMemberRepository crewMemberRepository;
 
-    public List<CrewParticipantRequestDto> findMyCrewRequests(Long memberId) {
-        return crewParticipantRepository.findMyCrewRequests(memberId).stream()
+    public List<CrewParticipantRequestDto> fetchAllCrewRequests(Long memberId) {
+        return crewParticipantRepository.fetchAllCrewRequestsByMemberId(memberId).stream()
                 .map(CrewParticipantRequestDto::from)
                 .toList();
     }

@@ -23,8 +23,8 @@ public class SquadMemberService {
     private final SquadMemberRepository squadMemberRepository;
     private final CrewMemberRepository crewMemberRepository;
 
-    public List<EnrolledSquadDto> findEnrolledSquads(Long memberId) {
-        return squadMemberRepository.findEnrolledSquads(memberId).stream()
+    public List<EnrolledSquadDto> fetchAllJoinedSquads(Long memberId) {
+        return squadMemberRepository.fetchAllJoinedSquadsByMemberId(memberId).stream()
                 .map(EnrolledSquadDto::from)
                 .toList();
     }

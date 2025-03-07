@@ -27,7 +27,9 @@ public interface CrewParticipantRepository {
 
     CrewParticipant upsertCrewParticipant(Crew crew, Member member, LocalDateTime now);
 
-    List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
+//    List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
+
+    List<CrewParticipantRequest> fetchAllCrewRequestsByMemberId(Long memberId);
 
     Page<SimpleCrewParticipantRequest> fetchCrewRequests(Long crewId, Pageable pageable);
 

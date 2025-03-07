@@ -58,8 +58,8 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
-    public List<CrewParticipantRequest> findMyCrewRequests(Long memberId) {
-        return crewParticipantQueryDslRepository.findMyCrewRequests(memberId);
+    public List<CrewParticipantRequest> fetchAllCrewRequestsByMemberId(Long memberId) {
+        return crewParticipantQueryDslRepository.fetchAllCrewRequestsByMemberId(memberId);
     }
 
     @Override

@@ -34,7 +34,7 @@ public interface CrewMemberRepository {
 
     Optional<CrewMember> findCrewMemberByCrewIdAndMemberId(Long memberId, Long crewId);
 
-    List<EnrolledCrewDomainDto> findOwnedCrews(Long memberId);
+    List<EnrolledCrewDomainDto> fetchAllJoinedCrewsByMemberId(Long memberId);
 
     List<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId);
 

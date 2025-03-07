@@ -42,7 +42,7 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public List<EnrolledSquadDomainDto> findEnrolledSquads(Long memberId) {
+    public List<EnrolledSquadDomainDto> fetchAllJoinedSquadsByMemberId(Long memberId) {
         return squadMemberQueryDslRepository.findEnrolledSquads(memberId);
     }
 

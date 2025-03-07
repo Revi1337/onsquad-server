@@ -11,10 +11,6 @@ public record SquadParticipantDto(
         String title,
         int capacity,
         int remain,
-        String address,
-        String addressDetail,
-        String kakaoLink,
-        String discordLink,
         List<String> categories,
         SimpleMemberInfoDto squadOwner,
         RequestParticipantDto request
@@ -25,10 +21,6 @@ public record SquadParticipantDto(
                 squadParticipantDomainDto.title().getValue(),
                 squadParticipantDomainDto.capacity().getValue(),
                 squadParticipantDomainDto.capacity().getRemain(),
-                squadParticipantDomainDto.address().getValue(),
-                squadParticipantDomainDto.address().getDetail(),
-                squadParticipantDomainDto.kakaoLink(),
-                squadParticipantDomainDto.discordLink(),
                 squadParticipantDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),

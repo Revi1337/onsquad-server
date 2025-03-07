@@ -22,14 +22,13 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
-import revi1337.onsquad.crew.domain.dto.SimpleCrewInfoDomainDto;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
+import revi1337.onsquad.squad_member.domain.dto.QEnrolledSquadDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.QSquadInMembersDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.QSquadMemberDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.QSquadMembersWithSquadDomainDto;
@@ -49,79 +48,70 @@ public class SquadMemberQueryDslRepository {
     private final QMember SQUAD_CREATOR = new QMember("squadCreator");
 
     /**
-     * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 쪼갠다.
-     *
-     * @param memberId
-     * @return
+     * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 분리합니다.
      */
     public List<EnrolledSquadDomainDto> findEnrolledSquads(Long memberId) {
-        List<SimpleSquadInfoDomainDto> squadInfoDtos = jpaQueryFactory
+        List<SimpleSquadInfoDomainDto> squads = jpaQueryFactory
                 .from(squadMember)
                 .innerJoin(squadMember.crewMember, crewMember).on(crewMember.member.id.eq(memberId))
+                .innerJoin(crewMember.member, member)
                 .innerJoin(squadMember.squad, squad)
-                .innerJoin(squad.crew, crew)
-                .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
-                .innerJoin(SQUAD_CREW_MEMBER.member, SQUAD_CREATOR)
-                .innerJoin(squad.categories, squadCategory)
+                .leftJoin(squad.categories, squadCategory)
                 .innerJoin(squadCategory.category, category)
                 .orderBy(squadMember.requestAt.desc())
                 .transform(groupBy(squad.id)
                         .list(new QSimpleSquadInfoDomainDto(
-                                crew.id,
+                                squad.crew.id,
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
-                                squad.address,
-                                squad.kakaoLink,
-                                squad.discordLink,
                                 new CaseBuilder()
-                                        .when(SQUAD_CREATOR.id.eq(memberId))
-                                        .then(TRUE)
-                                        .otherwise(FALSE),
+                                        .when(crewMember.member.id.eq(memberId))
+                                        .then(true)
+                                        .otherwise(false),
                                 list(category.categoryType),
                                 new QSimpleMemberInfoDomainDto(
-                                        SQUAD_CREATOR.id,
-                                        SQUAD_CREATOR.nickname,
-                                        SQUAD_CREATOR.mbti
+                                        member.id,
+                                        member.nickname,
+                                        member.mbti
                                 )
-                        ))
-                );
+                        )));
 
-        Map<Long, List<SimpleSquadInfoDomainDto>> squadMembersMap = squadInfoDtos.stream()
+        Map<Long, List<SimpleSquadInfoDomainDto>> transformed = squads.stream()
                 .collect(Collectors.groupingBy(SimpleSquadInfoDomainDto::crewId));
 
-        Map<Long, SimpleCrewInfoDomainDto> crewDtoMap = jpaQueryFactory
-                .from(crew)
-                .leftJoin(crew.image, image)
+        Map<Long, EnrolledSquadDomainDto> crewMap = jpaQueryFactory
+                .from(crewMember)
+                .innerJoin(crewMember.crew, crew)
+                .on(
+                        crew.id.in(transformed.keySet()),
+                        crewMember.member.id.eq(memberId)
+                )
                 .innerJoin(crew.member, CREW_CREATOR)
-                .where(crew.id.in(squadMembersMap.keySet()))
+                .leftJoin(crew.image, image)
                 .transform(groupBy(crew.id)
-                        .as(new QSimpleCrewInfoDomainDto(
+                        .as(new QEnrolledSquadDomainDto(
                                 crew.id,
                                 crew.name,
-                                crew.kakaoLink,
                                 image.imageUrl,
                                 new QSimpleMemberInfoDomainDto(
                                         CREW_CREATOR.id,
                                         CREW_CREATOR.nickname,
                                         CREW_CREATOR.mbti
                                 )
-                        ))
-                );
+                        )));
 
-        return squadMembersMap.keySet().stream()
+        return transformed.keySet().stream()
                 .map(crewId -> {
-                    SimpleCrewInfoDomainDto crewInfo = crewDtoMap.get(crewId);
-                    List<SimpleSquadInfoDomainDto> squadsInCrew = squadMembersMap.get(crewId);
+                    EnrolledSquadDomainDto temp = crewMap.get(crewId);
                     return new EnrolledSquadDomainDto(
-                            crewInfo.id(),
-                            crewInfo.name(),
-                            crewInfo.imageUrl(),
-                            crewInfo.owner(),
-                            squadsInCrew
+                            temp.id(),
+                            temp.name(),
+                            temp.imageUrl(),
+                            temp.owner(),
+                            transformed.get(crewId)
                     );
-                })
-                .toList();
+                }).toList();
     }
 
     public Optional<SquadMembersWithSquadDomainDto> findSquadMembers(Long memberId, Long crewId, Long squadId) {
