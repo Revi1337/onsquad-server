@@ -1,0 +1,29 @@
+package revi1337.onsquad.crew.application;
+
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import revi1337.onsquad.crew.application.dto.CrewStatisticDto;
+import revi1337.onsquad.crew.domain.CrewStatisticCacheRepository;
+import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+
+@RequiredArgsConstructor
+@Service
+public class CrewManagementService {
+
+    private final CrewStatisticCacheRepository crewStatisticRedisRepository;
+    private final CrewMemberRepository crewMemberRepository;
+
+    // TODO 캐시 정합성을 조금 더 올릴 방법을 생각해봐야 한다. 캐싱 된 이후에 추가된 인원 수, 추가된 신청 수, 추가된 스쿼드 수 를 파악(Redis)해 추가해주는 방향을 생각해야한다.
+    public CrewStatisticDto calculateStatistic(Long memberId, Long crewId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
+        }
+
+        return CrewStatisticDto.from(crewStatisticRedisRepository.getStatisticById(crewId));
+    }
+}
