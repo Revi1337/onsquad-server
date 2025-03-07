@@ -6,7 +6,6 @@ import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties;
 
 public interface AuthorizationUserProfileProvider {
 
-    PlatformUserProfile provideUserProfile(String baseUrl, AccessToken accessToken,
-                                           OAuth2ClientProperties oAuth2ClientProperties);
+    PlatformUserProfile provideUserProfile(AccessToken accessToken, OAuth2ClientProperties oAuth2ClientProperties);
 
 }

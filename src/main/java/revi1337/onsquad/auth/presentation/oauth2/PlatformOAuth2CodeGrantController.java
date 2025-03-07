@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import revi1337.onsquad.auth.application.dto.JsonWebToken;
 import revi1337.onsquad.auth.application.oauth2.OAuth2LoginService;
+import revi1337.onsquad.auth.application.oauth2.OAuth2Platform;
 import revi1337.onsquad.auth.application.oauth2.model.PlatformUserProfile;
 import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties;
@@ -28,13 +29,12 @@ public class PlatformOAuth2CodeGrantController {
     @GetMapping("/login/oauth2/code/{platform}")
     public ResponseEntity<Void> receivePlatformAuthorizationCode(@PathVariable String platform,
                                                                  @RequestParam String code) {
-        SupportOAuth2Platform oAuth2Platform = SupportOAuth2Platform.convertFrom(platform);
+        OAuth2Platform oAuth2Platform = SupportOAuth2Platform.getAvailableFromSpecific(platform);
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         AccessToken accessToken = oAuth2Platform.provideAccessToken(baseUrl, code, oAuth2ClientProperties);
-        PlatformUserProfile platformUserProfile = oAuth2Platform
-                .provideUserProfile(baseUrl, accessToken, oAuth2ClientProperties);
+        PlatformUserProfile userProfile = oAuth2Platform.provideUserProfile(accessToken, oAuth2ClientProperties);
 
-        JsonWebToken jsonWebToken = oAuth2LoginService.loginOAuth2User(platformUserProfile);
+        JsonWebToken jsonWebToken = oAuth2LoginService.loginOAuth2User(userProfile);
         URI redirectUri = buildRedirectUri(jsonWebToken);
 
         return ResponseEntity.status(HttpStatus.FOUND).location(redirectUri).build();
