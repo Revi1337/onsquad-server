@@ -8,14 +8,15 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.expression.Expression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -23,6 +24,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisCacheAspect {
 
+    private static final String DELIMITER = ":";
+    private static final String CACHE_NAME_PREFIX = "onsquad" + DELIMITER;
+    private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
@@ -46,24 +50,15 @@ public class RedisCacheAspect {
 
     private String generateRedisKey(ProceedingJoinPoint joinPoint, RedisCache redisCache) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Map<String, Object> params = getMethodParams(methodSignature, joinPoint.getArgs());
-        String cacheKeyParam = getCacheKeyParam(redisCache.id(), params);
-        return String.format(redisCache.type().getFormat(), cacheKeyParam, redisCache.name());
-    }
-
-    private Map<String, Object> getMethodParams(MethodSignature methodSignature, Object[] args) {
+        StandardEvaluationContext standardEvaluationContext = new StandardEvaluationContext();
         String[] paramNames = methodSignature.getParameterNames();
-        return IntStream.range(0, paramNames.length)
-                .boxed()
-                .collect(Collectors.toMap(i -> paramNames[i], i -> args[i]));
-    }
-
-    private String getCacheKeyParam(String paramName, Map<String, Object> params) {
-        Object paramValue = params.get(paramName);
-        if (paramValue == null) {
-            throw new IllegalArgumentException("Missing parameter: " + paramName);
+        Object[] args = joinPoint.getArgs();
+        for (int i = 0; i < paramNames.length; i++) {
+            standardEvaluationContext.setVariable(paramNames[i], args[i]);
         }
-        return paramValue.toString();
+        Expression expression = spelExpressionParser.parseExpression(redisCache.key());
+        String expressionValue = expression.getValue(standardEvaluationContext, String.class);
+        return CACHE_NAME_PREFIX + redisCache.name() + DELIMITER + expressionValue;
     }
 
     private Object deserializeCachedData(ProceedingJoinPoint joinPoint, Object cachedData) {

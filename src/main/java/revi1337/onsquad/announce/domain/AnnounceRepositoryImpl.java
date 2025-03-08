@@ -1,7 +1,6 @@
 package revi1337.onsquad.announce.domain;
 
 import static java.util.concurrent.TimeUnit.HOURS;
-import static revi1337.onsquad.common.aspect.OnSquadType.CREW;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
         return announceQueryDslRepository.findAnnouncesByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 
-    @RedisCache(type = CREW, id = "crewId", name = "limit-announces", unit = HOURS, cacheEmptyCollection = true)
+    @RedisCache(name = "limit-announces", key = "'crew:' + #crewId", unit = HOURS)
     @Override
     public List<AnnounceInfoDomainDto> findCachedLimitedAnnouncesByCrewId(Long crewId) {
         return announceQueryDslRepository.findAnnouncesByCrewId(crewId, DEFAULT_FETCH_SIZE);
