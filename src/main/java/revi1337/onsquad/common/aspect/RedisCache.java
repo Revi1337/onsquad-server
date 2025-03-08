@@ -10,11 +10,9 @@ import java.util.concurrent.TimeUnit;
 @Target({ElementType.METHOD})
 public @interface RedisCache {
 
-    OnSquadType type() default OnSquadType.CREW;
+    String name() default "";
 
-    String id();
-
-    String name();
+    String key();
 
     long ttl() default 1;
 

@@ -25,7 +25,7 @@ public class AnnounceFixedEventListener {
         log.debug("[{}] Renew fixed announces caches in crew_id = {}", fixedEvent.getEventName(), fixedEvent.crewId());
         List<AnnounceInfoDomainDto> announceInfos = announceRepository.findLimitedAnnouncesByCrewId(
                 fixedEvent.crewId());
-        String redisKey = String.format("onsquad:crew:%d:limit-announces", fixedEvent.crewId());
+        String redisKey = String.format("onsquad:limit-announces:crew:%d", fixedEvent.crewId());
         redisTemplate.opsForValue().set(redisKey, announceInfos, Duration.ofHours(1));
     }
 }
