@@ -21,4 +21,18 @@ public abstract class AnnounceBusinessException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), announceId));
         }
     }
+
+    public static class CantMake extends AnnounceBusinessException {
+
+        public CantMake(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
+    public static class CantFix extends AnnounceBusinessException {
+
+        public CantFix(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }
