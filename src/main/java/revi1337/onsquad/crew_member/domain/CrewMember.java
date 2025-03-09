@@ -1,6 +1,7 @@
 package revi1337.onsquad.crew_member.domain;
 
 import static revi1337.onsquad.crew_member.domain.vo.CrewRole.GENERAL;
+import static revi1337.onsquad.crew_member.domain.vo.CrewRole.MANAGER;
 import static revi1337.onsquad.crew_member.domain.vo.CrewRole.OWNER;
 
 import jakarta.persistence.AttributeOverride;
@@ -57,7 +58,7 @@ public class CrewMember extends RequestEntity {
     @ColumnDefault("'GENERAL'")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CrewRole role;
+    private CrewRole role = GENERAL;
 
     @Builder
     private CrewMember(Long id, Crew crew, Member member, CrewRole role, LocalDateTime participantAt) {
@@ -121,5 +122,17 @@ public class CrewMember extends RequestEntity {
 
     public boolean isOwner() {
         return role == OWNER;
+    }
+
+    public boolean isGeneral() {
+        return role == GENERAL;
+    }
+
+    public boolean isNotGreaterThenManager() {
+        return !isGreaterThenManager();
+    }
+
+    public boolean isGreaterThenManager() {
+        return role == OWNER || role == MANAGER;
     }
 }

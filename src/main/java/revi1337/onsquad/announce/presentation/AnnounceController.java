@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.announce.application.AnnounceService;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
@@ -20,26 +20,27 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/crew")
+@RequestMapping("/api/v1/crews")
 @RestController
 public class AnnounceController {
 
     private final AnnounceService announceService;
 
-    @PostMapping("/announce/new")
+    @PostMapping("/{crewId}/announces")
     public ResponseEntity<RestResponse<String>> createNewAnnounce(
-            @Valid @RequestBody AnnounceCreateRequest createRequest,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @PathVariable Long crewId,
+            @Authenticate AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody AnnounceCreateRequest createRequest
     ) {
-        announceService.createNewAnnounce(authenticatedMember.toDto().getId(), createRequest.toDto());
+        announceService.createNewAnnounce(authenticatedMember.toDto().getId(), crewId, createRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @PatchMapping("/announce/fix")
+    @PatchMapping("/{crewId}/announces/{announceId}")
     public ResponseEntity<RestResponse<String>> fixAnnounce(
-            @RequestParam Long crewId,
-            @RequestParam Long announceId,
+            @PathVariable Long crewId,
+            @PathVariable Long announceId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         announceService.fixAnnounce(authenticatedMember.toDto().getId(), crewId, announceId);
@@ -47,10 +48,10 @@ public class AnnounceController {
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @GetMapping("/announce")
+    @GetMapping("/{crewId}/announces/{announceId}")
     public ResponseEntity<RestResponse<AnnounceInfoResponse>> findAnnounce(
-            @RequestParam Long crewId,
-            @RequestParam Long announceId,
+            @PathVariable Long crewId,
+            @PathVariable Long announceId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         AnnounceInfoResponse announceInfoResponse = AnnounceInfoResponse.from(
@@ -60,9 +61,9 @@ public class AnnounceController {
         return ResponseEntity.ok().body(RestResponse.success(announceInfoResponse));
     }
 
-    @GetMapping("/announces")
+    @GetMapping("/{crewId}/announces")
     public ResponseEntity<RestResponse<List<AnnounceInfoResponse>>> findAnnounces(
-            @RequestParam Long crewId,
+            @PathVariable Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         List<AnnounceInfoResponse> announceInfoResponses = announceService.findAnnounces(
@@ -73,9 +74,9 @@ public class AnnounceController {
         return ResponseEntity.ok().body(RestResponse.success(announceInfoResponses));
     }
 
-    @GetMapping("/announces/more")
+    @GetMapping("/{crewId}/announces/more")
     public ResponseEntity<RestResponse<AnnounceInfosWithAuthResponse>> findMoreAnnounces(
-            @RequestParam Long crewId,
+            @PathVariable Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         AnnounceInfosWithAuthResponse announceInfosWithAuthResponse = AnnounceInfosWithAuthResponse.from(
