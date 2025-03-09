@@ -44,7 +44,7 @@ public class AnnounceService {
     public void fixAnnounce(Long memberId, Long crewId, Long announceId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         checkMemberIsCrewOwner(crewMember);
-        Announce announce = announceRepository.getByIdAndCrewId(crewId, announceId);
+        Announce announce = announceRepository.getByCrewIdAndId(crewId, announceId);
         announce.updateFixed(true, LocalDateTime.now());
         announceRepository.saveAndFlush(announce);
         applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewMember.getId()));

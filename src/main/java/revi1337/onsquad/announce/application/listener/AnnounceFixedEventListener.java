@@ -11,7 +11,6 @@ import revi1337.onsquad.announce.application.event.AnnounceFixedEvent;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
 
-// TODO RedisCacheAspect 와 겹치는 로직을 리팩토링 해야한다.
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -23,9 +22,9 @@ public class AnnounceFixedEventListener {
     @TransactionalEventListener
     public void handleAnnounceFixedEvent(AnnounceFixedEvent fixedEvent) {
         log.debug("[{}] Renew fixed announces caches in crew_id = {}", fixedEvent.getEventName(), fixedEvent.crewId());
-        List<AnnounceInfoDomainDto> announceInfos = announceRepository.findLimitedAnnouncesByCrewId(
-                fixedEvent.crewId());
-        String redisKey = String.format("onsquad:limit-announces:crew:%d", fixedEvent.crewId());
+        List<AnnounceInfoDomainDto> announceInfos = announceRepository
+                .findLimitedAnnouncesByCrewId(fixedEvent.crewId());
+        String redisKey = String.format("onsquad:crew-announces:crew:%d", fixedEvent.crewId());
         redisTemplate.opsForValue().set(redisKey, announceInfos, Duration.ofHours(1));
     }
 }
