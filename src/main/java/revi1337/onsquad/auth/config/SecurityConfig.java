@@ -1,7 +1,9 @@
 package revi1337.onsquad.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -97,7 +99,7 @@ public class SecurityConfig {
         corsConfiguration.addAllowedOriginPattern("*"); // TODO 나중에 Front BaseURL 만으로 변경해야 한다.
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addExposedHeader("Authorization");
+        corsConfiguration.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.LOCATION));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();

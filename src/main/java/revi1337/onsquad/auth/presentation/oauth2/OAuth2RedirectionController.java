@@ -2,7 +2,6 @@ package revi1337.onsquad.auth.presentation.oauth2;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +18,11 @@ public class OAuth2RedirectionController {
     private final OAuth2ClientProperties oAuth2ClientProperties;
 
     @GetMapping("/api/v1/login/oauth2/{platform}")
-    public ResponseEntity<Void> handlePlatformOAuth2Login(@PathVariable String platform) {
+    public ResponseEntity<String> handlePlatformOAuth2Login(@PathVariable String platform) {
         OAuth2Platform oAuth2Platform = SupportOAuth2Platform.getAvailableFromSpecific(platform);
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         URI compositeAuthorizationEndpoint = oAuth2Platform.provideUsing(baseUrl, oAuth2ClientProperties);
 
-        return ResponseEntity.status(HttpStatus.FOUND).location(compositeAuthorizationEndpoint).build();
+        return ResponseEntity.ok().location(compositeAuthorizationEndpoint).build();
     }
 }
