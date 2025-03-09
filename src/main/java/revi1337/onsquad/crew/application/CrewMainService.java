@@ -28,7 +28,7 @@ public class CrewMainService {
     public CrewMainDto fetchMain(Long memberId, Long crewId, CategoryType categoryType, Pageable pageable) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
-        List<AnnounceInfoDomainDto> announces = announceRepository.findCachedLimitedAnnouncesByCrewId(crewId);
+        List<AnnounceInfoDomainDto> announces = announceRepository.fetchCachedLimitedAnnouncesByCrewId(crewId);
         List<Top5CrewMemberDomainDto> topMembers = crewMemberRepository.findTop5CrewMembers(crewId);
         Page<SquadInfoDomainDto> squads = squadRepository.findSquadsByCrewId(crewId, categoryType, pageable);
 
