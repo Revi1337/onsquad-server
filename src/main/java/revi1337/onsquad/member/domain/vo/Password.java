@@ -21,7 +21,7 @@ public class Password {
     private static final String BCRYPT_REGEX = "^[$]2[abxy]?[$](?:0[4-9]|[12][0-9]|3[01])[$][./0-9a-zA-Z]{53}$";
     private static final String BCRYPT_PREFIX = "{bcrypt}";
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String value;
 
     public Password(String rawPassword) {
