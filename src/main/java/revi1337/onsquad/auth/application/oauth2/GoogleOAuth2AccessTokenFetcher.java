@@ -13,14 +13,14 @@ import org.springframework.web.client.RestTemplate;
 import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
 
-public class GoogleOAuth2AccessTokenEvaluator implements PlatformOAuth2AccessTokenEvaluator {
+public class GoogleOAuth2AccessTokenFetcher implements PlatformOAuth2AccessTokenFetcher {
 
     @Override
-    public AccessToken provideAccessToken(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {
-        return fetchAccessToken(baseUrl, authorizationCode, oAuth2Properties);
+    public AccessToken fetchAccessToken(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {
+        return fetchToken(baseUrl, authorizationCode, oAuth2Properties);
     }
 
-    private AccessToken fetchAccessToken(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {
+    private AccessToken fetchToken(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>() {{
             add("client_id", oAuth2Properties.clientId());
             add("client_secret", oAuth2Properties.clientSecret());

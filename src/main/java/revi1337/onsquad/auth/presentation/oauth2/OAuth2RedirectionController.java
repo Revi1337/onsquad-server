@@ -2,6 +2,7 @@ package revi1337.onsquad.auth.presentation.oauth2;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,6 @@ public class OAuth2RedirectionController {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         URI compositeAuthorizationEndpoint = oAuth2Platform.provideUsing(baseUrl, oAuth2ClientProperties);
 
-        return ResponseEntity.ok().location(compositeAuthorizationEndpoint).build();
+        return ResponseEntity.status(HttpStatus.FOUND).location(compositeAuthorizationEndpoint).build();
     }
 }
