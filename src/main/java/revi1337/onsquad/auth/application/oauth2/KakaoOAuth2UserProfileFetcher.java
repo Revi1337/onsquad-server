@@ -13,10 +13,10 @@ import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.auth.presentation.oauth2.dto.response.KakaoUserInfoResponse;
 
-public class KakaoOAuth2UserProfileEvaluator implements PlatformOAuth2UserProfileEvaluator {
+public class KakaoOAuth2UserProfileFetcher implements PlatformOAuth2UserProfileFetcher {
 
     @Override
-    public PlatformUserProfile provideUserProfile(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
+    public PlatformUserProfile fetchUserProfile(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
         KakaoUserInfoResponse kakaoUserInfoResponse = fetchUserInfoResponse(accessToken, oAuth2Properties);
         return KakaoUserProfile.from(kakaoUserInfoResponse);
     }
