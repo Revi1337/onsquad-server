@@ -12,32 +12,32 @@ public enum OAuth2Platform implements AuthorizationEndPointProvider, Authorizati
 
     KAKAO(
             new KakaoOAuth2EndpointBuilder(),
-            new KakaoOAuth2AccessTokenEvaluator(),
-            new KakaoOAuth2UserProfileEvaluator()
+            new KakaoOAuth2AccessTokenFetcher(),
+            new KakaoOAuth2UserProfileFetcher()
     ),
     GOOGLE(
             new GoogleOAuth2EndpointBuilder(),
-            new GoogleOAuth2AccessTokenEvaluator(),
-            new GoogleOAuth2UserProfileEvaluator()
+            new GoogleOAuth2AccessTokenFetcher(),
+            new GoogleOAuth2UserProfileFetcher()
     );
 
     private final PlatformOAuth2EndpointBuilder endpointBuilder;
-    private final PlatformOAuth2AccessTokenEvaluator tokenEvaluator;
-    private final PlatformOAuth2UserProfileEvaluator userProfileEvaluator;
+    private final PlatformOAuth2AccessTokenFetcher tokenEvaluator;
+    private final PlatformOAuth2UserProfileFetcher userProfileEvaluator;
 
     OAuth2Platform(PlatformOAuth2EndpointBuilder endpointBuilder,
-                   PlatformOAuth2AccessTokenEvaluator tokenEvaluator,
-                   PlatformOAuth2UserProfileEvaluator userProfileEvaluator) {
+                   PlatformOAuth2AccessTokenFetcher tokenFetcher,
+                   PlatformOAuth2UserProfileFetcher userProfileFetcher) {
         this.endpointBuilder = endpointBuilder;
-        this.tokenEvaluator = tokenEvaluator;
-        this.userProfileEvaluator = userProfileEvaluator;
+        this.tokenEvaluator = tokenFetcher;
+        this.userProfileEvaluator = userProfileFetcher;
     }
 
     @Override
     public AccessToken provideAccessToken(String baseUrl, String authorizationCode,
                                           OAuth2ClientProperties oAuth2ClientProperties) {
         OAuth2Properties oAuth2Properties = getPropertyFrom(oAuth2ClientProperties);
-        return tokenEvaluator.provideAccessToken(baseUrl, authorizationCode, oAuth2Properties);
+        return tokenEvaluator.fetchAccessToken(baseUrl, authorizationCode, oAuth2Properties);
     }
 
     @Override
@@ -50,7 +50,7 @@ public enum OAuth2Platform implements AuthorizationEndPointProvider, Authorizati
     public PlatformUserProfile provideUserProfile(AccessToken accessToken,
                                                   OAuth2ClientProperties oAuth2ClientProperties) {
         OAuth2Properties oAuth2Properties = getPropertyFrom(oAuth2ClientProperties);
-        return userProfileEvaluator.provideUserProfile(accessToken, oAuth2Properties);
+        return userProfileEvaluator.fetchUserProfile(accessToken, oAuth2Properties);
     }
 
     public OAuth2Properties getPropertyFrom(OAuth2ClientProperties oAuth2ClientProperties) {

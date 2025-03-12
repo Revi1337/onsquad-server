@@ -11,10 +11,10 @@ import revi1337.onsquad.auth.application.token.AccessToken;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.auth.presentation.oauth2.dto.response.GoogleUserInfoResponse;
 
-public class GoogleOAuth2UserProfileEvaluator implements PlatformOAuth2UserProfileEvaluator {
+public class GoogleOAuth2UserProfileFetcher implements PlatformOAuth2UserProfileFetcher {
 
     @Override
-    public PlatformUserProfile provideUserProfile(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
+    public PlatformUserProfile fetchUserProfile(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
         GoogleUserInfoResponse googleUserInfoResponse = fetchUserInfoResponse(accessToken, oAuth2Properties);
         return GoogleUserProfile.from(googleUserInfoResponse);
     }
