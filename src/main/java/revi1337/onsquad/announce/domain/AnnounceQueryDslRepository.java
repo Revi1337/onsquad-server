@@ -23,11 +23,12 @@ public class AnnounceQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId, Long limit) {
+    public List<AnnounceInfoDomainDto> fetchLimitedByCrewId(Long crewId, Long limit) {
         JPAQuery<AnnounceInfoDomainDto> query = jpaQueryFactory
                 .select(new QAnnounceInfoDomainDto(
                         announce.id,
                         announce.title,
+                        announce.content,
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
@@ -53,7 +54,7 @@ public class AnnounceQueryDslRepository {
         return query.fetch();
     }
 
-    public Optional<AnnounceInfoDomainDto> findAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
+    public Optional<AnnounceInfoDomainDto> fetchByCrewIdAndIdAndMemberId(Long crewId, Long announceId, Long memberId) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .select(new QAnnounceInfoDomainDto(
@@ -77,7 +78,7 @@ public class AnnounceQueryDslRepository {
                         .innerJoin(announce.crewMember, crewMember)
                         .on(
                                 announce.crew.id.eq(crewId),
-                                announce.id.eq(id)
+                                announce.id.eq(announceId)
                         )
                         .innerJoin(crewMember.member, member)
                         .fetchOne()

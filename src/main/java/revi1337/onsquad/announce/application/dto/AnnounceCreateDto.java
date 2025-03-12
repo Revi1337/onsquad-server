@@ -6,7 +6,6 @@ import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 
 public record AnnounceCreateDto(
-        Long crewId,
         String title,
         String content
 ) {

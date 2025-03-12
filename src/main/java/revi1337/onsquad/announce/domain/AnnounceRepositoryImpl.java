@@ -1,20 +1,20 @@
 package revi1337.onsquad.announce.domain;
 
-import static java.util.concurrent.TimeUnit.HOURS;
-import static revi1337.onsquad.common.aspect.OnSquadType.CREW;
+import static revi1337.onsquad.announce.error.AnnounceErrorCode.NOT_FOUND;
 
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
-import revi1337.onsquad.common.aspect.RedisCache;
+import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
 
 @RequiredArgsConstructor
 @Repository
 public class AnnounceRepositoryImpl implements AnnounceRepository {
 
     private final AnnounceJpaRepository announceJpaRepository;
+    private final AnnounceCacheRepository announceCacheRepository;
     private final AnnounceQueryDslRepository announceQueryDslRepository;
 
     @Override
@@ -33,23 +33,27 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     }
 
     @Override
-    public Optional<AnnounceInfoDomainDto> findAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
-        return announceQueryDslRepository.findAnnounceByCrewIdAndId(crewId, id, memberId);
-    }
-
-    @Override
-    public List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId) {
-        return announceQueryDslRepository.findAnnouncesByCrewId(crewId, null);
+    public List<AnnounceInfoDomainDto> fetchAnnouncesByCrewId(Long crewId) {
+        return announceQueryDslRepository.fetchLimitedByCrewId(crewId, null);
     }
 
     @Override
     public List<AnnounceInfoDomainDto> findLimitedAnnouncesByCrewId(Long crewId) {
-        return announceQueryDslRepository.findAnnouncesByCrewId(crewId, DEFAULT_FETCH_SIZE);
+        return announceQueryDslRepository.fetchLimitedByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 
-    @RedisCache(type = CREW, id = "crewId", name = "limit-announces", unit = HOURS, cacheEmptyCollection = true)
     @Override
-    public List<AnnounceInfoDomainDto> findCachedLimitedAnnouncesByCrewId(Long crewId) {
-        return announceQueryDslRepository.findAnnouncesByCrewId(crewId, DEFAULT_FETCH_SIZE);
+    public List<AnnounceInfoDomainDto> fetchCachedLimitedAnnouncesByCrewId(Long crewId) {
+        return announceCacheRepository.fetchCachedLimitedByCrewId(crewId, DEFAULT_FETCH_SIZE);
+    }
+
+    @Override
+    public AnnounceInfoDomainDto getCachedByCrewIdAndIdAndMemberId(Long crewId, Long announceId, Long memberId) {
+        AnnounceInfoDomainDto announceInfo = announceCacheRepository
+                .getCachedByCrewIdAndIdAndMemberId(crewId, announceId, memberId);
+        if (announceInfo == null) {
+            throw new AnnounceBusinessException.NotFoundById(NOT_FOUND, announceId);
+        }
+        return announceInfo;
     }
 }

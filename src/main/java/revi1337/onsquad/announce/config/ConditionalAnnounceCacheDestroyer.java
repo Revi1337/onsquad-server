@@ -19,7 +19,7 @@ import org.springframework.data.redis.core.ScanOptions;
 @Configuration
 public class ConditionalAnnounceCacheDestroyer {
 
-    private static final String DESTROY_KEY_PATTERN = "onsquad:crew:*:limit-announces";
+    private static final String DESTROY_KEY_PATTERN = "onsquad:crew-announce*";
     private final RedisTemplate<String, Object> redisTemplate;
 
     @EventListener(ContextClosedEvent.class)

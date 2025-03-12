@@ -17,20 +17,15 @@ public interface AnnounceRepository {
 
     Optional<Announce> findByIdAndCrewId(Long crewId, Long id);
 
-    Optional<AnnounceInfoDomainDto> findAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId);
-
-    List<AnnounceInfoDomainDto> findAnnouncesByCrewId(Long crewId);
+    List<AnnounceInfoDomainDto> fetchAnnouncesByCrewId(Long crewId);
 
     List<AnnounceInfoDomainDto> findLimitedAnnouncesByCrewId(Long crewId);
 
-    List<AnnounceInfoDomainDto> findCachedLimitedAnnouncesByCrewId(Long crewId);
+    List<AnnounceInfoDomainDto> fetchCachedLimitedAnnouncesByCrewId(Long crewId);
 
-    default AnnounceInfoDomainDto getAnnounceByCrewIdAndId(Long crewId, Long id, Long memberId) {
-        return findAnnounceByCrewIdAndId(crewId, id, memberId)
-                .orElseThrow(() -> new AnnounceBusinessException.NotFoundById(NOT_FOUND, id));
-    }
+    AnnounceInfoDomainDto getCachedByCrewIdAndIdAndMemberId(Long crewId, Long announceId, Long memberId);
 
-    default Announce getByIdAndCrewId(Long crewId, Long id) {
+    default Announce getByCrewIdAndId(Long crewId, Long id) {
         return findByIdAndCrewId(crewId, id)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFoundById(NOT_FOUND, id));
     }

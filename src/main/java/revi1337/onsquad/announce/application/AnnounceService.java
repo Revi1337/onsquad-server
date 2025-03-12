@@ -1,8 +1,7 @@
 package revi1337.onsquad.announce.application;
 
-import static revi1337.onsquad.crew_member.domain.vo.CrewRole.GENERAL;
-import static revi1337.onsquad.crew_member.domain.vo.CrewRole.MANAGER;
-import static revi1337.onsquad.crew_member.domain.vo.CrewRole.OWNER;
+import static revi1337.onsquad.announce.error.AnnounceErrorCode.CANT_FIX;
+import static revi1337.onsquad.announce.error.AnnounceErrorCode.CANT_MAKE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,12 +16,11 @@ import revi1337.onsquad.announce.application.event.AnnounceFixedEvent;
 import revi1337.onsquad.announce.domain.Announce;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfosWithAuthDto;
+import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.crew_member.domain.vo.CrewRole;
-
 
 @RequiredArgsConstructor
 @Service
@@ -33,12 +31,11 @@ public class AnnounceService {
     private final AnnounceRepository announceRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    // TODO 권한 리팩토링 필요.
     @Transactional
-    public void createNewAnnounce(Long memberId, AnnounceCreateDto dto) {
-        Crew crew = crewRepository.getById(dto.crewId());
+    public void createNewAnnounce(Long memberId, Long crewId, AnnounceCreateDto dto) {
+        Crew crew = crewRepository.getById(crewId);
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crew.getId(), memberId);
-        checkMemberHasAuthority(crewMember.getRole());
+        checkMemberCanWriteAnnounce(crewMember);
         announceRepository.save(dto.toEntity(crew, crewMember));
         applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crew.getId()));
     }
@@ -47,7 +44,7 @@ public class AnnounceService {
     public void fixAnnounce(Long memberId, Long crewId, Long announceId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         checkMemberIsCrewOwner(crewMember);
-        Announce announce = announceRepository.getByIdAndCrewId(crewId, announceId);
+        Announce announce = announceRepository.getByCrewIdAndId(crewId, announceId);
         announce.updateFixed(true, LocalDateTime.now());
         announceRepository.saveAndFlush(announce);
         applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewMember.getId()));
@@ -56,39 +53,35 @@ public class AnnounceService {
     public AnnounceInfoDto findAnnounce(Long memberId, Long crewId, Long announceId) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
-        return AnnounceInfoDto.from(announceRepository.getAnnounceByCrewIdAndId(crewId, announceId, memberId));
+        return AnnounceInfoDto.from(announceRepository.getCachedByCrewIdAndIdAndMemberId(crewId, announceId, memberId));
     }
 
     public List<AnnounceInfoDto> findAnnounces(Long memberId, Long crewId) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
 
-        return announceRepository.findCachedLimitedAnnouncesByCrewId(crewId).stream()
+        return announceRepository.fetchCachedLimitedAnnouncesByCrewId(crewId).stream()
                 .map(AnnounceInfoDto::from)
                 .toList();
     }
 
-    // TODO 권한 리팩토링 필요.
     public AnnounceInfosWithAuthDto findMoreAnnounces(Long memberId, Long crewId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        boolean hasAuthority = crewMember.getRole() == OWNER || crewMember.getRole() == MANAGER;
-        List<AnnounceInfoDto> announceInfos = announceRepository.findAnnouncesByCrewId(crewId).stream()
+        List<AnnounceInfoDto> announceInfos = announceRepository.fetchAnnouncesByCrewId(crewId).stream()
                 .map(AnnounceInfoDto::from)
                 .toList();
 
-        return new AnnounceInfosWithAuthDto(hasAuthority, announceInfos);
+        return new AnnounceInfosWithAuthDto(crewMember.isGreaterThenManager(), announceInfos);
     }
 
-    // TODO 권한 Auth 패키지에서 예외처리 필요.
-    private void checkMemberHasAuthority(CrewRole role) {
-        if (role == GENERAL) {
-            throw new IllegalArgumentException("공지사항은 크루 작성자나 매니저만 작성할 수 있습니다");
+    private void checkMemberCanWriteAnnounce(CrewMember crewMember) {
+        if (crewMember.isNotGreaterThenManager()) {
+            throw new AnnounceBusinessException.CantMake(CANT_MAKE);
         }
     }
 
-    // TODO 권한 Auth 패키지에서 예외처리 필요.
     private void checkMemberIsCrewOwner(CrewMember crewMember) {
-        if (crewMember.getRole() != OWNER) {
-            throw new IllegalArgumentException("공지사항 고정은 크루장만 이용할 수 있습니다.");
+        if (crewMember.isNotOwner()) {
+            throw new AnnounceBusinessException.CantFix(CANT_FIX);
         }
     }
 }
