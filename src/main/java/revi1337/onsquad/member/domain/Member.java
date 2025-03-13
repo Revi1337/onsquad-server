@@ -2,7 +2,6 @@ package revi1337.onsquad.member.domain;
 
 import static revi1337.onsquad.member.domain.vo.UserType.GENERAL;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,9 +37,11 @@ import revi1337.onsquad.member.domain.vo.UserType;
 @Entity
 public class Member extends BaseEntity {
 
-    private static final Introduce DEFAULT_INTRODUCE = new Introduce("[소개 없음]");
+    private static final Introduce DEFAULT_INTRODUCE = new Introduce("소개 없음");
+    private static final Address DEFAULT_ADDRESS = new Address("공백", "공백");
+    private static final UserType DEFAULT_USER_TYPE = UserType.GENERAL;
     private static final String DEFAULT_KAKAO_LINK = "";
-    private static final Address DEFAULT_ADDRESS = new Address("어딘가", "상세한 어딘가");
+    private static final String DEFAULT_PROFILE_IMAGE = "";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +51,7 @@ public class Member extends BaseEntity {
     private Email email;
 
     @Embedded
-    private Address address;
+    private Address address = DEFAULT_ADDRESS;
 
     @Embedded
     private Nickname nickname;
@@ -61,12 +62,11 @@ public class Member extends BaseEntity {
     @Embedded
     private Introduce introduce = DEFAULT_INTRODUCE;
 
-    private String profileImage;
+    private String profileImage = DEFAULT_PROFILE_IMAGE;
 
     private String kakaoLink = DEFAULT_KAKAO_LINK;
 
     @ColumnDefault("'GENERAL'")
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserType userType = GENERAL;
 
@@ -93,13 +93,13 @@ public class Member extends BaseEntity {
                    String profileImage, String kakaoLink, UserType userType, Mbti mbti) {
         this.id = id;
         this.email = email;
-        this.address = address;
+        this.address = address == null ? DEFAULT_ADDRESS : address;
         this.nickname = nickname;
         this.password = password;
-        this.introduce = introduce;
-        this.profileImage = profileImage;
-        this.kakaoLink = kakaoLink;
-        this.userType = userType;
+        this.introduce = introduce == null ? DEFAULT_INTRODUCE : introduce;
+        this.profileImage = profileImage == null ? DEFAULT_PROFILE_IMAGE : profileImage;
+        this.kakaoLink = kakaoLink == null ? DEFAULT_KAKAO_LINK : kakaoLink;
+        this.userType = userType == null ? DEFAULT_USER_TYPE : userType;
         this.mbti = mbti;
     }
 

@@ -19,19 +19,20 @@ public class Introduce {
     private static final int MIN_LENGTH = 1;
     private static final int MAX_LENGTH = 200;
     private static final int PERSIST_MAX_LENGTH = MAX_LENGTH * 3;
-    private static final String DEFAULT_INTRODUCE_VALUE = "[소개 없음]";
 
     @Column(name = "introduce", length = PERSIST_MAX_LENGTH)
     private String value;
 
     public Introduce(String value) {
-        if (value == null) {
-            this.value = DEFAULT_INTRODUCE_VALUE;
-            return;
-        }
-
+        validateNull(value);
         validateSize(value);
         this.value = value;
+    }
+
+    public void validateNull(String value) {
+        if (value == null) {
+            throw new NullPointerException("자기소개는 null 일 수 없습니다");
+        }
     }
 
     public void validateSize(String value) {
