@@ -6,18 +6,18 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties("onsquad.api")
 public record ApiProperties(
-        CrewTopN crewTopN
+        CrewTopMembers crewTopMembers
 ) {
-    public record CrewTopN(
-            Duration cycle,
-            Integer nSize
+    public record CrewTopMembers(
+            Duration during,
+            Integer rankLimit
     ) {
-        public CrewTopN(
-                @DefaultValue("7d") Duration cycle,
-                @DefaultValue("4") Integer nSize
+        public CrewTopMembers(
+                @DefaultValue("7d") Duration during,
+                @DefaultValue("4") Integer rankLimit
         ) {
-            this.cycle = cycle;
-            this.nSize = nSize;
+            this.during = during;
+            this.rankLimit = rankLimit;
         }
     }
 }

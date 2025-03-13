@@ -1,13 +1,14 @@
 package revi1337.onsquad.crew_member.domain;
 
-import static java.util.concurrent.TimeUnit.HOURS;
+import static revi1337.onsquad.common.config.RedisCacheManagerConfiguration.RedisCacheName.CREW_TOP_USERS;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.backup.crew.domain.CrewTopCacheJpaRepository;
-import revi1337.onsquad.common.aspect.RedisCache;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
@@ -51,12 +52,12 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
 
-    @RedisCache(name = "topN", key = "'crew:' + #crewId", unit = HOURS)
+    @Cacheable(cacheNames = CREW_TOP_USERS, key = "'crew:' + #crewId")
     @Override
     public List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId) {
         return crewTopCacheJpaRepository.findAllByCrewId(crewId).stream()
                 .map(Top5CrewMemberDomainDto::from)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

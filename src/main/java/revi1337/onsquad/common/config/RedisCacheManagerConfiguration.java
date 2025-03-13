@@ -41,6 +41,7 @@ public class RedisCacheManagerConfiguration {
             put(RedisCacheName.CREW_STATISTIC, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
             put(RedisCacheName.CREW_ANNOUNCES, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
             put(RedisCacheName.CREW_ANNOUNCE, defaultConfigurationWithoutDefaultTyping().entryTtl(Duration.ofHours(1)));
+            put(RedisCacheName.CREW_TOP_USERS, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
         }};
     }
 
@@ -79,6 +80,7 @@ public class RedisCacheManagerConfiguration {
         public static final String CREW_STATISTIC = "crew-statistic";
         public static final String CREW_ANNOUNCES = "crew-announces";
         public static final String CREW_ANNOUNCE = "crew-announce";
+        public static final String CREW_TOP_USERS = "crew-top-users";
 
     }
 }

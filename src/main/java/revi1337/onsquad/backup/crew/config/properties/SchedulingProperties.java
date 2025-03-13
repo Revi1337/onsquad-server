@@ -6,14 +6,14 @@ import org.springframework.scheduling.support.CronExpression;
 
 @ConfigurationProperties("onsquad.schedule")
 public record SchedulingProperties(
-        RefreshCrewTopN refreshCrewTopN
+        RefreshCrewTopMembers refreshCrewTopMembers
 ) {
     @Getter
-    public static class RefreshCrewTopN {
+    public static class RefreshCrewTopMembers {
 
         private final CronExpression cronExpression;
 
-        public RefreshCrewTopN(String expression) {
+        public RefreshCrewTopMembers(String expression) {
             try {
                 this.cronExpression = CronExpression.parse(expression);
             } catch (IllegalArgumentException e) {

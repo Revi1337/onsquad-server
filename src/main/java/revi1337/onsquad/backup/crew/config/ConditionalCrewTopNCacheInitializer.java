@@ -11,6 +11,7 @@ import org.springframework.context.event.EventListener;
 import revi1337.onsquad.backup.crew.domain.CrewTopCache;
 import revi1337.onsquad.backup.crew.domain.CrewTopCacheRepository;
 import revi1337.onsquad.common.config.properties.ApiProperties;
+import revi1337.onsquad.common.config.properties.ApiProperties.CrewTopMembers;
 import revi1337.onsquad.crew_member.domain.CrewMemberJdbcRepository;
 
 @Slf4j
@@ -26,14 +27,14 @@ public class ConditionalCrewTopNCacheInitializer {
 
     @EventListener(ApplicationReadyEvent.class)
     public void crewTop5Init() {
-        ApiProperties.CrewTopN crewTopNMetadata = apiProperties.crewTopN();
+        CrewTopMembers crewTopMembersMetadata = apiProperties.crewTopMembers();
         LocalDate to = LocalDate.now();
-        LocalDate from = to.minusDays(apiProperties.crewTopN().cycle().toDays());
+        LocalDate from = to.minusDays(apiProperties.crewTopMembers().during().toDays());
 
         log.info("[Initialize Crew Top N Caches]");
         crewTopCacheRepository.deleteAllInBatch();
         crewTopCacheRepository.batchInsertCrewTop(
-                crewMemberJdbcRepository.findAllTopNCrewMembers(from, to, crewTopNMetadata.nSize()).stream()
+                crewMemberJdbcRepository.findAllTopNCrewMembers(from, to, crewTopMembersMetadata.rankLimit()).stream()
                         .map(CrewTopCache::from)
                         .toList()
         );

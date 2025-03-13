@@ -1,6 +1,6 @@
 package revi1337.onsquad.backup.crew.schedule;
 
-import static revi1337.onsquad.common.config.properties.ApiProperties.CrewTopN;
+import static revi1337.onsquad.common.config.properties.ApiProperties.CrewTopMembers;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +24,16 @@ public class CrewTopNRefreshScheduler {
     private final CrewMemberJdbcRepository crewMemberJdbcRepository;
     private final ApiProperties apiProperties;
 
-    @Scheduled(cron = "${onsquad.schedule.refresh-crew-top-n.expression}", scheduler = "crewTopTask")
+    @Scheduled(cron = "${onsquad.schedule.refresh-crew-top-members.expression}", scheduler = "crewTopTask")
     public void refreshTopNMemberInCrew() {
-        CrewTopN crewTopNMetadata = apiProperties.crewTopN();
+        CrewTopMembers crewTopMembersMetadata = apiProperties.crewTopMembers();
         LocalDate to = LocalDate.now().minusDays(1);
-        LocalDate from = to.minusDays(apiProperties.crewTopN().cycle().toDays());
+        LocalDate from = to.minusDays(apiProperties.crewTopMembers().during().toDays());
 
         log.info("[Renew CrewTopN Caches In DataBase : {} ~ {}]", from, to);
         crewTopCacheRepository.deleteAllInBatch();
         crewTopCacheRepository.batchInsertCrewTop(
-                crewMemberJdbcRepository.findAllTopNCrewMembers(from, to, crewTopNMetadata.nSize()).stream()
+                crewMemberJdbcRepository.findAllTopNCrewMembers(from, to, crewTopMembersMetadata.rankLimit()).stream()
                         .map(CrewTopCache::from)
                         .toList()
         );

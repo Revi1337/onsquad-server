@@ -117,14 +117,14 @@ public class CrewMemberJdbcRepository {
                                 ) AS count_table
                             ) AS distinct_table
                         ) AS rank_table
-                        WHERE ranks <= :nSize
+                        WHERE ranks <= :rankLimit
                         ORDER BY crew_id, ranks
                 """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
                 .addValue("from", Date.valueOf(from))
                 .addValue("to", Date.valueOf(to))
-                .addValue("nSize", nSize);
+                .addValue("rankLimit", nSize);
 
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewTop5RowMapper());
     }
