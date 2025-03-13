@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -22,7 +22,6 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewService;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
-import revi1337.onsquad.crew.presentation.dto.request.CrewJoinRequest;
 import revi1337.onsquad.crew.presentation.dto.response.CrewInfoResponse;
 import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
 
@@ -33,19 +32,19 @@ public class CrewController {
 
     private final CrewService crewService;
 
-    @GetMapping("/crew/check")
+    @GetMapping("/crews/check")
     public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkCrewNameDuplicate(
-            @RequestParam String crewName,
+            @RequestParam String name,
             @Authenticate AuthenticatedMember ignored
     ) {
-        if (crewService.isDuplicateCrewName(crewName)) {
+        if (crewService.isDuplicateCrewName(name)) {
             return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(true)));
         }
 
         return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(false)));
     }
 
-    @PostMapping(value = "/crew/new", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/crews", consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<String>> createNewCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
             @RequestPart(required = false) MultipartFile file,
@@ -56,19 +55,19 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @PostMapping("/crew/join")
+    @PostMapping("/crews/{crewId}/requests")
     public ResponseEntity<RestResponse<String>> joinCrew(
-            @Valid @RequestBody CrewJoinRequest crewJoinRequest,
+            @PathVariable Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
-        crewService.joinCrew(authenticatedMember.toDto().getId(), crewJoinRequest.toDto());
+        crewService.joinCrew(authenticatedMember.toDto().getId(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @GetMapping("/crew")
+    @GetMapping("/crews/{crewId}")
     public ResponseEntity<RestResponse<CrewInfoResponse>> findCrew(
-            @RequestParam Long crewId,
+            @PathVariable Long crewId,
             @Authenticate(required = false) AuthenticatedMember authenticatedMember
     ) {
         final CrewInfoResponse crewResponse;

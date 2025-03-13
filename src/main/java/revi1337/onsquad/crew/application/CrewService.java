@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.common.aspect.Throttling;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
-import revi1337.onsquad.crew.application.dto.CrewJoinDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
@@ -27,7 +26,6 @@ import revi1337.onsquad.inrastructure.s3.application.S3StorageManager;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CrewService {
@@ -72,11 +70,11 @@ public class CrewService {
     }
 
     @Throttling(type = MEMBER, id = "memberId", perCycle = 5)
-    public void joinCrew(Long memberId, CrewJoinDto dto) {
-        Crew crew = crewRepository.getById(dto.crewId());
-        crewMemberRepository.findByCrewIdAndMemberId(dto.crewId(), memberId).ifPresentOrElse(
+    public void joinCrew(Long memberId, Long crewId) {
+        Crew crew = crewRepository.getById(crewId);
+        crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).ifPresentOrElse(
                 crewMember -> {
-                    throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, dto.crewId());
+                    throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId);
                 },
                 () -> {
                     checkDifferenceCrewCreator(crew, memberId);
@@ -86,10 +84,12 @@ public class CrewService {
         );
     }
 
+    @Transactional(readOnly = true)
     public CrewInfoDto findCrewById(Long crewId) {
         return CrewInfoDto.from(crewRepository.getCrewById(crewId));
     }
 
+    @Transactional(readOnly = true)
     public CrewInfoDto findCrewById(Long memberId, Long crewId) {
         return CrewInfoDto.from(
                 crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId),
@@ -97,15 +97,15 @@ public class CrewService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<CrewInfoDto> findCrewsByName(String crewName, Pageable pageable) {
         return crewRepository.findCrewsByName(crewName, pageable).stream()
                 .map(CrewInfoDto::from)
                 .toList();
     }
 
-    // TODO 객체지향적인 접근으로 리팩토링해야한다.
     private void checkDifferenceCrewCreator(Crew crew, Long memberId) {
-        if (crew.getMember().getId().equals(memberId)) {
+        if (crew.createByOwnerUsing(memberId)) {
             throw new CrewBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
         }
     }

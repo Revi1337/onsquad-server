@@ -131,4 +131,8 @@ public class Crew extends BaseEntity {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
+    public boolean createByOwnerUsing(Long memberId) {
+        return member.getId().equals(memberId);
+    }
 }
