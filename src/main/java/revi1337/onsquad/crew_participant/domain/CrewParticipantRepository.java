@@ -17,8 +17,6 @@ public interface CrewParticipantRepository {
 
     CrewParticipant save(CrewParticipant crewParticipant);
 
-    List<CrewParticipant> saveAll(List<CrewParticipant> crewParticipants);
-
     CrewParticipant saveAndFlush(CrewParticipant crewParticipant);
 
     void deleteById(Long id);
@@ -26,8 +24,6 @@ public interface CrewParticipantRepository {
     Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
     CrewParticipant upsertCrewParticipant(Crew crew, Member member, LocalDateTime now);
-
-//    List<CrewParticipantRequest> findMyCrewRequests(Long memberId);
 
     List<CrewParticipantRequest> fetchAllCrewRequestsByMemberId(Long memberId);
 

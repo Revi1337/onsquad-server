@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
 import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
@@ -27,11 +26,6 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
-    public List<CrewParticipant> saveAll(List<CrewParticipant> crewParticipants) {
-        return crewParticipantJpaRepository.saveAll(crewParticipants);
-    }
-
-    @Override
     public CrewParticipant saveAndFlush(CrewParticipant crewParticipant) {
         return crewParticipantJpaRepository.saveAndFlush(crewParticipant);
     }
@@ -46,7 +40,6 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
         return crewParticipantJpaRepository.findByCrewIdAndMemberId(crewId, memberId);
     }
 
-    @Transactional
     @Override
     public CrewParticipant upsertCrewParticipant(Crew crew, Member member, LocalDateTime now) {
         return crewParticipantJpaRepository.findByCrewIdAndMemberId(crew.getId(), member.getId())

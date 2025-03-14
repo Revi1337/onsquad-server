@@ -1,6 +1,5 @@
 package revi1337.onsquad.crew.application;
 
-import static revi1337.onsquad.common.aspect.OnSquadType.MEMBER;
 import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_EXISTS;
 import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_JOIN;
 import static revi1337.onsquad.crew.error.CrewErrorCode.OWNER_CANT_PARTICIPANT;
@@ -69,7 +68,8 @@ public class CrewService {
         crewRepository.persistCrew(dto.toEntity(member), dto.hashtags());
     }
 
-    @Throttling(type = MEMBER, id = "memberId", perCycle = 5)
+    @Throttling(name = "throttle-crew-join", key = "'crew:' + #crewId + ':member:' + #memberId", during = 5)
+    @Transactional
     public void joinCrew(Long memberId, Long crewId) {
         Crew crew = crewRepository.getById(crewId);
         crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).ifPresentOrElse(

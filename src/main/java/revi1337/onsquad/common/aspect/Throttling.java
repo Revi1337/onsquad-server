@@ -10,13 +10,11 @@ import java.util.concurrent.TimeUnit;
 @Target({ElementType.METHOD})
 public @interface Throttling {
 
-    OnSquadType type() default OnSquadType.CREW;
-
-    String id();
-
     String name() default "";
 
-    int perCycle() default 10;
+    String key();
+
+    int during() default 10;
 
     TimeUnit unit() default TimeUnit.SECONDS;
 
