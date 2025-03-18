@@ -1,13 +1,10 @@
-package revi1337.onsquad.member.application;
+package revi1337.onsquad.inrastructure.mail.application;
 
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.inrastructure.mail.EmailSender;
-import revi1337.onsquad.inrastructure.mail.MailStatus;
-import revi1337.onsquad.member.domain.redis.RedisMailRepository;
-
-import java.time.Duration;
+import revi1337.onsquad.inrastructure.mail.domain.RedisMailRepository;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -1,11 +1,11 @@
-package revi1337.onsquad.member.domain.redis;
+package revi1337.onsquad.inrastructure.mail.domain;
 
 import java.time.Duration;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.inrastructure.mail.MailStatus;
+import revi1337.onsquad.inrastructure.mail.application.MailStatus;
 
 @RequiredArgsConstructor
 @Repository
