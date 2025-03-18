@@ -23,28 +23,3 @@ public record SquadParticipantRequestResponse(
         );
     }
 }
-
-//package revi1337.onsquad.squad_participant.presentation.dto;
-//
-//import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
-//import revi1337.onsquad.squad_participant.application.dto.SquadParticipantRequestDto;
-//
-//import java.util.List;
-//
-//public record SquadParticipantRequestResponse(
-//        Long crewId,
-//        String crewName,
-//        SimpleMemberInfoResponse crewOwner,
-//        List<SquadParticipantResponse> requests
-//) {
-//    public static SquadParticipantRequestResponse from(SquadParticipantRequestDto squadParticipantRequestDto) {
-//        return new SquadParticipantRequestResponse(
-//                squadParticipantRequestDto.crewId(),
-//                squadParticipantRequestDto.crewName(),
-//                SimpleMemberInfoResponse.from(squadParticipantRequestDto.crewOwner()),
-//                squadParticipantRequestDto.requests().stream()
-//                        .map(SquadParticipantResponse::from)
-//                        .toList()
-//        );
-//    }
-//}

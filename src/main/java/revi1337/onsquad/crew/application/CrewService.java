@@ -1,38 +1,43 @@
 package revi1337.onsquad.crew.application;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_EXISTS;
-import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_JOIN;
-import static revi1337.onsquad.crew.error.CrewErrorCode.OWNER_CANT_PARTICIPANT;
+import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_PUBLISHER;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.common.aspect.Throttling;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
+import revi1337.onsquad.crew.application.event.CrewUpdateEvent;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.crew_hashtag.domain.CrewHashtag;
+import revi1337.onsquad.crew_hashtag.domain.CrewHashtagRepository;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
+import revi1337.onsquad.hashtag.domain.Hashtag;
 import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.inrastructure.s3.application.S3StorageManager;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CrewService {
 
     private final CrewRepository crewRepository;
     private final MemberRepository memberRepository;
-    private final CrewParticipantRepository crewParticipantRepository;
     private final CrewMemberRepository crewMemberRepository;
+    private final CrewHashtagRepository crewHashtagRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final S3StorageManager crewS3StorageManager;
 
     public boolean isDuplicateCrewName(String crewName) {
@@ -68,28 +73,10 @@ public class CrewService {
         crewRepository.persistCrew(dto.toEntity(member), dto.hashtags());
     }
 
-    @Throttling(name = "throttle-crew-join", key = "'crew:' + #crewId + ':member:' + #memberId", during = 5)
-    @Transactional
-    public void joinCrew(Long memberId, Long crewId) {
-        Crew crew = crewRepository.getById(crewId);
-        crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).ifPresentOrElse(
-                crewMember -> {
-                    throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId);
-                },
-                () -> {
-                    checkDifferenceCrewCreator(crew, memberId);
-                    Member referenceMember = memberRepository.getReferenceById(memberId);
-                    crewParticipantRepository.upsertCrewParticipant(crew, referenceMember, LocalDateTime.now());
-                }
-        );
-    }
-
-    @Transactional(readOnly = true)
     public CrewInfoDto findCrewById(Long crewId) {
         return CrewInfoDto.from(crewRepository.getCrewById(crewId));
     }
 
-    @Transactional(readOnly = true)
     public CrewInfoDto findCrewById(Long memberId, Long crewId) {
         return CrewInfoDto.from(
                 crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId),
@@ -97,16 +84,49 @@ public class CrewService {
         );
     }
 
-    @Transactional(readOnly = true)
     public List<CrewInfoDto> findCrewsByName(String crewName, Pageable pageable) {
         return crewRepository.findCrewsByName(crewName, pageable).stream()
                 .map(CrewInfoDto::from)
                 .toList();
     }
 
-    private void checkDifferenceCrewCreator(Crew crew, Long memberId) {
-        if (crew.createByOwnerUsing(memberId)) {
-            throw new CrewBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
+    @Transactional
+    public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto, MultipartFile file) {
+        Member member = memberRepository.getById(memberId);
+        Crew crew = crewRepository.getByIdWithImage(crewId);
+        validateCrewPublisher(member.getId(), crew);
+        update(dto, crew);
+        publishEventIfMultipartAvailable(file, crewId);
+    }
+
+    private void update(CrewUpdateDto dto, Crew crew) {
+        crew.updateCrew(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
+        crewRepository.saveAndFlush(crew);
+        updateCrewHashtags(dto, crew);
+    }
+
+    private void updateCrewHashtags(CrewUpdateDto dto, Crew crew) {
+        List<Hashtag> hashtags = dto.hashtags();
+        List<Long> hashtagIds = crew.getHashtags().stream().map(CrewHashtag::getId).toList();
+        crewHashtagRepository.deleteAllByIdIn(hashtagIds);
+        crewHashtagRepository.batchInsertCrewHashtags(crew.getId(), hashtags);
+    }
+
+    private void publishEventIfMultipartAvailable(MultipartFile file, Long crewId) {
+        if (file == null || file.isEmpty()) {
+            return;
+        }
+        try {
+            applicationEventPublisher.publishEvent(
+                    new CrewUpdateEvent(crewId, file.getBytes(), file.getOriginalFilename())
+            );
+        } catch (IOException ignored) {
+        }
+    }
+
+    private void validateCrewPublisher(Long memberId, Crew crew) {
+        if (crew.isCreatedByOwnerUsing(memberId)) {
+            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
         }
     }
 }

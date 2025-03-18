@@ -1,13 +1,11 @@
 package revi1337.onsquad.squad.presentation;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,20 +19,19 @@ import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.application.SquadService;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
-import revi1337.onsquad.squad.presentation.dto.request.SquadJoinRequest;
+import revi1337.onsquad.squad.presentation.dto.response.SimpleSquadInfoWithOwnerFlagResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
 
-@Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/crews")
 @RestController
 public class SquadController {
 
     private final SquadService squadService;
 
-    @PostMapping("/squad/new")
+    @PostMapping("/{crewId}/squads")
     public ResponseEntity<RestResponse<String>> createNewSquad(
-            @RequestParam @Positive Long crewId,
+            @PathVariable Long crewId,
             @Valid @RequestBody SquadCreateRequest squadCreateRequest,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
@@ -43,22 +40,11 @@ public class SquadController {
         return ResponseEntity.ok(RestResponse.created());
     }
 
-    @PostMapping("/squad/join")
-    public ResponseEntity<RestResponse<String>> joinSquad(
-            @RequestParam @Positive Long crewId,
-            @Valid @RequestBody SquadJoinRequest joinRequest,
-            @Authenticate AuthenticatedMember authenticatedMember
-    ) {
-        squadService.submitParticipationRequest(authenticatedMember.toDto().getId(), crewId, joinRequest.toDto());
-
-        return ResponseEntity.ok(RestResponse.noContent());
-    }
-
-    @GetMapping("/crews/{crewId}/squads/{squadId}")
+    @GetMapping("/{crewId}/squads/{squadId}")
     public ResponseEntity<RestResponse<SquadInfoResponse>> findSquad(
-            @Authenticate AuthenticatedMember authenticatedMember,
             @PathVariable Long crewId,
-            @PathVariable Long squadId
+            @PathVariable Long squadId,
+            @Authenticate AuthenticatedMember authenticatedMember
     ) {
         SquadInfoResponse squadResponse = SquadInfoResponse.from(
                 squadService.findSquad(authenticatedMember.toDto().getId(), crewId, squadId)
@@ -67,9 +53,9 @@ public class SquadController {
         return ResponseEntity.ok(RestResponse.success(squadResponse));
     }
 
-    @GetMapping("/squads")
+    @GetMapping("/{crewId}/squads")
     public ResponseEntity<RestResponse<List<SquadInfoResponse>>> findSquads(
-            @RequestParam @Positive Long crewId,
+            @PathVariable Long crewId,
             @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable
     ) {
@@ -78,5 +64,19 @@ public class SquadController {
                 .toList();
 
         return ResponseEntity.ok(RestResponse.success(squadResponses));
+    }
+
+    @GetMapping("/{crewId}/squads/manage")
+    public ResponseEntity<RestResponse<List<SimpleSquadInfoWithOwnerFlagResponse>>> fetchSquadsWithOwnerFlag(
+            @PathVariable Long crewId,
+            @PageableDefault(size = 5) Pageable pageable,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        List<SimpleSquadInfoWithOwnerFlagResponse> simpleSquadInfoWithOwnerFlagResponses = squadService
+                .fetchSquadsWithOwnerFlag(authenticatedMember.toDto().getId(), crewId, pageable).stream()
+                .map(SimpleSquadInfoWithOwnerFlagResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(simpleSquadInfoWithOwnerFlagResponses));
     }
 }

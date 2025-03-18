@@ -9,11 +9,10 @@ import revi1337.onsquad.inrastructure.mail.application.MailStatus;
 
 @RequiredArgsConstructor
 @Repository
-public class RedisMailRepository {
-
-    private final StringRedisTemplate stringRedisTemplate;
+public class AuthMailRedisRepository {
 
     private static final String KEY_FORMAT = "onsquad:auth:mail:%s";
+    private final StringRedisTemplate stringRedisTemplate;
 
     public void saveAuthCode(String email, String authCode, Duration minutes) {
         String emailFormat = String.format(KEY_FORMAT, email);

@@ -67,7 +67,6 @@ public class Crew extends BaseEntity {
     @OneToMany(mappedBy = "crew")
     private final List<CrewHashtag> hashtags = new ArrayList<>();
 
-    // TODO Image 를 nullable = True 로 바꾸었기 때문에 Image 가 들어가는 쿼리를 leftJoin() 으로 바꿔야 한다.
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
@@ -132,7 +131,7 @@ public class Crew extends BaseEntity {
         return Objects.hashCode(getId());
     }
 
-    public boolean createByOwnerUsing(Long memberId) {
+    public boolean isCreatedByOwnerUsing(Long memberId) {
         return member.getId().equals(memberId);
     }
 }

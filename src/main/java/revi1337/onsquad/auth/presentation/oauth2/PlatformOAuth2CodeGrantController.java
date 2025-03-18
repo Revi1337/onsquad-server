@@ -26,9 +26,11 @@ public class PlatformOAuth2CodeGrantController {
     private final OAuth2ClientProperties oAuth2ClientProperties;
     private final OAuth2LoginService oAuth2LoginService;
 
-    @GetMapping("/login/oauth2/code/{platform}")
-    public ResponseEntity<Void> receivePlatformAuthorizationCode(@PathVariable String platform,
-                                                                 @RequestParam String code) {
+    @GetMapping("/api/login/oauth2/code/{platform}")
+    public ResponseEntity<Void> receivePlatformAuthorizationCode(
+            @PathVariable String platform,
+            @RequestParam String code
+    ) {
         OAuth2Platform oAuth2Platform = SupportOAuth2Platform.getAvailableFromSpecific(platform);
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         AccessToken accessToken = oAuth2Platform.provideAccessToken(baseUrl, code, oAuth2ClientProperties);

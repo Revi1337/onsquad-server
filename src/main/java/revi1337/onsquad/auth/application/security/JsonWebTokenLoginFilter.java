@@ -26,7 +26,7 @@ import revi1337.onsquad.common.error.CommonErrorCode;
 @Slf4j
 public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFilter {
 
-    private static final String DEFAULT_LOGIN_URL = "/api/v1/auth/login";
+    private static final String DEFAULT_LOGIN_URL = "/api/auth/login";
     private static final String ALLOW_HTTP_METHOD = "POST";
     private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(DEFAULT_LOGIN_URL, ALLOW_HTTP_METHOD);

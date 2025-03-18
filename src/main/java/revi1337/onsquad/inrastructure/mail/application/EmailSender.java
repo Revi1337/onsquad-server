@@ -1,4 +1,4 @@
-package revi1337.onsquad.inrastructure.mail;
+package revi1337.onsquad.inrastructure.mail.application;
 
 import org.springframework.scheduling.annotation.Async;
 
