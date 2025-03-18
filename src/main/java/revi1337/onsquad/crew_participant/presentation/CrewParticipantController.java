@@ -1,33 +1,35 @@
 package revi1337.onsquad.crew_participant.presentation;
 
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthenticatedMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.crew.presentation.dto.request.CrewAcceptRequest;
 import revi1337.onsquad.crew_participant.application.CrewParticipantService;
 import revi1337.onsquad.crew_participant.presentation.dto.response.CrewParticipantRequestResponse;
 import revi1337.onsquad.crew_participant.presentation.dto.response.SimpleCrewParticipantRequestResponse;
 
-@Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 @RestController
 public class CrewParticipantController {
 
     private final CrewParticipantService crewParticipantService;
 
-    @GetMapping("/my/crew/requests")
+    @GetMapping("/my/crews/requests")
     public ResponseEntity<RestResponse<List<CrewParticipantRequestResponse>>> fetchAllCrewRequests(
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
@@ -39,9 +41,9 @@ public class CrewParticipantController {
         return ResponseEntity.ok().body(RestResponse.success(crewParticipantRequestResponse));
     }
 
-    @DeleteMapping("/my/crew/request")
-    public ResponseEntity<RestResponse<String>> modifyCrewRequest(
-            @RequestParam @Positive Long crewId,
+    @DeleteMapping("/my/crews/{crewId}/requests")
+    public ResponseEntity<RestResponse<String>> rejectCrewRequest(
+            @PathVariable Long crewId,
             @Authenticate AuthenticatedMember authenticatedMember
     ) {
         crewParticipantService.rejectCrewRequest(authenticatedMember.toDto().getId(), crewId);
@@ -49,11 +51,34 @@ public class CrewParticipantController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @GetMapping("/manage/crew/requests")
+    @PostMapping("/crews/{crewId}/requests")
+    public ResponseEntity<RestResponse<String>> requestInCrew(
+            @PathVariable Long crewId,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        crewParticipantService.requestInCrew(authenticatedMember.toDto().getId(), crewId);
+
+        return ResponseEntity.ok().body(RestResponse.created());
+    }
+
+    @PatchMapping("/crews/{crewId}/requests")
+    public ResponseEntity<RestResponse<String>> acceptCrewRequest(
+            @PathVariable Long crewId,
+            @Valid @RequestBody CrewAcceptRequest crewAcceptRequest,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        crewParticipantService.acceptCrewRequest(
+                authenticatedMember.toDto().getId(), crewId, crewAcceptRequest.toDto()
+        );
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
+    @GetMapping("/crews/{crewId}/requests")
     public ResponseEntity<RestResponse<List<SimpleCrewParticipantRequestResponse>>> fetchCrewRequests(
-            @Authenticate AuthenticatedMember authenticatedMember,
-            @RequestParam @Positive Long crewId,
-            @PageableDefault Pageable pageable
+            @PathVariable Long crewId,
+            @PageableDefault Pageable pageable,
+            @Authenticate AuthenticatedMember authenticatedMember
     ) {
         List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService
                 .fetchCrewRequests(authenticatedMember.toDto().getId(), crewId, pageable).stream()

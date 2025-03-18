@@ -15,16 +15,17 @@ import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewMainService;
 import revi1337.onsquad.crew.presentation.dto.response.CrewMainResponse;
+import revi1337.onsquad.crew.presentation.dto.response.CrewStatisticResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/crews")
 @RestController
 public class CrewMainController {
 
     private final CrewMainService crewMainService;
 
     // TODO @RequestParam CategoryCondition category 이거 왜 필수값이지? 고민필요.
-    @GetMapping("/crews/{crewId}/main")
+    @GetMapping("/{crewId}/main")
     public ResponseEntity<RestResponse<CrewMainResponse>> fetchMain(
             @PathVariable Long crewId,
             @RequestParam CategoryCondition category,
@@ -38,5 +39,17 @@ public class CrewMainController {
         );
 
         return ResponseEntity.ok().body(RestResponse.success(crewMainResponse));
+    }
+
+    @GetMapping("/{crewId}/statistic")
+    public ResponseEntity<RestResponse<CrewStatisticResponse>> fetchCrewStatistic(
+            @PathVariable Long crewId,
+            @Authenticate AuthenticatedMember authenticatedMember
+    ) {
+        CrewStatisticResponse crewStatisticResponse = CrewStatisticResponse.from(
+                crewMainService.calculateStatistic(authenticatedMember.toDto().getId(), crewId)
+        );
+
+        return ResponseEntity.ok(RestResponse.success(crewStatisticResponse));
     }
 }

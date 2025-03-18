@@ -20,7 +20,7 @@ import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/crews")
+@RequestMapping("/api/crews")
 @RestController
 public class AnnounceController {
 

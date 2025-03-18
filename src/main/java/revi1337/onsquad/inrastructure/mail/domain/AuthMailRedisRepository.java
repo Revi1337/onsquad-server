@@ -1,19 +1,18 @@
-package revi1337.onsquad.member.domain.redis;
+package revi1337.onsquad.inrastructure.mail.domain;
 
 import java.time.Duration;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.inrastructure.mail.MailStatus;
+import revi1337.onsquad.inrastructure.mail.application.MailStatus;
 
 @RequiredArgsConstructor
 @Repository
-public class RedisMailRepository {
-
-    private final StringRedisTemplate stringRedisTemplate;
+public class AuthMailRedisRepository {
 
     private static final String KEY_FORMAT = "onsquad:auth:mail:%s";
+    private final StringRedisTemplate stringRedisTemplate;
 
     public void saveAuthCode(String email, String authCode, Duration minutes) {
         String emailFormat = String.format(KEY_FORMAT, email);

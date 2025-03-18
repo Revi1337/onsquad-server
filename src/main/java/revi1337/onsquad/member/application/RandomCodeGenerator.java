@@ -1,21 +1,24 @@
 package revi1337.onsquad.member.application;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RandomCodeGenerator {
 
-    private static final String CODE_BOOK = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    @Value("${spring.mail.code-seed}")
+    private String CODE_BOOK;
 
     public String generate() {
-        StringBuilder stringBuilder = new StringBuilder();
-        mapCodeBookToIndex(stringBuilder);
-        return stringBuilder.toString();
+        StringBuffer stringBuffer = new StringBuffer();
+        mapCodeBookToIndex(stringBuffer);
+        return stringBuffer.toString();
     }
 
-    private void mapCodeBookToIndex(StringBuilder stringBuilder) {
-        Random random = new Random();
-        random.ints(0, CODE_BOOK.length())
+    private void mapCodeBookToIndex(StringBuffer stringBuffer) {
+        ThreadLocalRandom.current().ints(0, CODE_BOOK.length())
                 .limit(8)
-                .forEach(integer -> stringBuilder.append(CODE_BOOK.charAt(integer)));
+                .forEach(integer -> stringBuffer.append(CODE_BOOK.charAt(integer)));
     }
 }

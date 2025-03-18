@@ -20,7 +20,7 @@ import revi1337.onsquad.squad_member.presentation.dto.response.SquadMembersWithS
 
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 @RestController
 public class SquadMemberController {
 

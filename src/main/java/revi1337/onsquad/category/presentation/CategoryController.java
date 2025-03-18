@@ -10,7 +10,7 @@ import revi1337.onsquad.category.application.CategoryService;
 import revi1337.onsquad.common.dto.RestResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/api/categories")
 @RestController
 public class CategoryController {
 

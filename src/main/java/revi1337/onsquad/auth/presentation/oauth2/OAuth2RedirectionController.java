@@ -18,7 +18,7 @@ public class OAuth2RedirectionController {
 
     private final OAuth2ClientProperties oAuth2ClientProperties;
 
-    @GetMapping("/api/v1/login/oauth2/{platform}")
+    @GetMapping("/api/login/oauth2/{platform}")
     public ResponseEntity<String> handlePlatformOAuth2Login(@PathVariable String platform) {
         OAuth2Platform oAuth2Platform = SupportOAuth2Platform.getAvailableFromSpecific(platform);
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();

@@ -10,7 +10,7 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.hashtag.application.HashtagService;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/hashtags")
+@RequestMapping("/api/hashtags")
 @RestController
 public class HashtagController {
 

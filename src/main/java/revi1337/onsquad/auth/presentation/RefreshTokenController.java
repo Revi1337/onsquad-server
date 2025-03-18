@@ -14,7 +14,7 @@ import revi1337.onsquad.auth.presentation.dto.request.ReissueRequest;
 import revi1337.onsquad.common.dto.RestResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @RestController
 public class RefreshTokenController {
 

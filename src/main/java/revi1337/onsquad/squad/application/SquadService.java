@@ -1,8 +1,6 @@
 package revi1337.onsquad.squad.application;
 
-import static revi1337.onsquad.squad.error.SquadErrorCode.ALREADY_JOIN;
-import static revi1337.onsquad.squad.error.SquadErrorCode.NOTMATCH_CREWINFO;
-import static revi1337.onsquad.squad.error.SquadErrorCode.OWNER_CANT_PARTICIPANT;
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,15 +17,14 @@ import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.squad.application.dto.SimpleSquadInfoWithOwnerFlagDto;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-import revi1337.onsquad.squad.application.dto.SquadJoinDto;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
-import revi1337.onsquad.squad_participant.domain.SquadParticipantRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -38,7 +35,6 @@ public class SquadService {
     private final MemberRepository memberRepository;
     private final CrewRepository crewRepository;
     private final CrewMemberRepository crewMemberRepository;
-    private final SquadParticipantRepository squadParticipantRepository;
 
     @Transactional
     public void createNewSquad(Long memberId, Long crewId, SquadCreateDto dto) {
@@ -46,15 +42,6 @@ public class SquadService {
         Crew crew = crewRepository.getById(crewId);
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         persistSquad(dto, crewMember, crew);
-    }
-
-    @Transactional
-    public void submitParticipationRequest(Long memberId, Long crewId, SquadJoinDto dto) {
-        Squad squad = squadRepository.getByIdWithOwnerAndCrewAndSquadMembers(dto.squadId());
-        checkSquadBelongsToCrew(crewId, squad);
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrewId(), memberId);
-        validateSquadMembers(squad, crewMember);
-        squadParticipantRepository.upsertSquadParticipant(squad.getId(), crewMember.getId(), LocalDateTime.now());
     }
 
     public SquadInfoDto findSquad(Long memberId, Long crewId, Long squadId) {
@@ -66,6 +53,21 @@ public class SquadService {
         return squadRepository.findSquadsByCrewId(crewId, condition.categoryType(), pageable).stream()
                 .map(SquadInfoDto::from)
                 .collect(Collectors.toList());
+    }
+
+    public List<SimpleSquadInfoWithOwnerFlagDto> fetchSquadsWithOwnerFlag(
+            Long memberId,
+            Long crewId,
+            Pageable pageable
+    ) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
+        }
+
+        return squadRepository.fetchSquadsWithOwnerFlag(memberId, crewId, pageable).stream()
+                .map(SimpleSquadInfoWithOwnerFlagDto::from)
+                .toList();
     }
 
     private void persistSquad(SquadCreateDto dto, CrewMember crewMember, Crew crew) {
@@ -84,28 +86,5 @@ public class SquadService {
         List<CategoryType> possibleCategoryTypes = CategoryTypeUtil.extractPossible(categoryTypes);
         List<Category> categories = Category.fromCategoryTypes(possibleCategoryTypes);
         squadRepository.batchInsertSquadCategories(persistedSquad.getId(), categories);
-    }
-
-    private void checkSquadBelongsToCrew(Long requestCrewId, Squad squad) {
-        if (squad.isNotSameCrewId(requestCrewId)) {
-            throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
-        }
-    }
-
-    private void validateSquadMembers(Squad squad, CrewMember crewMember) {
-        checkDifferenceSquadCreator(squad, crewMember);
-        checkCrewMemberAlreadyInSquad(squad, crewMember);
-    }
-
-    private void checkDifferenceSquadCreator(Squad squad, CrewMember crewMember) {
-        if (crewMember.isOwnerOfSquad(squad.getOwnerId())) {
-            throw new SquadBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
-        }
-    }
-
-    private void checkCrewMemberAlreadyInSquad(Squad squad, CrewMember crewMember) {
-        if (squad.isSquadMemberAlreadyParticipant(crewMember.getId())) {
-            throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
-        }
     }
 }
