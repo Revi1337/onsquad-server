@@ -54,7 +54,6 @@ public class JsonWebTokenService {
                 new HashMap<>() {
                     {
                         put("memberId", dto.getId());
-                        put("nickname", dto.getNickname().getValue());
                         put("email", dto.getEmail().getValue());
                         put("userType", dto.getUserType().getText());
                     }

@@ -22,8 +22,8 @@ public class JsonWebTokenAuthenticationProvider implements AuthenticationProvide
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String emailPrincipal = authentication.getPrincipal().toString();
-        AuthMemberAttribute authMemberAttribute = (AuthMemberAttribute) userDetailsService.loadUserByUsername(
-                emailPrincipal);
+        AuthMemberAttribute authMemberAttribute = (AuthMemberAttribute) userDetailsService
+                .loadUserByUsername(emailPrincipal);
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), authMemberAttribute.getPassword())) {
             throw new BadCredentialsException(BAD_CREDENTIALS);
         }
