@@ -10,7 +10,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.application.JsonWebTokenEvaluator;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
 
@@ -43,7 +43,7 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
                 extracted -> extracted.get(EXTRACT_KEY, Long.class)
         );
 
-        return AuthenticatedMember.of(memberId);
+        return AuthMemberAttribute.of(memberId);
     }
 
     private boolean isTokenDoesntRequired(MethodParameter parameter) {

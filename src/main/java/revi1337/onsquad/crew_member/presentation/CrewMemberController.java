@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
@@ -24,11 +24,10 @@ public class CrewMemberController {
 
     @GetMapping("/my/crews")
     public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchAllJoinedCrews(
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<EnrolledCrewResponse> ownedCrewResponses = crewMemberService
-                .fetchAllJoinedCrews(authenticatedMember.toDto().getId())
-                .stream()
+                .fetchAllJoinedCrews(authMemberAttribute.id()).stream()
                 .map(EnrolledCrewResponse::from)
                 .toList();
 
@@ -38,10 +37,10 @@ public class CrewMemberController {
     @GetMapping("/crews/{crewId}/top")
     public ResponseEntity<RestResponse<List<Top5CrewMemberResponse>>> findTop5CrewMembers(
             @PathVariable Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<Top5CrewMemberResponse> top5CrewMembers = crewMemberService
-                .findTop5CrewMembers(authenticatedMember.toDto().getId(), crewId).stream()
+                .findTop5CrewMembers(authMemberAttribute.id(), crewId).stream()
                 .map(Top5CrewMemberResponse::from)
                 .toList();
 
@@ -51,10 +50,10 @@ public class CrewMemberController {
     @GetMapping("/crews/{crewId}/members")
     public ResponseEntity<RestResponse<List<CrewMemberResponse>>> findCrewMembers(
             @PathVariable Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<CrewMemberResponse> crewMemberResponse = crewMemberService
-                .findCrewMembers(authenticatedMember.toDto().getId(), crewId)
+                .findCrewMembers(authMemberAttribute.id(), crewId)
                 .stream()
                 .map(CrewMemberResponse::from)
                 .toList();

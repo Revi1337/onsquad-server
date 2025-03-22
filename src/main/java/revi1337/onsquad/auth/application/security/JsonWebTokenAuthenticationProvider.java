@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 
 @RequiredArgsConstructor
 public class JsonWebTokenAuthenticationProvider implements AuthenticationProvider {
@@ -22,14 +22,14 @@ public class JsonWebTokenAuthenticationProvider implements AuthenticationProvide
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String emailPrincipal = authentication.getPrincipal().toString();
-        AuthenticatedMember authenticatedMember = (AuthenticatedMember) userDetailsService.loadUserByUsername(
+        AuthMemberAttribute authMemberAttribute = (AuthMemberAttribute) userDetailsService.loadUserByUsername(
                 emailPrincipal);
-        if (!passwordEncoder.matches(authentication.getCredentials().toString(), authenticatedMember.getPassword())) {
+        if (!passwordEncoder.matches(authentication.getCredentials().toString(), authMemberAttribute.getPassword())) {
             throw new BadCredentialsException(BAD_CREDENTIALS);
         }
 
         return UsernamePasswordAuthenticationToken.authenticated(
-                authenticatedMember, authenticatedMember.getPassword(), authenticatedMember.getAuthorities()
+                authMemberAttribute, authMemberAttribute.getPassword(), authMemberAttribute.getAuthorities()
         );
     }
 

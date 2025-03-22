@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.presentation.dto.response.DuplicateNicknameResponse;
 import revi1337.onsquad.common.dto.RestResponse;
@@ -56,10 +56,11 @@ public class MemberController {
 
     @GetMapping("/my")
     public ResponseEntity<RestResponse<MemberInfoResponse>> findMember(
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        MemberInfoResponse memberInfoResponse = MemberInfoResponse
-                .from(memberService.findMember(authenticatedMember.toDto().getId()));
+        MemberInfoResponse memberInfoResponse = MemberInfoResponse.from(
+                memberService.findMember(authMemberAttribute.id())
+        );
 
         return ResponseEntity.ok().body(RestResponse.success(memberInfoResponse));
     }
@@ -67,9 +68,9 @@ public class MemberController {
     @PutMapping("/my")
     public ResponseEntity<RestResponse<String>> updatePassword(
             @Valid @RequestBody MemberPasswordUpdateRequest request,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        memberService.updatePassword(authenticatedMember.toDto().getId(), request.toDto());
+        memberService.updatePassword(authMemberAttribute.id(), request.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -78,9 +79,9 @@ public class MemberController {
     public ResponseEntity<RestResponse<String>> updateMember(
             @Valid @RequestPart(name = "request") MemberUpdateRequest request,
             @RequestPart(name = "file", required = false) MultipartFile file,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        memberService.updateProfile(authenticatedMember.toDto().getId(), request.toDto(), file);
+        memberService.updateProfile(authMemberAttribute.id(), request.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

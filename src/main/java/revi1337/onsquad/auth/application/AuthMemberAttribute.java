@@ -6,19 +6,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import revi1337.onsquad.member.application.dto.MemberDto;
-import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.domain.vo.UserType;
 
-public record AuthenticatedMember(
+public record AuthMemberAttribute(
         Long id,
-        UserType userType,
         Email email,
-        Address address,
-        Nickname nickname,
         Password password,
+        UserType userType,
         Collection<? extends GrantedAuthority> authorities
 ) implements UserDetails {
 
@@ -28,21 +24,17 @@ public record AuthenticatedMember(
      * @param id
      * @return
      */
-    public static AuthenticatedMember of(Long id) {
-        return new AuthenticatedMember(id, null, null, null, null, null, null);
+    public static AuthMemberAttribute of(Long id) {
+        return new AuthMemberAttribute(id, null, null, null, null);
     }
 
-    // TODO 권한이 도입되면 리팩토링 필요.
-    public static AuthenticatedMember of(Long id, UserType userType, Email email, Address address, Nickname nickname,
-                                         Password password) {
+    public static AuthMemberAttribute of(Long id, Email email, Password password, UserType userType) {
         Set<SimpleGrantedAuthority> roles = Set.of(new SimpleGrantedAuthority("ROLE_USER"));
-        return new AuthenticatedMember(
+        return new AuthMemberAttribute(
                 id,
-                userType,
                 email,
-                address,
-                nickname,
                 password,
+                userType,
                 roles
         );
     }
@@ -50,22 +42,18 @@ public record AuthenticatedMember(
     public MemberDto toDto() {
         return MemberDto.builder()
                 .id(id)
-                .userType(userType)
                 .email(email)
-                .address(address)
-                .nickname(nickname)
                 .password(password)
+                .userType(userType)
                 .build();
     }
 
-    public static AuthenticatedMember from(MemberDto memberDto) {
-        return AuthenticatedMember.of(
+    public static AuthMemberAttribute from(MemberDto memberDto) {
+        return AuthMemberAttribute.of(
                 memberDto.getId(),
-                memberDto.getUserType(),
                 memberDto.getEmail(),
-                memberDto.getAddress(),
-                memberDto.getNickname(),
-                memberDto.getPassword()
+                memberDto.getPassword(),
+                memberDto.getUserType()
         );
     }
 
@@ -82,25 +70,5 @@ public record AuthenticatedMember(
     @Override
     public String getUsername() {
         return email.getValue();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }

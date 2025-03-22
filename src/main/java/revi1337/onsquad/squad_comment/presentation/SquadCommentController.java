@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_comment.application.SquadCommentService;
@@ -34,10 +34,10 @@ public class SquadCommentController {
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Valid @RequestBody CreateSquadCommentRequest request,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         squadCommentService.addComment(
-                authenticatedMember.toDto().getId(), crewId, squadId, request.content()
+                authMemberAttribute.id(), crewId, squadId, request.content()
         );
 
         return ResponseEntity.ok().body(RestResponse.created());
@@ -49,10 +49,10 @@ public class SquadCommentController {
             @PathVariable Long squadId,
             @PathVariable Long parentId,
             @Valid @RequestBody CreateSquadCommentRequest request,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         squadCommentService.addCommentReply(
-                authenticatedMember.toDto().getId(), crewId, squadId, parentId, request.content()
+                authMemberAttribute.id(), crewId, squadId, parentId, request.content()
         );
 
         return ResponseEntity.ok().body(RestResponse.created());
@@ -60,15 +60,14 @@ public class SquadCommentController {
 
     @GetMapping("/crews/{crewId}/squads/{squadId}/comments")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchParentCommentsWithChildren(
-            @Authenticate AuthenticatedMember authenticatedMember,
+            @Authenticate AuthMemberAttribute authMemberAttribute,
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Qualifier("parent") Pageable parentPageable,
             @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) int childSize
     ) {
         List<SquadCommentResponse> commentsResponses = squadCommentService
-                .fetchParentCommentsWithChildren(authenticatedMember.toDto().getId(), crewId, squadId, parentPageable,
-                        childSize)
+                .fetchParentCommentsWithChildren(authMemberAttribute.id(), crewId, squadId, parentPageable, childSize)
                 .stream()
                 .map(SquadCommentResponse::from)
                 .toList();
@@ -82,11 +81,10 @@ public class SquadCommentController {
             @PathVariable Long squadId,
             @PathVariable Long parentId,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<SquadCommentResponse> childComments = squadCommentService
-                .findMoreChildComments(authenticatedMember.toDto().getId(), crewId, squadId, parentId, pageable)
-                .stream()
+                .findMoreChildComments(authMemberAttribute.id(), crewId, squadId, parentId, pageable).stream()
                 .map(SquadCommentResponse::from)
                 .toList();
 
@@ -97,10 +95,10 @@ public class SquadCommentController {
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> findAllComments(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<SquadCommentResponse> commentsResponses = squadCommentService
-                .findAllComments(authenticatedMember.toDto().getId(), crewId, squadId).stream()
+                .findAllComments(authMemberAttribute.id(), crewId, squadId).stream()
                 .map(SquadCommentResponse::from)
                 .toList();
 
