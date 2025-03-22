@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.common.dto.RestResponse;
@@ -33,9 +33,9 @@ public class SquadController {
     public ResponseEntity<RestResponse<String>> createNewSquad(
             @PathVariable Long crewId,
             @Valid @RequestBody SquadCreateRequest squadCreateRequest,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        squadService.createNewSquad(authenticatedMember.toDto().getId(), crewId, squadCreateRequest.toDto());
+        squadService.createNewSquad(authMemberAttribute.id(), crewId, squadCreateRequest.toDto());
 
         return ResponseEntity.ok(RestResponse.created());
     }
@@ -44,10 +44,10 @@ public class SquadController {
     public ResponseEntity<RestResponse<SquadInfoResponse>> findSquad(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         SquadInfoResponse squadResponse = SquadInfoResponse.from(
-                squadService.findSquad(authenticatedMember.toDto().getId(), crewId, squadId)
+                squadService.findSquad(authMemberAttribute.id(), crewId, squadId)
         );
 
         return ResponseEntity.ok(RestResponse.success(squadResponse));
@@ -70,10 +70,10 @@ public class SquadController {
     public ResponseEntity<RestResponse<List<SimpleSquadInfoWithOwnerFlagResponse>>> fetchSquadsWithOwnerFlag(
             @PathVariable Long crewId,
             @PageableDefault(size = 5) Pageable pageable,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<SimpleSquadInfoWithOwnerFlagResponse> simpleSquadInfoWithOwnerFlagResponses = squadService
-                .fetchSquadsWithOwnerFlag(authenticatedMember.toDto().getId(), crewId, pageable).stream()
+                .fetchSquadsWithOwnerFlag(authMemberAttribute.id(), crewId, pageable).stream()
                 .map(SimpleSquadInfoWithOwnerFlagResponse::from)
                 .toList();
 

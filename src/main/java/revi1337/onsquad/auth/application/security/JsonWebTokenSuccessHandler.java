@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.application.JsonWebTokenService;
 import revi1337.onsquad.auth.application.dto.JsonWebToken;
 
@@ -26,9 +26,9 @@ public class JsonWebTokenSuccessHandler implements AuthenticationSuccessHandler 
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
         log.info("{} --> onAuthenticationSuccess", getClass().getSimpleName());
-        if (authentication.getPrincipal() instanceof AuthenticatedMember authenticatedMember) {
-            JsonWebToken jsonWebToken = generateJsonWebTokenPair(authenticatedMember);
-            jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebToken.refreshToken(), authenticatedMember.id());
+        if (authentication.getPrincipal() instanceof AuthMemberAttribute authMemberAttribute) {
+            JsonWebToken jsonWebToken = generateJsonWebTokenPair(authMemberAttribute);
+            jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebToken.refreshToken(), authMemberAttribute.id());
             sendTokenResponseToClient(response, jsonWebToken);
             return;
         }
@@ -36,8 +36,8 @@ public class JsonWebTokenSuccessHandler implements AuthenticationSuccessHandler 
         throw new RuntimeException("unexpected principal type");
     }
 
-    private JsonWebToken generateJsonWebTokenPair(AuthenticatedMember authenticatedMember) {
-        return jsonWebTokenService.generateTokenPair(authenticatedMember.toDto());
+    private JsonWebToken generateJsonWebTokenPair(AuthMemberAttribute authMemberAttribute) {
+        return jsonWebTokenService.generateTokenPair(authMemberAttribute.toDto());
     }
 
     private void sendTokenResponseToClient(HttpServletResponse response,

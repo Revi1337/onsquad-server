@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.common.dto.RestResponse;
@@ -30,12 +30,10 @@ public class CrewMainController {
             @PathVariable Long crewId,
             @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         CrewMainResponse crewMainResponse = CrewMainResponse.from(
-                crewMainService.fetchMain(
-                        authenticatedMember.toDto().getId(), crewId, category.categoryType(), pageable
-                )
+                crewMainService.fetchMain(authMemberAttribute.id(), crewId, category.categoryType(), pageable)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(crewMainResponse));
@@ -44,10 +42,10 @@ public class CrewMainController {
     @GetMapping("/{crewId}/statistic")
     public ResponseEntity<RestResponse<CrewStatisticResponse>> fetchCrewStatistic(
             @PathVariable Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         CrewStatisticResponse crewStatisticResponse = CrewStatisticResponse.from(
-                crewMainService.calculateStatistic(authenticatedMember.toDto().getId(), crewId)
+                crewMainService.calculateStatistic(authMemberAttribute.id(), crewId)
         );
 
         return ResponseEntity.ok(RestResponse.success(crewStatisticResponse));

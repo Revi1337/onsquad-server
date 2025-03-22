@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_member.application.SquadMemberService;
@@ -28,10 +28,10 @@ public class SquadMemberController {
 
     @GetMapping("/my/squads")
     public ResponseEntity<RestResponse<List<EnrolledSquadResponse>>> fetchAllJoinedSquads(
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<EnrolledSquadResponse> enrolledSquadResponses = squadMemberService
-                .fetchAllJoinedSquads(authenticatedMember.toDto().getId()).stream()
+                .fetchAllJoinedSquads(authMemberAttribute.id()).stream()
                 .map(EnrolledSquadResponse::from)
                 .toList();
 
@@ -40,12 +40,12 @@ public class SquadMemberController {
 
     @GetMapping("/manage/squad/members")
     public ResponseEntity<RestResponse<SquadMembersWithSquadResponse>> findSquadWithMembers(
-            @Authenticate AuthenticatedMember authenticatedMember,
+            @Authenticate AuthMemberAttribute authMemberAttribute,
             @RequestParam @Positive Long crewId,
             @RequestParam Long squadId
     ) {
         SquadMembersWithSquadResponse squadWithSquadMembers = SquadMembersWithSquadResponse.from(
-                squadMemberService.findSquadWithMembers(authenticatedMember.toDto().getId(), crewId, squadId)
+                squadMemberService.findSquadWithMembers(authMemberAttribute.id(), crewId, squadId)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(squadWithSquadMembers));
@@ -55,10 +55,10 @@ public class SquadMemberController {
     public ResponseEntity<RestResponse<SquadInMembersResponse>> fetchMembersInSquad(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         SquadInMembersResponse squadInMembersResponse = SquadInMembersResponse.from(
-                squadMemberService.fetchMembersInSquad(authenticatedMember.toDto().getId(), crewId, squadId)
+                squadMemberService.fetchMembersInSquad(authMemberAttribute.id(), crewId, squadId)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(squadInMembersResponse));

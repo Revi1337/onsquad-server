@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.presentation.dto.request.SquadAcceptRequest;
@@ -31,10 +31,10 @@ public class SquadParticipantController {
 
     @GetMapping("/my/squads/requests")
     public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> fetchAllSquadRequests(
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<SquadParticipantRequestResponse> requestResponses = squadParticipantService
-                .fetchAllSquadRequests(authenticatedMember.toDto().getId()).stream()
+                .fetchAllSquadRequests(authMemberAttribute.id()).stream()
                 .map(SquadParticipantRequestResponse::from)
                 .toList();
 
@@ -45,9 +45,9 @@ public class SquadParticipantController {
     public ResponseEntity<RestResponse<String>> rejectSquadRequest(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        squadParticipantService.rejectSquadRequest(authenticatedMember.toDto().getId(), crewId, squadId);
+        squadParticipantService.rejectSquadRequest(authMemberAttribute.id(), crewId, squadId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -56,9 +56,9 @@ public class SquadParticipantController {
     public ResponseEntity<RestResponse<String>> requestInSquad(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        squadParticipantService.requestInSquad(authenticatedMember.toDto().getId(), crewId, squadId);
+        squadParticipantService.requestInSquad(authMemberAttribute.id(), crewId, squadId);
 
         return ResponseEntity.ok(RestResponse.noContent());
     }
@@ -68,7 +68,7 @@ public class SquadParticipantController {
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Valid @RequestBody SquadAcceptRequest squadAcceptRequest,
-            @Authenticate AuthenticatedMember ignored
+            @Authenticate AuthMemberAttribute ignored
     ) {
         squadParticipantService.acceptCrewRequest(crewId, squadId, squadAcceptRequest.toDto());
 
@@ -80,10 +80,10 @@ public class SquadParticipantController {
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<SimpleSquadParticipantResponse> simpleSquadParticipantResponses = squadParticipantService
-                .fetchRequestsInSquad(authenticatedMember.toDto().getId(), crewId, squadId, pageable).stream()
+                .fetchRequestsInSquad(authMemberAttribute.id(), crewId, squadId, pageable).stream()
                 .map(SimpleSquadParticipantResponse::from)
                 .toList();
 

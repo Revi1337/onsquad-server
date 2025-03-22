@@ -15,7 +15,7 @@ import revi1337.onsquad.announce.application.AnnounceService;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfoResponse;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfosWithAuthResponse;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 
@@ -29,10 +29,10 @@ public class AnnounceController {
     @PostMapping("/{crewId}/announces")
     public ResponseEntity<RestResponse<String>> createNewAnnounce(
             @PathVariable Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember,
+            @Authenticate AuthMemberAttribute authMemberAttribute,
             @Valid @RequestBody AnnounceCreateRequest createRequest
     ) {
-        announceService.createNewAnnounce(authenticatedMember.toDto().getId(), crewId, createRequest.toDto());
+        announceService.createNewAnnounce(authMemberAttribute.id(), crewId, createRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -41,9 +41,9 @@ public class AnnounceController {
     public ResponseEntity<RestResponse<String>> fixAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        announceService.fixAnnounce(authenticatedMember.toDto().getId(), crewId, announceId);
+        announceService.fixAnnounce(authMemberAttribute.id(), crewId, announceId);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -52,10 +52,10 @@ public class AnnounceController {
     public ResponseEntity<RestResponse<AnnounceInfoResponse>> findAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         AnnounceInfoResponse announceInfoResponse = AnnounceInfoResponse.from(
-                announceService.findAnnounce(authenticatedMember.toDto().getId(), crewId, announceId)
+                announceService.findAnnounce(authMemberAttribute.id(), crewId, announceId)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(announceInfoResponse));
@@ -64,10 +64,10 @@ public class AnnounceController {
     @GetMapping("/{crewId}/announces")
     public ResponseEntity<RestResponse<List<AnnounceInfoResponse>>> findAnnounces(
             @PathVariable Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<AnnounceInfoResponse> announceInfoResponses = announceService.findAnnounces(
-                        authenticatedMember.toDto().getId(), crewId).stream()
+        List<AnnounceInfoResponse> announceInfoResponses = announceService
+                .findAnnounces(authMemberAttribute.id(), crewId).stream()
                 .map(AnnounceInfoResponse::from)
                 .toList();
 
@@ -77,10 +77,10 @@ public class AnnounceController {
     @GetMapping("/{crewId}/announces/more")
     public ResponseEntity<RestResponse<AnnounceInfosWithAuthResponse>> findMoreAnnounces(
             @PathVariable Long crewId,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         AnnounceInfosWithAuthResponse announceInfosWithAuthResponse = AnnounceInfosWithAuthResponse.from(
-                announceService.findMoreAnnounces(authenticatedMember.toDto().getId(), crewId)
+                announceService.findMoreAnnounces(authMemberAttribute.id(), crewId)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(announceInfosWithAuthResponse));

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.auth.application.AuthenticatedMember;
+import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewService;
@@ -37,7 +37,7 @@ public class CrewController {
     @GetMapping("/check")
     public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkCrewNameDuplicate(
             @RequestParam String name,
-            @Authenticate AuthenticatedMember ignored
+            @Authenticate AuthMemberAttribute ignored
     ) {
         if (crewService.isDuplicateCrewName(name)) {
             return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(true)));
@@ -50,9 +50,9 @@ public class CrewController {
     public ResponseEntity<RestResponse<String>> newCrew(
             @Valid @RequestPart CrewCreateRequest crewCreateRequest,
             @RequestPart(required = false) MultipartFile file,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewService.createNewCrew(authenticatedMember.toDto().getId(), crewCreateRequest.toDto(), file);
+        crewService.createNewCrew(authMemberAttribute.id(), crewCreateRequest.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -60,15 +60,15 @@ public class CrewController {
     @GetMapping("/{crewId}")
     public ResponseEntity<RestResponse<CrewInfoResponse>> findCrew(
             @PathVariable Long crewId,
-            @Authenticate(required = false) AuthenticatedMember authenticatedMember
+            @Authenticate(required = false) AuthMemberAttribute authMemberAttribute
     ) {
         final CrewInfoResponse crewResponse;
-        if (authenticatedMember == null) {
+        if (authMemberAttribute == null) {
             crewResponse = CrewInfoResponse.from(crewService.findCrewById(crewId));
             return ResponseEntity.ok().body(RestResponse.success(crewResponse));
         }
 
-        crewResponse = CrewInfoResponse.from(crewService.findCrewById(authenticatedMember.toDto().getId(), crewId));
+        crewResponse = CrewInfoResponse.from(crewService.findCrewById(authMemberAttribute.id(), crewId));
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
 
@@ -89,9 +89,9 @@ public class CrewController {
             @PathVariable Long crewId,
             @Valid @RequestPart CrewUpdateRequest crewUpdateRequest,
             @RequestPart(name = "file", required = false) MultipartFile file,
-            @Authenticate AuthenticatedMember authenticatedMember
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewService.updateCrew(authenticatedMember.toDto().getId(), crewId, crewUpdateRequest.toDto(), file);
+        crewService.updateCrew(authMemberAttribute.id(), crewId, crewUpdateRequest.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
