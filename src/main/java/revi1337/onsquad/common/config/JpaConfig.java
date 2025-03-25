@@ -1,5 +1,9 @@
 package revi1337.onsquad.common.config;
 
+import com.blazebit.persistence.querydsl.JPQLNextTemplates;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.sql.SQLOps;
+import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -17,5 +21,17 @@ public class JpaConfig {
             pageableResolver.setSizeParameterName("size");
             pageableResolver.setOneIndexedParameters(true);
         };
+    }
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory(EntityManager entityManager) {
+        return new JPAQueryFactory(new CustomJPQLTemplates(), entityManager);
+    }
+
+    static class CustomJPQLTemplates extends JPQLNextTemplates {
+
+        public CustomJPQLTemplates() {
+            add(SQLOps.ROWNUMBER, "row_number()");
+        }
     }
 }

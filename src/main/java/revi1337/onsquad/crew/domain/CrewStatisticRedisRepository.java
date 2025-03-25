@@ -13,7 +13,7 @@ public class CrewStatisticRedisRepository implements CrewStatisticCacheRepositor
 
     private final CrewStatisticQueryDslRepository crewStatisticQueryDslRepository;
 
-    @Cacheable(cacheNames = CREW_STATISTIC, key = "'crew:' + #crewId", cacheManager = "caffeineCacheManager")
+    @Cacheable(cacheNames = CREW_STATISTIC, key = "'crew:' + #crewId")
     @Override
     public CrewStatisticDomainDto getStatisticById(Long crewId) {
         return crewStatisticQueryDslRepository.getStatisticById(crewId);

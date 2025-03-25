@@ -12,33 +12,31 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
 @RequiredArgsConstructor
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @Aspect
-@Component
 public class RedisCacheAspect {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
 
     @Around("@annotation(redisCache)")
     public Object handleRedisCache(ProceedingJoinPoint joinPoint, RedisCache redisCache) {
         String redisKey = generateRedisKey(joinPoint, redisCache);
-        String cachedData = redisTemplate.opsForValue().get(redisKey);
+        String cachedData = stringRedisTemplate.opsForValue().get(redisKey);
         if (cachedData != null) {
             return deserializeCachedData(cachedData, joinPoint);
         }
         try {
             Object result = joinPoint.proceed();
             if (shouldCache(redisCache, result)) {
-                redisTemplate.opsForValue().set(redisKey, serializeData(result), calculateTtl(redisCache));
+                stringRedisTemplate.opsForValue().set(redisKey, serializeData(result), calculateTtl(redisCache));
             }
             return result;
         } catch (Throwable e) {
