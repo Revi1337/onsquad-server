@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -20,12 +19,11 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import revi1337.onsquad.common.constant.CacheConst;
+import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
-@EnableCaching
 @Configuration
 public class RedisCacheManagerConfiguration {
-
-    private static final String DEFAULT_KEY_FORMAT = "onsquad:%s:";
 
     @Primary
     @Bean
@@ -38,10 +36,10 @@ public class RedisCacheManagerConfiguration {
 
     private Map<String, RedisCacheConfiguration> initConfiguration() {
         return new HashMap<>() {{
-            put(RedisCacheName.CREW_STATISTIC, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
-            put(RedisCacheName.CREW_ANNOUNCES, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
-            put(RedisCacheName.CREW_ANNOUNCE, defaultConfigurationWithoutDefaultTyping().entryTtl(Duration.ofHours(1)));
-            put(RedisCacheName.CREW_TOP_USERS, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
+            put(CacheConst.CREW_STATISTIC, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
+            put(CacheConst.CREW_ANNOUNCES, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
+            put(CacheConst.CREW_ANNOUNCE, defaultConfigurationWithoutDefaultTyping().entryTtl(Duration.ofHours(1)));
+            put(CacheConst.CREW_TOP_USERS, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
         }};
     }
 
@@ -50,7 +48,7 @@ public class RedisCacheManagerConfiguration {
         serializer.configure(objectMapper -> objectMapper.registerModule(new JavaTimeModule()));
 
         return RedisCacheConfiguration.defaultCacheConfig()
-                .computePrefixWith(cacheName -> String.format(DEFAULT_KEY_FORMAT, cacheName))
+                .computePrefixWith(cacheName -> String.format(CacheFormat.PREFIX, cacheName))
                 .serializeKeysWith(fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(fromSerializer(serializer));
     }
@@ -73,14 +71,5 @@ public class RedisCacheManagerConfiguration {
                                 .build(),
                         DefaultTyping.NON_FINAL
                 );
-    }
-
-    abstract public static class RedisCacheName {
-
-        public static final String CREW_STATISTIC = "crew-statistic";
-        public static final String CREW_ANNOUNCES = "crew-announces";
-        public static final String CREW_ANNOUNCE = "crew-announce";
-        public static final String CREW_TOP_USERS = "crew-top-users";
-
     }
 }

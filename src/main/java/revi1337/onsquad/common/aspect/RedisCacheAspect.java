@@ -10,18 +10,20 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
-@Aspect
 @RequiredArgsConstructor
+@Order(Ordered.LOWEST_PRECEDENCE - 1)
+@Aspect
 @Component
 public class RedisCacheAspect {
 
-    private static final String DELIMITER = ":";
-    private static final String CACHE_NAME_PREFIX = "onsquad" + DELIMITER;
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
@@ -54,7 +56,7 @@ public class RedisCacheAspect {
         }
 
         String expressionValue = spelExpressionParser.parseExpression(redisCache.key()).getValue(context, String.class);
-        return CACHE_NAME_PREFIX + redisCache.name() + DELIMITER + expressionValue;
+        return String.format(CacheFormat.COMPLEX, redisCache.name(), expressionValue);
     }
 
     private String serializeData(Object data) {

@@ -25,7 +25,7 @@ public class JsonWebTokenService {
 
     private final JsonWebTokenProvider jsonWebTokenProvider;
     private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
-    private final RefreshTokenManager redisHashRefreshTokenManager;
+    private final RefreshTokenManager expiringMapRefreshTokenManager;
     private final MemberRepository memberRepository;
 
     public JsonWebToken generateTokenPair(MemberDto dto) {
@@ -36,15 +36,15 @@ public class JsonWebTokenService {
     }
 
     public void storeTemporaryTokenInMemory(RefreshToken refreshToken, Long memberId) {
-        redisHashRefreshTokenManager.storeTemporaryToken(refreshToken, memberId);
+        expiringMapRefreshTokenManager.storeTemporaryToken(refreshToken, memberId);
     }
 
     public JsonWebToken reissueToken(RefreshToken refreshToken) {
         Claims claims = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
         return Optional.ofNullable(claims.get("memberId", Long.class))
-                .flatMap(memberId -> redisHashRefreshTokenManager.findTemporaryToken(memberId)
+                .flatMap(memberId -> expiringMapRefreshTokenManager.findTemporaryToken(memberId)
                         .filter(token -> token.equals(refreshToken))
-                        .map(token -> restoreTemporaryTokenAndCreateTokenPair(memberId)))
+                        .map(token -> restoreTokenPair(memberId)))
                 .orElseThrow(() -> new AuthTokenException.NotFoundRefresh(NOT_FOUND_REFRESH));
     }
 
@@ -68,15 +68,10 @@ public class JsonWebTokenService {
         );
     }
 
-    private JsonWebToken restoreTemporaryTokenAndCreateTokenPair(Long tokenOwnerId) {
+    private JsonWebToken restoreTokenPair(Long tokenOwnerId) {
         Member member = memberRepository.getById(tokenOwnerId);
         JsonWebToken jsonWebToken = generateTokenPair(MemberDto.from(member));
-        updateTemporaryToken(tokenOwnerId, jsonWebToken.refreshToken());
-
+        expiringMapRefreshTokenManager.storeTemporaryToken(jsonWebToken.refreshToken(), tokenOwnerId);
         return jsonWebToken;
-    }
-
-    private void updateTemporaryToken(Long tokenOwnerId, RefreshToken newRefreshToken) {
-        redisHashRefreshTokenManager.updateTemporaryToken(tokenOwnerId, newRefreshToken);
     }
 }

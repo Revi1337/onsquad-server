@@ -12,6 +12,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
+import revi1337.onsquad.common.constant.Sign;
 import revi1337.onsquad.common.error.CommonErrorCode;
 import revi1337.onsquad.common.error.exception.CommonBusinessException;
 
@@ -21,8 +23,6 @@ import revi1337.onsquad.common.error.exception.CommonBusinessException;
 @Component
 public class ThrottlingAspect {
 
-    private static final String DELIMITER = ":";
-    private static final String CACHE_NAME_PREFIX = "onsquad" + DELIMITER;
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
     private final RequestCacheHandler requestCacheHandlerExecutionChain;
 
@@ -48,11 +48,11 @@ public class ThrottlingAspect {
         }
 
         String expressionValue = spelExpressionParser.parseExpression(throttling.key()).getValue(context, String.class);
-        return CACHE_NAME_PREFIX + throttling.name() + DELIMITER + expressionValue;
+        return String.format(CacheFormat.COMPLEX, throttling.name(), expressionValue);
     }
 
     private String getCycleAsDuration(Throttling throttling) {
         ChronoUnit chronoUnit = throttling.unit().toChronoUnit();
-        return throttling.during() + " " + chronoUnit;
+        return throttling.during() + Sign.WHITESPACE + chronoUnit;
     }
 }

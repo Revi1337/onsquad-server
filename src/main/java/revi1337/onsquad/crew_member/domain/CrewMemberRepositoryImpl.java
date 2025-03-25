@@ -1,6 +1,6 @@
 package revi1337.onsquad.crew_member.domain;
 
-import static revi1337.onsquad.common.config.RedisCacheManagerConfiguration.RedisCacheName.CREW_TOP_USERS;
+import static revi1337.onsquad.common.constant.CacheConst.CREW_TOP_USERS;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +52,7 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
 
-    @Cacheable(cacheNames = CREW_TOP_USERS, key = "'crew:' + #crewId")
+    @Cacheable(cacheNames = CREW_TOP_USERS, key = "'crew:' + #crewId", cacheManager = "caffeineCacheManager")
     @Override
     public List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId) {
         return crewTopCacheJpaRepository.findAllByCrewId(crewId).stream()

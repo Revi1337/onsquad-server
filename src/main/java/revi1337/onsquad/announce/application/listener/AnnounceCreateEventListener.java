@@ -10,7 +10,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.announce.application.event.AnnounceCreateEvent;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
 import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
-import revi1337.onsquad.common.config.RedisCacheManagerConfiguration.RedisCacheName;
+import revi1337.onsquad.common.constant.CacheConst;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ import revi1337.onsquad.common.config.RedisCacheManagerConfiguration.RedisCacheN
 public class AnnounceCreateEventListener {
 
     private final AnnounceRepository announceRepository;
-    private final CacheManager redisCacheManager;
+    private final CacheManager caffeineCacheManager;
 
     @TransactionalEventListener
     public void handleAnnounceCreateEvent(AnnounceCreateEvent createEvent) {
@@ -26,7 +26,9 @@ public class AnnounceCreateEventListener {
         List<AnnounceInfoDomainDto> announceInfos = announceRepository
                 .findLimitedAnnouncesByCrewId(createEvent.crewId());
 
-        Cache cache = redisCacheManager.getCache(RedisCacheName.CREW_ANNOUNCES);
-        cache.put(String.format("crew:%d", createEvent.crewId()), announceInfos);
+        Cache cache = caffeineCacheManager.getCache(CacheConst.CREW_ANNOUNCES);
+        String computedCacheName = String.format("crew:%d", createEvent.crewId());
+        cache.evict(computedCacheName);
+        cache.put(computedCacheName, announceInfos);
     }
 }
