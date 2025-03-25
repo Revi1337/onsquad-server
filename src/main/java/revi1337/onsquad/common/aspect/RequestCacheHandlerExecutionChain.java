@@ -1,17 +1,15 @@
 package revi1337.onsquad.common.aspect;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
 
-    private final List<RequestCacheHandler> requestCacheHandlers = new ArrayList<>();
-
-    public RequestCacheHandlerExecutionChain() {
-        addDefaultCacheHandler();
-    }
+    private final List<RequestCacheHandler> requestCacheHandlers =
+            new ArrayList<>(Collections.singletonList(new ExpiredMapRequestCacheHandler()));
 
     public void addRequestCacheHandlerBefore(RequestCacheHandler requestCacheHandler,
                                              Class<? extends RequestCacheHandler> clazz) {
@@ -31,9 +29,5 @@ public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("[모든 캐싱 후보군을 사용할 수 없습니다.]"));
-    }
-
-    private void addDefaultCacheHandler() {
-        requestCacheHandlers.add(new ExpiredMapRequestCacheHandler());
     }
 }

@@ -52,7 +52,7 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
 
-    @Cacheable(cacheNames = CREW_TOP_USERS, key = "'crew:' + #crewId", cacheManager = "caffeineCacheManager")
+    @Cacheable(cacheNames = CREW_TOP_USERS, key = "'crew:' + #crewId")
     @Override
     public List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId) {
         return crewTopCacheJpaRepository.findAllByCrewId(crewId).stream()

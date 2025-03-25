@@ -15,13 +15,13 @@ public class AnnounceCacheRepository {
 
     private final AnnounceQueryDslRepository announceQueryDslRepository;
 
-    @Cacheable(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", unless = "#result == null", cacheManager = "caffeineCacheManager")
+    @Cacheable(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", unless = "#result == null")
     public AnnounceInfoDomainDto getCachedByCrewIdAndIdAndMemberId(Long crewId, Long announceId, Long memberId) {
         return announceQueryDslRepository.fetchByCrewIdAndIdAndMemberId(crewId, announceId, memberId)
                 .orElse(null);
     }
 
-    @Cacheable(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId", cacheManager = "caffeineCacheManager")
+    @Cacheable(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId")
     public List<AnnounceInfoDomainDto> fetchCachedLimitedByCrewId(Long crewId, Long size) {
         return announceQueryDslRepository.fetchLimitedByCrewId(crewId, size);
     }
