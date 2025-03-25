@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config.properties;
+package revi1337.onsquad.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
