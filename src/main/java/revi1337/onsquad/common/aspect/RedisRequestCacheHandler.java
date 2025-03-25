@@ -6,6 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+/**
+ * RedisRequestCacheHandler For RequestCacheHandlerExecutionChain
+ *
+ * @see RequestCacheHandlerExecutionChain
+ * @deprecated Redis is unnecessary due to single-instance usage, so this Class has been deprecated.
+ */
+@Deprecated
 @Slf4j
 @RequiredArgsConstructor
 public class RedisRequestCacheHandler implements RequestCacheHandler {

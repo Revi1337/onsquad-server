@@ -1,6 +1,6 @@
 package revi1337.onsquad.crew.domain;
 
-import static revi1337.onsquad.common.config.RedisCacheManagerConfiguration.RedisCacheName.CREW_STATISTIC;
+import static revi1337.onsquad.common.constant.CacheConst.CREW_STATISTIC;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,8 +12,8 @@ import revi1337.onsquad.crew.domain.dto.CrewStatisticDomainDto;
 public class CrewStatisticRedisRepository implements CrewStatisticCacheRepository {
 
     private final CrewStatisticQueryDslRepository crewStatisticQueryDslRepository;
-    
-    @Cacheable(cacheNames = CREW_STATISTIC, key = "'crew:' + #crewId")
+
+    @Cacheable(cacheNames = CREW_STATISTIC, key = "'crew:' + #crewId", cacheManager = "caffeineCacheManager")
     @Override
     public CrewStatisticDomainDto getStatisticById(Long crewId) {
         return crewStatisticQueryDslRepository.getStatisticById(crewId);

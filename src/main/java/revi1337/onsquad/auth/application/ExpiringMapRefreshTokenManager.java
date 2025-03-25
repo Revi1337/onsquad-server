@@ -1,34 +1,32 @@
-package revi1337.onsquad.auth.application.redis;
+package revi1337.onsquad.auth.application;
 
 import java.time.Duration;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.auth.application.RefreshTokenManager;
 import revi1337.onsquad.auth.application.token.RefreshToken;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
 
-@Deprecated
 @RequiredArgsConstructor
 @Service
-public class RedisRefreshTokenManager implements RefreshTokenManager {
+public class ExpiringMapRefreshTokenManager implements RefreshTokenManager {
 
-    private final RedisHashTokenOperation redisTokenOperation;
+    private final ExpiringMapTokenOperation refreshTokenOperation;
     private final TokenProperties tokenProperties;
 
     @Override
     public void storeTemporaryToken(RefreshToken refreshToken, Long memberId) {
         Duration expired = tokenProperties.refreshTokenAttributes().tokenAttributes().expired();
-        redisTokenOperation.storeTemporaryRefreshToken(refreshToken, memberId, expired);
+        refreshTokenOperation.storeTemporaryRefreshToken(refreshToken, memberId, expired);
     }
 
     @Override
     public Optional<RefreshToken> findTemporaryToken(Long memberId) {
-        return redisTokenOperation.retrieveTemporaryRefreshToken(memberId);
+        return refreshTokenOperation.retrieveTemporaryRefreshToken(memberId);
     }
 
     @Override
     public void removeTemporaryToken(Long memberId) {
-        redisTokenOperation.deleteTemporaryRefreshToken(memberId);
+        refreshTokenOperation.deleteTemporaryRefreshToken(memberId);
     }
 }
