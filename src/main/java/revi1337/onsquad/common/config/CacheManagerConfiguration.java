@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -24,6 +24,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -39,6 +40,7 @@ public class CacheManagerConfiguration {
     @Configuration
     static class CaffeineCacheManagerConfiguration {
 
+        @Primary
         @Bean
         public CacheManager caffeineCacheManager() {
             List<CaffeineCache> caches = CaffeineConst.stream()
@@ -84,7 +86,7 @@ public class CacheManagerConfiguration {
     }
 
     @Configuration
-    @ConditionalOnMissingBean(CacheManager.class)
+    @ConditionalOnProperty(name = "onsquad.use-redis-cache-manager", havingValue = "true")
     static class RedisCacheManagerConfiguration {
 
         @Bean

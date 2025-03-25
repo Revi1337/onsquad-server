@@ -17,6 +17,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
+@Deprecated
 @RequiredArgsConstructor
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @Aspect
