@@ -1,6 +1,7 @@
 package revi1337.onsquad.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,6 +19,7 @@ public class AspectConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "onsquad.use-custom-redis-aspect", havingValue = "true")
     public RedisCacheAspect redisCacheAspect(StringRedisTemplate stringRedisTemplate, ObjectMapper objectMapper) {
         return new RedisCacheAspect(stringRedisTemplate, objectMapper);
     }
