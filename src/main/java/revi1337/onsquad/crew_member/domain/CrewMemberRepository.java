@@ -4,7 +4,6 @@ import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICI
 
 import java.util.List;
 import java.util.Optional;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
@@ -18,10 +17,6 @@ public interface CrewMemberRepository {
 
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    Optional<CrewMember> findWithMemberByCrewIdAndMemberId(Long crewId, Long memberId);
-
-    boolean existsByMemberIdAndCrewName(Long memberId, Name name);
-
     Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
 
     List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId);
@@ -30,21 +25,12 @@ public interface CrewMemberRepository {
 
     boolean existsParticipantCrewMember(Long memberId);
 
-    Optional<CrewMember> findCrewMemberByMemberId(Long memberId);
-
-    Optional<CrewMember> findCrewMemberByCrewIdAndMemberId(Long memberId, Long crewId);
-
     List<EnrolledCrewDomainDto> fetchAllJoinedCrewsByMemberId(Long memberId);
 
     List<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId);
 
     default CrewMember getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)
-                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT));
-    }
-
-    default CrewMember getWithMemberByCrewIdAndMemberId(Long crewId, Long memberId) {
-        return findWithMemberByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT));
     }
 }

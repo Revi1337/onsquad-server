@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.backup.crew.domain.CrewTopCacheJpaRepository;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
@@ -38,16 +37,6 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public Optional<CrewMember> findWithMemberByCrewIdAndMemberId(Long crewId, Long memberId) {
-        return crewMemberJpaRepository.findWithMemberByCrewIdAndMemberId(crewId, memberId);
-    }
-
-    @Override
-    public boolean existsByMemberIdAndCrewName(Long memberId, Name name) {
-        return crewMemberJpaRepository.existsByMemberIdAndCrewName(memberId, name);
-    }
-
-    @Override
     public Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId) {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
@@ -68,16 +57,6 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     @Override
     public boolean existsParticipantCrewMember(Long memberId) {
         return crewMemberJpaRepository.existsParticipantCrewMember(memberId);
-    }
-
-    @Override
-    public Optional<CrewMember> findCrewMemberByMemberId(Long memberId) {
-        return crewMemberJpaRepository.findCrewMemberByMemberId(memberId);
-    }
-
-    @Override
-    public Optional<CrewMember> findCrewMemberByCrewIdAndMemberId(Long memberId, Long crewId) {
-        return crewMemberJpaRepository.findCrewMemberByCrewIdAndMemberId(memberId, crewId);
     }
 
     @Override
