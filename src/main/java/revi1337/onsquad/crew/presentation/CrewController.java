@@ -74,10 +74,10 @@ public class CrewController {
 
     @GetMapping
     public ResponseEntity<RestResponse<List<CrewInfoResponse>>> findCrewsByName(
-            @RequestParam(required = false) String crewName,
+            @RequestParam(required = false) String name,
             @PageableDefault Pageable pageable
     ) {
-        List<CrewInfoResponse> crewResponses = crewService.findCrewsByName(crewName, pageable).stream()
+        List<CrewInfoResponse> crewResponses = crewService.findCrewsByName(name, pageable).stream()
                 .map(CrewInfoResponse::from)
                 .toList();
 

@@ -81,7 +81,7 @@ public class Member extends BaseEntity {
         return Member.builder()
                 .email(new Email(email))
                 .nickname(new Nickname(nickname))
-                .password(new Password((CharSequence) password))
+                .password(Password.uuid(password))
                 .address(DEFAULT_ADDRESS)
                 .profileImage(profileImage)
                 .userType(userType)
@@ -103,20 +103,20 @@ public class Member extends BaseEntity {
         this.mbti = mbti;
     }
 
-    public void updateProfile(Member member) {
-        this.nickname = member.getNickname();
-        this.introduce = member.getIntroduce();
-        this.mbti = member.getMbti();
-        this.kakaoLink = member.getKakaoLink();
-        this.address = member.getAddress();
+    public void updatePassword(String password) {
+        this.password = this.password.update(password);
     }
 
     public void updateProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 
-    public void updatePassword(CharSequence encodedPassword) {
-        this.password = password.update(encodedPassword);
+    public void updateProfile(Member member) {
+        this.nickname = member.getNickname();
+        this.introduce = member.getIntroduce();
+        this.mbti = member.getMbti();
+        this.kakaoLink = member.getKakaoLink();
+        this.address = member.getAddress();
     }
 
     @Override

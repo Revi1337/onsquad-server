@@ -1,6 +1,7 @@
 package revi1337.onsquad.member.application;
 
 import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_MEMBER;
+import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_NICKNAME;
 import static revi1337.onsquad.auth.error.AuthErrorCode.NON_AUTHENTICATE_EMAIL;
 import static revi1337.onsquad.member.error.MemberErrorCode.WRONG_PASSWORD;
 
@@ -36,6 +37,10 @@ public class MemberService {
 
     public boolean checkDuplicateNickname(String nickname) {
         return memberRepository.existsByNickname(new Nickname(nickname));
+    }
+
+    public boolean checkDuplicateEmail(String email) {
+        return memberRepository.existsByEmail(new Email(email));
     }
 
     @Transactional
@@ -74,6 +79,9 @@ public class MemberService {
     private void verifyAttribute(MemberJoinDto dto) {
         if (!authMailManager.isValidMailStatus(dto.email())) {
             throw new AuthJoinException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
+        }
+        if (memberRepository.existsByNickname(new Nickname(dto.email()))) {
+            throw new AuthJoinException.DuplicateNickname(DUPLICATE_NICKNAME, dto.nickname());
         }
         if (memberRepository.existsByEmail(new Email(dto.email()))) {
             throw new AuthJoinException.DuplicateMember(DUPLICATE_MEMBER);

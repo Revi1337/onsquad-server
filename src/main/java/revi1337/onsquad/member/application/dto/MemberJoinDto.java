@@ -17,7 +17,7 @@ public record MemberJoinDto(
     public Member toEntity() {
         return Member.builder()
                 .email(new Email(email))
-                .password(new Password(password))
+                .password(Password.raw(password))
                 .nickname(new Nickname(nickname))
                 .address(new Address(address, addressDetail))
                 .build();
