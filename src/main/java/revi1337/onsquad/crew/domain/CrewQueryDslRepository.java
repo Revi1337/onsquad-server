@@ -7,7 +7,6 @@ import static revi1337.onsquad.crew.domain.QCrew.crew;
 import static revi1337.onsquad.crew_hashtag.domain.QCrewHashtag.crewHashtag;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
 import static revi1337.onsquad.hashtag.domain.QHashtag.hashtag;
-import static revi1337.onsquad.image.domain.QImage.image;
 import static revi1337.onsquad.member.domain.QMember.member;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -37,7 +36,6 @@ public class CrewQueryDslRepository {
         Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member).on(crew.id.eq(id))
-                .leftJoin(crew.image, image)
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
                 .transform(groupBy(crew.id)
@@ -46,7 +44,7 @@ public class CrewQueryDslRepository {
                                 crew.name,
                                 crew.introduce,
                                 crew.detail,
-                                image.imageUrl,
+                                crew.imageUrl,
                                 crew.kakaoLink,
                                 list(hashtag.hashtagType),
                                 select(crewMember.count())
@@ -67,7 +65,6 @@ public class CrewQueryDslRepository {
         Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member).on(crew.id.eq(id))
-                .leftJoin(crew.image, image)
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
                 .transform(groupBy(crew.id)
@@ -76,7 +73,7 @@ public class CrewQueryDslRepository {
                                 crew.name,
                                 crew.introduce,
                                 crew.detail,
-                                image.imageUrl,
+                                crew.imageUrl,
                                 crew.kakaoLink,
                                 list(hashtag.hashtagType),
                                 select(crewMember.count())
@@ -96,7 +93,6 @@ public class CrewQueryDslRepository {
     public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
         List<CrewInfoDomainDto> transformedCrewInfos = jpaQueryFactory
                 .from(crew)
-                .leftJoin(crew.image, image)
                 .innerJoin(crew.member, member)
                 .where(crewNameStartsWith(name))
                 .orderBy(crew.createdAt.desc())
@@ -107,7 +103,7 @@ public class CrewQueryDslRepository {
                                 crew.id,
                                 crew.name,
                                 crew.introduce,
-                                image.imageUrl,
+                                crew.imageUrl,
                                 crew.kakaoLink,
                                 select(crewMember.count())
                                         .from(crewMember)

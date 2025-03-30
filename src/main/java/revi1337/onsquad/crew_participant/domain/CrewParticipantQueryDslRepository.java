@@ -2,7 +2,6 @@ package revi1337.onsquad.crew_participant.domain;
 
 import static revi1337.onsquad.crew.domain.QCrew.crew;
 import static revi1337.onsquad.crew_participant.domain.QCrewParticipant.crewParticipant;
-import static revi1337.onsquad.image.domain.QImage.image;
 import static revi1337.onsquad.member.domain.QMember.member;
 
 import com.querydsl.jpa.impl.JPAQuery;
@@ -31,7 +30,7 @@ public class CrewParticipantQueryDslRepository {
                 .select(new QCrewParticipantRequest(
                         crew.id,
                         crew.name,
-                        image.imageUrl,
+                        crew.imageUrl,
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
                                 member.nickname,
@@ -44,7 +43,6 @@ public class CrewParticipantQueryDslRepository {
                 ))
                 .from(crewParticipant)
                 .innerJoin(crewParticipant.crew, crew).on(crewParticipant.member.id.eq(memberId))
-                .leftJoin(crew.image, image)
                 .innerJoin(crew.member, member)
                 .orderBy(crewParticipant.requestAt.desc())
                 .fetch();

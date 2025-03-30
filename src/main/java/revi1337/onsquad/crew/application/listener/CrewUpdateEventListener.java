@@ -10,7 +10,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.crew.application.event.CrewUpdateEvent;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.inrastructure.s3.application.S3StorageManager;
 
 @Slf4j
@@ -26,14 +25,13 @@ public class CrewUpdateEventListener {
     @TransactionalEventListener
     public void handleCrewUpdateEvent(CrewUpdateEvent event) {
         try {
-            Crew crew = crewRepository.getByIdWithImage(event.crewId());
+            Crew crew = crewRepository.getById(event.crewId());
             if (crew.hasNotImage()) {
                 String imageUrl = crewS3StorageManager.updateFile(null, event.fileContent(), event.originalFilename());
                 crew.updateImage(imageUrl);
             } else {
-                Image image = crew.getImage();
                 String imageUrl = crewS3StorageManager.updateFile(
-                        image.getImageUrl(), event.fileContent(), event.originalFilename()
+                        crew.getImageUrl(), event.fileContent(), event.originalFilename()
                 );
                 crew.updateImage(imageUrl);
             }
@@ -42,5 +40,4 @@ public class CrewUpdateEventListener {
             log.error("[크루 이미지 업데이트 실패] : crew_id = {}", event.crewId());
         }
     }
-
 }

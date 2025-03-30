@@ -48,11 +48,6 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<Crew> findByName(Name name) {
-        return crewJpaRepository.findByName(name);
-    }
-
-    @Override
     public boolean existsByName(Name name) {
         return crewJpaRepository.existsByName(name);
     }
@@ -65,15 +60,5 @@ public class CrewRepositoryImpl implements CrewRepository {
     @Override
     public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
         return crewQueryDslRepository.findCrewsByName(name, pageable);
-    }
-
-    @Override
-    public Optional<Crew> findByIdWithImage(Long id) {
-        return crewJpaRepository.findByIdWithImage(id);
-    }
-
-    @Override
-    public Optional<Crew> findByIdWithCrewMembers(Long id) {
-        return crewJpaRepository.findByIdWithCrewMembers(id);
     }
 }

@@ -5,7 +5,6 @@ import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.CascadeType.REFRESH;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.util.ArrayList;
@@ -28,12 +26,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.vo.Detail;
-import revi1337.onsquad.crew.domain.vo.HashTags;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtag;
 import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.member.domain.Member;
 
 @Getter
@@ -63,13 +59,11 @@ public class Crew extends BaseEntity {
 
     private String kakaoLink;
 
+    private String imageUrl;
+
     @BatchSize(size = HASHTAG_BATCH_SIZE)
     @OneToMany(mappedBy = "crew")
     private final List<CrewHashtag> hashtags = new ArrayList<>();
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @JoinColumn(name = "image_id")
-    private Image image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -79,13 +73,13 @@ public class Crew extends BaseEntity {
     private final List<CrewMember> crewMembers = new ArrayList<>();
 
     @Builder
-    private Crew(Long id, Name name, Introduce introduce, Detail detail, HashTags hashTags, Image image,
+    private Crew(Long id, Name name, Introduce introduce, Detail detail, String imageUrl,
                  String kakaoLink, Member member) {
         this.id = id;
         this.name = name;
         this.introduce = introduce;
         this.detail = detail;
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.kakaoLink = kakaoLink;
         this.member = member;
     }
@@ -105,14 +99,13 @@ public class Crew extends BaseEntity {
     }
 
     public boolean hasNotImage() {
-        return image == null;
+        return imageUrl == null || imageUrl.isEmpty();
     }
 
     public void updateImage(String imageUrl) {
         if (hasNotImage()) {
-            this.image = new Image(imageUrl);
+            this.imageUrl = imageUrl;
         }
-        this.image = this.image.updateImage(imageUrl);
     }
 
     @Override
