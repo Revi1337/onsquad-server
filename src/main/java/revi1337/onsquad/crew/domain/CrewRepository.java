@@ -21,35 +21,19 @@ public interface CrewRepository {
 
     Optional<Crew> findById(Long id);
 
-    Optional<Crew> findByName(Name name);
-
     boolean existsByName(Name name);
 
     Optional<CrewInfoDomainDto> findCrewById(Long id);
 
     Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable);
 
-    Optional<Crew> findByIdWithImage(Long id);
-
-    Optional<Crew> findByIdWithCrewMembers(Long id);
-
     default CrewInfoDomainDto getCrewById(Long id) {
         return findCrewById(id)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 
-    default Crew getByIdWithImage(Long id) {
-        return findByIdWithImage(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
-    }
-
     default Crew getById(Long id) {
         return findById(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
-    }
-
-    default Crew getByIdWithCrewMembers(Long id) {
-        return findByIdWithCrewMembers(id)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 }

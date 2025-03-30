@@ -23,7 +23,6 @@ import revi1337.onsquad.crew_hashtag.domain.CrewHashtag;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtagRepository;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.hashtag.domain.Hashtag;
-import revi1337.onsquad.image.domain.Image;
 import revi1337.onsquad.inrastructure.s3.application.S3StorageManager;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -44,20 +43,6 @@ public class CrewService {
         return crewRepository.existsByName(new Name(crewName));
     }
 
-    /**
-     * 1. S3 업로드 후, Crew 커밋.
-     * <p>
-     * - 업로드 후 @TransactionalEventListener 에서 Crew 만 커밋만 치면됨.
-     * <p>
-     * - 만약 Crew 에서 검증 오류가 발생한다면 따로 스케줄러로 삭제해주어야한다는 단점이 있음.
-     * <p>
-     * <p>
-     * 2. Crew 커밋 후, S3 업로드.
-     * <p>
-     * - 커밋 후, S3 에 업로드하기 때문에 업로드 후, Crew 를 Update 시켜주어야한다는 단점이 있음.
-     * <p>
-     * - Crew 를 Update 하는 트랜잭션이 S3 업로드하는 로직과 함께하기 때문에, 데이터 불일치가 있을 수 있음.
-     */
     // TODO 트랜잭션 분리 필요.
     @Transactional
     public void createNewCrew(Long memberId, CrewCreateDto dto, MultipartFile file) {
@@ -66,8 +51,8 @@ public class CrewService {
             throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, dto.name());
         }
         if (file != null) {
-            Image crewImage = new Image(crewS3StorageManager.uploadFile(file));
-            crewRepository.persistCrew(dto.toEntity(crewImage, member), dto.hashtags());
+            String imageUrl = crewS3StorageManager.uploadFile(file);
+            crewRepository.persistCrew(dto.toEntity(imageUrl, member), dto.hashtags());
             return;
         }
         crewRepository.persistCrew(dto.toEntity(member), dto.hashtags());
@@ -93,7 +78,7 @@ public class CrewService {
     @Transactional
     public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto, MultipartFile file) {
         Member member = memberRepository.getById(memberId);
-        Crew crew = crewRepository.getByIdWithImage(crewId);
+        Crew crew = crewRepository.getById(crewId);
         validateCrewPublisher(member.getId(), crew);
         update(dto, crew);
         publishEventIfMultipartAvailable(file, crewId);

@@ -2,7 +2,6 @@ package revi1337.onsquad.crew_member.domain;
 
 import static revi1337.onsquad.crew.domain.QCrew.crew;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
-import static revi1337.onsquad.image.domain.QImage.image;
 import static revi1337.onsquad.member.domain.QMember.member;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -36,7 +35,7 @@ public class CrewMemberQueryDslRepository {
                 .select(new QEnrolledCrewDomainDto(
                         crew.id,
                         crew.name,
-                        image.imageUrl,
+                        crew.imageUrl,
                         isCrewOwner,
                         new QSimpleMemberInfoDomainDto(
                                 CREW_CREATOR.id,
@@ -46,7 +45,6 @@ public class CrewMemberQueryDslRepository {
                 ))
                 .from(crewMember)
                 .innerJoin(crewMember.crew, crew).on(crewMember.member.id.eq(memberId))
-                .leftJoin(crew.image, image)
                 .innerJoin(crew.member, CREW_CREATOR)
                 .orderBy(
                         crewMember.requestAt.desc(),

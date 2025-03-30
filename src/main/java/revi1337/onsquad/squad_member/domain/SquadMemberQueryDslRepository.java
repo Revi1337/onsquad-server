@@ -7,7 +7,6 @@ import static java.lang.Boolean.TRUE;
 import static revi1337.onsquad.category.domain.QCategory.category;
 import static revi1337.onsquad.crew.domain.QCrew.crew;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
-import static revi1337.onsquad.image.domain.QImage.image;
 import static revi1337.onsquad.member.domain.QMember.member;
 import static revi1337.onsquad.squad.domain.QSquad.squad;
 import static revi1337.onsquad.squad_category.domain.QSquadCategory.squadCategory;
@@ -88,12 +87,11 @@ public class SquadMemberQueryDslRepository {
                         crewMember.member.id.eq(memberId)
                 )
                 .innerJoin(crew.member, CREW_CREATOR)
-                .leftJoin(crew.image, image)
                 .transform(groupBy(crew.id)
                         .as(new QEnrolledSquadDomainDto(
                                 crew.id,
                                 crew.name,
-                                image.imageUrl,
+                                crew.imageUrl,
                                 new QSimpleMemberInfoDomainDto(
                                         CREW_CREATOR.id,
                                         CREW_CREATOR.nickname,
