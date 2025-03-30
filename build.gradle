@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
-    id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'org.asciidoctor.jvm.convert' version "3.3.2"
 }
 
 group = 'revi1337'
@@ -65,47 +65,46 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
 }
 
-ext {
-    snippetsDir = file('build/generated-snippets')
-    applicationName = 'onsquad'
-}
-
 String ENABLE_PREVIEW = "--enable-preview"
 String PARAMETERS = "-parameters"
 
 def gradleProfile = project.hasProperty("profile") ?
         project.property("profile").toString() : "test"
 
-tasks.named('test') {
-    useJUnitPlatform()
-    jvmArgs(ENABLE_PREVIEW)
-    systemProperty("spring.profiles.active", gradleProfile)
-    outputs.dir snippetsDir
+ext {
+    applicationName = 'onsquad'
+    snippetsDir = file('build/generated-snippets')
 }
 
-asciidoctor {
-    configurations 'asciidoctorExt'
-
-    sources {
-        include('**/index.adoc')
-    }
-    baseDirFollowsSourceFile()
-    inputs.dir snippetsDir
-    dependsOn test
+test {
+    jvmArgs(ENABLE_PREVIEW)
+    systemProperty("spring.profiles.active", gradleProfile)
+    useJUnitPlatform()
+    outputs.dir snippetsDir
 }
 
 asciidoctor.doFirst {
     delete file('src/main/resources/static')
 }
 
-task createDocument(type: Copy) {
+asciidoctor {
+    dependsOn test
+    configurations 'asciidoctorExt'
+    inputs.dir snippetsDir
+    baseDirFollowsSourceFile()
+    sources {
+        include('**/index.adoc')
+    }
+}
+
+tasks.register('copyDocsToStatic', Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
     into file("src/main/resources/static")
 }
 
 bootJar {
-    dependsOn createDocument
+    dependsOn copyDocsToStatic
     from("${asciidoctor.outputDir}") {
         into 'static'
     }
