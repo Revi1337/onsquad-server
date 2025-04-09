@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.error.exception.AuthJoinException;
-import revi1337.onsquad.inrastructure.mail.application.AuthMailManager;
+import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
+import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
 import revi1337.onsquad.member.application.dto.MemberInfoDto;
 import revi1337.onsquad.member.application.dto.MemberJoinDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
@@ -33,7 +34,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final AuthMailManager authMailManager;
+    private final VerificationCodeRepository repositoryChain;
 
     public boolean checkDuplicateNickname(String nickname) {
         return memberRepository.existsByNickname(new Nickname(nickname));
@@ -45,7 +46,7 @@ public class MemberService {
 
     @Transactional
     public void newMember(MemberJoinDto dto) {
-        verifyAttribute(dto);
+        ensureNewMemberRequirements(dto);
         Member member = dto.toEntity();
         member.updatePassword(passwordEncoder.encode(dto.password()));
         memberRepository.save(member);
@@ -76,11 +77,11 @@ public class MemberService {
         publishEventIfMultipartAvailable(file, member);
     }
 
-    private void verifyAttribute(MemberJoinDto dto) {
-        if (!authMailManager.isValidMailStatus(dto.email())) {
+    private void ensureNewMemberRequirements(MemberJoinDto dto) {
+        if (!repositoryChain.isMarkedVerificationStatusWith(dto.email(), VerificationStatus.SUCCESS)) {
             throw new AuthJoinException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
         }
-        if (memberRepository.existsByNickname(new Nickname(dto.email()))) {
+        if (memberRepository.existsByNickname(new Nickname(dto.nickname()))) {
             throw new AuthJoinException.DuplicateNickname(DUPLICATE_NICKNAME, dto.nickname());
         }
         if (memberRepository.existsByEmail(new Email(dto.email()))) {
