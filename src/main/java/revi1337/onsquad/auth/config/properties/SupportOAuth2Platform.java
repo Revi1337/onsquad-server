@@ -1,6 +1,6 @@
 package revi1337.onsquad.auth.config.properties;
 
-import revi1337.onsquad.auth.application.oauth2.OAuth2Platform;
+import revi1337.onsquad.auth.application.oauth.OAuth2Platform;
 
 public enum SupportOAuth2Platform {
 

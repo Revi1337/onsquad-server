@@ -10,6 +10,7 @@ import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.domain.vo.UserType;
 
+// TODO 이거 패키지를 auth > model 로 옮겨야한다.
 public record AuthMemberAttribute(
         Long id,
         Email email,
