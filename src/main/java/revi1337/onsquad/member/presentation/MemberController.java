@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
-import revi1337.onsquad.auth.presentation.dto.response.DuplicateResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberService;
 import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 import revi1337.onsquad.member.presentation.dto.request.MemberPasswordUpdateRequest;
 import revi1337.onsquad.member.presentation.dto.request.MemberUpdateRequest;
+import revi1337.onsquad.member.presentation.dto.response.DuplicateResponse;
 import revi1337.onsquad.member.presentation.dto.response.MemberInfoResponse;
 
 @RequiredArgsConstructor
