@@ -1,23 +1,13 @@
 package revi1337.onsquad.common.config.properties;
 
-import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import revi1337.onsquad.crew_member.config.CrewTopMemberProperty;
+import revi1337.onsquad.inrastructure.file.config.s3.properties.RecycleBinCleaningProperty;
 
 @ConfigurationProperties("onsquad.api")
 public record ApiProperties(
-        CrewTopMembers crewTopMembers
+        @NestedConfigurationProperty CrewTopMemberProperty crewTopMembers,
+        @NestedConfigurationProperty RecycleBinCleaningProperty cleanRecycleBin
 ) {
-    public record CrewTopMembers(
-            Duration during,
-            Integer rankLimit
-    ) {
-        public CrewTopMembers(
-                @DefaultValue("7d") Duration during,
-                @DefaultValue("4") Integer rankLimit
-        ) {
-            this.during = during;
-            this.rankLimit = rankLimit;
-        }
-    }
 }
