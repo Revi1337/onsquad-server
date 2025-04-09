@@ -24,12 +24,12 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import revi1337.onsquad.auth.application.JsonWebTokenService;
-import revi1337.onsquad.auth.application.security.JsonWebTokenAuthenticationProvider;
-import revi1337.onsquad.auth.application.security.JsonWebTokenFailureHandler;
-import revi1337.onsquad.auth.application.security.JsonWebTokenLoginFilter;
-import revi1337.onsquad.auth.application.security.JsonWebTokenSuccessHandler;
-import revi1337.onsquad.auth.application.security.JsonWebTokenUserDetailsService;
+import revi1337.onsquad.auth.application.token.JsonWebTokenService;
+import revi1337.onsquad.auth.application.token.security.JsonWebTokenAuthenticationProvider;
+import revi1337.onsquad.auth.application.token.security.JsonWebTokenFailureHandler;
+import revi1337.onsquad.auth.application.token.security.JsonWebTokenLoginFilter;
+import revi1337.onsquad.auth.application.token.security.JsonWebTokenSuccessHandler;
+import revi1337.onsquad.auth.application.token.security.JsonWebTokenUserDetailsService;
 import revi1337.onsquad.member.domain.MemberRepository;
 
 @RequiredArgsConstructor
