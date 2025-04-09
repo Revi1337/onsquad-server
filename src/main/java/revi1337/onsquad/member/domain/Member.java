@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -34,6 +36,9 @@ import revi1337.onsquad.member.domain.vo.UserType;
 @DynamicUpdate
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "name_uniq_idx", columnNames = "email")
+})
 @Entity
 public class Member extends BaseEntity {
 
@@ -41,7 +46,7 @@ public class Member extends BaseEntity {
     private static final Address DEFAULT_ADDRESS = new Address("공백", "공백");
     private static final UserType DEFAULT_USER_TYPE = UserType.GENERAL;
     private static final String DEFAULT_KAKAO_LINK = "";
-    private static final String DEFAULT_PROFILE_IMAGE = "";
+    private static final String DEFAULT_PROFILE_IMAGE = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -101,6 +106,18 @@ public class Member extends BaseEntity {
         this.kakaoLink = kakaoLink == null ? DEFAULT_KAKAO_LINK : kakaoLink;
         this.userType = userType == null ? DEFAULT_USER_TYPE : userType;
         this.mbti = mbti;
+    }
+
+    public boolean hasNotDefaultProfileImage() {
+        return !hasDefaultProfileImage();
+    }
+
+    public boolean hasDefaultProfileImage() {
+        return DEFAULT_PROFILE_IMAGE.equals(profileImage);
+    }
+
+    public void changeDefaultProfileImage() {
+        this.profileImage = DEFAULT_PROFILE_IMAGE;
     }
 
     public void updatePassword(String password) {
