@@ -31,6 +31,14 @@ public class CrewHashtag {
     @JoinColumn(name = "hashtag_id", nullable = false)
     private Hashtag hashtag;
 
+    public void addCrew(Crew crew) {
+        this.crew = crew;
+    }
+
+    public void releaseCrew() {
+        this.crew = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

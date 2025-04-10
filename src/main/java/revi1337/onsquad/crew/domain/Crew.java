@@ -1,9 +1,7 @@
 package revi1337.onsquad.crew.domain;
 
-import static jakarta.persistence.CascadeType.DETACH;
-import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
-import static jakarta.persistence.CascadeType.REFRESH;
+import static jakarta.persistence.CascadeType.REMOVE;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -62,14 +60,14 @@ public class Crew extends BaseEntity {
     private String imageUrl;
 
     @BatchSize(size = HASHTAG_BATCH_SIZE)
-    @OneToMany(mappedBy = "crew")
+    @OneToMany(mappedBy = "crew", cascade = REMOVE, orphanRemoval = true)
     private final List<CrewHashtag> hashtags = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "crew", cascade = {PERSIST, MERGE, DETACH, REFRESH})
+    @OneToMany(mappedBy = "crew", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
     private final List<CrewMember> crewMembers = new ArrayList<>();
 
     @Builder
@@ -91,11 +89,15 @@ public class Crew extends BaseEntity {
         }
     }
 
-    public void updateCrew(String name, String introduce, String detail, String kakaoLink) {
+    public void update(String name, String introduce, String detail, String kakaoLink) {
         this.name = this.name.updateName(name);
         this.introduce = this.introduce.updateIntroduce(introduce);
         this.detail = this.detail.updateDetail(detail);
         this.kakaoLink = kakaoLink;
+    }
+
+    public boolean hasImage() {
+        return !hasNotImage();
     }
 
     public boolean hasNotImage() {
@@ -103,9 +105,26 @@ public class Crew extends BaseEntity {
     }
 
     public void updateImage(String imageUrl) {
-        if (hasNotImage()) {
-            this.imageUrl = imageUrl;
-        }
+        this.imageUrl = imageUrl;
+    }
+
+    public void deleteImage() {
+        this.imageUrl = null;
+    }
+
+    public void releaseAssociations() {
+        releaseHashtags();
+        releaseMembers();
+    }
+
+    private void releaseHashtags() {
+        hashtags.forEach(CrewHashtag::releaseCrew);
+        hashtags.clear();
+    }
+
+    private void releaseMembers() {
+        crewMembers.forEach(CrewMember::releaseCrew);
+        crewMembers.clear();
     }
 
     @Override

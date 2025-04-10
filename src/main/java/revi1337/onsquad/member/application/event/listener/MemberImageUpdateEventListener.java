@@ -20,10 +20,10 @@ public class MemberImageUpdateEventListener {
     private final FileStorageManager memberS3StorageManager;
 
     @EventListener(MemberImageUpdateEvent.class)
-    public void handleMemberUpdateEvent(MemberImageUpdateEvent event) {
+    public void handleMemberImageUpdateEvent(MemberImageUpdateEvent event) {
         Member member = event.member();
         MultipartFile file = event.file();
-
+        
         if (member.hasDefaultProfileImage()) {
             String uploadUrl = memberS3StorageManager.upload(file);
             member.updateProfileImage(uploadUrl);
