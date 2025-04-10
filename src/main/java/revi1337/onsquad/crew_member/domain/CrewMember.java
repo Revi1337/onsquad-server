@@ -96,6 +96,10 @@ public class CrewMember extends RequestEntity {
         this.crew = crew;
     }
 
+    public void releaseCrew() {
+        this.crew = null;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
