@@ -15,7 +15,7 @@ public interface CrewRepository {
 
     Crew saveAndFlush(Crew crew);
 
-    void delete(Crew crew);
+    void deleteById(Long id);
 
     Optional<Crew> findById(Long id);
 

@@ -26,8 +26,8 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public void delete(Crew crew) {
-        crewJpaRepository.delete(crew);
+    public void deleteById(Long id) {
+        crewJpaRepository.deleteById(id);
     }
 
     @Override

@@ -7,6 +7,6 @@ public interface CrewHashtagRepository {
 
     void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags);
 
-    void deleteAllByIdIn(List<Long> ids);
+    void deleteByCrewId(Long crewId);
 
 }

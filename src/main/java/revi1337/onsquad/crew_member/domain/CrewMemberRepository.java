@@ -15,6 +15,8 @@ public interface CrewMemberRepository {
 
     CrewMember saveAndFlush(CrewMember crewMember);
 
+    void deleteByCrewId(Long crewId);
+
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
     Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
