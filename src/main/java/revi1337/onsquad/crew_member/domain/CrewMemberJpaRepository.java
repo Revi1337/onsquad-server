@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_member.domain;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface CrewMemberJpaRepository extends JpaRepository<CrewMember, Long>, CrewMemberQueryRepository {
@@ -10,5 +11,9 @@ public interface CrewMemberJpaRepository extends JpaRepository<CrewMember, Long>
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
     boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("delete CrewMember as cm where cm.crew.id = :crewId")
+    void deleteByCrewId(Long crewId);
 
 }
