@@ -37,7 +37,7 @@ public class VerificationCodeRedisRepository implements VerificationCodeReposito
         String redisKey = getKey(email);
 
         return RedisSafeExecutor.supply(() ->
-                stringRedisTemplate.opsForValue().setIfPresent(redisKey, verificationStatus.getCode(), minutes)
+                stringRedisTemplate.opsForValue().setIfPresent(redisKey, verificationStatus.name(), minutes)
         );
     }
 
@@ -46,7 +46,7 @@ public class VerificationCodeRedisRepository implements VerificationCodeReposito
         String redisKey = getKey(email);
 
         return RedisSafeExecutor.supply(() ->
-                Objects.equals(stringRedisTemplate.opsForValue().get(redisKey), verificationStatus.getCode())
+                Objects.equals(stringRedisTemplate.opsForValue().get(redisKey), verificationStatus.name())
         );
     }
 
