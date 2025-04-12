@@ -71,7 +71,7 @@ public class VerificationCodeExpiringMapRepository implements VerificationCodeRe
     public boolean isMarkedVerificationStatusWith(String email, VerificationStatus verificationStatus) {
         String redisKey = getKey(email);
 
-        return Objects.equals(VERIFICATION_STORE.get(redisKey), verificationStatus.getCode());
+        return Objects.equals(VERIFICATION_STORE.get(redisKey), verificationStatus.name());
     }
 
     public VerificationSnapshots collectAvailableSnapshots() {
