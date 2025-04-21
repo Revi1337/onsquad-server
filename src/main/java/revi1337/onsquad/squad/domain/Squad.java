@@ -1,9 +1,6 @@
 package revi1337.onsquad.squad.domain;
 
-import static jakarta.persistence.CascadeType.DETACH;
-import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
-import static jakarta.persistence.CascadeType.REFRESH;
 import static jakarta.persistence.FetchType.LAZY;
 
 import jakarta.persistence.Embedded;
@@ -71,7 +68,7 @@ public class Squad extends BaseEntity {
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;
 
-    @OneToMany(mappedBy = "squad", cascade = {PERSIST, MERGE, DETACH, REFRESH})
+    @OneToMany(mappedBy = "squad", cascade = PERSIST)
     private final List<SquadMember> squadMembers = new ArrayList<>();
 
     @Builder
