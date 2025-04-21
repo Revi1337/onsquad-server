@@ -3,6 +3,7 @@ package revi1337.onsquad.squad.presentation.dto.request;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
+import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 
 public record SquadCreateRequest(
@@ -11,7 +12,7 @@ public record SquadCreateRequest(
         @Positive int capacity,
         @NotEmpty String address,
         String addressDetail,
-        @NotEmpty List<String> categories,
+        @NotEmpty List<CategoryType> categories,
         String kakaoLink,
         String discordLink
 ) {

@@ -9,7 +9,7 @@ public class CategoryConditionConverter implements Converter<String, CategoryCon
 
     @Override
     public CategoryCondition convert(String categoryText) {
-        return Optional.ofNullable(CategoryType.mapFromText(categoryText))
+        return Optional.ofNullable(CategoryType.fromText(categoryText))
                 .map(CategoryCondition::new)
                 .orElse(new CategoryCondition(CategoryType.ALL));
     }
