@@ -26,7 +26,9 @@ public class CrewCommandExecutor {
             }
             crewCommandService.newCrew(memberId, dto, imageUrl);
         } catch (CrewBusinessException exception) {
-            eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
+            if (imageUrl != null) {
+                eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
+            }
             throw exception;
         }
     }

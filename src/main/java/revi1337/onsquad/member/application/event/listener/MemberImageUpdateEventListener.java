@@ -6,7 +6,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.inrastructure.file.application.FileStorageManager;
-import revi1337.onsquad.inrastructure.file.application.RecycleBin;
+import revi1337.onsquad.inrastructure.file.support.RecycleBin;
 import revi1337.onsquad.member.application.event.MemberImageUpdateEvent;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -23,7 +23,7 @@ public class MemberImageUpdateEventListener {
     public void handleMemberImageUpdateEvent(MemberImageUpdateEvent event) {
         Member member = event.member();
         MultipartFile file = event.file();
-        
+
         if (member.hasDefaultProfileImage()) {
             String uploadUrl = memberS3StorageManager.upload(file);
             member.updateProfileImage(uploadUrl);

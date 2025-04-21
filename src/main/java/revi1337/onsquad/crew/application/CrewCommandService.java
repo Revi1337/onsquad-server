@@ -21,6 +21,7 @@ import revi1337.onsquad.crew.error.exception.CrewBusinessException.InvalidPublis
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtagRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.hashtag.domain.Hashtag;
 import revi1337.onsquad.inrastructure.file.application.event.FileDeleteEvent;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -57,7 +58,7 @@ public class CrewCommandService {
 
         crew.update(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
         crewHashtagRepository.deleteByCrewId(crew.getId());
-        crewHashtagRepository.batchInsertCrewHashtags(crew.getId(), dto.hashtags());
+        crewHashtagRepository.batchInsertCrewHashtags(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
     }
 
     @Transactional

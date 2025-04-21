@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.inrastructure.file.application.RecycleBin;
 import revi1337.onsquad.inrastructure.file.application.s3.S3StorageCleaner;
+import revi1337.onsquad.inrastructure.file.support.RecycleBin;
 
 @Slf4j
 @RequiredArgsConstructor

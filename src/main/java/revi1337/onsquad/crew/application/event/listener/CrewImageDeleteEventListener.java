@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.application.event.CrewImageDeleteEvent;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.inrastructure.file.application.RecycleBin;
+import revi1337.onsquad.inrastructure.file.support.RecycleBin;
 
 @RequiredArgsConstructor
 @Component

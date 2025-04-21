@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.inrastructure.file.application.RecycleBin;
+import revi1337.onsquad.inrastructure.file.support.RecycleBin;
 import revi1337.onsquad.member.application.event.MemberImageDeleteEvent;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
