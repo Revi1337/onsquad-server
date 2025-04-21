@@ -64,11 +64,11 @@ public enum CategoryType {
 
     public static List<CategoryType> fromTexts(List<String> categoryTexts) {
         return new LinkedHashSet<>(categoryTexts).stream()
-                .map(CategoryType::mapFromText)
+                .map(CategoryType::fromText)
                 .collect(Collectors.toList());
     }
 
-    public static CategoryType mapFromText(String categoryText) {
+    public static CategoryType fromText(String categoryText) {
         return categoryHashMap.get(categoryText);
     }
 }

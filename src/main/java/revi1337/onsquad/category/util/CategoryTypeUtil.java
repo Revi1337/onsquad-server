@@ -20,7 +20,7 @@ public abstract class CategoryTypeUtil {
                 .collect(Collectors.toList());
     }
 
-    private static void validateCategory(CategoryType categoryType) {
+    public static void validateCategory(CategoryType categoryType) {
         if (categoryType == null) {
             throw new SquadDomainException.InvalidCategory(INVALID_CATEGORY);
         }
