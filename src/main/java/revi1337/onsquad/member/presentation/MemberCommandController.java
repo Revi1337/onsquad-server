@@ -40,7 +40,7 @@ public class MemberCommandController {
 
     @PutMapping("/my")
     public ResponseEntity<RestResponse<String>> updateMember(
-            @Valid @RequestPart(name = "request") MemberUpdateRequest request,
+            @Valid @RequestBody MemberUpdateRequest request,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         memberCommandService.updateMember(authMemberAttribute.id(), request.toDto());

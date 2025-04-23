@@ -55,11 +55,10 @@ public class VerificationCodeExpiringMapRepository implements VerificationCodeRe
     @Override
     public boolean markVerificationStatus(String email, VerificationStatus verificationStatus, Duration duration) {
         String inMemoryKey = getKey(email);
-        VERIFICATION_STORE.put(inMemoryKey, verificationStatus.name(), duration.toMillis(), TimeUnit.MILLISECONDS);
-
         if (VERIFICATION_STORE.containsKey(inMemoryKey)) {
             long expectedTime = getExpiredTime(duration);
             VerificationState state = new VerificationState(verificationStatus.name(), email, expectedTime);
+            VERIFICATION_STORE.put(inMemoryKey, verificationStatus.name(), duration.toMillis(), TimeUnit.MILLISECONDS);
             VERIFICATION_TRACKER.put(inMemoryKey, state);
             return true;
         }
