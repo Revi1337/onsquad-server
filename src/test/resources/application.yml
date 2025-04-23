@@ -1,19 +1,8 @@
 spring:
   application:
-    name: onsquad-server
+    name: onsquad
   profiles:
     default: test
-
-  sql:
-    init:
-      mode: never
-
-  datasource:
-    #    url: jdbc:h2:mem:~/onsquad;MODE=MySQL
-    url: jdbc:h2:tcp://localhost/~/onsquad-test;MODE=MySQL
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
 
   jpa:
     open-in-view: false
@@ -31,13 +20,32 @@ spring:
         one-indexed-parameters: true
         default-page-size: 10
         max-page-size: 100
+
     redis:
       host: localhost
       port: 6379
       repositories:
         enabled: false
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
+      resolve-lazily: true
+
+  sql:
+    init:
+      mode: never
+
+  datasource:
+    url: jdbc:h2:mem:~/onsquad;MODE=MySQL
+    #    url: jdbc:h2:tcp://localhost/~/onsquad-test;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
   mail:
+    code-seed: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
     host: smtp.gmail.com
     port: 587
     username: aaaaa
@@ -54,12 +62,6 @@ spring:
           writetimeout: 5000
     auth-code-expiration-millis: 300000
 
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 20MB
-      resolve-lazily: true
-
 server:
   error:
     whitelabel:
@@ -70,13 +72,11 @@ server:
     include-binding-errors: never
   port: 8081
 
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
-
 onsquad:
+  frontend-base-url: http://localhost:3000
+  use-custom-redis-aspect: false
+  use-redis-cache-manager: false
+
   token:
     access-token-attributes:
       token-attributes:
@@ -88,7 +88,47 @@ onsquad:
         expired: 10s
         secret-key: 22222222222222222222222222222222222222222222222222222222222222222222222222222222
 
+  oauth2:
+    clients:
+      kakao:
+        client-name: ${spring.application.name}
+        client-id: aaaaaaaaaaaaaaaaaaaaaaaaaaa
+        client-secret: aaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+        issuer-uri: https://kauth.kakao.com
+        authorization-uri: https://kauth.kakao.com/oauth/authorize
+        response_type: code
+        redirect-uri: /login/oauth2/code/kakao
+
+        token-uri: https://kauth.kakao.com/oauth/token
+        grant-type: authorization_code
+
+        account-uri: https://kapi.kakao.com/v2/user/me
+        user-info-uri: https://kapi.kakao.com/v1/oidc/userinfo
+
+      google:
+        client-name: ${spring.application.name}
+        client-id: aaaaaaaaaaaaaaaaaaaaaaaaaaa
+        client-secret: aaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+        issuer-uri: https://accounts.google.com
+        authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+        response_type: code
+        redirect-uri: /login/oauth2/code/google
+
+        token-uri: https://oauth2.googleapis.com/token
+        grant-type: authorization_code
+
+        account-uri: https://www.googleapis.com/oauth2/v1/userinfo
+        scope:
+          - email: https://www.googleapis.com/auth/userinfo.email
+          - profile: https://www.googleapis.com/auth/userinfo.profile
+
   aws:
+    cloud-front:
+      base-domain: https://cloudfront.net
+      region: aws-global
+      distribution-id: aaaaaaaaaaaaaa
     s3:
       access-key: accesskey
       secret-key: secretkey
@@ -99,3 +139,31 @@ onsquad:
         directories:
           crew-directory: /dummy
           squad-directory: /dummys
+          member-directory: /dummy-member
+
+  api:
+    crew-top-members:
+      during: 7d
+      rank-limit: 5
+      schedule:
+        expression:
+          0 0 0 * * 1
+    clean-recycle-bin:
+      schedule:
+        expression:
+          0 0 0 * * *
+
+logging:
+  level:
+    org:
+      springframework.jdbc: DEBUG
+      hibernate.SQL: DEBUG
+      hibernate.orm.jdbc.bind: DEBUG
+
+      springframework.transaction.interceptor: TRACE
+      springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+      springframework.orm.jpa.JpaTransactionManager: DEBUG
+
+    revi1337:
+      onsquad:
+        INFO
