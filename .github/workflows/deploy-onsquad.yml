@@ -29,8 +29,8 @@ jobs:
       - name: Make application-dev.yml & application-prod.yml
         run: |
           cd ./src/main/resources
-          printf "%s" "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
-          printf "%s" "${{ secrets.APPLICATION_PROD }}" > ./application-prod.yml
+          echo "${{ secrets.APPLICATION_DEV }}" | base64 -d > ./application-dev.yml
+          echo "${{ secrets.APPLICATION_PROD }}" | base64 -d > ./application-prod.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
