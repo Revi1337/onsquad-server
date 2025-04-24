@@ -18,12 +18,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import revi1337.onsquad.inrastructure.file.support.RecycleBinLifeCycleManager;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
+import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleManager;
 import revi1337.onsquad.member.application.dto.MemberJoinDto;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
 
+@MockBean({VerificationCacheLifeCycleManager.class, RecycleBinLifeCycleManager.class})
 @SpringBootTest
 class MemberConcurrencyServiceTest {
 

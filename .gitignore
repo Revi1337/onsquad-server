@@ -11,6 +11,8 @@ src/main/generated
 docker-compose-*.yml
 src/main/resources/static/index.html
 performance
+.java-version
+performance
 
 # User-specific stuff
 .idea/**/workspace.xml
