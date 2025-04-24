@@ -36,4 +36,4 @@ server:
     include-message: never
     include-stacktrace: never
     include-binding-errors: never
-  port: 8087
+  port: 8080

@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import revi1337.onsquad.inrastructure.file.support.RecycleBinLifeCycleManager;
 import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeExpiringMapRepository;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRedisRepository;
@@ -38,7 +39,7 @@ import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleMan
 import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
 
 @AutoConfigureMockMvc
-@MockBean(VerificationCacheLifeCycleManager.class)
+@MockBean({VerificationCacheLifeCycleManager.class, RecycleBinLifeCycleManager.class})
 @SpringBootTest
 public class MemberConcurrencyControllerTest {
 
