@@ -46,6 +46,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           source: 'build/libs/*.jar'
+          strip_components: 2
           target: /home/${{secrets.USERNAME}}/${{ env.PROJECT_NAME }}
           rm: true
 
