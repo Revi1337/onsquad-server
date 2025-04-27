@@ -31,7 +31,7 @@ public class CrewParticipantJdbcRepository {
 
         return new CrewParticipant(
                 generatedKeyHolder.getKey().longValue(),
-                Crew.builder().id(crewId).build(),
+                new Crew(crewId),
                 Member.builder().id(memberId).build(),
                 now
         );

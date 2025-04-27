@@ -13,7 +13,6 @@ public record CrewUpdateRequest(
         @NotNull List<HashtagType> hashtags,
         String kakaoLink
 ) {
-
     public CrewUpdateDto toDto() {
         return new CrewUpdateDto(name, introduce, detail, hashtags, kakaoLink);
     }

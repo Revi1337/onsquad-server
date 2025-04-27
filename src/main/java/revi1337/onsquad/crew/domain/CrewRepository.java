@@ -23,7 +23,7 @@ public interface CrewRepository {
 
     Optional<CrewInfoDomainDto> findCrewById(Long id);
 
-    Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable);
+    Page<CrewInfoDomainDto> fetchCrewsByName(String name, Pageable pageable);
 
     default CrewInfoDomainDto getCrewById(Long id) {
         return findCrewById(id)

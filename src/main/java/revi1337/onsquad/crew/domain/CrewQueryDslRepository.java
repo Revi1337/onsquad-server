@@ -90,7 +90,7 @@ public class CrewQueryDslRepository {
         return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
     }
 
-    public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
+    public Page<CrewInfoDomainDto> fetchCrewsByName(String name, Pageable pageable) {
         List<CrewInfoDomainDto> transformedCrewInfos = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member)

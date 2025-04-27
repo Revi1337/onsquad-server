@@ -46,7 +46,7 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Page<CrewInfoDomainDto> findCrewsByName(String name, Pageable pageable) {
-        return crewQueryDslRepository.findCrewsByName(name, pageable);
+    public Page<CrewInfoDomainDto> fetchCrewsByName(String name, Pageable pageable) {
+        return crewQueryDslRepository.fetchCrewsByName(name, pageable);
     }
 }

@@ -33,8 +33,8 @@ public class CrewQueryService {
         return CrewInfoDto.from(alreadyJoin, crewInfo);
     }
 
-    public List<CrewInfoDto> findCrewsByName(String crewName, Pageable pageable) {
-        return crewRepository.findCrewsByName(crewName, pageable).stream()
+    public List<CrewInfoDto> fetchCrewsByName(String crewName, Pageable pageable) {
+        return crewRepository.fetchCrewsByName(crewName, pageable).stream()
                 .map(CrewInfoDto::from)
                 .toList();
     }
