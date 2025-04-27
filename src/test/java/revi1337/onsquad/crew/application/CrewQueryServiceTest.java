@@ -10,7 +10,7 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_IMAGE_LINK_V
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.hashtag.domain.vo.HashtagType.ACTIVE;
 import static revi1337.onsquad.hashtag.domain.vo.HashtagType.ESCAPE;
 import static revi1337.onsquad.hashtag.domain.vo.HashtagType.FOODIE;

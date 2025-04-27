@@ -3,7 +3,7 @@ package revi1337.onsquad.common.fixture;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.UserType;
 
-public class ValueFixture {
+public class MemberValueFixture {
 
     public static final String EMAIL_VALUE = "email@gmail.com";
     public static final String NICKNAME_VALUE = "nickname";
