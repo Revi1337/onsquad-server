@@ -2,8 +2,8 @@ package revi1337.onsquad.member.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;

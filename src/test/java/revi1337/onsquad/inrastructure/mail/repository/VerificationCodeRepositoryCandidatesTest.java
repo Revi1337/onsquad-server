@@ -3,9 +3,9 @@ package revi1337.onsquad.inrastructure.mail.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static revi1337.onsquad.common.fixture.ValueFixture.INVALID_AUTHENTICATION_CODE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.VALID_AUTHENTICATION_CODE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.INVALID_AUTHENTICATION_CODE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.VALID_AUTHENTICATION_CODE;
 
 import io.lettuce.core.RedisConnectionException;
 import java.time.Duration;

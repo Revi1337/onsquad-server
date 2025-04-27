@@ -2,15 +2,15 @@ package revi1337.onsquad.member.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static revi1337.onsquad.common.fixture.ValueFixture.ANDONG_EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.ANDONG_NICKNAME_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_ADDRESS_DETAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_ADDRESS_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_INTRODUCE_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_KAKAO_LINK;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_NICKNAME_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_PROFILE_IMAGE_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_DETAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_INTRODUCE_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_KAKAO_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_PROFILE_IMAGE_LINK;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -2,11 +2,11 @@ package revi1337.onsquad.member.application;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static revi1337.onsquad.common.fixture.ValueFixture.ADDRESS_DETAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.ADDRESS_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.NICKNAME_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.PASSWORD_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ADDRESS_DETAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ADDRESS_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.PASSWORD_VALUE;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

@@ -4,11 +4,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_ADDRESS_DETAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_ADDRESS_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_NICKNAME_VALUE;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_PASSWORD_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_DETAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_PASSWORD_VALUE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;

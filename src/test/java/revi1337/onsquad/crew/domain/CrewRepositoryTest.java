@@ -8,7 +8,7 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_DETAIL;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME;
 import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
-import static revi1337.onsquad.common.fixture.ValueFixture.REVI_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
