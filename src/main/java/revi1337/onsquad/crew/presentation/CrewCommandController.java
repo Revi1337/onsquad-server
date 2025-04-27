@@ -32,11 +32,11 @@ public class CrewCommandController {
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
     public ResponseEntity<RestResponse<String>> newCrew(
-            @Valid @RequestPart CrewCreateRequest crewCreateRequest,
+            @Valid @RequestPart CrewCreateRequest request,
             @RequestPart(required = false) MultipartFile file,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewCommandExecutor.newCrew(authMemberAttribute.id(), crewCreateRequest.toDto(), file);
+        crewCommandExecutor.newCrew(authMemberAttribute.id(), request.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }

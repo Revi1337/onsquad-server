@@ -93,13 +93,13 @@ public class CrewParticipantService {
     }
 
     private void checkDifferenceCrewCreator(Crew crew, Long memberId) {
-        if (crew.isCreatedByOwnerUsing(memberId)) {
+        if (crew.isCreatedBy(memberId)) {
             throw new CrewBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
         }
     }
 
     private void validateCrewPublisher(Long memberId, Crew crew) {
-        if (crew.isCreatedByOwnerUsing(memberId)) {
+        if (crew.isCreatedBy(memberId)) {
             throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
         }
     }

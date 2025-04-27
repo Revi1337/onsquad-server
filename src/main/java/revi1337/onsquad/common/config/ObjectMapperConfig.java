@@ -12,6 +12,7 @@ import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.category.presentation.deserializer.CategoryTypeDeserializer;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.hashtag.presentation.deserializer.HashtagTypeDeserializer;
+import revi1337.onsquad.hashtag.presentation.serializer.HashtagTypeSerializer;
 
 @Configuration
 public class ObjectMapperConfig {
@@ -22,6 +23,7 @@ public class ObjectMapperConfig {
         return builder.createXmlMapper(false).build()
                 .registerModule(new JavaTimeModule())
                 .registerModule(new SimpleModule().addDeserializer(HashtagType.class, new HashtagTypeDeserializer()))
+                .registerModule(new SimpleModule().addSerializer(HashtagType.class, new HashtagTypeSerializer()))
                 .registerModule(new SimpleModule().addDeserializer(CategoryType.class, new CategoryTypeDeserializer()))
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }

@@ -16,7 +16,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class S3ClientConfig {
 
-    @Bean
+    @Bean("s3Client")
     public S3Client amazonS3(S3BucketProperties s3BucketProperties) {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(
                 s3BucketProperties.accessKey(), s3BucketProperties.secretKey()

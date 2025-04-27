@@ -14,6 +14,6 @@ public record CrewCreateRequest(
         String kakaoLink
 ) {
     public CrewCreateDto toDto() {
-        return CrewCreateDto.of(name, introduce, detail, hashtags, kakaoLink);
+        return new CrewCreateDto(name, introduce, detail, hashtags, kakaoLink);
     }
 }

@@ -12,7 +12,7 @@ public class CrewHashtagJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public void batchInsertCrewHashtags(Long crewId, List<Hashtag> hashtags) {
+    public void batchInsert(Long crewId, List<Hashtag> hashtags) {
         String sql = "INSERT INTO crew_hashtag(crew_id, hashtag_id) VALUES (?, ?)";
         jdbcTemplate.batchUpdate(
                 sql,
