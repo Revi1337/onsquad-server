@@ -135,7 +135,7 @@ class VerificationCodeRepositoryCandidatesTest {
     }
 
     @Nested
-    @DisplayName("인증이 완료 위임 테스트")
+    @DisplayName("인증 완료 위임 테스트")
     class IsMarkedVerificationStatusWith {
 
         @Test

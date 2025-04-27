@@ -4,6 +4,9 @@ spring:
   profiles:
     default: test
 
+  main:
+    allow-bean-definition-overriding: true
+
   jpa:
     open-in-view: false
     hibernate:
@@ -40,6 +43,7 @@ spring:
   datasource:
     url: jdbc:h2:mem:~/onsquad;MODE=MySQL
     #    url: jdbc:h2:tcp://localhost/~/onsquad-test;MODE=MySQL
+    #    url: jdbc:mysql://127.0.0.1:3306/onsquad
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -132,14 +136,14 @@ onsquad:
     s3:
       access-key: accesskey
       secret-key: secretkey
-      bucket: bucket
+      bucket: onsquad
       region: ap-northeast-2
       directory:
         root: root
         directories:
-          crew-directory: /dummy
-          squad-directory: /dummys
-          member-directory: /dummy-member
+          crew-directory: dummy1
+          squad-directory: dummy2
+          member-directory: dummy3
 
   api:
     crew-top-members:

@@ -14,14 +14,14 @@ import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleMan
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @RecordApplicationEvents
 @Transactional
-@Import(ApplicationLayerConfiguration.class)
+@Import({ApplicationLayerConfiguration.class})
 @Sql({"/h2-truncate.sql"})
 public abstract class ApplicationLayerTestSupport {
 
     @MockBean
-    private RecycleBinLifeCycleManager recycleBinLifeCycleManager;
+    protected RecycleBinLifeCycleManager recycleBinLifeCycleManager;
 
     @MockBean
-    private VerificationCacheLifeCycleManager verificationCacheLifeCycleManager;
+    protected VerificationCacheLifeCycleManager verificationCacheLifeCycleManager;
 
 }
