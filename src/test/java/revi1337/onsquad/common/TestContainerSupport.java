@@ -21,6 +21,8 @@ public abstract class TestContainerSupport {
         redis = new RedisContainer(RedisContainer.DEFAULT_IMAGE_NAME.withTag("7.0.8-alpine"));
         aws = new LocalStackContainer(DockerImageName.parse("localstack/localstack:1.2"))
                 .withServices(LocalStackContainer.Service.S3)
+                .withAccessToHost(true)
+                .withEnv("HOSTNAME_EXTERNAL", "localstack")
                 .withStartupTimeout(Duration.ofSeconds(600));
 
         redis.start();
@@ -42,7 +44,7 @@ public abstract class TestContainerSupport {
 
         private static void createTestBucket() {
             try {
-                aws.execInContainer("awslocal", "s3api", "create-bucket", "--bucket", "onsqaud");
+                aws.execInContainer("awslocal", "s3api", "create-bucket", "--bucket", "onsquad");
             } catch (Exception e) {
             }
         }

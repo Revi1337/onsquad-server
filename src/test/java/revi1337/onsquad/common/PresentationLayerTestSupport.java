@@ -17,9 +17,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import revi1337.onsquad.auth.application.token.JsonWebTokenEvaluator;
+import revi1337.onsquad.common.config.PresentationLayerConfiguration;
 import revi1337.onsquad.common.config.WebMvcConfig;
 
-@Import(WebMvcConfig.class)
+@Import({WebMvcConfig.class, PresentationLayerConfiguration.class})
 @WebMvcTest
 @ExtendWith({RestDocumentationExtension.class})
 public abstract class PresentationLayerTestSupport {

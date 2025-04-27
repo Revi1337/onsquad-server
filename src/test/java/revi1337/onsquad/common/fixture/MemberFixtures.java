@@ -29,6 +29,7 @@ import static revi1337.onsquad.common.fixture.ValueFixture.REVI_KAKAO_LINK;
 import static revi1337.onsquad.common.fixture.ValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.ValueFixture.REVI_PROFILE_IMAGE_LINK;
 
+import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.Email;
@@ -99,5 +100,23 @@ public class MemberFixtures {
                 .mbti(Mbti.ISTP)
                 .userType(UserType.GOOGLE)
                 .build();
+    }
+
+    public static Member REVI_WITH_ID(Long id) {
+        Member revi = REVI();
+        ReflectionTestUtils.setField(revi, "id", id);
+        return revi;
+    }
+
+    public static Member ANDONG_WITH_ID(Long id) {
+        Member andong = ANDONG();
+        ReflectionTestUtils.setField(andong, "id", id);
+        return andong;
+    }
+
+    public static Member KWANGWON_WITH_ID(Long id) {
+        Member kwangwon = KWANGWON();
+        ReflectionTestUtils.setField(kwangwon, "id", id);
+        return kwangwon;
     }
 }
