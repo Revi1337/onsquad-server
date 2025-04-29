@@ -22,7 +22,7 @@ import revi1337.onsquad.member.domain.Member;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "unique_crewparticipant_crew_member", columnNames = {"crew_id", "member_id"}),
+        @UniqueConstraint(name = "crewparticipant_uidx_member_id_crew_id", columnNames = {"crew_id", "member_id"})
 })
 public class CrewParticipant extends RequestEntity {
 
@@ -49,6 +49,14 @@ public class CrewParticipant extends RequestEntity {
         this.id = id;
         this.crew = crew;
         this.member = member;
+    }
+
+    public boolean isNotFrom(Long crewId) {
+        return !isFrom(crewId);
+    }
+
+    public boolean isFrom(Long crewId) {
+        return crew.getId().equals(crewId);
     }
 
     @Override

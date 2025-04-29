@@ -9,7 +9,8 @@ import revi1337.onsquad.common.error.ErrorCode;
 public enum CrewParticipantErrorCode implements ErrorCode {
 
     NEVER_REQUESTED(400, "CP001", "크루에 참여신청을 한 이력이 없습니다."),
-    CANT_SEE_PARTICIPANTS(400, "CP002", "crew 작성자 이외에는 신청자를 볼 수 없습니다.");
+    CANT_SEE_PARTICIPANTS(400, "CP002", "crew 작성자 이외에는 신청자를 볼 수 없습니다."),
+    INVALID_REQUEST(400, "CP003", "해당 신청은 해당 크루의 신청이 아닙니다.");
 
     private final int status;
     private final String code;

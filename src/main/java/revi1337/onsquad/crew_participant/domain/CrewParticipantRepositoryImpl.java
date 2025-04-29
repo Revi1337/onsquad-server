@@ -31,6 +31,11 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
+    public Optional<CrewParticipant> findById(Long id) {
+        return crewParticipantJpaRepository.findById(id);
+    }
+
+    @Override
     public void deleteById(Long id) {
         crewParticipantJpaRepository.deleteById(id);
     }

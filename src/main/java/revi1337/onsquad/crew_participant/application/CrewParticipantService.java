@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.aspect.Throttling;
-import revi1337.onsquad.crew.application.dto.CrewAcceptDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
@@ -23,10 +22,11 @@ import revi1337.onsquad.crew_participant.application.dto.CrewParticipantRequestD
 import revi1337.onsquad.crew_participant.application.dto.SimpleCrewParticipantRequestDto;
 import revi1337.onsquad.crew_participant.domain.CrewParticipant;
 import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
+import revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode;
+import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
 
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CrewParticipantService {
@@ -36,28 +36,16 @@ public class CrewParticipantService {
     private final CrewRepository crewRepository;
     private final MemberRepository memberRepository;
 
-    public List<CrewParticipantRequestDto> fetchAllCrewRequests(Long memberId) {
-        return crewParticipantRepository.fetchAllCrewRequestsByMemberId(memberId).stream()
-                .map(CrewParticipantRequestDto::from)
-                .toList();
-    }
-
-    @Transactional
-    public void rejectCrewRequest(Long memberId, Long crewId) {
-        CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crewId, memberId);
-        crewParticipantRepository.deleteById(crewParticipant.getId());
-    }
-
     @Throttling(name = "throttle-crew-join", key = "'crew:' + #crewId + ':member:' + #memberId", during = 5)
     @Transactional
     public void requestInCrew(Long memberId, Long crewId) {
         Crew crew = crewRepository.getById(crewId);
+        validateMemberIsNotCrewCreator(crew, memberId);
         crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).ifPresentOrElse(
                 crewMember -> {
                     throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId);
                 },
                 () -> {
-                    checkDifferenceCrewCreator(crew, memberId);
                     Member referenceMember = memberRepository.getReferenceById(memberId);
                     crewParticipantRepository.upsertCrewParticipant(crew, referenceMember, LocalDateTime.now());
                 }
@@ -65,15 +53,15 @@ public class CrewParticipantService {
     }
 
     @Transactional
-    public void acceptCrewRequest(Long memberId, Long crewId, CrewAcceptDto dto) {
+    public void acceptCrewRequest(Long memberId, Long crewId, Long reqMemberId) {
         Crew crew = crewRepository.getById(crewId);
-        validateCrewPublisher(memberId, crew);
-        crewMemberRepository.findByCrewIdAndMemberId(crewId, dto.memberId()).ifPresentOrElse(
+        validateCrewCreator(memberId, crew);
+        crewMemberRepository.findByCrewIdAndMemberId(crewId, reqMemberId).ifPresentOrElse(
                 crewMember -> {
                     throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId);
                 },
                 () -> {
-                    CrewParticipant cp = crewParticipantRepository.getByCrewIdAndMemberId(crew.getId(), dto.memberId());
+                    CrewParticipant cp = crewParticipantRepository.getByCrewIdAndMemberId(crew.getId(), reqMemberId);
                     CrewMember cm = CrewMember.forGeneral(crew, cp.getMember(), LocalDateTime.now());
                     crewMemberRepository.save(cm);
                     crewParticipantRepository.deleteById(cp.getId());
@@ -81,6 +69,19 @@ public class CrewParticipantService {
         );
     }
 
+    @Transactional
+    public void rejectCrewRequest(Long memberId, Long crewId, Long requestId) {
+        Crew crew = crewRepository.getById(crewId);
+        validateCrewCreator(memberId, crew);
+        CrewParticipant crewParticipant = crewParticipantRepository.getById(requestId);
+        if (crewParticipant.isNotFrom(crewId)) {
+            throw new CrewParticipantBusinessException.InvalidRequest(CrewParticipantErrorCode.INVALID_REQUEST);
+        }
+
+        crewParticipantRepository.deleteById(requestId);
+    }
+
+    @Transactional(readOnly = true)
     public List<SimpleCrewParticipantRequestDto> fetchCrewRequests(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         if (crewMember.isNotOwner()) {
@@ -92,14 +93,27 @@ public class CrewParticipantService {
                 .toList();
     }
 
-    private void checkDifferenceCrewCreator(Crew crew, Long memberId) {
+    @Transactional
+    public void cancelCrewRequest(Long memberId, Long crewId) {
+        CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crewId, memberId);
+        crewParticipantRepository.deleteById(crewParticipant.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CrewParticipantRequestDto> fetchAllCrewRequests(Long memberId) {
+        return crewParticipantRepository.fetchAllCrewRequestsByMemberId(memberId).stream()
+                .map(CrewParticipantRequestDto::from)
+                .toList();
+    }
+
+    private void validateMemberIsNotCrewCreator(Crew crew, Long memberId) {
         if (crew.isCreatedBy(memberId)) {
             throw new CrewBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
         }
     }
 
-    private void validateCrewPublisher(Long memberId, Crew crew) {
-        if (crew.isCreatedBy(memberId)) {
+    private void validateCrewCreator(Long memberId, Crew crew) {
+        if (!crew.isCreatedBy(memberId)) {
             throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
         }
     }

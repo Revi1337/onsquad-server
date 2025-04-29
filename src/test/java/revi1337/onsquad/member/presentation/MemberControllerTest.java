@@ -36,7 +36,7 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_PASSWORD_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_PROFILE_IMAGE_LINK;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_USER_TYPE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_USER_TYPE_VALUE;
 
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
@@ -123,7 +123,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                     REVI_MBTI_VALUE,
                     REVI_KAKAO_LINK,
                     REVI_PROFILE_IMAGE_LINK,
-                    REVI_USER_TYPE,
+                    REVI_USER_TYPE_VALUE,
                     REVI_ADDRESS_VALUE,
                     REVI_ADDRESS_DETAIL_VALUE
             );
