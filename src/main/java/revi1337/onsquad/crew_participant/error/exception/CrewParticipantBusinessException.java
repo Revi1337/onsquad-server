@@ -22,6 +22,13 @@ public abstract class CrewParticipantBusinessException extends RuntimeException 
         }
     }
 
+    public static class InvalidRequest extends CrewParticipantBusinessException {
+
+        public InvalidRequest(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
     public static class CantSeeParticipant extends CrewParticipantBusinessException {
 
         public CantSeeParticipant(ErrorCode errorCode) {

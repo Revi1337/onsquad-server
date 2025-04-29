@@ -86,7 +86,7 @@ public class MemberFixtures {
                 .password(Password.encrypted(KWANGWON_ENCRYPTED_PASSWORD_VALUE))
                 .profileImage(KWANGWON_PROFILE_IMAGE_LINK)
                 .kakaoLink(KWANGWON_KAKAO_LINK)
-                .mbti(Mbti.ISTP)
+                .mbti(Mbti.ENFJ)
                 .build();
     }
 
