@@ -2,7 +2,7 @@ package revi1337.onsquad.hashtag.domain.vo;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
@@ -67,7 +67,7 @@ public enum HashtagType {
     }
 
     public static List<HashtagType> fromTexts(List<String> hashtagTexts) {
-        return new LinkedHashSet<>(hashtagTexts).stream()
+        return new HashSet<>(hashtagTexts).stream()
                 .map(HashtagType::fromText)
                 .toList();
     }
