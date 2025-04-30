@@ -7,12 +7,14 @@ import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 
 public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
 
+    @Deprecated
     default List<Hashtag> findAllHashtags() {
         return HashtagType.unmodifiableList().stream()
                 .map(hashtagType -> findById(hashtagType.getPk()).get())
                 .collect(Collectors.toList());
     }
 
+    @Deprecated
     default List<Hashtag> findHashtagsInSecondCache(List<HashtagType> hashtagTypes) {
         return hashtagTypes.stream()
                 .map(hashtagType -> findById(hashtagType.getPk()).get())
