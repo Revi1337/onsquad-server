@@ -26,8 +26,7 @@ public class CrewMemberController {
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<CrewMemberResponse> crewMemberResponse = crewMemberService
-                .fetchCrewMembers(authMemberAttribute.id(), crewId)
-                .stream()
+                .fetchCrewMembers(authMemberAttribute.id(), crewId).stream()
                 .map(CrewMemberResponse::from)
                 .toList();
 

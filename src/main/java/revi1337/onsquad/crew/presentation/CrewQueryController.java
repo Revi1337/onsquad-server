@@ -64,7 +64,7 @@ public class CrewQueryController {
         return ResponseEntity.ok().body(RestResponse.success(crewResponses));
     }
 
-    @GetMapping("/crews/me")
+    @GetMapping("/me")
     public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchAllJoinedCrews(
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
