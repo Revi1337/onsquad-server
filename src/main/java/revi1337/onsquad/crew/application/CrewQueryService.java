@@ -9,6 +9,7 @@ import revi1337.onsquad.crew.application.dto.CrewInfoDto;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 
 @Transactional(readOnly = true)
@@ -36,6 +37,12 @@ public class CrewQueryService {
     public List<CrewInfoDto> fetchCrewsByName(String crewName, Pageable pageable) {
         return crewRepository.fetchCrewsByName(crewName, pageable).stream()
                 .map(CrewInfoDto::from)
+                .toList();
+    }
+
+    public List<EnrolledCrewDto> fetchAllJoinedCrews(Long memberId) {
+        return crewMemberRepository.fetchAllJoinedCrewsByMemberId(memberId).stream()
+                .map(EnrolledCrewDto::from)
                 .toList();
     }
 }

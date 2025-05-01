@@ -1,7 +1,7 @@
-package revi1337.onsquad.crew_member.presentation.dto.response;
+package revi1337.onsquad.backup.crew.presentation.dto;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.crew_member.application.dto.Top5CrewMemberDto;
+import revi1337.onsquad.backup.crew.application.dto.Top5CrewMemberDto;
 
 public record Top5CrewMemberResponse(
         Long crewId,

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 public interface CrewMemberRepository {
@@ -15,13 +14,11 @@ public interface CrewMemberRepository {
 
     CrewMember saveAndFlush(CrewMember crewMember);
 
-    void deleteByCrewId(Long crewId);
+    void deleteAllByCrewId(Long crewId);
 
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
     Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
-
-    List<Top5CrewMemberDomainDto> findTop5CrewMembers(Long crewId);
 
     boolean existsCrewMember(Long memberId);
 

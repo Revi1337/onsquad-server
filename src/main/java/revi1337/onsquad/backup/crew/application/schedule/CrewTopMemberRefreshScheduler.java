@@ -8,32 +8,26 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.backup.crew.domain.CrewTopCache;
-import revi1337.onsquad.backup.crew.domain.CrewTopCacheRepository;
-import revi1337.onsquad.crew_member.config.CrewTopMemberProperty;
-import revi1337.onsquad.crew_member.domain.CrewMemberJdbcRepository;
+import revi1337.onsquad.backup.crew.config.property.CrewTopMemberProperty;
+import revi1337.onsquad.backup.crew.domain.CrewTopMemberRepository;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class CrewTopNRefreshScheduler {
+public class CrewTopMemberRefreshScheduler {
 
-    private final CrewTopCacheRepository crewTopCacheRepository;
-    private final CrewMemberJdbcRepository crewMemberJdbcRepository;
+    private final CrewTopMemberRepository crewTopMemberRepository;
     private final CrewTopMemberProperty crewTopMemberProperty;
 
     @Scheduled(cron = "${onsquad.api.crew-top-members.schedule.expression}", scheduler = "crewTopTask")
-    public void refreshTopNMemberInCrew() {
+    public void refreshTopMembersInCrew() {
         LocalDate to = LocalDate.now().minusDays(1);
         LocalDate from = to.minusDays(crewTopMemberProperty.during().toDays());
 
-        log.info("[Renew CrewTopN Caches In DataBase : {} ~ {}]", from, to);
-        crewTopCacheRepository.deleteAllInBatch();
-        crewTopCacheRepository.batchInsertCrewTop(
-                crewMemberJdbcRepository.findAllTopNCrewMembers(from, to, crewTopMemberProperty.rankLimit())
-                        .stream()
-                        .map(CrewTopCache::from)
-                        .toList()
+        log.info("[Renew CrewTopMember Caches In DataBase : {} ~ {}]", from, to);
+        crewTopMemberRepository.deleteAllInBatch();
+        crewTopMemberRepository.batchInsert(
+                crewTopMemberRepository.findAllTopNCrewMembers(from, to, crewTopMemberProperty.rankLimit())
         );
     }
 

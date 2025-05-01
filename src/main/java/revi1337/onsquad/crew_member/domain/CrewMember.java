@@ -21,7 +21,6 @@ import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -60,36 +59,35 @@ public class CrewMember extends RequestEntity {
     @Column(nullable = false)
     private CrewRole role = GENERAL;
 
-    @Builder
-    private CrewMember(Long id, Crew crew, Member member, CrewRole role, LocalDateTime participantAt) {
+    private CrewMember(Member member, CrewRole role, LocalDateTime participantAt) {
+        this(null, member, role, participantAt);
+    }
+
+    private CrewMember(Crew crew, Member member, CrewRole role, LocalDateTime participantAt) {
         super(participantAt);
-        this.id = id;
         this.crew = crew;
         this.member = member;
         this.role = role == null ? GENERAL : role;
     }
 
-    public static CrewMember forOwner(Member member, LocalDateTime participantAt) {
-        return CrewMember.builder()
-                .member(member)
-                .role(OWNER)
-                .participantAt(participantAt)
-                .build();
-    }
-
     public static CrewMember forGeneral(Crew crew, Member member, LocalDateTime participantAt) {
-        return CrewMember.builder()
-                .crew(crew)
-                .member(member)
-                .participantAt(participantAt)
-                .build();
+        CrewMember crewMember = forGeneral(member, participantAt);
+        crewMember.addCrew(crew);
+        return crewMember;
     }
 
-    public static CrewMember of(Crew crew, Member member) {
-        return CrewMember.builder()
-                .crew(crew)
-                .member(member)
-                .build();
+    public static CrewMember forOwner(Crew crew, Member member, LocalDateTime participantAt) {
+        CrewMember crewMember = forOwner(member, participantAt);
+        crewMember.addCrew(crew);
+        return crewMember;
+    }
+
+    public static CrewMember forGeneral(Member member, LocalDateTime participantAt) {
+        return new CrewMember(member, GENERAL, participantAt);
+    }
+
+    public static CrewMember forOwner(Member member, LocalDateTime participantAt) {
+        return new CrewMember(member, OWNER, participantAt);
     }
 
     public void addCrew(Crew crew) {
@@ -98,22 +96,6 @@ public class CrewMember extends RequestEntity {
 
     public void releaseCrew() {
         this.crew = null;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof CrewMember that)) {
-            return false;
-        }
-        return id != null && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
     }
 
     public boolean isOwnerOfSquad(Long squadId) {
@@ -138,5 +120,21 @@ public class CrewMember extends RequestEntity {
 
     public boolean isGreaterThenManager() {
         return role == OWNER || role == MANAGER;
+    }
+    
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof CrewMember that)) {
+            return false;
+        }
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

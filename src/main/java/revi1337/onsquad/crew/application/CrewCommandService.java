@@ -71,7 +71,7 @@ public class CrewCommandService {
         }
 
         crewHashtagRepository.deleteByCrewId(crewId);
-        crewMemberRepository.deleteByCrewId(crewId);
+        crewMemberRepository.deleteAllByCrewId(crewId);
         crewRepository.deleteById(crew.getId());
     }
 
