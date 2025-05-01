@@ -21,11 +21,18 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW1_IMAGE_LINK_VALUE;
+import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW1_NAME_VALUE;
+import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW2_IMAGE_LINK_VALUE;
+import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW2_NAME_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_DETAIL_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_IMAGE_LINK_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_KAKAO_LINK_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.member.domain.vo.Mbti.ISTP;
 
@@ -39,6 +46,7 @@ import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 
@@ -244,6 +252,45 @@ class CrewQueryControllerTest extends PresentationLayerTestSupport {
                     ));
 
             verify(crewQueryService, times(1)).fetchCrewsByName(eq(CREW_NAME_VALUE), any(Pageable.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 들 조회를 테스트한다.")
+    class FetchAllJoinedCrews {
+
+        @Test
+        @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 들 조회에 성공한다.")
+        void success() throws Exception {
+            EnrolledCrewDto SERVICE_DTO1 = new EnrolledCrewDto(
+                    1L,
+                    CREW1_NAME_VALUE,
+                    CREW1_IMAGE_LINK_VALUE,
+                    true,
+                    new SimpleMemberInfoDto(1L, null, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE)
+            );
+            EnrolledCrewDto SERVICE_DTO2 = new EnrolledCrewDto(
+                    2L,
+                    CREW2_NAME_VALUE,
+                    CREW2_IMAGE_LINK_VALUE,
+                    false,
+                    new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
+            );
+            List<EnrolledCrewDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
+            when(crewQueryService.fetchAllJoinedCrews(any())).thenReturn(SERVICE_DTOS);
+
+            mockMvc.perform(get("/api/crews/me")
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andDo(document("crew-me/success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            responseBody()
+                    ));
+
+            verify(crewQueryService).fetchAllJoinedCrews(any());
         }
     }
 }
