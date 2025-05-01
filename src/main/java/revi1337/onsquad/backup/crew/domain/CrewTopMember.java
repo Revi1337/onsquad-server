@@ -8,15 +8,13 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import revi1337.onsquad.crew_member.domain.dto.Top5CrewMemberDomainDto;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CrewTopCache {
+public class CrewTopMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,18 +40,8 @@ public class CrewTopCache {
     @Column(nullable = false)
     private int ranks;
 
-    @Builder
-    private CrewTopCache(
-            Long id,
-            Long crewId,
-            Long memberId,
-            String nickname,
-            String mbti,
-            LocalDateTime participateAt,
-            int counter,
-            int ranks
-    ) {
-        this.id = id;
+    public CrewTopMember(Long crewId, int ranks, int counter, Long memberId, String nickname, String mbti,
+                         LocalDateTime participateAt) {
         this.crewId = crewId;
         this.memberId = memberId;
         this.nickname = nickname;
@@ -68,7 +56,7 @@ public class CrewTopCache {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CrewTopCache that)) {
+        if (!(o instanceof CrewTopMember that)) {
             return false;
         }
         return id != null && Objects.equals(getId(), that.getId());
@@ -77,17 +65,5 @@ public class CrewTopCache {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
-    }
-
-    public static CrewTopCache from(Top5CrewMemberDomainDto dto) {
-        return CrewTopCache.builder()
-                .crewId(dto.crewId())
-                .memberId(dto.memberId())
-                .nickname(dto.nickname())
-                .mbti(dto.mbti())
-                .participateAt(dto.participateAt())
-                .counter(dto.counter())
-                .ranks(dto.rank())
-                .build();
     }
 }

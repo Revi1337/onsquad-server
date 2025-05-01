@@ -2,8 +2,8 @@ package revi1337.onsquad.crew.presentation.dto.response;
 
 import java.util.List;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfoResponse;
+import revi1337.onsquad.backup.crew.presentation.dto.Top5CrewMemberResponse;
 import revi1337.onsquad.crew.application.dto.CrewMainDto;
-import revi1337.onsquad.crew_member.presentation.dto.response.Top5CrewMemberResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
 
 public record CrewMainResponse(

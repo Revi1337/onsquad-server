@@ -16,6 +16,7 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.presentation.dto.response.CrewInfoResponse;
 import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
+import revi1337.onsquad.crew_member.presentation.dto.response.EnrolledCrewResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -61,5 +62,17 @@ public class CrewQueryController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponses));
+    }
+
+    @GetMapping("/crews/me")
+    public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchAllJoinedCrews(
+            @Authenticate AuthMemberAttribute authMemberAttribute
+    ) {
+        List<EnrolledCrewResponse> ownedCrewResponses = crewQueryService
+                .fetchAllJoinedCrews(authMemberAttribute.id()).stream()
+                .map(EnrolledCrewResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(ownedCrewResponses));
     }
 }
