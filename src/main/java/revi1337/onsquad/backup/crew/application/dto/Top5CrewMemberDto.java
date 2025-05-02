@@ -6,7 +6,7 @@ import revi1337.onsquad.backup.crew.domain.CrewTopMember;
 public record Top5CrewMemberDto(
         Long crewId,
         int rank,
-        int counter,
+        int contribute,
         Long memberId,
         String nickname,
         String mbti,
@@ -16,7 +16,7 @@ public record Top5CrewMemberDto(
         return new Top5CrewMemberDto(
                 crewTopMember.getCrewId(),
                 crewTopMember.getRanks(),
-                crewTopMember.getCounter(),
+                crewTopMember.getContribute(),
                 crewTopMember.getMemberId(),
                 crewTopMember.getNickname(),
                 crewTopMember.getMbti() != null ? crewTopMember.getMbti() : "",
