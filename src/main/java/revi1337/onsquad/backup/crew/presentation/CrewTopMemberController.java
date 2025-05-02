@@ -20,7 +20,7 @@ public class CrewTopMemberController {
 
     private final CrewTopMemberService crewTopMemberService;
 
-    @GetMapping("/crews/{crewId}/top")
+    @GetMapping("/crews/{crewId}/members/top")
     public ResponseEntity<RestResponse<List<Top5CrewMemberResponse>>> findTop5CrewMembers(
             @PathVariable Long crewId,
             @Authenticate AuthMemberAttribute authMemberAttribute

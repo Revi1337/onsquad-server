@@ -10,6 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.backup.crew.config.property.CrewTopMemberProperty;
 import revi1337.onsquad.backup.crew.domain.CrewTopMemberRepository;
+import revi1337.onsquad.backup.crew.domain.dto.Top5CrewMemberDomainDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +28,9 @@ public class CrewTopMemberRefreshScheduler {
         log.info("[Renew CrewTopMember Caches In DataBase : {} ~ {}]", from, to);
         crewTopMemberRepository.deleteAllInBatch();
         crewTopMemberRepository.batchInsert(
-                crewTopMemberRepository.findAllTopNCrewMembers(from, to, crewTopMemberProperty.rankLimit())
+                crewTopMemberRepository.fetchAggregatedTopMembers(from, to, crewTopMemberProperty.rankLimit()).stream()
+                        .map(Top5CrewMemberDomainDto::toEntity)
+                        .toList()
         );
     }
 

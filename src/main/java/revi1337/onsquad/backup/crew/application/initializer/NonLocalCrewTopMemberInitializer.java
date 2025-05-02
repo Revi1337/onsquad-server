@@ -7,6 +7,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import revi1337.onsquad.backup.crew.config.property.CrewTopMemberProperty;
 import revi1337.onsquad.backup.crew.domain.CrewTopMemberRepository;
+import revi1337.onsquad.backup.crew.domain.dto.Top5CrewMemberDomainDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +24,10 @@ public class NonLocalCrewTopMemberInitializer {
         log.info("[Initialize Crew Top Members]");
         if (!crewTopMemberRepository.exists()) {
             crewTopMemberRepository.batchInsert(
-                    crewTopMemberRepository.findAllTopNCrewMembers(from, to, crewTopMemberProperty.rankLimit())
+                    crewTopMemberRepository.fetchAggregatedTopMembers(from, to, crewTopMemberProperty.rankLimit())
+                            .stream()
+                            .map(Top5CrewMemberDomainDto::toEntity)
+                            .toList()
             );
         }
     }

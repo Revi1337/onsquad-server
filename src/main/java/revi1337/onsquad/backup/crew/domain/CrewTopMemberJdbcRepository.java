@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.backup.crew.domain.dto.Top5CrewMemberDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -20,8 +21,9 @@ public class CrewTopMemberJdbcRepository {
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     public void batchInsertCrewTop(List<CrewTopMember> crewTopMembers) {
-        String sql = "INSERT INTO crew_top_member(crew_id, member_id, nickname, mbti, participate_at, counter, ranks) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql =
+                "INSERT INTO crew_top_member(crew_id, member_id, nickname, mbti, participate_at, contribute, ranks) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(
                 sql,
@@ -33,7 +35,7 @@ public class CrewTopMemberJdbcRepository {
                     ps.setString(3, crewTopCache.getNickname());
                     ps.setString(4, crewTopCache.getMbti());
                     ps.setObject(5, crewTopCache.getParticipateAt());
-                    ps.setInt(6, crewTopCache.getCounter());
+                    ps.setInt(6, crewTopCache.getContribute());
                     ps.setInt(7, crewTopCache.getRanks());
                 }
         );
@@ -46,7 +48,7 @@ public class CrewTopMemberJdbcRepository {
      * @param to
      * @param rankLimit
      */
-    public List<CrewTopMember> findAllTopNCrewMembers(LocalDate from, LocalDate to, Integer rankLimit) {
+    public List<Top5CrewMemberDomainDto> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
         String sql = """
                         \n
                         SELECT
@@ -54,7 +56,7 @@ public class CrewTopMemberJdbcRepository {
                         FROM (
                             SELECT
                                 crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
-                                DENSE_RANK() OVER(PARTITION BY crew_id ORDER BY counter, mem_join_time) AS ranks
+                                DENSE_RANK() OVER(PARTITION BY crew_id ORDER BY counter DESC, mem_join_time) AS ranks
                             FROM (
                                 SELECT DISTINCT
                                         crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter
@@ -101,17 +103,17 @@ public class CrewTopMemberJdbcRepository {
 
     /**
      * @param crewId
-     * @see #findAllTopNCrewMembers
+     * @see #fetchAggregatedTopMembers
      * @deprecated This API is no longer used.
      */
     @Deprecated
-    public List<CrewTopMember> findTopNCrewMembers(Long crewId, int fetchSize) {
+    public List<Top5CrewMemberDomainDto> fetchAggregatedTopMembers(Long crewId, int fetchSize) {
         String sql = """
                         \n
                         SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
                         FROM (
                             SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
-                                    DENSE_RANK() OVER(ORDER BY counter, mem_join_time) AS ranks
+                                    DENSE_RANK() OVER(ORDER BY counter DESC, mem_join_time) AS ranks
                             FROM (
                                 SELECT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, COUNT(mem_id) AS counter
                                 FROM (
@@ -150,8 +152,8 @@ public class CrewTopMemberJdbcRepository {
         return namedJdbcTemplate.query(sql, sqlParameterSource, top5RowMapper());
     }
 
-    private RowMapper<CrewTopMember> top5RowMapper() {
-        return (rs, rowNum) -> new CrewTopMember(
+    private RowMapper<Top5CrewMemberDomainDto> top5RowMapper() {
+        return (rs, rowNum) -> new Top5CrewMemberDomainDto(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
                 rs.getInt("counter"),
@@ -162,8 +164,8 @@ public class CrewTopMemberJdbcRepository {
         );
     }
 
-    private RowMapper<CrewTopMember> crewTop5RowMapper() {
-        return (rs, rowNum) -> new CrewTopMember(
+    private RowMapper<Top5CrewMemberDomainDto> crewTop5RowMapper() {
+        return (rs, rowNum) -> new Top5CrewMemberDomainDto(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
                 rs.getInt("counter"),

@@ -16,7 +16,7 @@ public record Top5CrewMemberResponse(
         return new Top5CrewMemberResponse(
                 top5CrewMemberDto.crewId(),
                 top5CrewMemberDto.rank(),
-                top5CrewMemberDto.counter(),
+                top5CrewMemberDto.contribute(),
                 top5CrewMemberDto.memberId(),
                 top5CrewMemberDto.nickname(),
                 top5CrewMemberDto.mbti(),
