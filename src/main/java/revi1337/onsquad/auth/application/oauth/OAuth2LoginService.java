@@ -37,7 +37,7 @@ public class OAuth2LoginService {
         memberRepository.save(member);
 
         JsonWebToken jsonWebToken = jsonWebTokenService.generateTokenPair(MemberDto.from(member));
-        jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebToken.refreshToken(), member.getId());
+        jsonWebTokenService.saveRefreshToken(jsonWebToken.refreshToken(), member.getId());
         return jsonWebToken;
     }
 }

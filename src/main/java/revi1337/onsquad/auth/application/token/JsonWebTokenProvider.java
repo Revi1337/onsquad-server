@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
@@ -61,6 +62,7 @@ public class JsonWebTokenProvider {
         Instant currentTime = Instant.now();
         return Jwts.builder()
                 .setClaims(extraClaims)
+                .claim("jti", UUID.randomUUID().toString())
                 .setSubject(subject)
                 .setIssuer(onsquadProperties.getApplicationName().toUpperCase())
                 .setIssuedAt(Date.from(currentTime))

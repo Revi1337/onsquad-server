@@ -5,10 +5,10 @@ import revi1337.onsquad.auth.model.token.RefreshToken;
 
 public interface RefreshTokenManager {
 
-    void storeTemporaryToken(RefreshToken refreshToken, Long memberId);
+    void saveToken(RefreshToken refreshToken, Long memberId);
 
-    Optional<RefreshToken> findTemporaryToken(Long memberId);
+    Optional<RefreshToken> findTokenBy(Long memberId);
 
-    void removeTemporaryToken(Long memberId);
+    void deleteTokenBy(Long memberId);
 
 }

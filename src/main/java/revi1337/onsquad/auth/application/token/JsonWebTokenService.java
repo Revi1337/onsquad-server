@@ -29,20 +29,17 @@ public class JsonWebTokenService {
     private final MemberRepository memberRepository;
 
     public JsonWebToken generateTokenPair(MemberDto dto) {
-        return JsonWebToken.of(
-                generateAccessToken(dto),
-                generateRefreshToken(dto)
-        );
+        return JsonWebToken.of(generateAccessToken(dto), generateRefreshToken(dto));
     }
 
-    public void storeTemporaryTokenInMemory(RefreshToken refreshToken, Long memberId) {
-        expiringMapRefreshTokenManager.storeTemporaryToken(refreshToken, memberId);
+    public void saveRefreshToken(RefreshToken refreshToken, Long memberId) {
+        expiringMapRefreshTokenManager.saveToken(refreshToken, memberId);
     }
 
     public JsonWebToken reissueToken(RefreshToken refreshToken) {
         Claims claims = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
         return Optional.ofNullable(claims.get("memberId", Long.class))
-                .flatMap(memberId -> expiringMapRefreshTokenManager.findTemporaryToken(memberId)
+                .flatMap(memberId -> expiringMapRefreshTokenManager.findTokenBy(memberId)
                         .filter(token -> token.equals(refreshToken))
                         .map(token -> restoreTokenPair(memberId)))
                 .orElseThrow(() -> new AuthTokenException.NotFoundRefresh(NOT_FOUND_REFRESH));
@@ -71,7 +68,7 @@ public class JsonWebTokenService {
     private JsonWebToken restoreTokenPair(Long tokenOwnerId) {
         Member member = memberRepository.getById(tokenOwnerId);
         JsonWebToken jsonWebToken = generateTokenPair(MemberDto.from(member));
-        expiringMapRefreshTokenManager.storeTemporaryToken(jsonWebToken.refreshToken(), tokenOwnerId);
+        expiringMapRefreshTokenManager.saveToken(jsonWebToken.refreshToken(), tokenOwnerId);
         return jsonWebToken;
     }
 }
