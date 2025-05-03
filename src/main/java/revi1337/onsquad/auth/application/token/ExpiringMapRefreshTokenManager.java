@@ -12,22 +12,22 @@ import revi1337.onsquad.auth.repository.token.ExpiringMapTokenRepository;
 @Service
 public class ExpiringMapRefreshTokenManager implements RefreshTokenManager {
 
-    private final ExpiringMapTokenRepository refreshTokenOperation;
     private final TokenProperties tokenProperties;
+    private final ExpiringMapTokenRepository tokenRepository;
 
     @Override
-    public void storeTemporaryToken(RefreshToken refreshToken, Long memberId) {
+    public void saveToken(RefreshToken refreshToken, Long memberId) {
         Duration expired = tokenProperties.refreshTokenAttributes().tokenAttributes().expired();
-        refreshTokenOperation.storeTemporaryRefreshToken(refreshToken, memberId, expired);
+        tokenRepository.save(refreshToken, memberId, expired);
     }
 
     @Override
-    public Optional<RefreshToken> findTemporaryToken(Long memberId) {
-        return refreshTokenOperation.retrieveTemporaryRefreshToken(memberId);
+    public Optional<RefreshToken> findTokenBy(Long memberId) {
+        return tokenRepository.findBy(memberId);
     }
 
     @Override
-    public void removeTemporaryToken(Long memberId) {
-        refreshTokenOperation.deleteTemporaryRefreshToken(memberId);
+    public void deleteTokenBy(Long memberId) {
+        tokenRepository.deleteBy(memberId);
     }
 }

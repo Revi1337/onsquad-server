@@ -17,18 +17,18 @@ public class RedisRefreshTokenManager implements RefreshTokenManager {
     private final TokenProperties tokenProperties;
 
     @Override
-    public void storeTemporaryToken(RefreshToken refreshToken, Long memberId) {
+    public void saveToken(RefreshToken refreshToken, Long memberId) {
         Duration expired = tokenProperties.refreshTokenAttributes().tokenAttributes().expired();
-        redisTokenOperation.storeTemporaryRefreshToken(refreshToken, memberId, expired);
+        redisTokenOperation.save(refreshToken, memberId, expired);
     }
 
     @Override
-    public Optional<RefreshToken> findTemporaryToken(Long memberId) {
-        return redisTokenOperation.retrieveTemporaryRefreshToken(memberId);
+    public Optional<RefreshToken> findTokenBy(Long memberId) {
+        return redisTokenOperation.findBy(memberId);
     }
 
     @Override
-    public void removeTemporaryToken(Long memberId) {
-        redisTokenOperation.deleteTemporaryRefreshToken(memberId);
+    public void deleteTokenBy(Long memberId) {
+        redisTokenOperation.deleteBy(memberId);
     }
 }

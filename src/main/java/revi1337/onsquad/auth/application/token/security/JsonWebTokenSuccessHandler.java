@@ -28,7 +28,7 @@ public class JsonWebTokenSuccessHandler implements AuthenticationSuccessHandler 
         log.info("{} --> onAuthenticationSuccess", getClass().getSimpleName());
         if (authentication.getPrincipal() instanceof AuthMemberAttribute authMemberAttribute) {
             JsonWebToken jsonWebToken = generateJsonWebTokenPair(authMemberAttribute);
-            jsonWebTokenService.storeTemporaryTokenInMemory(jsonWebToken.refreshToken(), authMemberAttribute.id());
+            jsonWebTokenService.saveRefreshToken(jsonWebToken.refreshToken(), authMemberAttribute.id());
             sendTokenResponseToClient(response, jsonWebToken);
             return;
         }
