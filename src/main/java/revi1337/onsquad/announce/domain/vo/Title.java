@@ -1,11 +1,14 @@
 package revi1337.onsquad.announce.domain.vo;
 
+import static revi1337.onsquad.announce.error.AnnounceErrorCode.INVALID_LENGTH;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import revi1337.onsquad.announce.error.exception.AnnounceDomainException;
 
 @Getter
 @EqualsAndHashCode
@@ -31,9 +34,7 @@ public class Title {
         }
 
         if (value.length() > MAX_LENGTH || value.isEmpty()) {
-            throw new IllegalArgumentException(
-                    String.format("제목의 길이는 %d 자 이상 %d 자 이하여야 합니다.", MIN_LENGTH, MAX_LENGTH)
-            );
+            throw new AnnounceDomainException.InvalidLength(INVALID_LENGTH);
         }
     }
 }
