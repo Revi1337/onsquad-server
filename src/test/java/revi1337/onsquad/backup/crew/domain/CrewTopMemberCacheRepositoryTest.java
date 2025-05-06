@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -24,6 +26,7 @@ import org.springframework.context.annotation.Import;
 import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
 
 @DataJpaTest(showSql = false)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 @Import({PersistenceLayerConfiguration.class, CrewTopMemberCacheRepository.class})
 @ImportAutoConfiguration(CacheAutoConfiguration.class) // TODO 캐싱테스트가 더 생기면, 클래스로 분리하는것이 좋을듯?
 class CrewTopMemberCacheRepositoryTest {
