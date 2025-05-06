@@ -76,6 +76,12 @@ public class CrewMember extends RequestEntity {
         return crewMember;
     }
 
+    public static CrewMember forManager(Crew crew, Member member, LocalDateTime participantAt) {
+        CrewMember crewMember = new CrewMember(crew, member, MANAGER, participantAt);
+        crewMember.addCrew(crew);
+        return crewMember;
+    }
+
     public static CrewMember forOwner(Crew crew, Member member, LocalDateTime participantAt) {
         CrewMember crewMember = forOwner(member, participantAt);
         crewMember.addCrew(crew);
@@ -84,6 +90,10 @@ public class CrewMember extends RequestEntity {
 
     public static CrewMember forGeneral(Member member, LocalDateTime participantAt) {
         return new CrewMember(member, GENERAL, participantAt);
+    }
+
+    public static CrewMember forManager(Member member, LocalDateTime participantAt) {
+        return new CrewMember(member, MANAGER, participantAt);
     }
 
     public static CrewMember forOwner(Member member, LocalDateTime participantAt) {
@@ -121,7 +131,7 @@ public class CrewMember extends RequestEntity {
     public boolean isGreaterThenManager() {
         return role == OWNER || role == MANAGER;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {

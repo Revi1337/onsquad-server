@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.announce.domain.AnnounceRepository;
-import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
+import revi1337.onsquad.announce.domain.AnnounceCacheRepository;
+import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
 import revi1337.onsquad.backup.crew.domain.CrewTopMember;
 import revi1337.onsquad.backup.crew.domain.CrewTopMemberCacheRepository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
@@ -29,7 +29,7 @@ public class CrewMainService {
 
     private final CrewMemberRepository crewMemberRepository;
     private final CrewTopMemberCacheRepository crewTopMemberCacheRepository;
-    private final AnnounceRepository announceRepository;
+    private final AnnounceCacheRepository announceCacheRepository;
     private final CrewRepository crewRepository;
     private final SquadRepository squadRepository;
     private final CrewStatisticCacheRepository crewStatisticRedisRepository;
@@ -37,7 +37,7 @@ public class CrewMainService {
     public CrewMainDto fetchMain(Long memberId, Long crewId, CategoryType categoryType, Pageable pageable) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
-        List<AnnounceInfoDomainDto> announces = announceRepository.fetchCachedLimitedAnnouncesByCrewId(crewId);
+        List<AnnounceDomainDto> announces = announceCacheRepository.fetchAllCacheInDefaultByCrewId(crewId);
         List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
         Page<SquadInfoDomainDto> squads = squadRepository.findSquadsByCrewId(crewId, categoryType, pageable);
 

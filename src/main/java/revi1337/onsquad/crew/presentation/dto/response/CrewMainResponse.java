@@ -1,14 +1,14 @@
 package revi1337.onsquad.crew.presentation.dto.response;
 
 import java.util.List;
-import revi1337.onsquad.announce.presentation.dto.response.AnnounceInfoResponse;
+import revi1337.onsquad.announce.presentation.dto.response.AnnounceResponse;
 import revi1337.onsquad.backup.crew.presentation.dto.Top5CrewMemberResponse;
 import revi1337.onsquad.crew.application.dto.CrewMainDto;
 import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
 
 public record CrewMainResponse(
         CrewInfoResponse crew,
-        List<AnnounceInfoResponse> announces,
+        List<AnnounceResponse> announces,
         List<Top5CrewMemberResponse> topMembers,
         List<SquadInfoResponse> squads
 ) {
@@ -16,7 +16,7 @@ public record CrewMainResponse(
         return new CrewMainResponse(
                 CrewInfoResponse.from(crewMainDto.crew()),
                 crewMainDto.announces().stream()
-                        .map(AnnounceInfoResponse::from)
+                        .map(AnnounceResponse::from)
                         .toList(),
                 crewMainDto.topMembers().stream()
                         .map(Top5CrewMemberResponse::from)

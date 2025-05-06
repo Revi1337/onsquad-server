@@ -12,7 +12,6 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.announce.domain.vo.Title;
@@ -49,18 +48,29 @@ public class Announce extends BaseEntity {
     @JoinColumn(name = "crew_member_id", nullable = false)
     private CrewMember crewMember;
 
-    @Builder
-    private Announce(Long id, Title title, String content, Crew crew, CrewMember crewMember) {
-        this.id = id;
-        this.title = title;
+    public Announce(String title, String content, Crew crew, CrewMember crewMember) {
+        this.title = new Title(title);
         this.content = content;
         this.crew = crew;
         this.crewMember = crewMember;
     }
 
-    public void updateFixed(boolean fixed, LocalDateTime fixedAt) {
-        this.fixed = fixed;
+    public boolean isNotFixed() {
+        return !isFixed();
+    }
+
+    public boolean isFixed() {
+        return this.fixed;
+    }
+
+    public void fix(LocalDateTime fixedAt) {
+        this.fixed = true;
         this.fixedAt = fixedAt;
+    }
+
+    public void unfix() {
+        this.fixed = false;
+        this.fixedAt = null;
     }
 
     @Override

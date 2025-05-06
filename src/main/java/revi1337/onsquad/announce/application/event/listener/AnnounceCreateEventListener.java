@@ -8,8 +8,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.announce.application.event.AnnounceCreateEvent;
-import revi1337.onsquad.announce.domain.AnnounceRepository;
-import revi1337.onsquad.announce.domain.dto.AnnounceInfoDomainDto;
+import revi1337.onsquad.announce.domain.AnnounceQueryDslRepository;
+import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
 import revi1337.onsquad.common.constant.CacheConst;
 
 @Slf4j
@@ -17,18 +17,19 @@ import revi1337.onsquad.common.constant.CacheConst;
 @Component
 public class AnnounceCreateEventListener {
 
-    private final AnnounceRepository announceRepository;
+    private final AnnounceQueryDslRepository announceQueryDslRepository;
     private final CacheManager caffeineCacheManager;
 
     @TransactionalEventListener
-    public void handleAnnounceCreateEvent(AnnounceCreateEvent createEvent) {
-        log.debug("[{}] Renew new announces caches in crew_id = {}", createEvent.getEventName(), createEvent.crewId());
-        List<AnnounceInfoDomainDto> announceInfos = announceRepository
-                .findLimitedAnnouncesByCrewId(createEvent.crewId());
+    public void handleAnnounceCreateEvent(AnnounceCreateEvent event) {
+        log.debug("[{}] Renew new announces caches in crew_id = {}", event.getEventName(), event.crewId());
+        List<AnnounceDomainDto> announceInfos = announceQueryDslRepository.fetchAllInDefaultByCrewId(event.crewId());
 
         Cache cache = caffeineCacheManager.getCache(CacheConst.CREW_ANNOUNCES);
-        String computedCacheName = String.format("crew:%d", createEvent.crewId());
-        cache.evict(computedCacheName);
-        cache.put(computedCacheName, announceInfos);
+        if (cache != null) {
+            String computedCacheName = String.format("crew:%d", event.crewId());
+            cache.evict(computedCacheName);
+            cache.put(computedCacheName, announceInfos);
+        }
     }
 }
