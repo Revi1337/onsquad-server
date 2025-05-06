@@ -9,6 +9,10 @@ import revi1337.onsquad.member.domain.Member;
 
 public class CrewFixture {
 
+    public static Crew CREW() {
+        return Crew.create(null, CREW_NAME_VALUE, CREW_INTRODUCE_VALUE, CREW_DETAIL_VALUE, null, null);
+    }
+
     public static Crew CREW(Member member) {
         return Crew.create(member, CREW_NAME_VALUE, CREW_INTRODUCE_VALUE, CREW_DETAIL_VALUE, null, null);
     }
