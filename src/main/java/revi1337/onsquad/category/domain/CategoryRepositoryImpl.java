@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.category.domain.vo.CategoryType;
 
 @RequiredArgsConstructor
 @Repository
@@ -14,8 +13,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     private final CategoryJdbcRepository categoryJdbcRepository;
 
     @Override
-    public void insertBulkCategories(List<Category> categories) {
-        categoryJdbcRepository.insertBulkCategories(categories);
+    public int batchInsert(List<Category> categories) {
+        return categoryJdbcRepository.batchInsert(categories);
     }
 
     @Override
@@ -29,17 +28,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public List<Category> findAllCategories() {
-        return categoryJpaRepository.findAllCategories();
-    }
-
-    @Override
     public Optional<Category> findById(Long id) {
         return categoryJpaRepository.findById(id);
-    }
-
-    @Override
-    public List<Category> findCategoriesInSecondCache(List<CategoryType> categoryTypes) {
-        return categoryJpaRepository.findCategoriesInSecondCache(categoryTypes);
     }
 }
