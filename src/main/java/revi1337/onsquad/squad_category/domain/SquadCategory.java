@@ -31,6 +31,11 @@ public class SquadCategory {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    public SquadCategory(Squad squad, Category category) {
+        this.squad = squad;
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
