@@ -2,6 +2,7 @@ package revi1337.onsquad.squad_category.presentation.dto;
 
 import revi1337.onsquad.squad_category.application.dto.SquadCategoryDto;
 
+@Deprecated
 public record SquadCategoryResponse(
         Long id,
         String category
