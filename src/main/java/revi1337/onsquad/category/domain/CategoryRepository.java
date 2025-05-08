@@ -2,20 +2,15 @@ package revi1337.onsquad.category.domain;
 
 import java.util.List;
 import java.util.Optional;
-import revi1337.onsquad.category.domain.vo.CategoryType;
 
 public interface CategoryRepository {
 
-    void insertBulkCategories(List<Category> categories);
+    int batchInsert(List<Category> categories);
 
     void saveAll(List<Category> categories);
 
     List<Category> findAll();
 
-    List<Category> findAllCategories();
-
     Optional<Category> findById(Long id);
-
-    List<Category> findCategoriesInSecondCache(List<CategoryType> categoryTypes);
 
 }

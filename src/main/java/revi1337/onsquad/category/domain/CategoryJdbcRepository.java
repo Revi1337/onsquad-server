@@ -1,6 +1,8 @@
 package revi1337.onsquad.category.domain;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,14 +13,20 @@ public class CategoryJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public void insertBulkCategories(List<Category> categories) {
-        String sql = "INSERT INTO category (category_type) VALUES (?)";
-        jdbcTemplate.batchUpdate(
+    public int batchInsert(List<Category> categories) {
+        String sql = "INSERT INTO category(id, category_type) VALUES (?, ?)";
+        int[][] influenced = jdbcTemplate.batchUpdate(
                 sql,
                 categories,
                 categories.size(),
-                (ps, category) -> ps.setString(1, category.getCategoryType().toString())
-
+                (ps, category) -> {
+                    ps.setLong(1, category.getCategoryType().getPk());
+                    ps.setString(2, category.getCategoryType().toString());
+                }
         );
+
+        return Arrays.stream(influenced)
+                .flatMapToInt(IntStream::of)
+                .sum();
     }
 }

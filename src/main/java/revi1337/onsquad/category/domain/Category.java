@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,19 +24,17 @@ public class Category {
     @Column(nullable = false)
     private CategoryType categoryType;
 
-    private Category(CategoryType categoryType) {
+    public Category(CategoryType categoryType) {
         this.id = categoryType.getPk();
         this.categoryType = categoryType;
     }
 
     public static List<Category> fromCategoryTypes(List<CategoryType> categoryTypes) {
         return categoryTypes.stream()
-                .map(Category::fromCategoryType)
-                .collect(Collectors.toList());
-    }
-
-    public static Category fromCategoryType(CategoryType categoryType) {
-        return new Category(categoryType);
+                .filter(type -> type != CategoryType.ALL)
+                .distinct()
+                .map(Category::new)
+                .toList();
     }
 
     @Override

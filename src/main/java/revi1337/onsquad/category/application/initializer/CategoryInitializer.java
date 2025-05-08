@@ -2,18 +2,18 @@ package revi1337.onsquad.category.application.initializer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import revi1337.onsquad.category.application.CategoryService;
 
 @RequiredArgsConstructor
-@Configuration
+@Component
 public class CategoryInitializer {
 
     private final CategoryService cachedCategoryService;
 
     @EventListener(ApplicationReadyEvent.class)
-    private void init() {
+    void init() {
         cachedCategoryService.findCategories();
     }
 }

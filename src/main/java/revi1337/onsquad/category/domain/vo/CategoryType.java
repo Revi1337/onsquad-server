@@ -1,11 +1,9 @@
 package revi1337.onsquad.category.domain.vo;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -52,20 +50,29 @@ public enum CategoryType {
     private final String text;
     private final Long pk;
 
-    private static final Map<String, CategoryType> categoryHashMap = Collections.unmodifiableMap(new HashMap<>() {
-        {
-            unmodifiableList().forEach(category -> put(category.getText(), category));
+    private static final List<CategoryType> IMMUTABLE_LIST = List.of(values());
+    private static final Map<String, CategoryType> categoryHashMap = new HashMap<>() {{
+        for (CategoryType category : IMMUTABLE_LIST) {
+            put(category.getText(), category);
         }
-    });
+    }};
+
+    public static List<String> texts() {
+        return IMMUTABLE_LIST.stream()
+                .map(CategoryType::getText)
+                .toList();
+    }
 
     public static List<CategoryType> unmodifiableList() {
-        return List.of(CategoryType.values());
+        return IMMUTABLE_LIST;
     }
 
     public static List<CategoryType> fromTexts(List<String> categoryTexts) {
-        return new LinkedHashSet<>(categoryTexts).stream()
+        return categoryTexts.stream()
                 .map(CategoryType::fromText)
-                .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
     }
 
     public static CategoryType fromText(String categoryText) {
