@@ -54,35 +54,35 @@ public class CategoryFixture {
     }
 
     public static List<Category> CATEGORIES_2() {
-        return Category.fromCategoryTypes(List.of(FUTSAL, SOCCER, PINGPONG));
+        return Category.fromCategoryTypes(List.of(BADMINTON, TENNIS, FUTSAL));
     }
 
     public static List<Category> CATEGORIES_3() {
-        return Category.fromCategoryTypes(List.of(BILLIARDS, BASKETBALL, BASEBALL));
+        return Category.fromCategoryTypes(List.of(TENNIS, FUTSAL, BILLIARDS));
     }
 
     public static List<Category> CATEGORIES_4() {
-        return Category.fromCategoryTypes(List.of(GOLF, FISHING, SCUBADIVING));
+        return Category.fromCategoryTypes(List.of(FUTSAL, BILLIARDS, GOLF));
     }
 
     public static List<Category> CATEGORIES_5() {
-        return Category.fromCategoryTypes(List.of(SURFING, RAFTING, FITNESS));
+        return Category.fromCategoryTypes(List.of(BILLIARDS, GOLF, SURFING));
     }
 
     public static List<Category> CATEGORIES_6() {
-        return Category.fromCategoryTypes(List.of(TRAVEL, RUNNING, HIKING));
+        return Category.fromCategoryTypes(List.of(GOLF, SURFING, TRAVEL));
     }
 
     public static List<Category> CATEGORIES_7() {
-        return Category.fromCategoryTypes(List.of(ACTIVITY, MOVIE, PERFORMANCE));
+        return Category.fromCategoryTypes(List.of(SURFING, TRAVEL, ACTIVITY));
     }
 
     public static List<Category> CATEGORIES_8() {
-        return Category.fromCategoryTypes(List.of(EXHIBITION, MUSICAL, ESCAPEROOM));
+        return Category.fromCategoryTypes(List.of(TRAVEL, ACTIVITY, EXHIBITION));
     }
 
     public static List<Category> CATEGORIES_9() {
-        return Category.fromCategoryTypes(List.of(MANGACAFE, VR, SWIMMINGPOOL));
+        return Category.fromCategoryTypes(List.of(ACTIVITY, EXHIBITION, MANGACAFE));
     }
 
     public static List<Category> CATEGORIES_10() {
@@ -90,7 +90,7 @@ public class CategoryFixture {
     }
 
     public static List<Category> CATEGORIES_11() {
-        return Category.fromCategoryTypes(List.of(SKIRESORT, ICESKATING, ICEFISHING, SNOWFESTIVAL));
+        return Category.fromCategoryTypes(List.of(PPAGI, VALLEY, SKIRESORT, ICESKATING));
     }
 
     public static final Category ALL_CATEGORY = new Category(ALL);

@@ -10,6 +10,9 @@ import static revi1337.onsquad.common.fixture.CrewTopMemberFixture.CREW1_REVI_RA
 import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
 import static revi1337.onsquad.common.fixture.MemberFixtures.KWANGWON;
 import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_1;
+import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_2;
+import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_3;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,12 +29,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadJpaRepository;
-import revi1337.onsquad.squad.domain.vo.Capacity;
-import revi1337.onsquad.squad.domain.vo.Content;
-import revi1337.onsquad.squad.domain.vo.Title;
 
 @Import({CrewTopMemberRepositoryImpl.class, CrewTopMemberJdbcRepository.class})
 class CrewTopMemberRepositoryTest extends PersistenceLayerTestSupport {
@@ -121,30 +119,9 @@ class CrewTopMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
             CrewMember ANDONG_CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             CrewMember KWANGWON_CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON));
-            squadJpaRepository.save(Squad.builder() // TODO Squad 를 테스트 할때, Fixture 를 구성하고 리팩토링해야 한다.
-                    .crew(CREW)
-                    .crewMember(ANDONG_CREW_MEMBER)
-                    .title(new Title("스쿼드 타이틀"))
-                    .content(new Content("스쿼드 컨텐츠"))
-                    .capacity(new Capacity(10))
-                    .address(new Address("공백", "공백"))
-                    .build());
-            squadJpaRepository.save(Squad.builder()
-                    .crew(CREW)
-                    .crewMember(ANDONG_CREW_MEMBER)
-                    .title(new Title("스쿼드 타이틀"))
-                    .content(new Content("스쿼드 컨텐츠"))
-                    .capacity(new Capacity(10))
-                    .address(new Address("공백", "공백"))
-                    .build());
-            squadJpaRepository.save(Squad.builder()
-                    .crew(CREW)
-                    .crewMember(KWANGWON_CREW_MEMBER)
-                    .title(new Title("스쿼드 타이틀"))
-                    .content(new Content("스쿼드 컨텐츠"))
-                    .capacity(new Capacity(10))
-                    .address(new Address("공백", "공백"))
-                    .build());
+            squadJpaRepository.save(SQUAD_1(ANDONG_CREW_MEMBER, CREW));
+            squadJpaRepository.save(SQUAD_2(KWANGWON_CREW_MEMBER, CREW));
+            squadJpaRepository.save(SQUAD_3(ANDONG_CREW_MEMBER, CREW));
             LocalDate TO = LocalDate.now();
             LocalDate FROM = TO.minusDays(7);
 
