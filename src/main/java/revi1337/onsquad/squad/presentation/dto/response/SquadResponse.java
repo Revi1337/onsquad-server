@@ -7,29 +7,19 @@ import revi1337.onsquad.squad.application.dto.SquadDto;
 public record SquadResponse(
         Long id,
         String title,
-        String content,
         int capacity,
         int remain,
-        String address,
-        String addressDetail,
-        String kakaoLink,
-        String discordLink,
         List<String> categories,
-        SimpleMemberInfoResponse memberInfo
+        SimpleMemberInfoResponse owner
 ) {
-    public static SquadResponse from(SquadDto dto) {
+    public static SquadResponse from(SquadDto squadDto) {
         return new SquadResponse(
-                dto.id(),
-                dto.title(),
-                dto.content(),
-                dto.capacity(),
-                dto.remain(),
-                dto.address(),
-                dto.addressDetail(),
-                dto.kakaoLink(),
-                dto.discordLink(),
-                dto.categories(),
-                SimpleMemberInfoResponse.from(dto.memberInfo())
+                squadDto.id(),
+                squadDto.title(),
+                squadDto.capacity(),
+                squadDto.remain(),
+                squadDto.categories(),
+                SimpleMemberInfoResponse.from(squadDto.owner())
         );
     }
 }

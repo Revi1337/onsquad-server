@@ -62,13 +62,13 @@ public class SquadParticipantService {
     // TODO 일단 동시성 문제는 나중에 해결
     @Transactional
     public void acceptCrewRequest(Long crewId, Long squadId, SquadAcceptDto dto) {
-        Squad squad = squadRepository.getSquadByIdWithCrew(squadId);
+        Squad squad = squadRepository.getById(squadId);
         checkCrewInfoMatch(crewId, squad);
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrew().getId(), dto.memberId());
         squadParticipantRepository.findBySquadIdAndCrewMemberId(squad.getId(), crewMember.getId()).ifPresentOrElse(
                 squadParticipant -> {
                     squadParticipantRepository.delete(squadParticipant);
-                    squad.addSquadMember(SquadMember.forGeneral(crewMember, LocalDateTime.now()));
+                    squad.addMembers(SquadMember.forGeneral(crewMember, LocalDateTime.now()));
                     squadRepository.saveAndFlush(squad);
                 },
                 () -> {
