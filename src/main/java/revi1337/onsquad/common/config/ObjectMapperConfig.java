@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.category.presentation.deserializer.CategoryTypeDeserializer;
+import revi1337.onsquad.category.presentation.serializer.CategoryTypeSerializer;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.hashtag.presentation.deserializer.HashtagTypeDeserializer;
 import revi1337.onsquad.hashtag.presentation.serializer.HashtagTypeSerializer;
@@ -25,6 +26,7 @@ public class ObjectMapperConfig {
                 .registerModule(new SimpleModule().addDeserializer(HashtagType.class, new HashtagTypeDeserializer()))
                 .registerModule(new SimpleModule().addSerializer(HashtagType.class, new HashtagTypeSerializer()))
                 .registerModule(new SimpleModule().addDeserializer(CategoryType.class, new CategoryTypeDeserializer()))
+                .registerModule(new SimpleModule().addSerializer(CategoryType.class, new CategoryTypeSerializer()))
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 }
