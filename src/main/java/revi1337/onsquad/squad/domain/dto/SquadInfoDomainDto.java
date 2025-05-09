@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad.domain.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
@@ -18,12 +19,18 @@ public record SquadInfoDomainDto(
         String kakaoLink,
         String discordLink,
         List<CategoryType> categories,
-        SimpleMemberInfoDomainDto squadOwner
+        SimpleMemberInfoDomainDto owner
 ) {
     @QueryProjection
     public SquadInfoDomainDto(Long id, Title title, Content content, Capacity capacity, Address address,
+                              String kakaoLink, String discordLink, SimpleMemberInfoDomainDto owner) {
+        this(id, title, content, capacity, address, kakaoLink, discordLink, new ArrayList<>(), owner);
+    }
+
+    @QueryProjection
+    public SquadInfoDomainDto(Long id, Title title, Content content, Capacity capacity, Address address,
                               String kakaoLink, String discordLink, List<CategoryType> categories,
-                              SimpleMemberInfoDomainDto squadOwner) {
+                              SimpleMemberInfoDomainDto owner) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -32,6 +39,6 @@ public record SquadInfoDomainDto(
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
         this.categories = categories;
-        this.squadOwner = squadOwner;
+        this.owner = owner;
     }
 }

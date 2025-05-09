@@ -2,13 +2,7 @@ package revi1337.onsquad.squad.application.dto;
 
 import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.vo.Capacity;
-import revi1337.onsquad.squad.domain.vo.Content;
-import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.Squad.SquadMetadata;
 
 public record SquadCreateDto(
         String title,
@@ -20,16 +14,7 @@ public record SquadCreateDto(
         String kakaoLink,
         String discordLink
 ) {
-    public Squad toEntity(CrewMember crewMember, Crew crew) {
-        return Squad.builder()
-                .title(new Title(title))
-                .content(new Content(content))
-                .capacity(new Capacity(capacity))
-                .address(new Address(address, addressDetail))
-                .kakaoLink(kakaoLink)
-                .discordLink(discordLink)
-                .crewMember(crewMember)
-                .crew(crew)
-                .build();
+    public SquadMetadata toEntityMetadata() {
+        return new SquadMetadata(title, content, capacity, address, addressDetail, kakaoLink, discordLink);
     }
 }

@@ -39,7 +39,7 @@ public class CrewMainService {
         CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
         List<AnnounceDomainDto> announces = announceCacheRepository.fetchAllCacheInDefaultByCrewId(crewId);
         List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
-        Page<SquadInfoDomainDto> squads = squadRepository.findSquadsByCrewId(crewId, categoryType, pageable);
+        Page<SquadInfoDomainDto> squads = squadRepository.fetchAllByCrewId(crewId, categoryType, pageable);
 
         return CrewMainDto.from(crewInfo, announces, topMembers, squads.getContent());
     }

@@ -2,14 +2,12 @@ package revi1337.onsquad.squad.domain;
 
 import static revi1337.onsquad.squad.error.SquadErrorCode.NOTFOUND;
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.domain.dto.SimpleSquadInfoWithOwnerFlagDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadWithOwnerStateDomainDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 
 public interface SquadRepository {
@@ -20,19 +18,13 @@ public interface SquadRepository {
 
     Optional<Squad> findById(Long id);
 
-    Optional<SquadInfoDomainDto> findSquadById(Long id);
-
-    Page<SquadInfoDomainDto> findSquadsByCrewId(Long crewId, CategoryType categoryType, Pageable pageable);
-
-    Page<SimpleSquadInfoWithOwnerFlagDomainDto> fetchSquadsWithOwnerFlag(Long memberId, Long crewId, Pageable pageable);
-
-    Optional<Squad> findSquadByIdWithCrew(Long id);
-
-    Optional<Squad> findSquadByIdWithSquadMembers(Long id);
-
     Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id);
 
-    void batchInsertSquadCategories(Long squadId, List<Category> categories);
+    Optional<SquadInfoDomainDto> fetchById(Long id);
+
+    Page<SquadInfoDomainDto> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable);
+
+    Page<SquadWithOwnerStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable);
 
     default Squad getById(Long id) {
         return findById(id)
@@ -40,17 +32,7 @@ public interface SquadRepository {
     }
 
     default SquadInfoDomainDto getSquadById(Long id) {
-        return findSquadById(id)
-                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
-    }
-
-    default Squad getSquadByIdWithSquadMembers(Long id) {
-        return findSquadByIdWithSquadMembers(id)
-                .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
-    }
-
-    default Squad getSquadByIdWithCrew(Long id) {
-        return findSquadByIdWithCrew(id)
+        return fetchById(id)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
     }
 

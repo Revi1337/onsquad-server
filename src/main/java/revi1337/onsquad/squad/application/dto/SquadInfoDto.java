@@ -32,7 +32,7 @@ public record SquadInfoDto(
                 squadInfoDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberInfoDto.from(squadInfoDomainDto.squadOwner())
+                SimpleMemberInfoDto.from(squadInfoDomainDto.owner())
         );
     }
 }

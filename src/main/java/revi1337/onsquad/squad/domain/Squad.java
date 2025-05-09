@@ -2,6 +2,7 @@ package revi1337.onsquad.squad.domain;
 
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -11,14 +12,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.CrewMember;
@@ -56,10 +58,6 @@ public class Squad extends BaseEntity {
 
     private String discordLink;
 
-    @BatchSize(size = CATEGORY_BATCH_SIZE)
-    @OneToMany(mappedBy = "squad")
-    private final List<SquadCategory> categories = new ArrayList<>();
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_member_id", nullable = false)
     private CrewMember crewMember;
@@ -68,28 +66,50 @@ public class Squad extends BaseEntity {
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;
 
-    @OneToMany(mappedBy = "squad", cascade = PERSIST)
-    private final List<SquadMember> squadMembers = new ArrayList<>();
+    @BatchSize(size = CATEGORY_BATCH_SIZE)
+    @OnDelete(action = CASCADE)
+    @OneToMany(mappedBy = "squad")
+    private final List<SquadCategory> categories = new ArrayList<>();
 
-    @Builder
-    private Squad(Long id, Title title, Content content, Capacity capacity, Address address, String kakaoLink,
-                  String discordLink, CrewMember crewMember, Crew crew) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.capacity = capacity;
-        this.address = address;
+    @OnDelete(action = CASCADE)
+    @OneToMany(mappedBy = "squad", cascade = PERSIST)
+    private final List<SquadMember> members = new ArrayList<>();
+
+    public static Squad create(SquadMetadata metadata, CrewMember crewMember, Crew crew) {
+        Squad squad = metadata.toEntity();
+        squad.registerOwner(crewMember);
+        squad.registerCrew(crew);
+        squad.addMembers(SquadMember.forLeader(crewMember, LocalDateTime.now()));
+        return squad;
+    }
+
+    public static Squad create(SquadMetadata metadata) {
+        return metadata.toEntity();
+    }
+
+    private Squad(String title, String content, int capacity, String address, String addressDetail, String kakaoLink,
+                  String discordLink) {
+        this.title = new Title(title);
+        this.content = new Content(content);
+        this.capacity = new Capacity(capacity);
+        this.address = new Address(address, addressDetail);
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
+    }
+
+    public void registerOwner(CrewMember crewMember) {
         this.crewMember = crewMember;
+    }
+
+    public void registerCrew(Crew crew) {
         this.crew = crew;
     }
 
-    public void addSquadMember(SquadMember... squadMembers) {
+    public void addMembers(SquadMember... squadMembers) {
         for (SquadMember squadMember : squadMembers) {
             capacity.decreaseRemain();
             squadMember.addSquad(this);
-            this.squadMembers.add(squadMember);
+            this.members.add(squadMember);
         }
     }
 
@@ -118,7 +138,7 @@ public class Squad extends BaseEntity {
     }
 
     public boolean isSquadMemberAlreadyParticipant(Long crewMemberId) {
-        for (SquadMember squadMember : this.squadMembers) {
+        for (SquadMember squadMember : this.members) {
             if (squadMember.isSameCrewMemberId(crewMemberId)) {
                 return true;
             }
@@ -140,5 +160,19 @@ public class Squad extends BaseEntity {
 
     public Long getOwnerId() {
         return crewMember.getId();
+    }
+
+    public record SquadMetadata(
+            String title,
+            String content,
+            int capacity,
+            String address,
+            String addressDetail,
+            String kakaoLink,
+            String discordLink
+    ) {
+        public Squad toEntity() {
+            return new Squad(title, content, capacity, address, addressDetail, kakaoLink, discordLink);
+        }
     }
 }

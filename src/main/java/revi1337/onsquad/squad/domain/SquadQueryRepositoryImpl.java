@@ -15,35 +15,13 @@ public class SquadQueryRepositoryImpl implements SquadQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<Squad> findSquadByIdWithCrew(Long id) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(squad)
-                        .innerJoin(squad.crew, crew).fetchJoin()
-                        .where(squad.id.eq(id))
-                        .fetchOne()
-        );
-    }
-
-    @Override
-    public Optional<Squad> findSquadByIdWithSquadMembers(Long id) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(squad)
-                        .innerJoin(squad.squadMembers, squadMember).fetchJoin()
-                        .where(squad.id.eq(id))
-                        .fetchOne()
-        );
-    }
-
-    @Override
     public Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(squad)
                         .innerJoin(squad.crew, crew).on(squad.id.eq(id))
                         .innerJoin(squad.crewMember, crewMember).fetchJoin()
-                        .innerJoin(squad.squadMembers, squadMember).fetchJoin()
+                        .innerJoin(squad.members, squadMember).fetchJoin()
                         .fetchOne()
         );
     }
