@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomainDto;
@@ -23,23 +24,8 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     }
 
     @Override
-    public List<SquadParticipant> saveAll(List<SquadParticipant> squadParticipants) {
-        return squadParticipantJpaRepository.saveAll(squadParticipants);
-    }
-
-    @Override
-    public SquadParticipant saveAndFlush(SquadParticipant squadParticipant) {
-        return squadParticipantJpaRepository.saveAndFlush(squadParticipant);
-    }
-
-    @Override
-    public void delete(SquadParticipant squadParticipant) {
-        squadParticipantJpaRepository.delete(squadParticipant);
-    }
-
-    @Override
-    public void deleteById(Long crewParticipantId) {
-        squadParticipantJpaRepository.deleteById(crewParticipantId);
+    public Optional<SquadParticipant> findById(Long id) {
+        return squadParticipantJpaRepository.findById(id);
     }
 
     @Override
@@ -53,17 +39,27 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     }
 
     @Override
-    public void upsertSquadParticipant(Long squadId, Long crewMemberId, LocalDateTime now) {
-        squadParticipantJdbcRepository.upsertSquadParticipant(squadId, crewMemberId, now);
-    }
-
-    @Override
     public List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId) {
         return squadParticipantQueryDslRepository.findSquadParticipantRequestsByMemberId(memberId);
     }
 
     @Override
-    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId, Pageable pageable) {
-        return squadParticipantQueryDslRepository.fetchAllWithMemberBySquadId(squadId, pageable);
+    public Page<SimpleSquadParticipantDomainDto> fetchAllBySquadId(Long squadId, Pageable pageable) {
+        return squadParticipantQueryDslRepository.fetchAllBySquadId(squadId, pageable);
+    }
+
+    @Override
+    public void upsertSquadParticipant(Long squadId, Long crewMemberId, LocalDateTime now) {
+        squadParticipantJdbcRepository.upsertSquadParticipant(squadId, crewMemberId, now);
+    }
+
+    @Override
+    public void deleteBySquadIdCrewMemberId(Long squadId, Long crewMemberId) {
+        squadParticipantJpaRepository.deleteBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    }
+
+    @Override
+    public void deleteById(Long crewParticipantId) {
+        squadParticipantJpaRepository.deleteById(crewParticipantId);
     }
 }

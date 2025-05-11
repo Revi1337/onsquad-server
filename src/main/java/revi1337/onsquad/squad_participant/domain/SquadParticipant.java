@@ -49,6 +49,10 @@ public class SquadParticipant extends RequestEntity {
         return new SquadParticipant(squad, crewMember, requestAt);
     }
 
+    public boolean matchSquadId(Long squadId) {
+        return squad.getId().equals(squadId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

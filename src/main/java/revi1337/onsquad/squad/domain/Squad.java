@@ -113,12 +113,29 @@ public class Squad extends BaseEntity {
         }
     }
 
-    public boolean hasNotSameCrewId(Long crewId) {
-        return !hasSameCrewId(crewId);
+    public boolean doesNotMatchCrewId(Long crewId) {
+        return !matchCrewId(crewId);
     }
 
-    public boolean hasSameCrewId(Long crewId) {
-        return crewId.equals(crew.getId());
+    public boolean matchCrewId(Long crewId) {
+        return getCrewId().equals(crewId);
+    }
+
+    public boolean doesNotMatchOwner(Long crewMemberId) {
+        return !matchOwner(crewMemberId);
+    }
+
+    public boolean matchOwner(Long crewMemberId) {
+        return crewMember.hasSameId(crewMemberId);
+    }
+
+    public boolean existsMember(Long crewMemberId) {
+        for (SquadMember squadMember : this.members) {
+            if (squadMember.isSameCrewMemberId(crewMemberId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -137,29 +154,16 @@ public class Squad extends BaseEntity {
         return Objects.hashCode(id);
     }
 
-    public boolean isSquadMemberAlreadyParticipant(Long crewMemberId) {
-        for (SquadMember squadMember : this.members) {
-            if (squadMember.isSameCrewMemberId(crewMemberId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isNotSameCrewId(Long crewId) {
-        return !isSameCrewId(crewId);
-    }
-
-    public boolean isSameCrewId(Long crewId) {
-        return getCrewId().equals(crewId);
-    }
-
     public Long getCrewId() {
         return crew.getId();
     }
 
     public Long getOwnerId() {
         return crewMember.getId();
+    }
+
+    public CrewMember getOwner() {
+        return crewMember;
     }
 
     public record SquadMetadata(

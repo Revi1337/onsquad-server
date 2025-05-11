@@ -18,7 +18,8 @@ import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.presentation.dto.request.SquadAcceptRequest;
-import revi1337.onsquad.squad_participant.application.SquadParticipantService;
+import revi1337.onsquad.squad_participant.application.SquadParticipantCommandService;
+import revi1337.onsquad.squad_participant.application.SquadParticipantQueryService;
 import revi1337.onsquad.squad_participant.presentation.dto.SimpleSquadParticipantResponse;
 import revi1337.onsquad.squad_participant.presentation.dto.SquadParticipantRequestResponse;
 
@@ -27,63 +28,78 @@ import revi1337.onsquad.squad_participant.presentation.dto.SquadParticipantReque
 @RestController
 public class SquadParticipantController {
 
-    private final SquadParticipantService squadParticipantService;
+    private final SquadParticipantCommandService squadParticipantCommandService;
+    private final SquadParticipantQueryService squadParticipantQueryService;
 
-    @GetMapping("/my/squads/requests")
-    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> fetchAllSquadRequests(
+    @GetMapping("/squad-requests/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이징 나뉠 가능성이 매우 큼
+    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> fetchMyAllRequests(
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<SquadParticipantRequestResponse> requestResponses = squadParticipantService
-                .fetchAllSquadRequests(authMemberAttribute.id()).stream()
+        List<SquadParticipantRequestResponse> requestResponses = squadParticipantQueryService
+                .fetchAllMyRequests(authMemberAttribute.id()).stream()
                 .map(SquadParticipantRequestResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(requestResponses));
     }
 
-    @DeleteMapping("/my/crews/{crewId}/squads/{squadId}/requests")
-    public ResponseEntity<RestResponse<String>> rejectSquadRequest(
+    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/me")
+    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> cancelMyRequest(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        squadParticipantService.rejectSquadRequest(authMemberAttribute.id(), crewId, squadId);
+        squadParticipantCommandService.cancelMyRequest(authMemberAttribute.id(), crewId, squadId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @PostMapping("/crews/{crewId}/squads/{squadId}/requests")
-    public ResponseEntity<RestResponse<String>> requestInSquad(
+    public ResponseEntity<RestResponse<String>> request(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        squadParticipantService.requestInSquad(authMemberAttribute.id(), crewId, squadId);
+        squadParticipantCommandService.request(authMemberAttribute.id(), crewId, squadId);
 
-        return ResponseEntity.ok(RestResponse.noContent());
+        return ResponseEntity.ok(RestResponse.created());
     }
 
     @PatchMapping("/crews/{crewId}/squads/{squadId}/requests")
-    public ResponseEntity<RestResponse<String>> acceptSquadRequest(
+    public ResponseEntity<RestResponse<String>> acceptRequest(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Valid @RequestBody SquadAcceptRequest squadAcceptRequest,
-            @Authenticate AuthMemberAttribute ignored
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        squadParticipantService.acceptCrewRequest(crewId, squadId, squadAcceptRequest.toDto());
+        squadParticipantCommandService.acceptRequest(
+                authMemberAttribute.id(), crewId, squadId, squadAcceptRequest.toDto()
+        );
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
+    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/{requestId}")
+    public ResponseEntity<RestResponse<String>> rejectRequest(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @PathVariable Long requestId,
+            @Authenticate AuthMemberAttribute authMemberAttribute
+    ) {
+        squadParticipantCommandService.rejectRequest(authMemberAttribute.id(), crewId, squadId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @GetMapping("/crews/{crewId}/squads/{squadId}/requests")
-    public ResponseEntity<RestResponse<List<SimpleSquadParticipantResponse>>> fetchRequestsInSquad(
+    public ResponseEntity<RestResponse<List<SimpleSquadParticipantResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PageableDefault Pageable pageable,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<SimpleSquadParticipantResponse> simpleSquadParticipantResponses = squadParticipantService
-                .fetchRequestsInSquad(authMemberAttribute.id(), crewId, squadId, pageable).stream()
+        List<SimpleSquadParticipantResponse> simpleSquadParticipantResponses = squadParticipantQueryService
+                .fetchAllRequests(authMemberAttribute.id(), crewId, squadId, pageable).stream()
                 .map(SimpleSquadParticipantResponse::from)
                 .toList();
 

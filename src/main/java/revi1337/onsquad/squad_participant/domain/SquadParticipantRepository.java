@@ -5,6 +5,7 @@ import static revi1337.onsquad.squad_participant.error.SquadParticipantErrorCode
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantRequest;
@@ -14,23 +15,21 @@ public interface SquadParticipantRepository {
 
     SquadParticipant save(SquadParticipant squadParticipant);
 
-    List<SquadParticipant> saveAll(List<SquadParticipant> squadParticipants);
-
-    SquadParticipant saveAndFlush(SquadParticipant squadParticipant);
-
-    void delete(SquadParticipant squadParticipant);
-
-    void deleteById(Long id);
+    Optional<SquadParticipant> findById(Long id);
 
     Optional<SquadParticipant> findByCrewIdAndSquadIdAndMemberId(Long crewId, Long squadId, Long memberId);
 
     Optional<SquadParticipant> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
 
-    void upsertSquadParticipant(Long squadId, Long crewMemberId, LocalDateTime now);
-
     List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId);
 
-    List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId, Pageable pageable);
+    Page<SimpleSquadParticipantDomainDto> fetchAllBySquadId(Long squadId, Pageable pageable);
+
+    void upsertSquadParticipant(Long squadId, Long crewMemberId, LocalDateTime now);
+
+    void deleteById(Long id);
+
+    void deleteBySquadIdCrewMemberId(Long squadId, Long crewMemberId);
 
     default SquadParticipant getByCrewIdAndSquadIdAndMemberId(Long crewId, Long squadId, Long memberId) {
         return findByCrewIdAndSquadIdAndMemberId(crewId, squadId, memberId)

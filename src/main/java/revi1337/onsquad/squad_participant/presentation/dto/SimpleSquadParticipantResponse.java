@@ -7,13 +7,13 @@ import revi1337.onsquad.squad_participant.application.dto.SimpleSquadParticipant
 public record SimpleSquadParticipantResponse(
         Long id,
         LocalDateTime requestAt,
-        SimpleMemberInfoResponse memberInfo
+        SimpleMemberInfoResponse member
 ) {
     public static SimpleSquadParticipantResponse from(SimpleSquadParticipantDto simpleSquadParticipantDto) {
         return new SimpleSquadParticipantResponse(
                 simpleSquadParticipantDto.id(),
                 simpleSquadParticipantDto.requestAt(),
-                SimpleMemberInfoResponse.from(simpleSquadParticipantDto.memberInfo())
+                SimpleMemberInfoResponse.from(simpleSquadParticipantDto.member())
         );
     }
 }

@@ -22,7 +22,6 @@ import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -67,31 +66,42 @@ public class SquadMember extends RequestEntity {
     @Column(nullable = false)
     private JoinStatus status;
 
-    @Builder
-    private SquadMember(Long id, Squad squad, CrewMember crewMember, SquadRole role, JoinStatus status,
-                        LocalDateTime participantAt) {
+    public SquadMember(SquadRole role, JoinStatus status, LocalDateTime participantAt) {
         super(participantAt);
-        this.id = id;
-        this.squad = squad;
-        this.crewMember = crewMember;
         this.role = role == null ? GENERAL : role;
         this.status = status == null ? PENDING : status;
     }
 
+    public static SquadMember forLeader(Squad squad, CrewMember crewMember, LocalDateTime participantAt) {
+        SquadMember squadMember = forLeader(crewMember, participantAt);
+        squadMember.addSquad(squad);
+        return squadMember;
+    }
+
+    public static SquadMember forGeneral(Squad squad, CrewMember crewMember, LocalDateTime participantAt) {
+        SquadMember squadMember = forGeneral(crewMember, participantAt);
+        squadMember.addSquad(squad);
+        return squadMember;
+    }
+
     public static SquadMember forLeader(CrewMember crewMember, LocalDateTime participantAt) {
-        return SquadMember.builder()
-                .crewMember(crewMember)
-                .role(LEADER)
-                .status(ACCEPT)
-                .participantAt(participantAt)
-                .build();
+        SquadMember squadMember = new SquadMember(LEADER, ACCEPT, participantAt);
+        squadMember.addOwner(crewMember);
+        return squadMember;
     }
 
     public static SquadMember forGeneral(CrewMember crewMember, LocalDateTime participantAt) {
-        return SquadMember.builder()
-                .crewMember(crewMember)
-                .participantAt(participantAt)
-                .build();
+        SquadMember squadMember = new SquadMember(GENERAL, PENDING, participantAt);
+        squadMember.addOwner(crewMember);
+        return squadMember;
+    }
+
+    public boolean matchCrewMemberId(Long crewMemberId) {
+        return crewMember.getId().equals(crewMemberId);
+    }
+
+    public boolean doesNotMatchCrewMemberId(Long crewMemberId) {
+        return !matchCrewMemberId(crewMemberId);
     }
 
     public boolean isNotLeader() {
@@ -100,6 +110,10 @@ public class SquadMember extends RequestEntity {
 
     public boolean isLeader() {
         return this.role == LEADER;
+    }
+
+    private void addOwner(CrewMember crewMember) {
+        this.crewMember = crewMember;
     }
 
     public void addSquad(Squad squad) {
@@ -123,6 +137,6 @@ public class SquadMember extends RequestEntity {
     }
 
     public boolean isSameCrewMemberId(Long crewMemberId) {
-        return this.crewMember.getId().equals(crewMemberId);
+        return crewMember.getId().equals(crewMemberId);
     }
 }
