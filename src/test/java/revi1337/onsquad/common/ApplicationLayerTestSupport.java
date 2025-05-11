@@ -1,5 +1,7 @@
 package revi1337.onsquad.common;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,4 +26,11 @@ public abstract class ApplicationLayerTestSupport {
     @MockBean
     protected VerificationCacheLifeCycleManager verificationCacheLifeCycleManager;
 
+    @PersistenceContext
+    protected EntityManager entityManager;
+
+    protected void clearPersistenceContext() {
+        entityManager.flush();
+        entityManager.clear();
+    }
 }

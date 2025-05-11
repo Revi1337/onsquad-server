@@ -84,6 +84,19 @@ public class SquadFixture {
         ));
     }
 
+    public static Squad SQUAD(CrewMember crewMember, Crew crew, int capacity) {
+        SquadMetadata data = new SquadMetadata(
+                SQUAD_TITLE_VALUE,
+                SQUAD_CONTENT_VALUE,
+                capacity,
+                SQUAD_ADDRESS_VALUE,
+                SQUAD_ADDRESS_DETAIL_VALUE,
+                SQUAD_KAKAO_LINK_VALUE,
+                SQUAD_DISCORD_LINK_VALUE
+        );
+        return Squad.create(data, crewMember, crew);
+    }
+
     public static Squad SQUAD(CrewMember crewMember, Crew crew) {
         SquadMetadata data = new SquadMetadata(
                 SQUAD_TITLE_VALUE,
