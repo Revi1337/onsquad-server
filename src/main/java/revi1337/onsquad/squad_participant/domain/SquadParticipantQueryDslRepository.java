@@ -10,18 +10,25 @@ import static revi1337.onsquad.squad.domain.QSquad.squad;
 import static revi1337.onsquad.squad_category.domain.QSquadCategory.squadCategory;
 import static revi1337.onsquad.squad_participant.domain.QSquadParticipant.squadParticipant;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
 import revi1337.onsquad.crew.domain.dto.SimpleCrewInfoDomainDto;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.squad_participant.domain.dto.MySquadRequestDomainDto;
+import revi1337.onsquad.squad_participant.domain.dto.QMySquadRequestDomainDto;
+import revi1337.onsquad.squad_participant.domain.dto.QMySquadRequestDomainDto_SquadWithParticipant;
+import revi1337.onsquad.squad_participant.domain.dto.QMySquadRequestDomainDto_SquadWithParticipant_RequestParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QSimpleSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QSquadParticipantDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QSquadParticipantDomainDto_RequestParticipantDomainDto;
@@ -39,21 +46,89 @@ public class SquadParticipantQueryDslRepository {
     private final QMember CREW_CREATOR = new QMember("crewCreator");
     private final QMember SQUAD_CREATOR = new QMember("squadCreator");
 
+    public List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId) {
+        Map<Long, List<MySquadRequestDomainDto>> transformed = jpaQueryFactory
+                .from(squadParticipant)
+                .innerJoin(squadParticipant.crewMember, crewMember).on(crewMember.member.id.eq(memberId))
+                .innerJoin(squadParticipant.squad, squad)
+                .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
+                .innerJoin(SQUAD_CREW_MEMBER.member, SQUAD_CREATOR)
+                .innerJoin(squad.crew, crew)
+                .innerJoin(crew.member, member)
+                .orderBy(squadParticipant.requestAt.desc())
+                .transform(groupBy(crew.id).as(
+                        list(new QMySquadRequestDomainDto(
+                                crew.id,
+                                crew.name,
+                                crew.imageUrl,
+                                new QSimpleMemberInfoDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.mbti
+                                ),
+                                list(new QMySquadRequestDomainDto_SquadWithParticipant(
+                                        squad.id,
+                                        squad.title,
+                                        squad.capacity,
+                                        new QSimpleMemberInfoDomainDto(
+                                                SQUAD_CREATOR.id,
+                                                SQUAD_CREATOR.nickname,
+                                                SQUAD_CREATOR.mbti
+                                        ),
+                                        new QMySquadRequestDomainDto_SquadWithParticipant_RequestParticipantDomainDto(
+                                                squadParticipant.id,
+                                                squadParticipant.requestAt
+                                        )
+                                ))
+                        ))
+                ));
+
+        return List.of();
+    }
+
+    public Page<SimpleSquadParticipantDomainDto> fetchAllBySquadId(Long squadId, Pageable pageable) {
+        List<SimpleSquadParticipantDomainDto> results = jpaQueryFactory
+                .select(new QSimpleSquadParticipantDomainDto(
+                        squadParticipant.id,
+                        squadParticipant.requestAt,
+                        new QSimpleMemberInfoDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.mbti
+                        )
+                ))
+                .from(squadParticipant)
+                .innerJoin(squadParticipant.crewMember, crewMember).on(squadParticipant.squad.id.eq(squadId))
+                .innerJoin(crewMember.member, member)
+                .orderBy(squadParticipant.requestAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(squadParticipant.id.count())
+                .from(squadParticipant)
+                .where(squadParticipant.squad.id.eq(squadId));
+
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
+    }
+
     /**
      * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 쪼갠다.
      *
      * @param memberId
-     * @return
+     * @deprecated Use {@link #findSquadParticipantRequestsByMemberId(Long)} instead.
      */
-    public List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId) {
+    @Deprecated
+    public List<SquadParticipantRequest> findSquadParticipantRequestsByMemberIdV2(Long memberId) {
         List<SquadParticipantDomainDto> squadParticipantDtos = jpaQueryFactory
                 .from(squadParticipant)
                 .innerJoin(squadParticipant.crewMember, crewMember).on(crewMember.member.id.eq(memberId))
                 .innerJoin(squadParticipant.squad, squad)
                 .innerJoin(squad.crewMember, SQUAD_CREW_MEMBER)
                 .innerJoin(SQUAD_CREW_MEMBER.member, SQUAD_CREATOR)
-                .innerJoin(squad.categories, squadCategory)
-                .innerJoin(squadCategory.category, category)
+                .leftJoin(squad.categories, squadCategory)
+                .leftJoin(squadCategory.category, category)
                 .orderBy(squadParticipant.requestAt.desc())
                 .transform(groupBy(squad.id)
                         .list(new QSquadParticipantDomainDto(
@@ -108,25 +183,5 @@ public class SquadParticipantQueryDslRepository {
                     );
                 })
                 .toList();
-    }
-
-    public List<SimpleSquadParticipantDomainDto> fetchAllWithMemberBySquadId(Long squadId, Pageable pageable) {
-        return jpaQueryFactory
-                .select(new QSimpleSquadParticipantDomainDto(
-                        squadParticipant.id,
-                        squadParticipant.requestAt,
-                        new QSimpleMemberInfoDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.mbti
-                        )
-                ))
-                .from(squadParticipant)
-                .innerJoin(squadParticipant.crewMember, crewMember).on(squadParticipant.squad.id.eq(squadId))
-                .innerJoin(crewMember.member, member)
-                .orderBy(squadParticipant.requestAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
     }
 }

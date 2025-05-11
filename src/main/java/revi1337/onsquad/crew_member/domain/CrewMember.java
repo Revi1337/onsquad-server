@@ -108,6 +108,18 @@ public class CrewMember extends RequestEntity {
         this.crew = null;
     }
 
+    public boolean doesNotMatchMemberId(Long memberId) {
+        return !matchMemberId(memberId);
+    }
+
+    public boolean matchMemberId(Long memberId) {
+        return member.getId().equals(memberId);
+    }
+
+    public boolean hasSameId(Long crewMemberId) {
+        return id.equals(crewMemberId);
+    }
+
     public boolean isOwnerOfSquad(Long squadId) {
         return id.equals(squadId);
     }

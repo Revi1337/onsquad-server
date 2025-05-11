@@ -18,7 +18,7 @@ public interface SquadRepository {
 
     Optional<Squad> findById(Long id);
 
-    Optional<Squad> findByIdWithOwnerAndCrewAndSquadMembers(Long id);
+    Optional<Squad> findByIdWithMembers(Long id);
 
     Optional<SquadInfoDomainDto> fetchById(Long id);
 
@@ -36,8 +36,8 @@ public interface SquadRepository {
                 .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
     }
 
-    default Squad getByIdWithOwnerAndCrewAndSquadMembers(Long id) {
-        return findByIdWithOwnerAndCrewAndSquadMembers(id)
+    default Squad getByIdWithMembers(Long id) {
+        return findByIdWithMembers(id)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));
     }
 }

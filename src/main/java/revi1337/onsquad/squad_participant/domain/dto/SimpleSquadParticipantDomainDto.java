@@ -7,12 +7,12 @@ import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 public record SimpleSquadParticipantDomainDto(
         Long id,
         LocalDateTime requestAt,
-        SimpleMemberInfoDomainDto memberInfo
+        SimpleMemberInfoDomainDto member
 ) {
     @QueryProjection
-    public SimpleSquadParticipantDomainDto(Long id, LocalDateTime requestAt, SimpleMemberInfoDomainDto memberInfo) {
+    public SimpleSquadParticipantDomainDto(Long id, LocalDateTime requestAt, SimpleMemberInfoDomainDto member) {
         this.id = id;
-        this.memberInfo = memberInfo;
+        this.member = member;
         this.requestAt = requestAt;
     }
 }

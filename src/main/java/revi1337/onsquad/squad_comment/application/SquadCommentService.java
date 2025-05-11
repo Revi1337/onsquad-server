@@ -79,7 +79,7 @@ public class SquadCommentService {
     }
 
     private void validateSquadInCrew(Long crewId, Squad squad) {
-        if (squad.hasNotSameCrewId(crewId)) {
+        if (squad.doesNotMatchCrewId(crewId)) {
             throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
         }
     }

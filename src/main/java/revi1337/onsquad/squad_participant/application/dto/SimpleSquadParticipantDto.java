@@ -7,13 +7,13 @@ import revi1337.onsquad.squad_participant.domain.dto.SimpleSquadParticipantDomai
 public record SimpleSquadParticipantDto(
         Long id,
         LocalDateTime requestAt,
-        SimpleMemberInfoDto memberInfo
+        SimpleMemberInfoDto member
 ) {
     public static SimpleSquadParticipantDto from(SimpleSquadParticipantDomainDto simpleSquadParticipantDomainDto) {
         return new SimpleSquadParticipantDto(
                 simpleSquadParticipantDomainDto.id(),
                 simpleSquadParticipantDomainDto.requestAt(),
-                SimpleMemberInfoDto.from(simpleSquadParticipantDomainDto.memberInfo())
+                SimpleMemberInfoDto.from(simpleSquadParticipantDomainDto.member())
         );
     }
 }

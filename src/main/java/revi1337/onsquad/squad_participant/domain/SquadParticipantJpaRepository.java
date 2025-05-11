@@ -14,7 +14,12 @@ public interface SquadParticipantJpaRepository extends JpaRepository<SquadPartic
 
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query("delete SquadParticipant where id = :crewParticipantId")
-    void deleteById(Long crewParticipantId);
+    @Query("delete SquadParticipant as sp where sp.id = :id")
+    void deleteById(Long id);
+
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("delete SquadParticipant as sp where sp.squad.id = :squadId and sp.crewMember.id = :crewMemberId")
+    int deleteBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
 
 }
