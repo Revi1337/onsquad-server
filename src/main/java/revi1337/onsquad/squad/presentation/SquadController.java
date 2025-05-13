@@ -22,6 +22,7 @@ import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SquadWithOwnerStateResponse;
+import revi1337.onsquad.squad.presentation.dto.response.SquadWithParticipantStateResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -43,12 +44,12 @@ public class SquadController {
     }
 
     @GetMapping("/{crewId}/squads/{squadId}")
-    public ResponseEntity<RestResponse<SquadInfoResponse>> fetchSquad(
+    public ResponseEntity<RestResponse<SquadWithParticipantStateResponse>> fetchSquad(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        SquadInfoResponse squadResponse = SquadInfoResponse.from(
+        SquadWithParticipantStateResponse squadResponse = SquadWithParticipantStateResponse.from(
                 squadQueryService.fetchSquad(authMemberAttribute.id(), crewId, squadId)
         );
 
@@ -71,14 +72,14 @@ public class SquadController {
     @GetMapping("/{crewId}/manage/squads")
     public ResponseEntity<RestResponse<List<SquadWithOwnerStateResponse>>> fetchSquadsWithOwnerState(
             @PathVariable Long crewId,
-            @PageableDefault(size = 5) Pageable pageable,
+            @PageableDefault Pageable pageable,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<SquadWithOwnerStateResponse> squadWithOwnerStateRespons = squadQueryService
+        List<SquadWithOwnerStateResponse> squadResponses = squadQueryService
                 .fetchSquadsWithOwnerState(authMemberAttribute.id(), crewId, pageable).stream()
                 .map(SquadWithOwnerStateResponse::from)
                 .toList();
 
-        return ResponseEntity.ok().body(RestResponse.success(squadWithOwnerStateRespons));
+        return ResponseEntity.ok().body(RestResponse.success(squadResponses));
     }
 }
