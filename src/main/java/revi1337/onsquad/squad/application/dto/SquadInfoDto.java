@@ -16,7 +16,7 @@ public record SquadInfoDto(
         String kakaoLink,
         String discordLink,
         List<String> categories,
-        SimpleMemberInfoDto squadOwner
+        SimpleMemberInfoDto owner
 ) {
     public static SquadInfoDto from(SquadInfoDomainDto squadInfoDomainDto) {
         return new SquadInfoDto(

@@ -13,8 +13,10 @@ import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
 import revi1337.onsquad.squad.application.dto.SquadWithOwnerStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithParticipantStateDto;
 import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,12 +25,15 @@ public class SquadQueryService {
 
     private final SquadRepository squadRepository;
     private final CrewMemberRepository crewMemberRepository;
+    private final SquadMemberRepository squadMemberRepository;
 
-    public SquadInfoDto fetchSquad(Long memberId, Long crewId, Long squadId) {
-        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+    public SquadWithParticipantStateDto fetchSquad(Long memberId, Long crewId, Long squadId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         SquadInfoDomainDto squadInfo = squadRepository.getSquadById(squadId);
 
-        return SquadInfoDto.from(squadInfo);
+        return squadMemberRepository.findBySquadIdAndCrewMemberId(squadId, crewMember.getId())
+                .map(squadMember -> SquadWithParticipantStateDto.from(true, squadInfo))
+                .orElseGet(() -> SquadWithParticipantStateDto.from(false, squadInfo));
     }
 
     public List<SquadInfoDto> fetchSquads(Long crewId, CategoryCondition condition, Pageable pageable) {

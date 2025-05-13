@@ -46,6 +46,7 @@ import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.application.dto.SquadDto;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
 import revi1337.onsquad.squad.application.dto.SquadWithOwnerStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithParticipantStateDto;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 
 @WebMvcTest(SquadController.class)
@@ -110,22 +111,25 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            SquadInfoDto SERVICE_DTO = new SquadInfoDto(
-                    SQUAD_ID,
-                    SQUAD_TITLE_VALUE,
-                    SQUAD_CONTENT_VALUE,
-                    20,
-                    8,
-                    SQUAD_ADDRESS_VALUE,
-                    SQUAD_ADDRESS_DETAIL_VALUE,
-                    SQUAD_KAKAO_LINK_VALUE,
-                    SQUAD_DISCORD_LINK_VALUE,
-                    List.of(GAME.getText(), MOVIE.getText()),
-                    new SimpleMemberInfoDto(
-                            2L,
-                            null,
-                            ANDONG_NICKNAME_VALUE,
-                            ANDONG_MBTI_VALUE
+            SquadWithParticipantStateDto SERVICE_DTO = new SquadWithParticipantStateDto(
+                    true,
+                    new SquadInfoDto(
+                            SQUAD_ID,
+                            SQUAD_TITLE_VALUE,
+                            SQUAD_CONTENT_VALUE,
+                            20,
+                            8,
+                            SQUAD_ADDRESS_VALUE,
+                            SQUAD_ADDRESS_DETAIL_VALUE,
+                            SQUAD_KAKAO_LINK_VALUE,
+                            SQUAD_DISCORD_LINK_VALUE,
+                            List.of(GAME.getText(), MOVIE.getText()),
+                            new SimpleMemberInfoDto(
+                                    2L,
+                                    null,
+                                    ANDONG_NICKNAME_VALUE,
+                                    ANDONG_MBTI_VALUE
+                            )
                     )
             );
             when(squadQueryService.fetchSquad(any(), anyLong(), anyLong())).thenReturn(SERVICE_DTO);

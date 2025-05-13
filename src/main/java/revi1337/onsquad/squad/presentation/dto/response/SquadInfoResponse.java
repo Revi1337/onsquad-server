@@ -17,7 +17,7 @@ public record SquadInfoResponse(
         String kakaoLink,
         String discordLink,
         List<String> categories,
-        SimpleMemberInfoResponse squadOwner
+        SimpleMemberInfoResponse owner
 ) {
     public static SquadInfoResponse from(SquadInfoDto squadInfoDto) {
         return new SquadInfoResponse(
@@ -31,7 +31,7 @@ public record SquadInfoResponse(
                 squadInfoDto.kakaoLink(),
                 squadInfoDto.discordLink(),
                 squadInfoDto.categories(),
-                SimpleMemberInfoResponse.from(squadInfoDto.squadOwner())
+                SimpleMemberInfoResponse.from(squadInfoDto.owner())
         );
     }
 }
