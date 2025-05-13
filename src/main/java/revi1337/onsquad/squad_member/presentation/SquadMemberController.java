@@ -1,36 +1,34 @@
 package revi1337.onsquad.squad_member.presentation;
 
-import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.squad_member.application.SquadMemberService;
+import revi1337.onsquad.squad_member.application.SquadMemberCommandService;
+import revi1337.onsquad.squad_member.application.SquadMemberQueryService;
 import revi1337.onsquad.squad_member.presentation.dto.response.EnrolledSquadResponse;
-import revi1337.onsquad.squad_member.presentation.dto.response.SquadInMembersResponse;
-import revi1337.onsquad.squad_member.presentation.dto.response.SquadMembersWithSquadResponse;
+import revi1337.onsquad.squad_member.presentation.dto.response.SquadMemberResponse;
 
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
 public class SquadMemberController {
 
-    private final SquadMemberService squadMemberService;
+    private final SquadMemberCommandService squadMemberCommandService;
+    private final SquadMemberQueryService squadMemberQueryService;
 
     @GetMapping("/my/squads")
     public ResponseEntity<RestResponse<List<EnrolledSquadResponse>>> fetchAllJoinedSquads(
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<EnrolledSquadResponse> enrolledSquadResponses = squadMemberService
+        List<EnrolledSquadResponse> enrolledSquadResponses = squadMemberQueryService
                 .fetchAllJoinedSquads(authMemberAttribute.id()).stream()
                 .map(EnrolledSquadResponse::from)
                 .toList();
@@ -38,29 +36,28 @@ public class SquadMemberController {
         return ResponseEntity.ok().body(RestResponse.success(enrolledSquadResponses));
     }
 
-    @GetMapping("/manage/squad/members")
-    public ResponseEntity<RestResponse<SquadMembersWithSquadResponse>> findSquadWithMembers(
-            @Authenticate AuthMemberAttribute authMemberAttribute,
-            @RequestParam @Positive Long crewId,
-            @RequestParam Long squadId
-    ) {
-        SquadMembersWithSquadResponse squadWithSquadMembers = SquadMembersWithSquadResponse.from(
-                squadMemberService.findSquadWithMembers(authMemberAttribute.id(), crewId, squadId)
-        );
-
-        return ResponseEntity.ok().body(RestResponse.success(squadWithSquadMembers));
-    }
-
     @GetMapping("/crews/{crewId}/squads/{squadId}/members")
-    public ResponseEntity<RestResponse<SquadInMembersResponse>> fetchMembersInSquad(
+    public ResponseEntity<RestResponse<List<SquadMemberResponse>>> fetchMembers(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        SquadInMembersResponse squadInMembersResponse = SquadInMembersResponse.from(
-                squadMemberService.fetchMembersInSquad(authMemberAttribute.id(), crewId, squadId)
-        );
+        List<SquadMemberResponse> results = squadMemberQueryService
+                .fetchAllBySquadId(authMemberAttribute.id(), crewId, squadId).stream()
+                .map(SquadMemberResponse::from)
+                .toList();
 
-        return ResponseEntity.ok().body(RestResponse.success(squadInMembersResponse));
+        return ResponseEntity.ok().body(RestResponse.success(results));
+    }
+
+    @DeleteMapping("/crews/{crewId}/squads/{squadId}/me")
+    public ResponseEntity<RestResponse<String>> leaveSquad(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @Authenticate AuthMemberAttribute authMemberAttribute
+    ) {
+        squadMemberCommandService.leaveSquad(authMemberAttribute.id(), crewId, squadId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 }

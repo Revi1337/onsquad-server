@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 public record SquadMemberDomainDto(
-        SimpleMemberInfoDomainDto memberInfo,
-        LocalDateTime participantAt
+        LocalDateTime participantAt,
+        SimpleMemberInfoDomainDto member
 ) {
     @QueryProjection
-    public SquadMemberDomainDto(SimpleMemberInfoDomainDto memberInfo, LocalDateTime participantAt) {
-        this.memberInfo = memberInfo;
+    public SquadMemberDomainDto(LocalDateTime participantAt, SimpleMemberInfoDomainDto member) {
+        this.member = member;
         this.participantAt = participantAt;
     }
 }

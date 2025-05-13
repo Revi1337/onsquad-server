@@ -28,4 +28,11 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class CannotLeaveLeader extends SquadMemberBusinessException {
+
+        public CannotLeaveLeader(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

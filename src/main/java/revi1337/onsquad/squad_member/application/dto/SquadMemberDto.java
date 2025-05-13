@@ -5,23 +5,23 @@ import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
 
 public record SquadMemberDto(
-        SimpleMemberInfoDto memberInfo,
+        Boolean matchCurrentMember,
         LocalDateTime participantAt,
-        Boolean matchCurrentUser
+        SimpleMemberInfoDto member
 ) {
     public static SquadMemberDto from(SquadMemberDomainDto squadMemberDomainDto) {
         return new SquadMemberDto(
-                SimpleMemberInfoDto.from(squadMemberDomainDto.memberInfo()),
+                null,
                 squadMemberDomainDto.participantAt(),
-                null
+                SimpleMemberInfoDto.from(squadMemberDomainDto.member())
         );
     }
 
     public static SquadMemberDto from(Long memberId, SquadMemberDomainDto squadMemberDomainDto) {
         return new SquadMemberDto(
-                SimpleMemberInfoDto.from(squadMemberDomainDto.memberInfo()),
+                squadMemberDomainDto.member().id().equals(memberId),
                 squadMemberDomainDto.participantAt(),
-                squadMemberDomainDto.memberInfo().id().equals(memberId)
+                SimpleMemberInfoDto.from(squadMemberDomainDto.member())
         );
     }
 }

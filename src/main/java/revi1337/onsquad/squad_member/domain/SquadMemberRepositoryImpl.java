@@ -5,9 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadInMembersDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadMembersWithSquadDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -27,13 +25,28 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public boolean existsBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
-        return squadMemberJpaRepository.existsBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    public void flush() {
+        squadMemberJpaRepository.flush();
+    }
+
+    @Override
+    public void delete(SquadMember squadMember) {
+        squadMemberJpaRepository.delete(squadMember);
+    }
+
+    @Override
+    public int countBySquadId(Long squadId) {
+        return squadMemberJpaRepository.countBySquadId(squadId);
     }
 
     @Override
     public Optional<SquadMember> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
         return squadMemberJpaRepository.findBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    }
+
+    @Override
+    public Optional<SquadMember> findWithSquadBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
+        return squadMemberJpaRepository.findWithSquadBySquadIdAndCrewMemberId(squadId, crewMemberId);
     }
 
     @Override
@@ -44,16 +57,5 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     @Override
     public List<EnrolledSquadDomainDto> fetchAllJoinedSquadsByMemberId(Long memberId) {
         return squadMemberQueryDslRepository.findEnrolledSquads(memberId);
-    }
-
-    @Override
-    public SquadInMembersDomainDto fetchAllWithCrewAndCategoriesBySquadId(Long crewMemberId, Long squadId) {
-//        return squadMemberQueryDslRepository.fetchAllWithCrewAndCategoriesBySquadId2(crewMemberId, squadId); {
-        return squadMemberQueryDslRepository.fetchAllWithCrewAndCategoriesBySquadId(crewMemberId, squadId);
-    }
-
-    @Override
-    public Optional<SquadMembersWithSquadDomainDto> fetchMembersWithSquad(Long memberId, Long crewId, Long squadId) {
-        return squadMemberQueryDslRepository.findSquadMembers(memberId, crewId, squadId);
     }
 }
