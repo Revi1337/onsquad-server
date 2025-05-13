@@ -10,14 +10,16 @@ import revi1337.onsquad.squad.application.dto.SquadInfoDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
 
 public record CrewMainDto(
+        boolean canManage,
         CrewInfoDto crew,
         List<AnnounceDto> announces,
         List<Top5CrewMemberDto> topMembers,
         List<SquadInfoDto> squads
 ) {
-    public static CrewMainDto from(CrewInfoDomainDto crew, List<AnnounceDomainDto> announces,
+    public static CrewMainDto from(boolean canManage, CrewInfoDomainDto crew, List<AnnounceDomainDto> announces,
                                    List<CrewTopMember> topMembers, List<SquadInfoDomainDto> squads) {
         return new CrewMainDto(
+                canManage,
                 CrewInfoDto.from(crew),
                 announces.stream()
                         .map(AnnounceDto::from)

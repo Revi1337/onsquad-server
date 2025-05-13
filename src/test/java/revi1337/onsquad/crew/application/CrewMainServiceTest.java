@@ -25,7 +25,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.announce.domain.Announce;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
-import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.application.dto.CrewMainDto;
 import revi1337.onsquad.crew.domain.Crew;
@@ -74,7 +73,7 @@ class CrewMainServiceTest extends ApplicationLayerTestSupport {
         announceRepository.save(ANNOUNCE);
 
         CrewMainDto CREW_MAIN_DTO = crewMainService.fetchMain(
-                REVI.getId(), CREW.getId(), CategoryType.ALL, PageRequest.of(0, 10)
+                REVI.getId(), CREW.getId(), PageRequest.of(0, 10)
         );
 
         assertAll(() -> {
