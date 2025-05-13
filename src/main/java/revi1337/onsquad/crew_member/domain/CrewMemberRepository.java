@@ -24,7 +24,7 @@ public interface CrewMemberRepository {
 
     boolean existsParticipantCrewMember(Long memberId);
 
-    List<EnrolledCrewDomainDto> fetchAllJoinedCrewsByMemberId(Long memberId);
+    List<EnrolledCrewDomainDto> fetchEnrolledCrewsByMemberId(Long memberId);
 
     List<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId);
 

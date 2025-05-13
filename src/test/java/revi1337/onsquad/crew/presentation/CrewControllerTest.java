@@ -70,6 +70,7 @@ import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
+import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
 import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
@@ -230,18 +231,18 @@ class CrewControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(get("/api/crews/{crewId}", 1L)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.data.alreadyJoin").doesNotExist())
                     .andExpect(jsonPath("$.data.id").value(1))
                     .andExpect(jsonPath("$.data.name").value(CREW_NAME_VALUE))
                     .andExpect(jsonPath("$.data.introduce").value(CREW_INTRODUCE_VALUE))
                     .andExpect(jsonPath("$.data.detail").value(CREW_DETAIL_VALUE))
                     .andExpect(jsonPath("$.data.imageUrl").value(CREW_IMAGE_LINK_VALUE))
                     .andExpect(jsonPath("$.data.kakaoLink").value(CREW_KAKAO_LINK_VALUE))
-                    .andExpect(jsonPath("$.data.hashtags[0]").value(1))
-                    .andExpect(jsonPath("$.data.hashtags[1]").value(HashtagType.ACTIVE.name()))
-                    .andExpect(jsonPath("$.data.alreadyJoin").doesNotExist())
-                    .andExpect(jsonPath("$.data.crewOwner.id").value(1))
-                    .andExpect(jsonPath("$.data.crewOwner.nickname").value(REVI_NICKNAME_VALUE))
-                    .andExpect(jsonPath("$.data.crewOwner.mbti").value(ISTP.name()))
+                    .andExpect(jsonPath("$.data.memberCount").value(1))
+                    .andExpect(jsonPath("$.data.hashtags[0]").value(HashtagType.ACTIVE.name()))
+                    .andExpect(jsonPath("$.data.owner.id").value(1))
+                    .andExpect(jsonPath("$.data.owner.nickname").value(REVI_NICKNAME_VALUE))
+                    .andExpect(jsonPath("$.data.owner.mbti").value(ISTP.name()))
                     .andDo(document("crews/find-crew/success1",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -255,20 +256,23 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("토큰이 있는 경우에도 Crew 조회에 성공한다.")
         void success2() throws Exception {
-            CrewInfoDto CREW_INFO = new CrewInfoDto(
-                    1L,
-                    CREW_NAME_VALUE,
-                    CREW_INTRODUCE_VALUE,
-                    CREW_DETAIL_VALUE,
-                    CREW_IMAGE_LINK_VALUE,
-                    CREW_KAKAO_LINK_VALUE,
-                    List.of(HashtagType.ACTIVE.name()),
-                    1L,
-                    new SimpleMemberInfoDto(
+            CrewWithParticipantStateDto CREW_INFO = new CrewWithParticipantStateDto(
+                    true,
+                    new CrewInfoDto(
                             1L,
-                            null,
-                            REVI_NICKNAME_VALUE, ISTP.name()),
-                    true
+                            CREW_NAME_VALUE,
+                            CREW_INTRODUCE_VALUE,
+                            CREW_DETAIL_VALUE,
+                            CREW_IMAGE_LINK_VALUE,
+                            CREW_KAKAO_LINK_VALUE,
+                            List.of(HashtagType.ACTIVE.name()),
+                            1L,
+                            new SimpleMemberInfoDto(
+                                    1L,
+                                    null,
+                                    REVI_NICKNAME_VALUE, ISTP.name()),
+                            true
+                    )
             );
             when(crewQueryService.findCrewById(any(), anyLong())).thenReturn(CREW_INFO);
 
@@ -276,18 +280,18 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andExpect(jsonPath("$.data.id").value(1))
-                    .andExpect(jsonPath("$.data.name").value(CREW_NAME_VALUE))
-                    .andExpect(jsonPath("$.data.introduce").value(CREW_INTRODUCE_VALUE))
-                    .andExpect(jsonPath("$.data.detail").value(CREW_DETAIL_VALUE))
-                    .andExpect(jsonPath("$.data.imageUrl").value(CREW_IMAGE_LINK_VALUE))
-                    .andExpect(jsonPath("$.data.kakaoLink").value(CREW_KAKAO_LINK_VALUE))
-                    .andExpect(jsonPath("$.data.hashtags[0]").value(1))
-                    .andExpect(jsonPath("$.data.hashtags[1]").value(HashtagType.ACTIVE.name()))
-                    .andExpect(jsonPath("$.data.alreadyJoin").isBoolean())
-                    .andExpect(jsonPath("$.data.crewOwner.id").value(1))
-                    .andExpect(jsonPath("$.data.crewOwner.nickname").value(REVI_NICKNAME_VALUE))
-                    .andExpect(jsonPath("$.data.crewOwner.mbti").value(ISTP.name()))
+                    .andExpect(jsonPath("$.data.alreadyParticipant").value(true))
+                    .andExpect(jsonPath("$.data.crew.id").value(1))
+                    .andExpect(jsonPath("$.data.crew.name").value(CREW_NAME_VALUE))
+                    .andExpect(jsonPath("$.data.crew.introduce").value(CREW_INTRODUCE_VALUE))
+                    .andExpect(jsonPath("$.data.crew.detail").value(CREW_DETAIL_VALUE))
+                    .andExpect(jsonPath("$.data.crew.imageUrl").value(CREW_IMAGE_LINK_VALUE))
+                    .andExpect(jsonPath("$.data.crew.kakaoLink").value(CREW_KAKAO_LINK_VALUE))
+                    .andExpect(jsonPath("$.data.crew.memberCount").value(1))
+                    .andExpect(jsonPath("$.data.crew.hashtags[0]").value(HashtagType.ACTIVE.name()))
+                    .andExpect(jsonPath("$.data.crew.owner.id").value(1))
+                    .andExpect(jsonPath("$.data.crew.owner.nickname").value(REVI_NICKNAME_VALUE))
+                    .andExpect(jsonPath("$.data.crew.owner.mbti").value(ISTP.name()))
                     .andDo(document("crews/find-crew/success2",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -541,12 +545,11 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     .andExpect(jsonPath("$.data[0].detail").value(CREW_DETAIL_VALUE))
                     .andExpect(jsonPath("$.data[0].imageUrl").value(CREW_IMAGE_LINK_VALUE))
                     .andExpect(jsonPath("$.data[0].kakaoLink").value(CREW_KAKAO_LINK_VALUE))
-                    .andExpect(jsonPath("$.data[0].hashtags[0]").value(1))
-                    .andExpect(jsonPath("$.data[0].hashtags[1]").value(HashtagType.ACTIVE.name()))
+                    .andExpect(jsonPath("$.data[0].hashtags[0]").value(HashtagType.ACTIVE.name()))
                     .andExpect(jsonPath("$.data[0].alreadyJoin").doesNotExist())
-                    .andExpect(jsonPath("$.data[0].crewOwner.id").value(1))
-                    .andExpect(jsonPath("$.data[0].crewOwner.nickname").value(REVI_NICKNAME_VALUE))
-                    .andExpect(jsonPath("$.data[0].crewOwner.mbti").value(ISTP.name()))
+                    .andExpect(jsonPath("$.data[0].owner.id").value(1))
+                    .andExpect(jsonPath("$.data[0].owner.nickname").value(REVI_NICKNAME_VALUE))
+                    .andExpect(jsonPath("$.data[0].owner.mbti").value(ISTP.name()))
                     .andDo(document("crews/find-crews/success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -584,7 +587,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
             );
             List<EnrolledCrewDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
-            when(crewQueryService.fetchAllJoinedCrews(any())).thenReturn(SERVICE_DTOS);
+            when(crewQueryService.fetchMyParticipants(any())).thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/me")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -597,7 +600,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(crewQueryService).fetchAllJoinedCrews(any());
+            verify(crewQueryService).fetchMyParticipants(any());
         }
     }
 }

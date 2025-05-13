@@ -25,7 +25,47 @@ public class CrewMemberQueryDslRepository {
 
     private final QMember CREW_CREATOR = new QMember("crewCreator");
 
-    public List<EnrolledCrewDomainDto> fetchAllJoinedCrewsByMemberId(Long memberId) {
+    public List<EnrolledCrewDomainDto> fetchEnrolledCrewsByMemberId(Long memberId) {
+        return jpaQueryFactory
+                .select(new QEnrolledCrewDomainDto(
+                        crew.id,
+                        crew.name,
+                        crew.imageUrl,
+                        new CaseBuilder()
+                                .when(CREW_CREATOR.id.eq(memberId))
+                                .then(true)
+                                .otherwise(false),
+                        new QSimpleMemberInfoDomainDto(
+                                CREW_CREATOR.id,
+                                CREW_CREATOR.nickname,
+                                CREW_CREATOR.mbti
+                        )
+                ))
+                .from(crewMember)
+                .innerJoin(crewMember.crew, crew).on(crewMember.member.id.eq(memberId))
+                .innerJoin(crew.member, CREW_CREATOR)
+                .orderBy(crewMember.requestAt.desc())
+                .fetch();
+    }
+
+    public List<CrewMemberDomainDto> findCrewMembersByCrewId(Long crewId) {
+        return jpaQueryFactory
+                .select(new QCrewMemberDomainDto(
+                        new QSimpleMemberInfoDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.mbti
+                        ),
+                        crewMember.requestAt
+                ))
+                .from(crewMember)
+                .innerJoin(crewMember.member, member).on(crewMember.crew.id.eq(crewId))
+                .orderBy(crewMember.requestAt.desc())
+                .fetch();
+    }
+
+    @Deprecated
+    public List<EnrolledCrewDomainDto> fetchAllWithCrewsByMemberIdV2(Long memberId) {
         BooleanExpression isCrewOwner = new CaseBuilder()
                 .when(CREW_CREATOR.id.eq(memberId))
                 .then(true)
@@ -50,22 +90,6 @@ public class CrewMemberQueryDslRepository {
                         crewMember.requestAt.desc(),
                         isCrewOwner.desc()
                 )
-                .fetch();
-    }
-
-    public List<CrewMemberDomainDto> findCrewMembersByCrewId(Long crewId) {
-        return jpaQueryFactory
-                .select(new QCrewMemberDomainDto(
-                        new QSimpleMemberInfoDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.mbti
-                        ),
-                        crewMember.requestAt
-                ))
-                .from(crewMember)
-                .innerJoin(crewMember.member, member).on(crewMember.crew.id.eq(crewId))
-                .orderBy(crewMember.requestAt.desc())
                 .fetch();
     }
 }

@@ -154,7 +154,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
             crewMemberRepository.save(CrewMember.forGeneral(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberRepository.save(CrewMember.forGeneral(CREW2, ANDONG, NOW.plusMinutes(1)));
 
-            List<EnrolledCrewDomainDto> DTOS = crewMemberRepository.fetchAllJoinedCrewsByMemberId(REVI.getId());
+            List<EnrolledCrewDomainDto> DTOS = crewMemberRepository.fetchEnrolledCrewsByMemberId(REVI.getId());
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);

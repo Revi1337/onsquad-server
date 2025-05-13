@@ -111,9 +111,9 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
                 assertThat(CREW_INFO.kakaoLink()).isNull();
                 assertThat(CREW_INFO.memberCnt()).isEqualTo(1);
                 assertThat(CREW_INFO.hashtagTypes()).contains(ACTIVE.getText(), ESCAPE.getText());
-                assertThat(CREW_INFO.crewOwner().id()).isEqualTo(REVI.getId());
-                assertThat(CREW_INFO.crewOwner().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
-                assertThat(CREW_INFO.crewOwner().mbti()).isEqualTo(ISTP.name());
+                assertThat(CREW_INFO.owner().id()).isEqualTo(REVI.getId());
+                assertThat(CREW_INFO.owner().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
+                assertThat(CREW_INFO.owner().mbti()).isEqualTo(ISTP.name());
             });
         }
     }
@@ -162,7 +162,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             crewMemberJpaRepository.save(CrewMember.forGeneral(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberJpaRepository.save(CrewMember.forGeneral(CREW2, ANDONG, NOW.plusMinutes(1)));
 
-            List<EnrolledCrewDto> DTOS = crewQueryService.fetchAllJoinedCrews(REVI.getId());
+            List<EnrolledCrewDto> DTOS = crewQueryService.fetchMyParticipants(REVI.getId());
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);

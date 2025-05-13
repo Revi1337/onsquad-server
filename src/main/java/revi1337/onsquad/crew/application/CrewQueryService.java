@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
@@ -28,10 +29,11 @@ public class CrewQueryService {
         return CrewInfoDto.from(crewRepository.getCrewById(crewId));
     }
 
-    public CrewInfoDto findCrewById(Long memberId, Long crewId) {
+    public CrewWithParticipantStateDto findCrewById(Long memberId, Long crewId) {
         Boolean alreadyJoin = crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId);
         CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
-        return CrewInfoDto.from(alreadyJoin, crewInfo);
+
+        return CrewWithParticipantStateDto.from(alreadyJoin, crewInfo);
     }
 
     public List<CrewInfoDto> fetchCrewsByName(String crewName, Pageable pageable) {
@@ -40,8 +42,8 @@ public class CrewQueryService {
                 .toList();
     }
 
-    public List<EnrolledCrewDto> fetchAllJoinedCrews(Long memberId) {
-        return crewMemberRepository.fetchAllJoinedCrewsByMemberId(memberId).stream()
+    public List<EnrolledCrewDto> fetchMyParticipants(Long memberId) {
+        return crewMemberRepository.fetchEnrolledCrewsByMemberId(memberId).stream()
                 .map(EnrolledCrewDto::from)
                 .toList();
     }
