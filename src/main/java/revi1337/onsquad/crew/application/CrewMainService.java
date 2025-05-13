@@ -34,14 +34,14 @@ public class CrewMainService {
     private final SquadRepository squadRepository;
     private final CrewStatisticCacheRepository crewStatisticRedisRepository;
 
-    public CrewMainDto fetchMain(Long memberId, Long crewId, CategoryType categoryType, Pageable pageable) {
-        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+    public CrewMainDto fetchMain(Long memberId, Long crewId, Pageable pageable) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
         List<AnnounceDomainDto> announces = announceCacheRepository.fetchAllCacheInDefaultByCrewId(crewId);
         List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
-        Page<SquadInfoDomainDto> squads = squadRepository.fetchAllByCrewId(crewId, categoryType, pageable);
+        Page<SquadInfoDomainDto> squads = squadRepository.fetchAllByCrewId(crewId, CategoryType.ALL, pageable);
 
-        return CrewMainDto.from(crewInfo, announces, topMembers, squads.getContent());
+        return CrewMainDto.from(crewMember.isOwner(), crewInfo, announces, topMembers, squads.getContent());
     }
 
     // TODO 캐시 정합성을 조금 더 올릴 방법을 생각해봐야 한다. 캐싱 된 이후에 추가된 인원 수, 추가된 신청 수, 추가된 스쿼드 수 를 파악(Redis)해 추가해주는 방향을 생각해야한다.
