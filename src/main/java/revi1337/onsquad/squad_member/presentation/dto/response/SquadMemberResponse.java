@@ -8,15 +8,15 @@ import revi1337.onsquad.squad_member.application.dto.SquadMemberDto;
 
 @JsonInclude(Include.NON_NULL)
 public record SquadMemberResponse(
-        SimpleMemberInfoResponse memberInfo,
+        Boolean matchCurrentMember,
         LocalDateTime participantAt,
-        Boolean matchCurrentUser
+        SimpleMemberInfoResponse member
 ) {
     public static SquadMemberResponse from(SquadMemberDto squadMemberDto) {
         return new SquadMemberResponse(
-                SimpleMemberInfoResponse.from(squadMemberDto.memberInfo()),
+                squadMemberDto.matchCurrentMember(),
                 squadMemberDto.participantAt(),
-                squadMemberDto.matchCurrentUser()
+                SimpleMemberInfoResponse.from(squadMemberDto.member())
         );
     }
 }

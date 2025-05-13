@@ -113,6 +113,10 @@ public class Squad extends BaseEntity {
         }
     }
 
+    public void increaseRemain() {
+        this.capacity.increaseRemain();
+    }
+
     public boolean doesNotMatchCrewId(Long crewId) {
         return !matchCrewId(crewId);
     }
@@ -129,6 +133,12 @@ public class Squad extends BaseEntity {
         return crewMember.hasSameId(crewMemberId);
     }
 
+    /**
+     * Squad 에 속한 SquadMember 의 실제 memberId 를 비교하여, Squad 의 특정 Member 가 있는지 확인한다.
+     * <p>
+     * 매우 주의해야 할 것은 Squad 조회 시, SquadMember 들을 같이 fetch 해오지 않으면, 반복문을 도는 과정에서 프록시 객체 초기화로 인해 size(this.members) 수 만큼 조회
+     * 쿼리가 나간다.
+     */
     public boolean existsMember(Long crewMemberId) {
         for (SquadMember squadMember : this.members) {
             if (squadMember.isSameCrewMemberId(crewMemberId)) {

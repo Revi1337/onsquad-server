@@ -96,6 +96,36 @@ public class SquadMember extends RequestEntity {
         return squadMember;
     }
 
+    private void addOwner(CrewMember crewMember) {
+        this.crewMember = crewMember;
+    }
+
+    public void addSquad(Squad squad) {
+        this.squad = squad;
+    }
+
+    /**
+     * 탈퇴 전 SquadMember 조회 시 Squad 정보를 같이 fetch 하지 않을 경우 Squad 조회 쿼리가 추가적으로 나갈 수 있다.
+     * <p>
+     * 정상적으로 탈퇴하면 Squad 의 잔류 인원이 1 증가한다. 이때 실제로 Squad 의 members 리스트에는 변화가 없지만, 이는 의도된 설계다.
+     * <p>
+     * 도메인 흐름 상, 탈퇴 시 고아객체 제거 및 Cascade 로 Squad 의 members 컬렉션에서 요소를 제거하는 것이 자연스럽지만, 모든 SquadMember 를 불러오는 것은 비효율적이므로
+     * fetch 를 유도하지 않는다.
+     */
+    public void leaveSquad() {
+        releaseOwner();
+        squad.increaseRemain();
+        releaseSquad();
+    }
+
+    private void releaseOwner() {
+        this.crewMember = null;
+    }
+
+    private void releaseSquad() {
+        this.squad = null;
+    }
+
     public boolean matchCrewMemberId(Long crewMemberId) {
         return crewMember.getId().equals(crewMemberId);
     }
@@ -110,14 +140,6 @@ public class SquadMember extends RequestEntity {
 
     public boolean isLeader() {
         return this.role == LEADER;
-    }
-
-    private void addOwner(CrewMember crewMember) {
-        this.crewMember = crewMember;
-    }
-
-    public void addSquad(Squad squad) {
-        this.squad = squad;
     }
 
     @Override

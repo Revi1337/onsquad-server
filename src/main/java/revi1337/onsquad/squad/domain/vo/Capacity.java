@@ -39,13 +39,16 @@ public class Capacity {
     }
 
     public void decreaseRemain() {
-        validateLeft();
-        this.remain -= 1;
-    }
-
-    private void validateLeft() {
         if (this.remain - 1 < 0) {
             throw new SquadDomainException.NotEnoughLeft(NOT_ENOUGH_LEFT);
         }
+        this.remain -= 1;
+    }
+
+    public void increaseRemain() {
+        if (this.remain + 1 > MAX_CAPACITY) {
+            throw new SquadDomainException.NotEnoughLeft(NOT_ENOUGH_LEFT);
+        }
+        this.remain += 1;
     }
 }
