@@ -50,8 +50,8 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public List<EnrolledCrewDomainDto> fetchAllJoinedCrewsByMemberId(Long memberId) {
-        return crewMemberQueryDslRepository.fetchAllJoinedCrewsByMemberId(memberId);
+    public List<EnrolledCrewDomainDto> fetchEnrolledCrewsByMemberId(Long memberId) {
+        return crewMemberQueryDslRepository.fetchEnrolledCrewsByMemberId(memberId);
     }
 
     @Override

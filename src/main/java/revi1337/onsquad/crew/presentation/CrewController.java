@@ -29,6 +29,7 @@ import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
 import revi1337.onsquad.crew.presentation.dto.response.CrewInfoResponse;
+import revi1337.onsquad.crew.presentation.dto.response.CrewWithParticipantStateResponse;
 import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
 import revi1337.onsquad.crew_member.presentation.dto.response.EnrolledCrewResponse;
 
@@ -64,17 +65,17 @@ public class CrewController {
     }
 
     @GetMapping("/{crewId}")
-    public ResponseEntity<RestResponse<CrewInfoResponse>> findCrew(
+    public ResponseEntity<RestResponse<?>> findCrew(
             @PathVariable Long crewId,
             @Authenticate(required = false) AuthMemberAttribute authMemberAttribute
     ) {
-        final CrewInfoResponse crewResponse;
         if (authMemberAttribute == null) {
-            crewResponse = CrewInfoResponse.from(crewQueryService.findCrewById(crewId));
+            CrewInfoResponse crewResponse = CrewInfoResponse.from(crewQueryService.findCrewById(crewId));
             return ResponseEntity.ok().body(RestResponse.success(crewResponse));
         }
 
-        crewResponse = CrewInfoResponse.from(crewQueryService.findCrewById(authMemberAttribute.id(), crewId));
+        CrewWithParticipantStateResponse crewResponse = CrewWithParticipantStateResponse
+                .from(crewQueryService.findCrewById(authMemberAttribute.id(), crewId));
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
 
@@ -89,7 +90,7 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @DeleteMapping("/{crewId}")
+    @DeleteMapping("/{crewId}") // TODO 여기 구현해야 함.
     public ResponseEntity<RestResponse<String>> deleteCrew(
             @PathVariable Long crewId,
             @Authenticate AuthMemberAttribute authMemberAttribute
@@ -133,11 +134,11 @@ public class CrewController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchAllJoinedCrews(
+    public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchMyParticipants(
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<EnrolledCrewResponse> ownedCrewResponses = crewQueryService
-                .fetchAllJoinedCrews(authMemberAttribute.id()).stream()
+                .fetchMyParticipants(authMemberAttribute.id()).stream()
                 .map(EnrolledCrewResponse::from)
                 .toList();
 

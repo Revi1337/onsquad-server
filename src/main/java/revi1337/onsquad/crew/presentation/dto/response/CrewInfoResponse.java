@@ -1,7 +1,6 @@
 package revi1337.onsquad.crew.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.crew.application.dto.CrewInfoDto;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
@@ -14,15 +13,11 @@ public record CrewInfoResponse(
         String detail,
         String imageUrl,
         String kakaoLink,
-        List<Object> hashtags,
-        SimpleMemberInfoResponse crewOwner,
-        Boolean alreadyJoin
+        Long memberCount,
+        List<String> hashtags,
+        SimpleMemberInfoResponse owner
 ) {
     public static CrewInfoResponse from(CrewInfoDto crewInfoDto) {
-        ArrayList<Object> hashTags = new ArrayList<>();
-        hashTags.add(crewInfoDto.memberCnt());
-        hashTags.addAll(crewInfoDto.hashtagTypes());
-
         return new CrewInfoResponse(
                 crewInfoDto.id(),
                 crewInfoDto.name(),
@@ -30,9 +25,9 @@ public record CrewInfoResponse(
                 crewInfoDto.detail(),
                 crewInfoDto.imageUrl(),
                 crewInfoDto.kakaoLink(),
-                hashTags,
-                SimpleMemberInfoResponse.from(crewInfoDto.crewOwner()),
-                crewInfoDto.alreadyJoin()
+                crewInfoDto.memberCnt(),
+                crewInfoDto.hashtagTypes(),
+                SimpleMemberInfoResponse.from(crewInfoDto.owner())
         );
     }
 }

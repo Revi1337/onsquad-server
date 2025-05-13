@@ -14,7 +14,7 @@ public record CrewInfoDto(
         String kakaoLink,
         List<String> hashtagTypes,
         Long memberCnt,
-        SimpleMemberInfoDto crewOwner,
+        SimpleMemberInfoDto owner,
         Boolean alreadyJoin
 ) {
     public static CrewInfoDto from(CrewInfoDomainDto crewInfoDomainDto) {
@@ -31,23 +31,6 @@ public record CrewInfoDto(
                 crewInfoDomainDto.getMemberCnt(),
                 SimpleMemberInfoDto.from(crewInfoDomainDto.getCrewOwner()),
                 null
-        );
-    }
-
-    public static CrewInfoDto from(Boolean alreadyJoin, CrewInfoDomainDto crewInfoDomainDto) {
-        return new CrewInfoDto(
-                crewInfoDomainDto.getId(),
-                crewInfoDomainDto.getName().getValue(),
-                crewInfoDomainDto.getIntroduce().getValue(),
-                crewInfoDomainDto.getDetail() != null ? crewInfoDomainDto.getDetail().getValue() : null,
-                crewInfoDomainDto.getImageUrl() != null ? crewInfoDomainDto.getImageUrl() : "",
-                crewInfoDomainDto.getKakaoLink(),
-                crewInfoDomainDto.getHashtagTypes().stream()
-                        .map(HashtagType::getText)
-                        .toList(),
-                crewInfoDomainDto.getMemberCnt(),
-                SimpleMemberInfoDto.from(crewInfoDomainDto.getCrewOwner()),
-                alreadyJoin
         );
     }
 }
