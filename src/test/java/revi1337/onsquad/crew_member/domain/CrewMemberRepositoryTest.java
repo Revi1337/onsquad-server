@@ -15,13 +15,14 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewJpaRepository;
@@ -155,26 +156,28 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             LocalDateTime NOW = LocalDateTime.now();
             crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, NOW));
             crewMemberRepository.save(CrewMember.forGeneral(CREW, KWANGWON, NOW.plusMinutes(1)));
+            PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            List<CrewMemberDomainDto> DTOS = crewMemberRepository.findManagedCrewMembersByCrewId(CREW.getId());
+            Page<CrewMemberDomainDto> DTOS = crewMemberRepository
+                    .findManagedCrewMembersByCrewId(CREW.getId(), PAGE_REQUEST);
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);
 
-                assertThat(DTOS.get(0).memberInfo().id()).isEqualTo(KWANGWON.getId());
-                assertThat(DTOS.get(0).memberInfo().nickname()).isEqualTo(KWANGWON_NICKNAME);
-                assertThat(DTOS.get(0).memberInfo().mbti()).isSameAs(KWANGWON_MBTI);
-                assertThat(DTOS.get(0).participantAt()).isEqualTo(NOW.plusMinutes(1));
+                assertThat(DTOS.getContent().get(0).memberInfo().id()).isEqualTo(KWANGWON.getId());
+                assertThat(DTOS.getContent().get(0).memberInfo().nickname()).isEqualTo(KWANGWON_NICKNAME);
+                assertThat(DTOS.getContent().get(0).memberInfo().mbti()).isSameAs(KWANGWON_MBTI);
+                assertThat(DTOS.getContent().get(0).participantAt()).isEqualTo(NOW.plusMinutes(1));
 
-                assertThat(DTOS.get(1).memberInfo().id()).isEqualTo(ANDONG.getId());
-                assertThat(DTOS.get(1).memberInfo().nickname()).isEqualTo(ANDONG_NICKNAME);
-                assertThat(DTOS.get(1).memberInfo().mbti()).isSameAs(ANDONG_MBTI);
-                assertThat(DTOS.get(1).participantAt()).isEqualTo(NOW);
+                assertThat(DTOS.getContent().get(1).memberInfo().id()).isEqualTo(ANDONG.getId());
+                assertThat(DTOS.getContent().get(1).memberInfo().nickname()).isEqualTo(ANDONG_NICKNAME);
+                assertThat(DTOS.getContent().get(1).memberInfo().mbti()).isSameAs(ANDONG_MBTI);
+                assertThat(DTOS.getContent().get(1).participantAt()).isEqualTo(NOW);
 
-                assertThat(DTOS.get(2).memberInfo().id()).isEqualTo(REVI.getId());
-                assertThat(DTOS.get(2).memberInfo().nickname()).isEqualTo(REVI_NICKNAME);
-                assertThat(DTOS.get(2).memberInfo().mbti()).isSameAs(REVI_MBTI);
-                assertThat(DTOS.get(2).participantAt()).isNotNull();
+                assertThat(DTOS.getContent().get(2).memberInfo().id()).isEqualTo(REVI.getId());
+                assertThat(DTOS.getContent().get(2).memberInfo().nickname()).isEqualTo(REVI_NICKNAME);
+                assertThat(DTOS.getContent().get(2).memberInfo().mbti()).isSameAs(REVI_MBTI);
+                assertThat(DTOS.getContent().get(2).participantAt()).isNotNull();
             });
         }
     }

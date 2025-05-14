@@ -4,6 +4,8 @@ import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_PARTICI
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
@@ -26,7 +28,7 @@ public interface CrewMemberRepository {
 
     List<EnrolledCrewDomainDto> fetchEnrolledCrewsByMemberId(Long memberId);
 
-    List<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId);
+    Page<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId, Pageable pageable);
 
     default CrewMember getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)
