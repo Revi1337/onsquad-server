@@ -15,6 +15,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
@@ -28,6 +29,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
 import revi1337.onsquad.crew_member.application.dto.CrewMemberDto;
@@ -47,20 +51,24 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
         @DisplayName("Crew 에 속한 CrewMember 들 조회에 성공한다.")
         void success() throws Exception {
             Long DUMMY_CREW_ID = 1L;
+            PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
             LocalDateTime NOW = LocalDateTime.now();
             CrewMemberDto SERVICE_DTO1 = new CrewMemberDto(
-                    new SimpleMemberInfoDto(1L, null, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE),
-                    NOW.plusDays(1)
+                    NOW.plusDays(1),
+                    new SimpleMemberInfoDto(1L, null, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE)
             );
             CrewMemberDto SERVICE_DTO2 = new CrewMemberDto(
-                    new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE),
-                    NOW
+                    NOW,
+                    new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
             );
             List<CrewMemberDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
-            when(crewMemberService.fetchCrewMembers(any(), eq(DUMMY_CREW_ID))).thenReturn(SERVICE_DTOS);
+            Page<CrewMemberDto> PAGE_DTOS = new PageImpl<>(SERVICE_DTOS, PAGE_REQUEST, SERVICE_DTOS.size());
+            when(crewMemberService.fetchCrewMembers(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST))).thenReturn(PAGE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/members", DUMMY_CREW_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .param("page", "0")
+                            .param("size", "5")
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew-members/success",
@@ -68,10 +76,14 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
+                            queryParameters(
+                                    parameterWithName("page").description("페이지"),
+                                    parameterWithName("size").description("페이지당 사이즈")
+                            ),
                             responseBody()
                     ));
 
-            verify(crewMemberService).fetchCrewMembers(any(), eq(DUMMY_CREW_ID));
+            verify(crewMemberService).fetchCrewMembers(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST));
         }
     }
 }
