@@ -20,6 +20,6 @@ public class CrewMemberFixture {
     }
 
     public static CrewMember MANAGER_CREW_MEMBER(Crew crew, Member member) {
-        return CrewMember.forGeneral(crew, member, LocalDateTime.now());
+        return CrewMember.forManager(crew, member, LocalDateTime.now());
     }
 }

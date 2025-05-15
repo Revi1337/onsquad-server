@@ -8,9 +8,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -22,7 +24,9 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE;
+import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE_1;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE;
+import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE_1;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.crew_member.domain.vo.CrewRole.OWNER;
 
@@ -38,9 +42,11 @@ import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.AnnounceQueryService;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceDto;
+import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceWithFixAndModifyStateDto;
 import revi1337.onsquad.announce.application.dto.AnnouncesWithWriteStateDto;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
+import revi1337.onsquad.announce.presentation.dto.request.AnnounceUpdateRequest;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew_member.application.dto.SimpleCrewMemberDto;
 
@@ -79,8 +85,8 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             requestFields(
-                                    fieldWithPath("title").description("공지사항 제목"),
-                                    fieldWithPath("content").description("공지사항 내용")
+                                    fieldWithPath("title").description("Announce 제목"),
+                                    fieldWithPath("content").description("Announce 내용")
                             ),
                             responseBody()
                     ));
@@ -189,6 +195,42 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("Announce 업데이트를 문서화한다.")
+    class Update {
+
+        @Test
+        @DisplayName("Announce 업데이트를 성공한다.")
+        void success1() throws Exception {
+            Long CREW_ID = 1L;
+            Long ANNOUNCE_ID = 1L;
+            doNothing().when(announceCommandService)
+                    .updateAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID), any(AnnounceUpdateDto.class));
+            AnnounceUpdateRequest UPDATE_REQUEST =
+                    new AnnounceUpdateRequest(ANNOUNCE_TITLE_VALUE_1, ANNOUNCE_CONTENT_VALUE_1);
+
+            mockMvc.perform(put("/api/crews/{crewId}/announces/{announceId}", CREW_ID, ANNOUNCE_ID)
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(204))
+                    .andDo(document("crew-announce/update/success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            pathParameters(
+                                    parameterWithName("crewId").description("Crew 아이디"),
+                                    parameterWithName("announceId").description("Announce 아이디")
+                            ),
+                            requestFields(
+                                    fieldWithPath("title").description("변경할 Announce 제목"),
+                                    fieldWithPath("content").description("변경할 Announce 내용")
+                            ),
+                            responseBody()
+                    ));
+        }
+    }
+
+    @Nested
     @DisplayName("Announce 상단 고정 및 해제를 문서화한다.")
     class Fix {
 
@@ -235,6 +277,35 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .queryParam("state", "false")
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204));
+        }
+    }
+
+    @Nested
+    @DisplayName("Announce 삭제를 문서화한다.")
+    class Delete {
+
+        @Test
+        @DisplayName("Announce 삭제에 성공한다.")
+        void success1() throws Exception {
+            Long CREW_ID = 1L;
+            Long ANNOUNCE_ID = 1L;
+            doNothing().when(announceCommandService)
+                    .deleteAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID));
+
+            mockMvc.perform(delete("/api/crews/{crewId}/announces/{announceId}", CREW_ID, ANNOUNCE_ID)
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(204))
+                    .andDo(document("crew-announce/delete/success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            pathParameters(
+                                    parameterWithName("crewId").description("Crew 아이디"),
+                                    parameterWithName("announceId").description("Announce 아이디")
+                            ),
+                            responseBody()
+                    ));
         }
     }
 }
