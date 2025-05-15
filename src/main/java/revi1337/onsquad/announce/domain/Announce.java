@@ -56,12 +56,9 @@ public class Announce extends BaseEntity {
         this.crewMember = crewMember;
     }
 
-    public boolean isNotFixed() {
-        return !isFixed();
-    }
-
-    public boolean isFixed() {
-        return this.fixed;
+    public void update(String title, String content) {
+        this.title = this.title.update(title);
+        this.content = content;
     }
 
     public void fix(LocalDateTime fixedAt) {
@@ -72,6 +69,22 @@ public class Announce extends BaseEntity {
     public void unfix() {
         this.fixed = false;
         this.fixedAt = null;
+    }
+
+    public boolean isNotMatchWriterId(Long crewMemberId) {
+        return !isMatchWriterId(crewMemberId);
+    }
+
+    public boolean isMatchWriterId(Long crewMemberId) {
+        return crewMember.getId().equals(crewMemberId);
+    }
+
+    public boolean isNotFixed() {
+        return !isFixed();
+    }
+
+    public boolean isFixed() {
+        return this.fixed;
     }
 
     @Override

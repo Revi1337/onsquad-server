@@ -28,4 +28,11 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class LessThenManager extends CrewMemberBusinessException {
+
+        public LessThenManager(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

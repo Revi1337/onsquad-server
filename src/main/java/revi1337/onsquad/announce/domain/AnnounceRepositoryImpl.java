@@ -26,6 +26,11 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     }
 
     @Override
+    public void delete(Announce announce) {
+        announceJpaRepository.delete(announce);
+    }
+
+    @Override
     public Optional<Announce> findByIdAndCrewId(Long id, Long crewId) {
         return announceJpaRepository.findByIdAndCrewId(id, crewId);
     }

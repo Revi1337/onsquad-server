@@ -14,6 +14,8 @@ public interface AnnounceRepository {
 
     Announce saveAndFlush(Announce announce);
 
+    void delete(Announce announce);
+
     Optional<Announce> findByIdAndCrewId(Long id, Long crewId);
 
     Page<AnnounceDomainDto> fetchAllByCrewId(Long crewId, Pageable pageable);
