@@ -13,7 +13,7 @@ public record AnnounceResponse(
         LocalDateTime createdAt,
         boolean fixed,
         LocalDateTime fixedAt,
-        SimpleCrewMemberResponse memberInfo
+        SimpleCrewMemberResponse writer
 ) {
     public static AnnounceResponse from(AnnounceDto announceDto) {
         return new AnnounceResponse(
@@ -23,7 +23,7 @@ public record AnnounceResponse(
                 announceDto.createdAt(),
                 announceDto.fixed(),
                 announceDto.fixedAt(),
-                SimpleCrewMemberResponse.from(announceDto.memberInfo())
+                SimpleCrewMemberResponse.from(announceDto.writer())
         );
     }
 }

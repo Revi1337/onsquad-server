@@ -1,6 +1,7 @@
 package revi1337.onsquad.announce.presentation;
 
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -37,8 +38,8 @@ import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.AnnounceQueryService;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceDto;
-import revi1337.onsquad.announce.application.dto.AnnounceWithStateDto;
-import revi1337.onsquad.announce.application.dto.AnnouncesWithCreateStateDto;
+import revi1337.onsquad.announce.application.dto.AnnounceWithFixAndModifyStateDto;
+import revi1337.onsquad.announce.application.dto.AnnouncesWithWriteStateDto;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew_member.application.dto.SimpleCrewMemberDto;
@@ -97,7 +98,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long CREW_ID = 2L;
             Long ANNOUNCE_ID = 3L;
             LocalDateTime NOW = LocalDateTime.now();
-            AnnounceWithStateDto SERVICE_DTO = new AnnounceWithStateDto(
+            AnnounceWithFixAndModifyStateDto SERVICE_DTO = new AnnounceWithFixAndModifyStateDto(
                     true,
                     true,
                     new AnnounceDto(
@@ -146,7 +147,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long ANNOUNCE_ID = 3L;
             PageRequest PAGE_REQUEST = PageRequest.of(0, 10);
             LocalDateTime NOW = LocalDateTime.now();
-            AnnouncesWithCreateStateDto SERVICE_DTO = new AnnouncesWithCreateStateDto(
+            AnnouncesWithWriteStateDto SERVICE_DTO = new AnnouncesWithWriteStateDto(
                     true,
                     List.of(new AnnounceDto(
                             ANNOUNCE_ID,
@@ -196,8 +197,9 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
         void success1() throws Exception {
             Long CREW_ID = 1L;
             Long ANNOUNCE_ID = 1L;
-            when(announceCommandService.newAnnounce(any(), eq(CREW_ID), any(AnnounceCreateDto.class)))
-                    .thenReturn(ANNOUNCE_ID);
+            boolean fixState = true;
+            doNothing().when(announceCommandService)
+                    .fixOrUnfixAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID), eq(fixState));
 
             mockMvc.perform(patch("/api/crews/{crewId}/announces/{announceId}/fix", CREW_ID, ANNOUNCE_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -224,8 +226,9 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
         void success2() throws Exception {
             Long CREW_ID = 1L;
             Long ANNOUNCE_ID = 1L;
-            when(announceCommandService.newAnnounce(any(), eq(CREW_ID), any(AnnounceCreateDto.class)))
-                    .thenReturn(ANNOUNCE_ID);
+            boolean fixState = false;
+            doNothing().when(announceCommandService)
+                    .fixOrUnfixAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID), eq(fixState));
 
             mockMvc.perform(patch("/api/crews/{crewId}/announces/{announceId}/fix", CREW_ID, ANNOUNCE_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)

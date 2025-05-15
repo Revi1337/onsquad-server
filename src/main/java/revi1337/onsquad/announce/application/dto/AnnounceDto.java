@@ -11,7 +11,7 @@ public record AnnounceDto(
         LocalDateTime createdAt,
         boolean fixed,
         LocalDateTime fixedAt,
-        SimpleCrewMemberDto memberInfo
+        SimpleCrewMemberDto writer
 ) {
     public static AnnounceDto from(AnnounceDomainDto domainDto) {
         return new AnnounceDto(
@@ -21,7 +21,7 @@ public record AnnounceDto(
                 domainDto.createdAt(),
                 domainDto.fixed(),
                 domainDto.fixedAt(),
-                SimpleCrewMemberDto.from(domainDto.memberInfo())
+                SimpleCrewMemberDto.from(domainDto.writer())
         );
     }
 }

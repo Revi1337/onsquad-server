@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
-import revi1337.onsquad.announce.application.dto.AnnounceWithStateDto;
-import revi1337.onsquad.announce.application.dto.AnnouncesWithCreateStateDto;
+import revi1337.onsquad.announce.application.dto.AnnounceWithFixAndModifyStateDto;
+import revi1337.onsquad.announce.application.dto.AnnouncesWithWriteStateDto;
 import revi1337.onsquad.announce.domain.Announce;
 import revi1337.onsquad.announce.domain.AnnounceJpaRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
@@ -69,7 +69,8 @@ class AnnounceQueryServiceTest extends ApplicationLayerTestSupport {
             CrewMember CREW_OWNER = crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId());
             Announce ANNOUNCE = announceJpaRepository.save(ANNOUNCE(CREW, CREW_OWNER));
 
-            AnnounceWithStateDto DTO = announceQueryService.findAnnounce(REVI.getId(), CREW.getId(), ANNOUNCE.getId());
+            AnnounceWithFixAndModifyStateDto DTO = announceQueryService.findAnnounce(REVI.getId(), CREW.getId(),
+                    ANNOUNCE.getId());
 
             assertThat(DTO.canModify()).isTrue();
             assertThat(DTO.canFix()).isTrue();
@@ -79,9 +80,9 @@ class AnnounceQueryServiceTest extends ApplicationLayerTestSupport {
             assertThat(DTO.announce().createdAt()).isNotNull();
             assertThat(DTO.announce().fixed()).isFalse();
             assertThat(DTO.announce().fixedAt()).isNull();
-            assertThat(DTO.announce().memberInfo().id()).isEqualTo(REVI.getId());
-            assertThat(DTO.announce().memberInfo().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
-            assertThat(DTO.announce().memberInfo().role()).isEqualTo(CrewRole.OWNER.getText());
+            assertThat(DTO.announce().writer().id()).isEqualTo(REVI.getId());
+            assertThat(DTO.announce().writer().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
+            assertThat(DTO.announce().writer().role()).isEqualTo(CrewRole.OWNER.getText());
         }
     }
 
@@ -98,19 +99,19 @@ class AnnounceQueryServiceTest extends ApplicationLayerTestSupport {
             Announce ANNOUNCE = announceJpaRepository.save(FIXED_ANNOUNCE(CREW, CREW_OWNER));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 10);
 
-            AnnouncesWithCreateStateDto DTO = announceQueryService
+            AnnouncesWithWriteStateDto DTO = announceQueryService
                     .findAnnounces(REVI.getId(), CREW.getId(), PAGE_REQUEST);
 
-            assertThat(DTO.canCreate()).isTrue();
+            assertThat(DTO.canWrite()).isTrue();
             assertThat(DTO.announces().get(0).id()).isEqualTo(ANNOUNCE.getId());
             assertThat(DTO.announces().get(0).title()).isEqualTo(ANNOUNCE_TITLE_VALUE);
             assertThat(DTO.announces().get(0).content()).isEqualTo(ANNOUNCE_CONTENT_VALUE);
             assertThat(DTO.announces().get(0).createdAt()).isNotNull();
             assertThat(DTO.announces().get(0).fixed()).isTrue();
             assertThat(DTO.announces().get(0).fixedAt()).isNotNull();
-            assertThat(DTO.announces().get(0).memberInfo().id()).isEqualTo(REVI.getId());
-            assertThat(DTO.announces().get(0).memberInfo().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
-            assertThat(DTO.announces().get(0).memberInfo().role()).isEqualTo(CrewRole.OWNER.getText());
+            assertThat(DTO.announces().get(0).writer().id()).isEqualTo(REVI.getId());
+            assertThat(DTO.announces().get(0).writer().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
+            assertThat(DTO.announces().get(0).writer().role()).isEqualTo(CrewRole.OWNER.getText());
         }
     }
 }

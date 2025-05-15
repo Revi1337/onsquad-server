@@ -12,17 +12,17 @@ public record AnnounceDomainDto(
         LocalDateTime createdAt,
         boolean fixed,
         LocalDateTime fixedAt,
-        SimpleCrewMemberDomainDto memberInfo
+        SimpleCrewMemberDomainDto writer
 ) {
     @QueryProjection
     public AnnounceDomainDto(Long id, Title title, String content, LocalDateTime createdAt,
-                             boolean fixed, LocalDateTime fixedAt, SimpleCrewMemberDomainDto memberInfo) {
+                             boolean fixed, LocalDateTime fixedAt, SimpleCrewMemberDomainDto writer) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.fixed = fixed;
         this.fixedAt = fixedAt;
-        this.memberInfo = memberInfo;
+        this.writer = writer;
     }
 }

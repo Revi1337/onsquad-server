@@ -3,13 +3,13 @@ package revi1337.onsquad.announce.application.dto;
 import java.util.List;
 import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
 
-public record AnnouncesWithCreateStateDto(
-        boolean canCreate,
+public record AnnouncesWithWriteStateDto(
+        boolean canWrite,
         List<AnnounceDto> announces
 ) {
-    public static AnnouncesWithCreateStateDto from(Boolean canCreate, List<AnnounceDomainDto> announceDtos) {
-        return new AnnouncesWithCreateStateDto(
-                canCreate,
+    public static AnnouncesWithWriteStateDto from(Boolean canWrite, List<AnnounceDomainDto> announceDtos) {
+        return new AnnouncesWithWriteStateDto(
+                canWrite,
                 announceDtos.stream()
                         .map(AnnounceDto::from)
                         .toList()
