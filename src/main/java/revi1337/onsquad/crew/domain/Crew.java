@@ -1,12 +1,13 @@
 package revi1337.onsquad.crew.domain;
 
 import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PUBLIC;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
@@ -30,7 +30,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.Member;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PUBLIC)
 @Entity
 @Table(
         uniqueConstraints = {
@@ -42,7 +42,7 @@ public class Crew extends BaseEntity {
     private static final int HASHTAG_BATCH_SIZE = 20;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Embedded
@@ -58,7 +58,7 @@ public class Crew extends BaseEntity {
 
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
@@ -87,10 +87,6 @@ public class Crew extends BaseEntity {
         this.detail = new Detail(detail);
         this.kakaoLink = kakaoLink;
         this.imageUrl = imageUrl;
-    }
-
-    public Crew(Long id) {
-        this.id = id;
     }
 
     public void addCrewMember(CrewMember... crewMembers) {

@@ -2,16 +2,13 @@ package revi1337.onsquad.crew_participant.domain;
 
 import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.NEVER_REQUESTED;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithCrewDomainDto;
 import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithMemberDomainDto;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
-import revi1337.onsquad.member.domain.Member;
 
 public interface CrewParticipantRepository {
 
@@ -23,23 +20,19 @@ public interface CrewParticipantRepository {
 
     void deleteById(Long id);
 
-    void deleteByCrewIdAndMemberId(Long crewId, Long memberId);
-
     Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
-
-    CrewParticipant upsertCrewParticipant(Crew crew, Member member, LocalDateTime now);
 
     List<CrewRequestWithCrewDomainDto> fetchAllWithSimpleCrewByMemberId(Long memberId);
 
     Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable);
 
-    default CrewParticipant getByCrewIdAndMemberId(Long crewId, Long memberId) {
-        return findByCrewIdAndMemberId(crewId, memberId)
+    default CrewParticipant getById(Long id) {
+        return findById(id)
                 .orElseThrow(() -> new CrewParticipantBusinessException.NeverRequested(NEVER_REQUESTED));
     }
 
-    default CrewParticipant getById(Long id) {
-        return findById(id)
+    default CrewParticipant getByCrewIdAndMemberId(Long crewId, Long memberId) {
+        return findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new CrewParticipantBusinessException.NeverRequested(NEVER_REQUESTED));
     }
 }
