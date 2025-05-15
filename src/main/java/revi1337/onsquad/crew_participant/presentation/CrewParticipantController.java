@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.crew_participant.application.CrewParticipantService;
+import revi1337.onsquad.crew_participant.application.CrewParticipantCommandService;
+import revi1337.onsquad.crew_participant.application.CrewParticipantQueryService;
 import revi1337.onsquad.crew_participant.presentation.dto.response.CrewRequestWithCrewResponse;
 import revi1337.onsquad.crew_participant.presentation.dto.response.CrewRequestWithMemberResponse;
 
@@ -24,14 +25,15 @@ import revi1337.onsquad.crew_participant.presentation.dto.response.CrewRequestWi
 @RestController
 public class CrewParticipantController {
 
-    private final CrewParticipantService crewParticipantService;
+    private final CrewParticipantCommandService crewParticipantCommandService;
+    private final CrewParticipantQueryService crewParticipantQueryService;
 
     @PostMapping("/crews/{crewId}/requests")
     public ResponseEntity<RestResponse<String>> requestInCrew(
             @PathVariable Long crewId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantService.requestInCrew(authMemberAttribute.id(), crewId);
+        crewParticipantCommandService.requestCrew(authMemberAttribute.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -42,7 +44,7 @@ public class CrewParticipantController {
             @PathVariable Long requestId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantService.acceptCrewRequest(authMemberAttribute.id(), crewId, requestId);
+        crewParticipantCommandService.acceptCrewRequest(authMemberAttribute.id(), crewId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -53,7 +55,7 @@ public class CrewParticipantController {
             @PathVariable Long requestId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantService.rejectCrewRequest(authMemberAttribute.id(), crewId, requestId);
+        crewParticipantCommandService.rejectCrewRequest(authMemberAttribute.id(), crewId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -64,7 +66,7 @@ public class CrewParticipantController {
             @PageableDefault Pageable pageable,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<CrewRequestWithMemberResponse> requestResponses = crewParticipantService
+        List<CrewRequestWithMemberResponse> requestResponses = crewParticipantQueryService
                 .fetchCrewRequests(authMemberAttribute.id(), crewId, pageable).stream()
                 .map(CrewRequestWithMemberResponse::from)
                 .toList();
@@ -77,7 +79,7 @@ public class CrewParticipantController {
             @PathVariable Long crewId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantService.cancelCrewRequest(authMemberAttribute.id(), crewId);
+        crewParticipantCommandService.cancelCrewRequest(authMemberAttribute.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -86,7 +88,7 @@ public class CrewParticipantController {
     public ResponseEntity<RestResponse<List<CrewRequestWithCrewResponse>>> fetchAllCrewRequests(
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<CrewRequestWithCrewResponse> crewRequestWithCrewResponse = crewParticipantService
+        List<CrewRequestWithCrewResponse> crewRequestWithCrewResponse = crewParticipantQueryService
                 .fetchAllCrewRequests(authMemberAttribute.id()).stream()
                 .map(CrewRequestWithCrewResponse::from)
                 .toList();
