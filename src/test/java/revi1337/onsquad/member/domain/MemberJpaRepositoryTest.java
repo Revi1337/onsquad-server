@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,11 +24,16 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     @Autowired
     private MemberRepository memberRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Test
     @DisplayName("사용자의 id 로 조회했을 때, 사용자가 존재하는지 확인한다.")
     void findById() {
         Member revi = MemberFixtures.REVI();
         memberRepository.save(revi);
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<Member> optionalMember = memberRepository.findById(revi.getId());
 

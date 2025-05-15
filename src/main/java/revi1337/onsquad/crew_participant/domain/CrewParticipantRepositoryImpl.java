@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
-import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithCrewDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithMemberDomainDto;
 import revi1337.onsquad.member.domain.Member;
 
 @RequiredArgsConstructor
@@ -41,6 +41,11 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
+    public void deleteByCrewIdAndMemberId(Long crewId, Long memberId) {
+        crewParticipantJpaRepository.deleteByCrewIdAndMemberId(crewId, memberId);
+    }
+
+    @Override
     public Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId) {
         return crewParticipantJpaRepository.findByCrewIdAndMemberId(crewId, memberId);
     }
@@ -56,12 +61,12 @@ public class CrewParticipantRepositoryImpl implements CrewParticipantRepository 
     }
 
     @Override
-    public List<CrewParticipantRequest> fetchAllCrewRequestsByMemberId(Long memberId) {
-        return crewParticipantQueryDslRepository.fetchAllCrewRequestsByMemberId(memberId);
+    public List<CrewRequestWithCrewDomainDto> fetchAllWithSimpleCrewByMemberId(Long memberId) {
+        return crewParticipantQueryDslRepository.fetchAllWithSimpleCrewByMemberId(memberId);
     }
 
     @Override
-    public Page<SimpleCrewParticipantRequest> fetchCrewRequests(Long crewId, Pageable pageable) {
+    public Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable) {
         return crewParticipantQueryDslRepository.fetchCrewRequests(crewId, pageable);
     }
 }

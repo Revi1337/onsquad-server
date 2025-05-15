@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_participant.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -15,16 +16,15 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_IMAGE_LINK_VALUE;
+import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VALUE;
+import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_KAKAO_LINK_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_EMAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
 
@@ -37,11 +37,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew.presentation.dto.request.CrewAcceptRequest;
+import revi1337.onsquad.crew.application.dto.SimpleCrewInfoDto;
 import revi1337.onsquad.crew_participant.application.CrewParticipantService;
-import revi1337.onsquad.crew_participant.application.dto.CrewParticipantDto;
-import revi1337.onsquad.crew_participant.application.dto.CrewParticipantRequestDto;
-import revi1337.onsquad.crew_participant.application.dto.SimpleCrewParticipantRequestDto;
+import revi1337.onsquad.crew_participant.application.dto.CrewRequestDto;
+import revi1337.onsquad.crew_participant.application.dto.CrewRequestWithCrewDto;
+import revi1337.onsquad.crew_participant.application.dto.CrewRequestWithMemberDto;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 
 @WebMvcTest(CrewParticipantController.class)
@@ -82,20 +82,21 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         @DisplayName("Crew 참가신청에 성공한다.")
         void success() throws Exception {
             Long CREW_Id = 1L;
-            CrewAcceptRequest ACCEPT_REQUEST = new CrewAcceptRequest(2L);
-            doNothing().when(crewParticipantService).acceptCrewRequest(any(), anyLong(), anyLong());
+            Long REQUEST_ID = 3L;
+            doNothing().when(crewParticipantService).acceptCrewRequest(any(), eq(CREW_Id), eq(REQUEST_ID));
 
-            mockMvc.perform(patch("/api/crews/{crewId}/requests", CREW_Id)
+            mockMvc.perform(patch("/api/crews/{crewId}/requests/{requestId}", CREW_Id, REQUEST_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                            .content(objectMapper.writeValueAsString(ACCEPT_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
                     .andDo(document("crew-participants/accept/success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                            pathParameters(parameterWithName("crewId").description("크루 Id")),
-                            requestFields(fieldWithPath("memberId").description("승인하고자하는 사용자 Id")),
+                            pathParameters(
+                                    parameterWithName("crewId").description("크루 Id"),
+                                    parameterWithName("requestId").description("크루 참가 신청 Id")
+                            ),
                             responseBody()
                     ));
         }
@@ -110,7 +111,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_Id = 1L;
             Long REQUEST_ID = 2L;
-            doNothing().when(crewParticipantService).rejectCrewRequest(any(), anyLong(), anyLong());
+            doNothing().when(crewParticipantService).rejectCrewRequest(any(), eq(CREW_Id), eq(REQUEST_ID));
 
             mockMvc.perform(delete("/api/crews/{crewId}/requests/{requestId}", CREW_Id, REQUEST_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -122,7 +123,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(
                                     parameterWithName("crewId").description("크루 Id"),
-                                    parameterWithName("requestId").description("참가신청 Id")
+                                    parameterWithName("requestId").description("크루 참가 신청 Id")
                             ),
                             responseBody()
                     ));
@@ -137,12 +138,12 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         @DisplayName("특정 Crew 의 참가신청 목록 조회에 성공한다.")
         void success() throws Exception {
             Long CREW_Id = 1L;
-            SimpleCrewParticipantRequestDto SERVICE_RESPONSE_DTO = new SimpleCrewParticipantRequestDto(
-                    new SimpleMemberInfoDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE),
-                    new CrewParticipantDto(2L, LocalDateTime.now())
-            );
+            List<CrewRequestWithMemberDto> SERVICE_DTOS = List.of(new CrewRequestWithMemberDto(
+                    new CrewRequestDto(2L, LocalDateTime.now()),
+                    new SimpleMemberInfoDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
+            ));
             when(crewParticipantService.fetchCrewRequests(any(), anyLong(), any(Pageable.class)))
-                    .thenReturn(List.of(SERVICE_RESPONSE_DTO));
+                    .thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/requests", CREW_Id)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -195,20 +196,24 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("내가 보낸 Crew 신청들 조회에 성공한다.")
         void success() throws Exception {
-            List<CrewParticipantRequestDto> SERVICE_RESPONSE_DTOS = List.of(new CrewParticipantRequestDto(
-                    1L,
-                    CREW_NAME_VALUE,
-                    CREW_IMAGE_LINK_VALUE,
-                    new SimpleMemberInfoDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE),
-                    new CrewParticipantDto(3L, LocalDateTime.now())
+            List<CrewRequestWithCrewDto> SERVICE_DTOS = List.of(new CrewRequestWithCrewDto(
+                    new CrewRequestDto(3L, LocalDateTime.now()),
+                    new SimpleCrewInfoDto(
+                            1L,
+                            CREW_NAME_VALUE,
+                            CREW_INTRODUCE_VALUE,
+                            CREW_KAKAO_LINK_VALUE,
+                            CREW_IMAGE_LINK_VALUE,
+                            new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
+                    )
             ));
-            when(crewParticipantService.fetchAllCrewRequests(any())).thenReturn(SERVICE_RESPONSE_DTOS);
+            when(crewParticipantService.fetchAllCrewRequests(any())).thenReturn(SERVICE_DTOS);
 
-            mockMvc.perform(get("/api/crews/requests/me")
+            mockMvc.perform(get("/api/crew-requests/me")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("crew-participants/my-fetch/success",
+                    .andDo(document("crew-participants/me/success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),

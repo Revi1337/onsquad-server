@@ -22,9 +22,9 @@ public abstract class CrewParticipantBusinessException extends RuntimeException 
         }
     }
 
-    public static class InvalidRequest extends CrewParticipantBusinessException {
+    public static class InvalidReference extends CrewParticipantBusinessException {
 
-        public InvalidRequest(ErrorCode errorCode) {
+        public InvalidReference(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

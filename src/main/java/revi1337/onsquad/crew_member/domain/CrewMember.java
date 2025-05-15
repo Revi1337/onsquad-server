@@ -76,6 +76,12 @@ public class CrewMember extends RequestEntity {
         return crewMember;
     }
 
+    public static CrewMember forGeneral(Crew crew, Member member) {
+        CrewMember crewMember = forGeneral(member, LocalDateTime.now());
+        crewMember.addCrew(crew);
+        return crewMember;
+    }
+
     public static CrewMember forManager(Crew crew, Member member, LocalDateTime participantAt) {
         CrewMember crewMember = new CrewMember(crew, member, MANAGER, participantAt);
         crewMember.addCrew(crew);

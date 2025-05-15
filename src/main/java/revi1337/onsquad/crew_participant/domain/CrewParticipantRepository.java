@@ -8,8 +8,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
-import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithCrewDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithMemberDomainDto;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
 import revi1337.onsquad.member.domain.Member;
 
@@ -23,13 +23,15 @@ public interface CrewParticipantRepository {
 
     void deleteById(Long id);
 
+    void deleteByCrewIdAndMemberId(Long crewId, Long memberId);
+
     Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
     CrewParticipant upsertCrewParticipant(Crew crew, Member member, LocalDateTime now);
 
-    List<CrewParticipantRequest> fetchAllCrewRequestsByMemberId(Long memberId);
+    List<CrewRequestWithCrewDomainDto> fetchAllWithSimpleCrewByMemberId(Long memberId);
 
-    Page<SimpleCrewParticipantRequest> fetchCrewRequests(Long crewId, Pageable pageable);
+    Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable);
 
     default CrewParticipant getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)
