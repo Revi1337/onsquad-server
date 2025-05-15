@@ -22,16 +22,9 @@ public abstract class AnnounceBusinessException extends RuntimeException {
         }
     }
 
-    public static class CantMake extends AnnounceBusinessException {
+    public static class InvalidReference extends AnnounceBusinessException {
 
-        public CantMake(ErrorCode errorCode) {
-            super(errorCode, errorCode.getDescription());
-        }
-    }
-
-    public static class CantFix extends AnnounceBusinessException {
-
-        public CantFix(ErrorCode errorCode) {
+        public InvalidReference(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

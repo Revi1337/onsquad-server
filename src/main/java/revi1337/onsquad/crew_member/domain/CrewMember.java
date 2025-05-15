@@ -138,6 +138,10 @@ public class CrewMember extends RequestEntity {
         return role == OWNER;
     }
 
+    public boolean isManager() {
+        return role == MANAGER;
+    }
+
     public boolean isGeneral() {
         return role == GENERAL;
     }

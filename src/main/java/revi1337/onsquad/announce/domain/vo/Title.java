@@ -37,4 +37,8 @@ public class Title {
             throw new AnnounceDomainException.InvalidLength(INVALID_LENGTH);
         }
     }
+
+    public Title update(String value) {
+        return new Title(value);
+    }
 }
