@@ -3,12 +3,12 @@ package revi1337.onsquad.crew_participant.domain.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
-public record SimpleCrewParticipantRequest(
+public record CrewRequestWithMemberDomainDto(
         SimpleMemberInfoDomainDto memberInfo,
-        CrewParticipantDomainDto request
+        CrewRequestDomainDto request
 ) {
     @QueryProjection
-    public SimpleCrewParticipantRequest(SimpleMemberInfoDomainDto memberInfo, CrewParticipantDomainDto request) {
+    public CrewRequestWithMemberDomainDto(SimpleMemberInfoDomainDto memberInfo, CrewRequestDomainDto request) {
         this.memberInfo = memberInfo;
         this.request = request;
     }

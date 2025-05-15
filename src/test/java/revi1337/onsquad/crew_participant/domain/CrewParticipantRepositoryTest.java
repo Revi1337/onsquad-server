@@ -9,13 +9,13 @@ import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_1;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_2;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_3;
+import static revi1337.onsquad.common.fixture.CrewParticipantFixture.CREW_PARTICIPANT;
 import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
 import static revi1337.onsquad.common.fixture.MemberFixtures.KWANGWON;
 import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,8 +28,8 @@ import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewJpaRepository;
-import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
-import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithCrewDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithMemberDomainDto;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
@@ -62,7 +62,7 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
         void save() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = new CrewParticipant(CREW, REVI, LocalDateTime.now());
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
 
             CrewParticipant SAVED_PARTICIPANT = crewParticipantRepository.save(CREW_PARTICIPANT);
 
@@ -76,7 +76,7 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             CrewParticipant CREW_PARTICIPANT = new CrewParticipant(CREW, REVI, LocalDateTime.now());
             crewParticipantRepository.save(CREW_PARTICIPANT);
-            CrewParticipant DUPLICATE = new CrewParticipant(CREW, REVI, LocalDateTime.now());
+            CrewParticipant DUPLICATE = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
 
             assertThatThrownBy(() -> crewParticipantRepository.save(DUPLICATE))
                     .isInstanceOf(DataIntegrityViolationException.class);
@@ -92,7 +92,7 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
         void findByCrewIdAndMemberId() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = new CrewParticipant(CREW, REVI, LocalDateTime.now());
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
             crewParticipantRepository.save(CREW_PARTICIPANT);
 
             assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId())).isPresent();
@@ -118,10 +118,23 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
         void deleteById() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = new CrewParticipant(CREW, REVI, LocalDateTime.now());
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
             CrewParticipant SAVED_PARTICIPANT = crewParticipantRepository.save(CREW_PARTICIPANT);
 
             crewParticipantRepository.deleteById(SAVED_PARTICIPANT.getId());
+
+            assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId())).isEmpty();
+        }
+
+        @Test
+        @DisplayName("crewId 와 memberId 로 Crew 참가신청 delete 에 성공한다.")
+        void deleteByCrewIdAndMemberId() {
+            Member REVI = memberJpaRepository.save(REVI());
+            Crew CREW = crewJpaRepository.save(CREW(REVI));
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
+            CrewParticipant SAVED_PARTICIPANT = crewParticipantRepository.save(CREW_PARTICIPANT);
+
+            crewParticipantRepository.deleteByCrewIdAndMemberId(CREW.getId(), REVI.getId());
 
             assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId())).isEmpty();
         }
@@ -140,10 +153,9 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
 
             crewParticipantRepository.upsertCrewParticipant(CREW, REVI, now);
 
-            Optional<CrewParticipant> PARTICIPANT = crewParticipantRepository
-                    .findByCrewIdAndMemberId(CREW.getId(), REVI.getId());
             assertAll(() -> {
-                assertThat(PARTICIPANT).isPresent();
+                assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()))
+                        .isPresent();
                 verify(crewParticipantJpaRepository).save(any(CrewParticipant.class));
             });
         }
@@ -153,7 +165,7 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
         void success2() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            crewParticipantRepository.save(new CrewParticipant(CREW, REVI, LocalDateTime.now()));
+            crewParticipantRepository.save(CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now()));
             LocalDateTime now = LocalDateTime.now();
 
             crewParticipantRepository.upsertCrewParticipant(CREW, REVI, now);
@@ -178,14 +190,14 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             LocalDateTime NOW = LocalDateTime.now();
-            crewParticipantRepository.save(new CrewParticipant(CREW, REVI, NOW));
-            crewParticipantRepository.save(new CrewParticipant(CREW, ANDONG, NOW.plusHours(1)));
-            crewParticipantRepository.save(new CrewParticipant(CREW, KWANGWON, NOW.plusHours(2)));
+            crewParticipantRepository.save(CREW_PARTICIPANT(CREW, REVI, NOW));
+            crewParticipantRepository.save(CREW_PARTICIPANT(CREW, ANDONG, NOW.plusHours(1)));
+            crewParticipantRepository.save(CREW_PARTICIPANT(CREW, KWANGWON, NOW.plusHours(2)));
 
-            Page<SimpleCrewParticipantRequest> REQUESTS = crewParticipantRepository
+            Page<CrewRequestWithMemberDomainDto> REQUESTS = crewParticipantRepository
                     .fetchCrewRequests(CREW.getId(), PageRequest.of(0, 10));
 
-            List<SimpleCrewParticipantRequest> CONTENTS = REQUESTS.getContent();
+            List<CrewRequestWithMemberDomainDto> CONTENTS = REQUESTS.getContent();
             assertAll(() -> {
                 assertThat(CONTENTS).hasSize(3);
                 assertThat(CONTENTS.get(0).memberInfo().id()).isEqualTo(KWANGWON.getId());
@@ -211,22 +223,24 @@ class CrewParticipantRepositoryTest extends PersistenceLayerTestSupport {
             Crew CREW3 = crewJpaRepository.save(CREW_3(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             LocalDateTime NOW = LocalDateTime.now();
-            crewParticipantRepository.save(new CrewParticipant(CREW1, ANDONG, NOW));
-            crewParticipantRepository.save(new CrewParticipant(CREW2, ANDONG, NOW.plusHours(1)));
-            crewParticipantRepository.save(new CrewParticipant(CREW3, ANDONG, NOW.plusHours(2)));
+            crewParticipantRepository.save(CREW_PARTICIPANT(CREW1, ANDONG, NOW));
+            crewParticipantRepository.save(CREW_PARTICIPANT(CREW2, ANDONG, NOW.plusHours(1)));
+            crewParticipantRepository.save(CREW_PARTICIPANT(CREW3, ANDONG, NOW.plusHours(2)));
 
-            List<CrewParticipantRequest> REQUESTS = crewParticipantRepository
-                    .fetchAllCrewRequestsByMemberId(ANDONG.getId());
+            List<CrewRequestWithCrewDomainDto> REQUESTS = crewParticipantRepository
+                    .fetchAllWithSimpleCrewByMemberId(ANDONG.getId());
 
             assertAll(() -> {
                 assertThat(REQUESTS).hasSize(3);
-                assertThat(REQUESTS.get(0).crewId()).isEqualTo(3);
-                assertThat(REQUESTS.get(0).crewName()).isEqualTo(CREW3.getName());
-                assertThat(REQUESTS.get(0).imageUrl()).isEqualTo(CREW3.getImageUrl());
+                assertThat(REQUESTS.get(0).crew().id()).isEqualTo(3);
+                assertThat(REQUESTS.get(0).crew().name()).isEqualTo(CREW3.getName());
+                assertThat(REQUESTS.get(0).crew().introduce()).isEqualTo(CREW3.getIntroduce());
+                assertThat(REQUESTS.get(0).crew().imageUrl()).isEqualTo(CREW3.getImageUrl());
+                assertThat(REQUESTS.get(0).crew().kakaoLink()).isEqualTo(CREW3.getKakaoLink());
 
-                assertThat(REQUESTS.get(0).crewOwner().id()).isEqualTo(1);
-                assertThat(REQUESTS.get(0).crewOwner().nickname()).isEqualTo(REVI.getNickname());
-                assertThat(REQUESTS.get(0).crewOwner().mbti()).isSameAs(REVI.getMbti());
+                assertThat(REQUESTS.get(0).crew().owner().id()).isEqualTo(1);
+                assertThat(REQUESTS.get(0).crew().owner().nickname()).isEqualTo(REVI.getNickname());
+                assertThat(REQUESTS.get(0).crew().owner().mbti()).isSameAs(REVI.getMbti());
 
                 assertThat(REQUESTS.get(0).request().id()).isEqualTo(3);
                 assertThat(REQUESTS.get(0).request().requestAt()).isEqualTo(NOW.plusHours(2));

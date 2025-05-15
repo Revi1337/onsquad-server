@@ -19,6 +19,10 @@ public interface CrewParticipantJpaRepository extends JpaRepository<CrewParticip
     @Query("delete CrewParticipant where id = :crewParticipantId")
     void deleteById(Long crewParticipantId);
 
+    @Modifying
+    @Query("delete CrewParticipant cp where cp.crew.id = :crewId and  cp.member.id = :memberId")
+    void deleteByCrewIdAndMemberId(Long crewId, Long memberId);
+
     default CrewParticipant getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new CrewParticipantBusinessException.NeverRequested(NEVER_REQUESTED));

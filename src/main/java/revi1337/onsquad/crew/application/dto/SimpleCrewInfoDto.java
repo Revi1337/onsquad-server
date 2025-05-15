@@ -15,9 +15,9 @@ public record SimpleCrewInfoDto(
         return new SimpleCrewInfoDto(
                 simpleCrewInfoDomainDto.id(),
                 simpleCrewInfoDomainDto.name().getValue(),
-                simpleCrewInfoDomainDto.introduce() != null ? simpleCrewInfoDomainDto.introduce().getValue() : null,
+                simpleCrewInfoDomainDto.introduce() != null ? simpleCrewInfoDomainDto.introduce().getValue() : "",
                 simpleCrewInfoDomainDto.kakaoLink(),
-                simpleCrewInfoDomainDto.imageUrl(),
+                simpleCrewInfoDomainDto.imageUrl() != null ? simpleCrewInfoDomainDto.imageUrl() : "",
                 SimpleMemberInfoDto.from(simpleCrewInfoDomainDto.owner())
         );
     }

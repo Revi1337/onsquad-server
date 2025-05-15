@@ -1,6 +1,5 @@
 package revi1337.onsquad.crew_participant.presentation;
 
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -11,16 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.crew.presentation.dto.request.CrewAcceptRequest;
 import revi1337.onsquad.crew_participant.application.CrewParticipantService;
-import revi1337.onsquad.crew_participant.presentation.dto.response.CrewParticipantRequestResponse;
-import revi1337.onsquad.crew_participant.presentation.dto.response.SimpleCrewParticipantRequestResponse;
+import revi1337.onsquad.crew_participant.presentation.dto.response.CrewRequestWithCrewResponse;
+import revi1337.onsquad.crew_participant.presentation.dto.response.CrewRequestWithMemberResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -39,13 +36,13 @@ public class CrewParticipantController {
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @PatchMapping("/crews/{crewId}/requests")
-    public ResponseEntity<RestResponse<String>> acceptCrewRequest(
+    @PatchMapping("/crews/{crewId}/requests/{requestId}")
+    public ResponseEntity<RestResponse<String>> acceptCrewRequests(
             @PathVariable Long crewId,
-            @Valid @RequestBody CrewAcceptRequest crewAcceptRequest,
+            @PathVariable Long requestId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantService.acceptCrewRequest(authMemberAttribute.id(), crewId, crewAcceptRequest.memberId());
+        crewParticipantService.acceptCrewRequest(authMemberAttribute.id(), crewId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -62,14 +59,14 @@ public class CrewParticipantController {
     }
 
     @GetMapping("/crews/{crewId}/requests")
-    public ResponseEntity<RestResponse<List<SimpleCrewParticipantRequestResponse>>> fetchCrewRequests(
+    public ResponseEntity<RestResponse<List<CrewRequestWithMemberResponse>>> fetchCrewRequests(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<SimpleCrewParticipantRequestResponse> requestResponses = crewParticipantService
+        List<CrewRequestWithMemberResponse> requestResponses = crewParticipantService
                 .fetchCrewRequests(authMemberAttribute.id(), crewId, pageable).stream()
-                .map(SimpleCrewParticipantRequestResponse::from)
+                .map(CrewRequestWithMemberResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(requestResponses));
@@ -85,15 +82,15 @@ public class CrewParticipantController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @GetMapping("/crews/requests/me")
-    public ResponseEntity<RestResponse<List<CrewParticipantRequestResponse>>> fetchAllCrewRequests(
+    @GetMapping("/crew-requests/me")
+    public ResponseEntity<RestResponse<List<CrewRequestWithCrewResponse>>> fetchAllCrewRequests(
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<CrewParticipantRequestResponse> crewParticipantRequestResponse = crewParticipantService
+        List<CrewRequestWithCrewResponse> crewRequestWithCrewResponse = crewParticipantService
                 .fetchAllCrewRequests(authMemberAttribute.id()).stream()
-                .map(CrewParticipantRequestResponse::from)
+                .map(CrewRequestWithCrewResponse::from)
                 .toList();
 
-        return ResponseEntity.ok().body(RestResponse.success(crewParticipantRequestResponse));
+        return ResponseEntity.ok().body(RestResponse.success(crewRequestWithCrewResponse));
     }
 }

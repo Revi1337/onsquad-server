@@ -12,11 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew_participant.domain.dto.CrewParticipantRequest;
-import revi1337.onsquad.crew_participant.domain.dto.QCrewParticipantDomainDto;
-import revi1337.onsquad.crew_participant.domain.dto.QCrewParticipantRequest;
-import revi1337.onsquad.crew_participant.domain.dto.QSimpleCrewParticipantRequest;
-import revi1337.onsquad.crew_participant.domain.dto.SimpleCrewParticipantRequest;
+import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithCrewDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithMemberDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.QCrewRequestDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.QCrewRequestWithCrewDomainDto;
+import revi1337.onsquad.crew_participant.domain.dto.QCrewRequestWithMemberDomainDto;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
 @RequiredArgsConstructor
@@ -25,18 +26,22 @@ public class CrewParticipantQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<CrewParticipantRequest> fetchAllCrewRequestsByMemberId(Long memberId) {
+    public List<CrewRequestWithCrewDomainDto> fetchAllWithSimpleCrewByMemberId(Long memberId) {
         return jpaQueryFactory
-                .select(new QCrewParticipantRequest(
-                        crew.id,
-                        crew.name,
-                        crew.imageUrl,
-                        new QSimpleMemberInfoDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.mbti
+                .select(new QCrewRequestWithCrewDomainDto(
+                        new QSimpleCrewInfoDomainDto(
+                                crew.id,
+                                crew.name,
+                                crew.introduce,
+                                crew.kakaoLink,
+                                crew.imageUrl,
+                                new QSimpleMemberInfoDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.mbti
+                                )
                         ),
-                        new QCrewParticipantDomainDto(
+                        new QCrewRequestDomainDto(
                                 crewParticipant.id,
                                 crewParticipant.requestAt
                         )
@@ -48,15 +53,15 @@ public class CrewParticipantQueryDslRepository {
                 .fetch();
     }
 
-    public Page<SimpleCrewParticipantRequest> fetchCrewRequests(Long crewId, Pageable pageable) {
-        List<SimpleCrewParticipantRequest> results = jpaQueryFactory
-                .select(new QSimpleCrewParticipantRequest(
+    public Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable) {
+        List<CrewRequestWithMemberDomainDto> results = jpaQueryFactory
+                .select(new QCrewRequestWithMemberDomainDto(
                         new QSimpleMemberInfoDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.mbti
                         ),
-                        new QCrewParticipantDomainDto(
+                        new QCrewRequestDomainDto(
                                 crewParticipant.id,
                                 crewParticipant.requestAt
                         )
