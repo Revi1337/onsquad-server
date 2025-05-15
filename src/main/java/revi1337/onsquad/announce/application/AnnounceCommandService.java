@@ -14,8 +14,6 @@ import revi1337.onsquad.announce.application.event.AnnounceFixedEvent;
 import revi1337.onsquad.announce.domain.Announce;
 import revi1337.onsquad.announce.domain.AnnounceRepository;
 import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 
@@ -24,52 +22,49 @@ import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 @Service
 public class AnnounceCommandService {
 
-    private final CrewRepository crewRepository;
     private final CrewMemberRepository crewMemberRepository;
     private final AnnounceRepository announceRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public Long newAnnounce(Long memberId, Long crewId, AnnounceCreateDto dto) {
-        Crew crew = crewRepository.getById(crewId);
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crew.getId(), memberId);
-        checkMemberCanCreateAnnounce(crewMember);
-        Announce persisteAnnounce = announceRepository.save(dto.toEntity(crew, crewMember));
-        applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crew.getId()));
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (crewMember.isLessThenManager()) {
+            throw new AnnounceBusinessException.CantMake(CANT_MAKE);
+        }
 
-        return persisteAnnounce.getId();
+        Announce announce = announceRepository.save(dto.toEntity(crewMember.getCrew(), crewMember));
+        applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crewId));
+
+        return announce.getId();
     }
 
-    public void fixAnnounce(Long memberId, Long crewId, Long announceId) {
+    public void fixOrUnfixAnnounce(Long memberId, Long crewId, Long announceId, boolean state) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        checkMemberIsCrewOwner(crewMember);
+        if (crewMember.isNotOwner()) {
+            throw new AnnounceBusinessException.CantFix(CANT_FIX);
+        }
+
         Announce announce = announceRepository.getByIdAndCrewId(announceId, crewId);
+        if (state) {
+            fixAnnounce(crewId, announce);
+        } else {
+            unfixAnnounce(crewId, announce);
+        }
+    }
+
+    private void fixAnnounce(Long crewId, Announce announce) {
         if (announce.isNotFixed()) {
             announce.fix(LocalDateTime.now());
             announceRepository.saveAndFlush(announce);
-            applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announceId));
+            applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
         }
     }
 
-    public void unfixAnnounce(Long memberId, Long crewId, Long announceId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        checkMemberIsCrewOwner(crewMember);
-        Announce announce = announceRepository.getByIdAndCrewId(announceId, crewId);
+    private void unfixAnnounce(Long crewId, Announce announce) {
         if (announce.isFixed()) {
             announce.unfix();
             announceRepository.saveAndFlush(announce);
-            applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announceId));
-        }
-    }
-
-    private void checkMemberCanCreateAnnounce(CrewMember crewMember) {
-        if (crewMember.isNotGreaterThenManager()) {
-            throw new AnnounceBusinessException.CantMake(CANT_MAKE);
-        }
-    }
-
-    private void checkMemberIsCrewOwner(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
-            throw new AnnounceBusinessException.CantFix(CANT_FIX);
+            applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
         }
     }
 }

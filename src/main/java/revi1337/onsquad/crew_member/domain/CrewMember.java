@@ -142,7 +142,7 @@ public class CrewMember extends RequestEntity {
         return role == GENERAL;
     }
 
-    public boolean isNotGreaterThenManager() {
+    public boolean isLessThenManager() {
         return !isGreaterThenManager();
     }
 

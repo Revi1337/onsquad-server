@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.AnnounceQueryService;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
-import revi1337.onsquad.announce.presentation.dto.response.AnnounceWithStateResponse;
-import revi1337.onsquad.announce.presentation.dto.response.AnnouncesWithCreateStateResponse;
+import revi1337.onsquad.announce.presentation.dto.response.AnnounceWithFixAndModifyStateResponse;
+import revi1337.onsquad.announce.presentation.dto.response.AnnouncesWithWriteStateResponse;
 import revi1337.onsquad.auth.application.AuthMemberAttribute;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
@@ -42,12 +42,12 @@ public class AnnounceController {
     }
 
     @GetMapping("/{crewId}/announces/{announceId}")
-    public ResponseEntity<RestResponse<AnnounceWithStateResponse>> findAnnounce(
+    public ResponseEntity<RestResponse<AnnounceWithFixAndModifyStateResponse>> findAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        AnnounceWithStateResponse announceInfoResponse = AnnounceWithStateResponse.from(
+        AnnounceWithFixAndModifyStateResponse announceInfoResponse = AnnounceWithFixAndModifyStateResponse.from(
                 announceQueryService.findAnnounce(authMemberAttribute.id(), crewId, announceId)
         );
 
@@ -55,12 +55,12 @@ public class AnnounceController {
     }
 
     @GetMapping("/{crewId}/announces")
-    public ResponseEntity<RestResponse<AnnouncesWithCreateStateResponse>> findAnnounces(
+    public ResponseEntity<RestResponse<AnnouncesWithWriteStateResponse>> findAnnounces(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        AnnouncesWithCreateStateResponse announceResponses = AnnouncesWithCreateStateResponse.from(
+        AnnouncesWithWriteStateResponse announceResponses = AnnouncesWithWriteStateResponse.from(
                 announceQueryService.findAnnounces(authMemberAttribute.id(), crewId, pageable)
         );
 
@@ -74,11 +74,7 @@ public class AnnounceController {
             @RequestParam boolean state,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        if (state) {
-            announceCommandService.fixAnnounce(authMemberAttribute.id(), crewId, announceId);
-        } else {
-            announceCommandService.unfixAnnounce(authMemberAttribute.id(), crewId, announceId);
-        }
+        announceCommandService.fixOrUnfixAnnounce(authMemberAttribute.id(), crewId, announceId, state);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
