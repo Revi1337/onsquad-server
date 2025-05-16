@@ -4,14 +4,14 @@ import java.util.List;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceResponse;
 import revi1337.onsquad.backup.crew.presentation.dto.Top5CrewMemberResponse;
 import revi1337.onsquad.crew.application.dto.CrewMainDto;
-import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
+import revi1337.onsquad.squad.presentation.dto.response.SquadResponse;
 
 public record CrewMainResponse(
         boolean canManage,
         CrewInfoResponse crew,
         List<AnnounceResponse> announces,
         List<Top5CrewMemberResponse> topMembers,
-        List<SquadInfoResponse> squads
+        List<SquadResponse> squads
 ) {
     public static CrewMainResponse from(CrewMainDto crewMainDto) {
         return new CrewMainResponse(
@@ -24,7 +24,7 @@ public record CrewMainResponse(
                         .map(Top5CrewMemberResponse::from)
                         .toList(),
                 crewMainDto.squads().stream()
-                        .map(SquadInfoResponse::from)
+                        .map(SquadResponse::from)
                         .toList()
         );
     }

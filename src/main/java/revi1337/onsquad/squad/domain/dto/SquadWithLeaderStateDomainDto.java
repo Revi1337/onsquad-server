@@ -4,10 +4,10 @@ import com.querydsl.core.annotations.QueryProjection;
 
 public record SquadWithLeaderStateDomainDto(
         Boolean isLeader,
-        SquadDomainDto squad
+        SimpleSquadDomainDto squad
 ) {
     @QueryProjection
-    public SquadWithLeaderStateDomainDto(Boolean isLeader, SquadDomainDto squad) {
+    public SquadWithLeaderStateDomainDto(Boolean isLeader, SimpleSquadDomainDto squad) {
         this.isLeader = isLeader;
         this.squad = squad;
     }

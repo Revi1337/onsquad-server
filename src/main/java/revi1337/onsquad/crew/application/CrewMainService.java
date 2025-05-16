@@ -21,7 +21,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 
 @RequiredArgsConstructor
 @Service
@@ -39,7 +39,7 @@ public class CrewMainService {
         CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
         List<AnnounceDomainDto> announces = announceCacheRepository.fetchAllCacheInDefaultByCrewId(crewId);
         List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
-        Page<SquadInfoDomainDto> squads = squadRepository.fetchAllByCrewId(crewId, CategoryType.ALL, pageable);
+        Page<SquadDomainDto> squads = squadRepository.fetchAllByCrewId(crewId, CategoryType.ALL, pageable);
 
         return CrewMainDto.from(crewMember.isOwner(), crewInfo, announces, topMembers, squads.getContent());
     }

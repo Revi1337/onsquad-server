@@ -8,21 +8,31 @@ import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 public record SquadDto(
         Long id,
         String title,
+        String content,
         int capacity,
         int remain,
+        String address,
+        String addressDetail,
+        String kakaoLink,
+        String discordLink,
         List<String> categories,
         SimpleMemberInfoDto leader
 ) {
-    public static SquadDto from(SquadDomainDto domainDto) {
+    public static SquadDto from(SquadDomainDto squadDomainDto) {
         return new SquadDto(
-                domainDto.id(),
-                domainDto.title().getValue(),
-                domainDto.capacity().getValue(),
-                domainDto.capacity().getRemain(),
-                domainDto.categories().stream()
+                squadDomainDto.id(),
+                squadDomainDto.title().getValue(),
+                squadDomainDto.content().getValue(),
+                squadDomainDto.capacity().getValue(),
+                squadDomainDto.capacity().getRemain(),
+                squadDomainDto.address().getValue(),
+                squadDomainDto.address().getDetail(),
+                squadDomainDto.kakaoLink(),
+                squadDomainDto.discordLink(),
+                squadDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberInfoDto.from(domainDto.leader())
+                SimpleMemberInfoDto.from(squadDomainDto.leader())
         );
     }
 }

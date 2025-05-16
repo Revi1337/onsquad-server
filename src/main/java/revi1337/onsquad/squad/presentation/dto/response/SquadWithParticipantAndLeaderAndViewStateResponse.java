@@ -6,7 +6,7 @@ public record SquadWithParticipantAndLeaderAndViewStateResponse(
         boolean alreadyParticipant,
         boolean isLeader,
         boolean canSeeMembers,
-        SquadInfoResponse squad
+        SquadResponse squad
 ) {
     public static SquadWithParticipantAndLeaderAndViewStateResponse from(
             SquadWithParticipantAndLeaderAndViewStateDto squadWithParticipantAndLeaderAndViewStateDto
@@ -15,7 +15,7 @@ public record SquadWithParticipantAndLeaderAndViewStateResponse(
                 squadWithParticipantAndLeaderAndViewStateDto.alreadyParticipant(),
                 squadWithParticipantAndLeaderAndViewStateDto.isLeader(),
                 squadWithParticipantAndLeaderAndViewStateDto.canSeeMembers(),
-                SquadInfoResponse.from(squadWithParticipantAndLeaderAndViewStateDto.squad())
+                SquadResponse.from(squadWithParticipantAndLeaderAndViewStateDto.squad())
         );
     }
 }
