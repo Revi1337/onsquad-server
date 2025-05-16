@@ -194,7 +194,8 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
 
             // when
-            List<SquadDto> SQUADS = squadQueryService.fetchSquads(CREW.getId(), CONDITION, PAGE_REQUEST);
+            List<SquadDto> SQUADS = squadQueryService
+                    .fetchSquads(ANDONG.getId(), CREW.getId(), CONDITION, PAGE_REQUEST);
 
             // then
             assertThat(SQUADS.size()).isEqualTo(2);

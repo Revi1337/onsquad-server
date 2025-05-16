@@ -180,18 +180,20 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             ANDONG_MBTI_VALUE
                     )
             ));
-            when(squadQueryService.fetchSquads(anyLong(), any(CategoryCondition.class), any(Pageable.class)))
+            when(squadQueryService.fetchSquads(any(), anyLong(), any(CategoryCondition.class), any(Pageable.class)))
                     .thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/squads", CREW_ID)
                             .param("category", "전체")
                             .param("page", "0")
                             .param("size", "3")
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("squads/fetches/success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             queryParameters(
                                     parameterWithName("category").description("카테고리"),

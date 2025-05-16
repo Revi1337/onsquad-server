@@ -42,7 +42,9 @@ public class SquadQueryService {
         return SquadWithParticipantAndLeaderAndViewStateDto.from(alreadyParticipant, canSeeMembers, isLeader, squad);
     }
 
-    public List<SquadDto> fetchSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
+    public List<SquadDto> fetchSquads(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
+        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+
         return squadRepository.fetchAllByCrewId(crewId, condition.categoryType(), pageable).stream()
                 .map(SquadDto::from)
                 .toList();
@@ -50,12 +52,16 @@ public class SquadQueryService {
 
     public List<SquadWithLeaderStateDto> fetchSquadsWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        if (crewMember.isNotOwner()) {
-            throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
-        }
+        checkMemberIsCrewOwner(crewMember);
 
         return squadRepository.fetchAllWithOwnerState(memberId, crewId, pageable).stream()
                 .map(SquadWithLeaderStateDto::from)
                 .toList();
+    }
+
+    private void checkMemberIsCrewOwner(CrewMember crewMember) {
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
+        }
     }
 }
