@@ -20,7 +20,7 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
-import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
+import revi1337.onsquad.squad.presentation.dto.response.SquadResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SquadWithLeaderStateResponse;
 import revi1337.onsquad.squad.presentation.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
 
@@ -57,13 +57,13 @@ public class SquadController {
     }
 
     @GetMapping("/{crewId}/squads")
-    public ResponseEntity<RestResponse<List<SquadInfoResponse>>> fetchSquads(
+    public ResponseEntity<RestResponse<List<SquadResponse>>> fetchSquads(
             @PathVariable Long crewId,
             @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable
     ) {
-        List<SquadInfoResponse> squadResponses = squadQueryService.fetchSquads(crewId, category, pageable).stream()
-                .map(SquadInfoResponse::from)
+        List<SquadResponse> squadResponses = squadQueryService.fetchSquads(crewId, category, pageable).stream()
+                .map(SquadResponse::from)
                 .toList();
 
         return ResponseEntity.ok(RestResponse.success(squadResponses));

@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 
 @ExtendWith(MockitoExtension.class)
@@ -142,7 +142,7 @@ class SquadRepositoryImplTest {
         @DisplayName("getSquadById 위임에 성공한다.")
         void success2() {
             Long squadId = 1L;
-            SquadInfoDomainDto squad = mock(SquadInfoDomainDto.class);
+            SquadDomainDto squad = mock(SquadDomainDto.class);
             when(squadQueryDslRepository.fetchById(squadId)).thenReturn(Optional.of(squad));
 
             squadRepository.getSquadById(squadId);

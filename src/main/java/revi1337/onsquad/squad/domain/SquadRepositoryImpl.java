@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadWithLeaderStateDomainDto;
 
 @RequiredArgsConstructor
@@ -37,12 +37,12 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Optional<SquadInfoDomainDto> fetchById(Long id) {
+    public Optional<SquadDomainDto> fetchById(Long id) {
         return squadQueryDslRepository.fetchById(id);
     }
 
     @Override
-    public Page<SquadInfoDomainDto> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
+    public Page<SquadDomainDto> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
         return squadQueryDslRepository.fetchAllByCrewId(crewId, categoryType, pageable);
     }
 

@@ -2,8 +2,8 @@ package revi1337.onsquad.squad_member.presentation.dto.response;
 
 import java.util.List;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
-import revi1337.onsquad.squad.presentation.dto.response.SimpleSquadInfoResponse;
 import revi1337.onsquad.squad_member.application.dto.EnrolledSquadDto;
+import revi1337.onsquad.squad_member.application.dto.EnrolledSquadDto.SimpleSquadInfoDto;
 
 public record EnrolledSquadResponse(
         Long id,
@@ -22,5 +22,27 @@ public record EnrolledSquadResponse(
                         .map(SimpleSquadInfoResponse::from)
                         .toList()
         );
+    }
+
+    public record SimpleSquadInfoResponse(
+            Long id,
+            String title,
+            int capacity,
+            int remain,
+            Boolean isLeader,
+            List<String> categories,
+            SimpleMemberInfoResponse leader
+    ) {
+        public static SimpleSquadInfoResponse from(SimpleSquadInfoDto simpleSquadInfoDto) {
+            return new SimpleSquadInfoResponse(
+                    simpleSquadInfoDto.id(),
+                    simpleSquadInfoDto.title(),
+                    simpleSquadInfoDto.capacity(),
+                    simpleSquadInfoDto.remain(),
+                    simpleSquadInfoDto.isLeader(),
+                    simpleSquadInfoDto.categories(),
+                    SimpleMemberInfoResponse.from(simpleSquadInfoDto.leader())
+            );
+        }
     }
 }

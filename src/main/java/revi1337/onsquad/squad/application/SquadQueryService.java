@@ -12,11 +12,11 @@ import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.squad.application.dto.SquadInfoDto;
+import revi1337.onsquad.squad.application.dto.SquadDto;
 import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
 import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
 import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
 
@@ -33,7 +33,7 @@ public class SquadQueryService {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         Optional<SquadMember> squadMember = squadMemberRepository
                 .findBySquadIdAndCrewMemberId(squadId, crewMember.getId());
-        SquadInfoDomainDto squad = squadRepository.getSquadById(squadId);
+        SquadDomainDto squad = squadRepository.getSquadById(squadId);
 
         boolean alreadyParticipant = squadMember.isPresent();
         boolean isLeader = squadMember.isPresent() && squadMember.get().isLeader();
@@ -42,9 +42,9 @@ public class SquadQueryService {
         return SquadWithParticipantAndLeaderAndViewStateDto.from(alreadyParticipant, canSeeMembers, isLeader, squad);
     }
 
-    public List<SquadInfoDto> fetchSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
+    public List<SquadDto> fetchSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
         return squadRepository.fetchAllByCrewId(crewId, condition.categoryType(), pageable).stream()
-                .map(SquadInfoDto::from)
+                .map(SquadDto::from)
                 .toList();
     }
 

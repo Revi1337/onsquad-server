@@ -1,22 +1,22 @@
 package revi1337.onsquad.squad.application.dto;
 
-import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 
 public record SquadWithParticipantAndLeaderAndViewStateDto(
         boolean alreadyParticipant,
         boolean isLeader,
         boolean canSeeMembers,
-        SquadInfoDto squad
+        SquadDto squad
 ) {
     public static SquadWithParticipantAndLeaderAndViewStateDto from(boolean alreadyParticipant,
                                                                     boolean canManage,
                                                                     boolean isLeader,
-                                                                    SquadInfoDomainDto squadInfoDomainDto) {
+                                                                    SquadDomainDto squadDomainDto) {
         return new SquadWithParticipantAndLeaderAndViewStateDto(
                 alreadyParticipant,
                 isLeader,
                 canManage,
-                SquadInfoDto.from(squadInfoDomainDto)
+                SquadDto.from(squadDomainDto)
         );
     }
 }

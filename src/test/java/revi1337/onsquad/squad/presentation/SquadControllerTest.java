@@ -43,8 +43,8 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
+import revi1337.onsquad.squad.application.dto.SimpleSquadDto;
 import revi1337.onsquad.squad.application.dto.SquadDto;
-import revi1337.onsquad.squad.application.dto.SquadInfoDto;
 import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
 import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
@@ -115,7 +115,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                     true,
                     true,
                     true,
-                    new SquadInfoDto(
+                    new SquadDto(
                             SQUAD_ID,
                             SQUAD_TITLE_VALUE,
                             SQUAD_CONTENT_VALUE,
@@ -162,7 +162,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            List<SquadInfoDto> SERVICE_DTOS = List.of(new SquadInfoDto(
+            List<SquadDto> SERVICE_DTOS = List.of(new SquadDto(
                     SQUAD_ID,
                     SQUAD_TITLE_VALUE,
                     SQUAD_CONTENT_VALUE,
@@ -213,7 +213,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
             Long CREW_ID = 1L;
             List<SquadWithLeaderStateDto> SERVICE_DTOS = List.of(new SquadWithLeaderStateDto(
                     true,
-                    new SquadDto(
+                    new SimpleSquadDto(
                             1L,
                             SQUAD_TITLE_VALUE,
                             20,

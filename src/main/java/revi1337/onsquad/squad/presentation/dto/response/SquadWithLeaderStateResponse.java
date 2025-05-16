@@ -4,12 +4,12 @@ import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
 
 public record SquadWithLeaderStateResponse(
         boolean isLeader,
-        SquadResponse squad
+        SimpleSquadResponse squad
 ) {
     public static SquadWithLeaderStateResponse from(SquadWithLeaderStateDto dto) {
         return new SquadWithLeaderStateResponse(
                 dto.isLeader(),
-                SquadResponse.from(dto.squad())
+                SimpleSquadResponse.from(dto.squad())
         );
     }
 }

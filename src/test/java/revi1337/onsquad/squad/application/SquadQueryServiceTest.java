@@ -34,7 +34,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.squad.application.dto.SquadInfoDto;
+import revi1337.onsquad.squad.application.dto.SquadDto;
 import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
 import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
 import revi1337.onsquad.squad.domain.Squad;
@@ -194,7 +194,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
 
             // when
-            List<SquadInfoDto> SQUADS = squadQueryService.fetchSquads(CREW.getId(), CONDITION, PAGE_REQUEST);
+            List<SquadDto> SQUADS = squadQueryService.fetchSquads(CREW.getId(), CONDITION, PAGE_REQUEST);
 
             // then
             assertThat(SQUADS.size()).isEqualTo(2);
