@@ -23,7 +23,7 @@ public class CrewMemberController {
 
     private final CrewMemberService crewMemberService;
 
-    @GetMapping("/crews/{crewId}/members")
+    @GetMapping("/crews/{crewId}/manage/members")
     public ResponseEntity<RestResponse<PageResponse<CrewMemberResponse>>> fetchCrewMembers(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,

@@ -60,7 +60,7 @@ public class CrewParticipantController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @GetMapping("/crews/{crewId}/requests")
+    @GetMapping("/crews/{crewId}/manage/requests")
     public ResponseEntity<RestResponse<List<CrewRequestWithMemberResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
