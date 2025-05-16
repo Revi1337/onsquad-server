@@ -22,7 +22,7 @@ public class CrewParticipantQueryService {
     private final CrewParticipantRepository crewParticipantRepository;
     private final CrewMemberRepository crewMemberRepository;
 
-    public List<CrewRequestWithMemberDto> fetchCrewRequests(Long memberId, Long crewId, Pageable pageable) {
+    public List<CrewRequestWithMemberDto> fetchAllRequests(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         checkMemberIsCrewOwner(crewMember);
 

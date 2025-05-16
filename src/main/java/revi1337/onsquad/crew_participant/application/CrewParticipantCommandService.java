@@ -34,7 +34,7 @@ public class CrewParticipantCommandService {
     private final MemberRepository memberRepository;
 
     @Throttling(name = "throttle-crew-join", key = "'crew:' + #crewId + ':member:' + #memberId", during = 5)
-    public void requestCrew(Long memberId, Long crewId) {
+    public void request(Long memberId, Long crewId) {
         Crew crew = crewRepository.getById(crewId);
         Optional<CrewMember> optionalCrewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId);
         if (optionalCrewMember.isPresent()) {
@@ -56,7 +56,7 @@ public class CrewParticipantCommandService {
         );
     }
 
-    public void acceptCrewRequest(Long memberId, Long crewId, Long requestId) {
+    public void acceptRequest(Long memberId, Long crewId, Long requestId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         checkMemberIsCrewOwner(crewMember);
 
@@ -72,7 +72,7 @@ public class CrewParticipantCommandService {
         crewParticipantRepository.deleteById(crewParticipant.getId());
     }
 
-    public void rejectCrewRequest(Long memberId, Long crewId, Long requestId) {
+    public void rejectRequest(Long memberId, Long crewId, Long requestId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         checkMemberIsCrewOwner(crewMember);
 
@@ -82,7 +82,7 @@ public class CrewParticipantCommandService {
         crewParticipantRepository.deleteById(requestId);
     }
 
-    public void cancelCrewRequest(Long memberId, Long crewId) {
+    public void cancelMyRequest(Long memberId, Long crewId) {
         CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crewId, memberId);
         crewParticipantRepository.deleteById(crewParticipant.getId());
     }

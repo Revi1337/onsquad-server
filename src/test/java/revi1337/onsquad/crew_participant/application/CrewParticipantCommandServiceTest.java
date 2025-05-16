@@ -62,7 +62,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             Member ANDONG = memberJpaRepository.save(ANDONG());
             clearPersistenceContext();
 
-            crewParticipantCommandService.requestCrew(ANDONG.getId(), CREW.getId());
+            crewParticipantCommandService.request(ANDONG.getId(), CREW.getId());
 
             assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isPresent();
         }
@@ -82,8 +82,8 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
 
             // when & then
             assertThatThrownBy(() -> {
-                proxyService.requestCrew(ANDONG.getId(), CREW.getId());
-                proxyService.requestCrew(ANDONG.getId(), CREW.getId());
+                proxyService.request(ANDONG.getId(), CREW.getId());
+                proxyService.request(ANDONG.getId(), CREW.getId());
             }).isExactlyInstanceOf(CommonBusinessException.RequestConflict.class);
         }
 
@@ -94,7 +94,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             clearPersistenceContext();
 
-            assertThatThrownBy(() -> crewParticipantCommandService.requestCrew(REVI.getId(), CREW.getId()))
+            assertThatThrownBy(() -> crewParticipantCommandService.request(REVI.getId(), CREW.getId()))
                     .isExactlyInstanceOf(CrewBusinessException.OwnerCantParticipant.class);
         }
 
@@ -107,7 +107,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             clearPersistenceContext();
 
-            assertThatThrownBy(() -> crewParticipantCommandService.requestCrew(ANDONG.getId(), CREW.getId()))
+            assertThatThrownBy(() -> crewParticipantCommandService.request(ANDONG.getId(), CREW.getId()))
                     .isExactlyInstanceOf(CrewBusinessException.AlreadyJoin.class);
         }
     }
@@ -125,7 +125,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             CrewParticipant PARTICIPANT = crewParticipantRepository.save(CREW_PARTICIPANT(CREW, ANDONG));
             clearPersistenceContext();
 
-            crewParticipantCommandService.acceptCrewRequest(REVI.getId(), CREW.getId(), PARTICIPANT.getId());
+            crewParticipantCommandService.acceptRequest(REVI.getId(), CREW.getId(), PARTICIPANT.getId());
 
             assertThat(crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isPresent();
             assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isEmpty();
@@ -143,7 +143,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> crewParticipantCommandService
-                    .acceptCrewRequest(ANDONG.getId(), CREW.getId(), PARTICIPANT.getId()))
+                    .acceptRequest(ANDONG.getId(), CREW.getId(), PARTICIPANT.getId()))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
 
@@ -160,7 +160,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> crewParticipantCommandService
-                    .acceptCrewRequest(REVI.getId(), CREW2.getId(), REQUEST1.getId()))
+                    .acceptRequest(REVI.getId(), CREW2.getId(), REQUEST1.getId()))
                     .isExactlyInstanceOf(CrewParticipantBusinessException.InvalidReference.class);
         }
 
@@ -175,7 +175,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> crewParticipantCommandService
-                    .acceptCrewRequest(REVI.getId(), CREW.getId(), PARTICIPANT.getId()))
+                    .acceptRequest(REVI.getId(), CREW.getId(), PARTICIPANT.getId()))
                     .isExactlyInstanceOf(CrewBusinessException.AlreadyJoin.class);
         }
     }
@@ -193,7 +193,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             CrewParticipant REQUEST1 = crewParticipantRepository.save(CREW_PARTICIPANT(CREW, ANDONG));
             clearPersistenceContext();
 
-            crewParticipantCommandService.rejectCrewRequest(REVI.getId(), CREW.getId(), REQUEST1.getId());
+            crewParticipantCommandService.rejectRequest(REVI.getId(), CREW.getId(), REQUEST1.getId());
 
             assertThat(crewParticipantRepository.findById(REQUEST1.getId())).isEmpty();
         }
@@ -209,7 +209,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             Long TEST_REQUEST_ID = 3L;
 
             assertThatThrownBy(() -> crewParticipantCommandService
-                    .rejectCrewRequest(ANDONG.getId(), CREW.getId(), TEST_REQUEST_ID))
+                    .rejectRequest(ANDONG.getId(), CREW.getId(), TEST_REQUEST_ID))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
 
@@ -226,7 +226,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> crewParticipantCommandService
-                    .rejectCrewRequest(REVI.getId(), CREW2.getId(), REQUEST1.getId()))
+                    .rejectRequest(REVI.getId(), CREW2.getId(), REQUEST1.getId()))
                     .isExactlyInstanceOf(CrewParticipantBusinessException.InvalidReference.class);
         }
     }
@@ -244,7 +244,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW, ANDONG));
             clearPersistenceContext();
 
-            crewParticipantCommandService.cancelCrewRequest(ANDONG.getId(), CREW.getId());
+            crewParticipantCommandService.cancelMyRequest(ANDONG.getId(), CREW.getId());
 
             assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isEmpty();
         }
@@ -256,7 +256,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
 
-            assertThatThrownBy(() -> crewParticipantCommandService.cancelCrewRequest(ANDONG.getId(), CREW.getId()))
+            assertThatThrownBy(() -> crewParticipantCommandService.cancelMyRequest(ANDONG.getId(), CREW.getId()))
                     .isExactlyInstanceOf(CrewParticipantBusinessException.NeverRequested.class);
         }
     }

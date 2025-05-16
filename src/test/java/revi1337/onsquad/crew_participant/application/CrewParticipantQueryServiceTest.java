@@ -67,7 +67,7 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             List<CrewRequestWithMemberDto> REQUESTS = crewParticipantQueryService
-                    .fetchCrewRequests(REVI.getId(), CREW.getId(), PageRequest.of(0, 3));
+                    .fetchAllRequests(REVI.getId(), CREW.getId(), PageRequest.of(0, 3));
 
             assertAll(() -> {
                 assertThat(REQUESTS).hasSize(2);
@@ -93,7 +93,7 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> crewParticipantQueryService
-                    .fetchCrewRequests(ANDONG.getId(), CREW.getId(), PageRequest.of(0, 3)))
+                    .fetchAllRequests(ANDONG.getId(), CREW.getId(), PageRequest.of(0, 3)))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotParticipant.class);
         }
 
@@ -107,7 +107,7 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> crewParticipantQueryService
-                    .fetchCrewRequests(ANDONG.getId(), CREW.getId(), PageRequest.of(0, 3)))
+                    .fetchAllRequests(ANDONG.getId(), CREW.getId(), PageRequest.of(0, 3)))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
     }
