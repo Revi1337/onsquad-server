@@ -14,6 +14,7 @@ import static revi1337.onsquad.common.fixture.SquadMemberFixture.GENERAL_SQUAD_M
 import static revi1337.onsquad.common.fixture.SquadMemberFixture.LEADER_SQUAD_MEMBER;
 import static revi1337.onsquad.common.fixture.SquadParticipantFixture.SQUAD_PARTICIPANT;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import revi1337.onsquad.squad.application.dto.SquadAcceptDto;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadJpaRepository;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
+import revi1337.onsquad.squad.error.exception.SquadBusinessException.MismatchReference;
 import revi1337.onsquad.squad.error.exception.SquadDomainException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 import revi1337.onsquad.squad_member.domain.SquadMemberJpaRepository;
@@ -60,38 +62,12 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
     private SquadParticipantCommandService commandService;
 
     @Nested
-    @DisplayName("내가 신청한 스쿼드 신청 취소를 테스트한다.")
-    class CancelMyRequest {
-
-        @Test
-        @DisplayName("내가 신청한 스쿼드 신청 취소에 성공한다.")
-        void success() {
-            // given
-            Member REVI = memberJpaRepository.save(REVI());
-            Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewMember CREW_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
-            Squad SQUAD = squadJpaRepository.save(SQUAD(CREW_OWNER, CREW));
-
-            Member ANDONG = memberJpaRepository.save(ANDONG());
-            CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
-            squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER));
-            clearPersistenceContext();
-
-            // when
-            commandService.cancelMyRequest(ANDONG.getId(), CREW.getId(), SQUAD.getId());
-
-            assertThat(squadParticipantJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
-                    .isEmpty();
-        }
-    }
-
-    @Nested
     @DisplayName("스쿼드 참가 신청을 테스트한다.")
     class Request {
 
         @Test
         @DisplayName("스쿼드 참가 신청에 성공한다.")
-        void success() {
+        void success1() {
             // given
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
@@ -111,6 +87,30 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
         }
 
         @Test
+        @DisplayName("이미 신청한적 있으면 업데이트 된다.")
+        void success2() {
+            // given
+            Member REVI = memberJpaRepository.save(REVI());
+            Crew CREW = crewJpaRepository.save(CREW(REVI));
+            CrewMember CREW_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+            Squad SQUAD = squadJpaRepository.save(SQUAD(CREW_OWNER, CREW));
+
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            LocalDateTime NOW = LocalDateTime.now();
+            squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER, NOW));
+            clearPersistenceContext();
+
+            // when
+            commandService.request(ANDONG.getId(), CREW.getId(), SQUAD.getId());
+
+            // then
+            assertThat(squadParticipantJpaRepository
+                    .findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()).get().getRequestAt())
+                    .isNotEqualTo(NOW);
+        }
+
+        @Test
         @DisplayName("스쿼드가 속한 크루정보가 일치하지 않으면 실패한다.")
         void fail1() {
             // given
@@ -123,7 +123,7 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
 
             // when & then
             assertThatThrownBy(() -> commandService.request(REVI.getId(), CREW2.getId(), SQUAD.getId()))
-                    .isExactlyInstanceOf(SquadBusinessException.NotMatchCrewInfo.class);
+                    .isExactlyInstanceOf(MismatchReference.class);
         }
 
         @Test
@@ -210,7 +210,7 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             // when & then
             assertThatThrownBy(() -> commandService
                     .acceptRequest(REVI.getId(), CREW2.getId(), SQUAD1.getId(), ACCEPT_DTO))
-                    .isExactlyInstanceOf(SquadBusinessException.NotMatchCrewInfo.class);
+                    .isExactlyInstanceOf(MismatchReference.class);
         }
 
         @Test
@@ -311,7 +311,33 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             // when & then
             assertThatThrownBy(() -> commandService
                     .rejectRequest(REVI.getId(), CREW2.getId(), SQUAD1.getId(), TEST_REQUEST_ID))
-                    .isExactlyInstanceOf(SquadBusinessException.NotMatchCrewInfo.class);
+                    .isExactlyInstanceOf(MismatchReference.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 신청한 스쿼드 신청 취소를 테스트한다.")
+    class Cancel {
+
+        @Test
+        @DisplayName("내가 신청한 스쿼드 신청 취소에 성공한다.")
+        void success() {
+            // given
+            Member REVI = memberJpaRepository.save(REVI());
+            Crew CREW = crewJpaRepository.save(CREW(REVI));
+            CrewMember CREW_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+            Squad SQUAD = squadJpaRepository.save(SQUAD(CREW_OWNER, CREW));
+
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER));
+            clearPersistenceContext();
+
+            // when
+            commandService.cancelMyRequest(ANDONG.getId(), CREW.getId(), SQUAD.getId());
+
+            assertThat(squadParticipantJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
+                    .isEmpty();
         }
     }
 }

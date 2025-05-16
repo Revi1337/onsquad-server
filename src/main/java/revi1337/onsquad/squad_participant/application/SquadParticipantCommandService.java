@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_participant.application;
 
 import static revi1337.onsquad.squad.error.SquadErrorCode.ALREADY_JOIN;
-import static revi1337.onsquad.squad.error.SquadErrorCode.NOTMATCH_CREWINFO;
+import static revi1337.onsquad.squad.error.SquadErrorCode.MISMATCH_REFERENCE;
 import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.NOT_LEADER;
 
 import java.time.LocalDateTime;
@@ -30,33 +30,32 @@ public class SquadParticipantCommandService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadMemberRepository squadMemberRepository;
 
-    public void cancelMyRequest(Long memberId, Long crewId, Long squadId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        SquadParticipant participant = squadParticipantRepository
-                .getBySquadIdAndCrewMemberId(squadId, crewMember.getId());
-
-        squadParticipantRepository.deleteById(participant.getId());
-    }
-
     public void request(Long memberId, Long crewId, Long squadId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         Squad squad = squadRepository.getByIdWithMembers(squadId);
-        if (squad.doesNotMatchCrewId(crewId)) {
-            throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
-        }
 
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(squad.getCrewId(), memberId);
+        if (squad.isNotMatchCrewId(crewId)) {
+            throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
+        }
         if (squad.existsMember(crewMember.getId())) {
             throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
         }
 
-        squadParticipantRepository.upsertSquadParticipant(squad.getId(), crewMember.getId(), LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        squadParticipantRepository.findBySquadIdAndCrewMemberId(squadId, crewMember.getId()).ifPresentOrElse(
+                squadParticipant -> {
+                    squadParticipant.updateRequestAt(now);
+                    squadParticipantRepository.saveAndFlush(squadParticipant);
+                },
+                () -> squadParticipantRepository.save(SquadParticipant.of(squad, crewMember, now))
+        );
     }
 
     public void acceptRequest(Long memberId, Long crewId, Long squadId, SquadAcceptDto dto) {
         validateAuthority(memberId, crewId, squadId);
         Squad squad = squadRepository.getById(squadId);
-        if (squad.doesNotMatchCrewId(crewId)) {
-            throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
+        if (squad.isNotMatchCrewId(crewId)) {
+            throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
         }
 
         CrewMember acceptMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, dto.memberId());
@@ -68,13 +67,21 @@ public class SquadParticipantCommandService {
     public void rejectRequest(Long memberId, Long crewId, Long squadId, Long requestId) {
         validateAuthority(memberId, crewId, squadId);
         Squad squad = squadRepository.getById(squadId);
-        if (squad.doesNotMatchCrewId(crewId)) {
-            throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
+        if (squad.isNotMatchCrewId(crewId)) {
+            throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
         }
 
         squadParticipantRepository.findById(requestId)
                 .filter(p -> p.matchSquadId(squadId))
                 .ifPresent(p -> squadParticipantRepository.deleteById(requestId));
+    }
+
+    public void cancelMyRequest(Long memberId, Long crewId, Long squadId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        SquadParticipant participant = squadParticipantRepository
+                .getBySquadIdAndCrewMemberId(squadId, crewMember.getId());
+
+        squadParticipantRepository.deleteById(participant.getId());
     }
 
     private void validateAuthority(Long memberId, Long crewId, Long squadId) {

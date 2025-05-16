@@ -1,6 +1,5 @@
 package revi1337.onsquad.squad_participant.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,13 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     }
 
     @Override
-    public Optional<SquadParticipant> findById(Long id) {
-        return squadParticipantJpaRepository.findById(id);
+    public SquadParticipant saveAndFlush(SquadParticipant squadParticipant) {
+        return squadParticipantJpaRepository.saveAndFlush(squadParticipant);
     }
 
     @Override
-    public Optional<SquadParticipant> findByCrewIdAndSquadIdAndMemberId(Long crewId, Long squadId, Long memberId) {
-        return squadParticipantJpaRepository.findByCrewIdAndSquadIdAndMemberId(crewId, squadId, memberId);
+    public Optional<SquadParticipant> findById(Long id) {
+        return squadParticipantJpaRepository.findById(id);
     }
 
     @Override
@@ -46,11 +45,6 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     @Override
     public Page<SimpleSquadParticipantDomainDto> fetchAllBySquadId(Long squadId, Pageable pageable) {
         return squadParticipantQueryDslRepository.fetchAllBySquadId(squadId, pageable);
-    }
-
-    @Override
-    public void upsertSquadParticipant(Long squadId, Long crewMemberId, LocalDateTime now) {
-        squadParticipantJdbcRepository.upsertSquadParticipant(squadId, crewMemberId, now);
     }
 
     @Override

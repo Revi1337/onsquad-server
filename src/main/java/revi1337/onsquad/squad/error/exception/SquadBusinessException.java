@@ -50,9 +50,9 @@ public abstract class SquadBusinessException extends RuntimeException {
         }
     }
 
-    public static class NotMatchCrewInfo extends SquadBusinessException {
+    public static class MismatchReference extends SquadBusinessException {
 
-        public NotMatchCrewInfo(ErrorCode errorCode) {
+        public MismatchReference(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
