@@ -21,8 +21,8 @@ import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 import revi1337.onsquad.squad.presentation.dto.response.SquadInfoResponse;
-import revi1337.onsquad.squad.presentation.dto.response.SquadWithOwnerStateResponse;
-import revi1337.onsquad.squad.presentation.dto.response.SquadWithParticipantStateResponse;
+import revi1337.onsquad.squad.presentation.dto.response.SquadWithLeaderStateResponse;
+import revi1337.onsquad.squad.presentation.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -44,12 +44,12 @@ public class SquadController {
     }
 
     @GetMapping("/{crewId}/squads/{squadId}")
-    public ResponseEntity<RestResponse<SquadWithParticipantStateResponse>> fetchSquad(
+    public ResponseEntity<RestResponse<SquadWithParticipantAndLeaderAndViewStateResponse>> fetchSquad(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        SquadWithParticipantStateResponse squadResponse = SquadWithParticipantStateResponse.from(
+        SquadWithParticipantAndLeaderAndViewStateResponse squadResponse = SquadWithParticipantAndLeaderAndViewStateResponse.from(
                 squadQueryService.fetchSquad(authMemberAttribute.id(), crewId, squadId)
         );
 
@@ -70,14 +70,14 @@ public class SquadController {
     }
 
     @GetMapping("/{crewId}/manage/squads")
-    public ResponseEntity<RestResponse<List<SquadWithOwnerStateResponse>>> fetchSquadsWithOwnerState(
+    public ResponseEntity<RestResponse<List<SquadWithLeaderStateResponse>>> fetchSquadsWithOwnerState(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<SquadWithOwnerStateResponse> squadResponses = squadQueryService
+        List<SquadWithLeaderStateResponse> squadResponses = squadQueryService
                 .fetchSquadsWithOwnerState(authMemberAttribute.id(), crewId, pageable).stream()
-                .map(SquadWithOwnerStateResponse::from)
+                .map(SquadWithLeaderStateResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(squadResponses));

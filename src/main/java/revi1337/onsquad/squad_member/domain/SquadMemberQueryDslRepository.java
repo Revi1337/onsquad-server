@@ -329,7 +329,7 @@ public class SquadMemberQueryDslRepository {
 //                            temp.id(),
 //                            temp.name(),
 //                            temp.imageUrl(),
-//                            temp.owner(),
+//                            temp.leader(),
 //                            transformed.get(crewId)
 //                    );
 //                }).toList();

@@ -28,9 +28,9 @@ import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSquadDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSquadInfoDomainDto;
-import revi1337.onsquad.squad.domain.dto.QSquadWithOwnerStateDomainDto;
+import revi1337.onsquad.squad.domain.dto.QSquadWithLeaderStateDomainDto;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-import revi1337.onsquad.squad.domain.dto.SquadWithOwnerStateDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadWithLeaderStateDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -134,11 +134,11 @@ public class SquadQueryDslRepository {
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
-    public Page<SquadWithOwnerStateDomainDto> fetchAllWithOwnerState(Long memberId,
-                                                                     Long crewId,
-                                                                     Pageable pageable) {
-        List<SquadWithOwnerStateDomainDto> results = jpaQueryFactory
-                .select(new QSquadWithOwnerStateDomainDto(
+    public Page<SquadWithLeaderStateDomainDto> fetchAllWithOwnerState(Long memberId,
+                                                                      Long crewId,
+                                                                      Pageable pageable) {
+        List<SquadWithLeaderStateDomainDto> results = jpaQueryFactory
+                .select(new QSquadWithLeaderStateDomainDto(
                         new CaseBuilder()
                                 .when(member.id.eq(memberId))
                                 .then(TRUE)
@@ -179,7 +179,7 @@ public class SquadQueryDslRepository {
                         .as(list(category.categoryType)));
 
         results.stream()
-                .map(SquadWithOwnerStateDomainDto::squad)
+                .map(SquadWithLeaderStateDomainDto::squad)
                 .forEach(squad -> {
                     if (categories.get(squad.id()) != null) {
                         squad.addCategories(categories.get(squad.id()));

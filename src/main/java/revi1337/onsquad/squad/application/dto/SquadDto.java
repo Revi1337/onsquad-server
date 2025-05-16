@@ -11,7 +11,7 @@ public record SquadDto(
         int capacity,
         int remain,
         List<String> categories,
-        SimpleMemberInfoDto owner
+        SimpleMemberInfoDto leader
 ) {
     public static SquadDto from(SquadDomainDto domainDto) {
         return new SquadDto(
@@ -22,7 +22,7 @@ public record SquadDto(
                 domainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberInfoDto.from(domainDto.owner())
+                SimpleMemberInfoDto.from(domainDto.leader())
         );
     }
 }

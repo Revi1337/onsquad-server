@@ -12,18 +12,18 @@ public record SimpleSquadInfoDomainDto(
         Long id,
         Title title,
         Capacity capacity,
-        Boolean isOwner,
+        Boolean isLeader,
         List<CategoryType> categories,
         SimpleMemberInfoDomainDto squadOwner
 ) {
     @QueryProjection
-    public SimpleSquadInfoDomainDto(Long crewId, Long id, Title title, Capacity capacity, Boolean isOwner,
+    public SimpleSquadInfoDomainDto(Long crewId, Long id, Title title, Capacity capacity, Boolean isLeader,
                                     List<CategoryType> categories, SimpleMemberInfoDomainDto squadOwner) {
         this.crewId = crewId;
         this.id = id;
         this.title = title;
         this.capacity = capacity;
-        this.isOwner = isOwner;
+        this.isLeader = isLeader;
         this.categories = categories;
         this.squadOwner = squadOwner;
     }
