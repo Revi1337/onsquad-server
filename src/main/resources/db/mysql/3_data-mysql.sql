@@ -482,7 +482,7 @@ values (1, 2),
 
 insert into squad_member(squad_id, crew_member_id, role, status, participate_at)
 values (1, 1, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 1 SECOND),
-       (1, 2, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 2 SECOND),
+       (1, 2, 'GENERAL', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 2 SECOND),
        (2, 5, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 3 SECOND),
        (3, 7, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 4 SECOND),
        (4, 9, 'LEADER', 'ACCEPT', CURRENT_TIMESTAMP - INTERVAL 5 SECOND),

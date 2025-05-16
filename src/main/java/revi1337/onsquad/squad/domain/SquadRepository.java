@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-import revi1337.onsquad.squad.domain.dto.SquadWithOwnerStateDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadWithLeaderStateDomainDto;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 
 public interface SquadRepository {
@@ -24,7 +24,7 @@ public interface SquadRepository {
 
     Page<SquadInfoDomainDto> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable);
 
-    Page<SquadWithOwnerStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable);
+    Page<SquadWithLeaderStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable);
 
     default Squad getById(Long id) {
         return findById(id)

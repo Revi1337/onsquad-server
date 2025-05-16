@@ -19,7 +19,7 @@ public record SquadInfoDomainDto(
         String kakaoLink,
         String discordLink,
         List<CategoryType> categories,
-        SimpleMemberInfoDomainDto owner
+        SimpleMemberInfoDomainDto leader
 ) {
     @QueryProjection
     public SquadInfoDomainDto(Long id, Title title, Content content, Capacity capacity, Address address,
@@ -30,7 +30,7 @@ public record SquadInfoDomainDto(
     @QueryProjection
     public SquadInfoDomainDto(Long id, Title title, Content content, Capacity capacity, Address address,
                               String kakaoLink, String discordLink, List<CategoryType> categories,
-                              SimpleMemberInfoDomainDto owner) {
+                              SimpleMemberInfoDomainDto leader) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -39,6 +39,6 @@ public record SquadInfoDomainDto(
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
         this.categories = categories;
-        this.owner = owner;
+        this.leader = leader;
     }
 }

@@ -15,6 +15,7 @@ import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_1;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_2;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_3;
+import static revi1337.onsquad.common.fixture.SquadMemberFixture.GENERAL_SQUAD_MEMBER;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -34,11 +35,12 @@ import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-import revi1337.onsquad.squad.application.dto.SquadWithOwnerStateDto;
-import revi1337.onsquad.squad.application.dto.SquadWithParticipantStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad_category.domain.SquadCategoryJdbcRepository;
+import revi1337.onsquad.squad_member.domain.SquadMemberJpaRepository;
 
 @Sql({"/h2-category.sql"})
 class SquadQueryServiceTest extends ApplicationLayerTestSupport {
@@ -53,6 +55,9 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
     private CrewMemberJpaRepository crewMemberRepository;
 
     @Autowired
+    private SquadMemberJpaRepository squadMemberRepository;
+
+    @Autowired
     private SquadRepository squadRepository;
 
     @Autowired
@@ -62,11 +67,11 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
     private SquadQueryService squadQueryService;
 
     @Nested
-    @DisplayName("스쿼드 현재 참여 상태와 함께 스쿼드 조회를 테스트한다.")
+    @DisplayName("스쿼드 단일 조회를 테스트한다.")
     class FetchSquad {
 
         @Test
-        @DisplayName("현재 스쿼드에 참여하고 있다면 true 와 함께 스쿼드 정보를 반환한다.")
+        @DisplayName("현재 스쿼드에 참여하고 있다면 (참여상태 & 리더인지 & 멤버를 볼수있는지)와 함께 스쿼드 정보를 반환한다.")
         void success1() {
             // given
             Member REVI = memberRepository.save(REVI());
@@ -75,11 +80,13 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             Squad SQUAD = squadRepository.save(SQUAD(CREW_OWNER, CREW));
 
             // when
-            SquadWithParticipantStateDto DTO = squadQueryService
+            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
                     .fetchSquad(REVI.getId(), CREW.getId(), SQUAD.getId());
 
             // then
             assertThat(DTO.alreadyParticipant()).isTrue();
+            assertThat(DTO.isLeader()).isTrue();
+            assertThat(DTO.canSeeMembers()).isTrue();
             assertThat(DTO.squad().id()).isEqualTo(SQUAD.getId());
             assertThat(DTO.squad().title()).isEqualTo(SQUAD.getTitle().getValue());
             assertThat(DTO.squad().content()).isEqualTo(SQUAD.getContent().getValue());
@@ -90,14 +97,14 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             assertThat(DTO.squad().kakaoLink()).isEqualTo(SQUAD.getKakaoLink());
             assertThat(DTO.squad().discordLink()).isEqualTo(SQUAD.getDiscordLink());
             assertThat(DTO.squad().categories()).hasSize(0);
-            assertThat(DTO.squad().owner().id()).isEqualTo(REVI.getId());
-            assertThat(DTO.squad().owner().email()).isNull();
-            assertThat(DTO.squad().owner().nickname()).isEqualTo(REVI.getNickname().getValue());
-            assertThat(DTO.squad().owner().mbti()).isEqualTo(REVI.getMbti().name());
+            assertThat(DTO.squad().leader().id()).isEqualTo(REVI.getId());
+            assertThat(DTO.squad().leader().email()).isNull();
+            assertThat(DTO.squad().leader().nickname()).isEqualTo(REVI.getNickname().getValue());
+            assertThat(DTO.squad().leader().mbti()).isEqualTo(REVI.getMbti().name());
         }
 
         @Test
-        @DisplayName("현재 스쿼드에 참여하고 있지 있다면 false 와 함께 스쿼드 정보를 반환한다.")
+        @DisplayName("Squad 에 속해있지 않다면, 참여상태 false, 리더인지 false, & 멤버를 볼수있는지 false 를 반환한다.")
         void success2() {
             // given
             Member REVI = memberRepository.save(REVI());
@@ -109,25 +116,57 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
 
             // when
-            SquadWithParticipantStateDto DTO = squadQueryService
+            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
                     .fetchSquad(ANDONG.getId(), CREW.getId(), SQUAD.getId());
 
             // then
             assertThat(DTO.alreadyParticipant()).isFalse();
-            assertThat(DTO.squad().id()).isEqualTo(SQUAD.getId());
-            assertThat(DTO.squad().title()).isEqualTo(SQUAD.getTitle().getValue());
-            assertThat(DTO.squad().content()).isEqualTo(SQUAD.getContent().getValue());
-            assertThat(DTO.squad().capacity()).isEqualTo(SQUAD.getCapacity().getValue());
-            assertThat(DTO.squad().remain()).isEqualTo(SQUAD.getCapacity().getRemain());
-            assertThat(DTO.squad().address()).isEqualTo(SQUAD.getAddress().getValue());
-            assertThat(DTO.squad().addressDetail()).isEqualTo(SQUAD.getAddress().getDetail());
-            assertThat(DTO.squad().kakaoLink()).isEqualTo(SQUAD.getKakaoLink());
-            assertThat(DTO.squad().discordLink()).isEqualTo(SQUAD.getDiscordLink());
-            assertThat(DTO.squad().categories()).hasSize(0);
-            assertThat(DTO.squad().owner().id()).isEqualTo(REVI.getId());
-            assertThat(DTO.squad().owner().email()).isNull();
-            assertThat(DTO.squad().owner().nickname()).isEqualTo(REVI.getNickname().getValue());
-            assertThat(DTO.squad().owner().mbti()).isEqualTo(REVI.getMbti().name());
+            assertThat(DTO.isLeader()).isFalse();
+            assertThat(DTO.canSeeMembers()).isFalse();
+        }
+
+        @Test
+        @DisplayName("Squad 에 속해있지만 Leader 가 아니라면, 참여상태 true, 리더인지 false, & 멤버를 볼수있는지 true 를 반환한다.")
+        void success3() {
+            // given
+            Member REVI = memberRepository.save(REVI());
+            Crew CREW = crewRepository.save(CREW(REVI));
+            CrewMember CREW_OWNER = crewMemberRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+            Squad SQUAD = squadRepository.save(SQUAD(CREW_OWNER, CREW));
+
+            Member ANDONG = memberRepository.save(ANDONG());
+            CrewMember ANDONG_MEMBER = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            squadMemberRepository.save(GENERAL_SQUAD_MEMBER(SQUAD, ANDONG_MEMBER));
+
+            // when
+            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
+                    .fetchSquad(ANDONG.getId(), CREW.getId(), SQUAD.getId());
+
+            // then
+            assertThat(DTO.alreadyParticipant()).isTrue();
+            assertThat(DTO.isLeader()).isFalse();
+            assertThat(DTO.canSeeMembers()).isTrue();
+        }
+
+        @Test
+        @DisplayName("Squad 에 속해있지 않지만 Crew Owner 라면, 참여상태 false, 리더인지 false, & 멤버를 볼수있는지 true 를 반환한다.")
+        void success4() {
+            // given
+            Member REVI = memberRepository.save(REVI());
+            Crew CREW = crewRepository.save(CREW(REVI));
+
+            Member ANDONG = memberRepository.save(ANDONG());
+            CrewMember ANDONG_MEMBER = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            Squad SQUAD = squadRepository.save(SQUAD(ANDONG_MEMBER, CREW));
+
+            // when
+            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
+                    .fetchSquad(REVI.getId(), CREW.getId(), SQUAD.getId());
+
+            // then
+            assertThat(DTO.alreadyParticipant()).isFalse();
+            assertThat(DTO.isLeader()).isFalse();
+            assertThat(DTO.canSeeMembers()).isTrue();
         }
     }
 
@@ -172,9 +211,9 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
                     .map(Category::getCategoryType)
                     .map(CategoryType::getText)
                     .toArray(String[]::new));
-            assertThat(SQUADS.get(0).owner().id()).isEqualTo(KWANGWON.getId());
-            assertThat(SQUADS.get(0).owner().nickname()).isEqualTo(KWANGWON.getNickname().getValue());
-            assertThat(SQUADS.get(0).owner().mbti()).isEqualTo(KWANGWON.getMbti().name());
+            assertThat(SQUADS.get(0).leader().id()).isEqualTo(KWANGWON.getId());
+            assertThat(SQUADS.get(0).leader().nickname()).isEqualTo(KWANGWON.getNickname().getValue());
+            assertThat(SQUADS.get(0).leader().mbti()).isEqualTo(KWANGWON.getMbti().name());
 
             assertThat(SQUADS.get(1).id()).isEqualTo(SQUAD_2.getId());
             assertThat(SQUADS.get(1).title()).isEqualTo(SQUAD_2.getTitle().getValue());
@@ -188,9 +227,9 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
                     .map(Category::getCategoryType)
                     .map(CategoryType::getText)
                     .toArray(String[]::new));
-            assertThat(SQUADS.get(1).owner().id()).isEqualTo(ANDONG.getId());
-            assertThat(SQUADS.get(1).owner().nickname()).isEqualTo(ANDONG.getNickname().getValue());
-            assertThat(SQUADS.get(1).owner().mbti()).isEqualTo(ANDONG.getMbti().name());
+            assertThat(SQUADS.get(1).leader().id()).isEqualTo(ANDONG.getId());
+            assertThat(SQUADS.get(1).leader().nickname()).isEqualTo(ANDONG.getNickname().getValue());
+            assertThat(SQUADS.get(1).leader().mbti()).isEqualTo(ANDONG.getMbti().name());
         }
     }
 
@@ -218,16 +257,16 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
             // when
-            List<SquadWithOwnerStateDto> RESULTS = squadQueryService
+            List<SquadWithLeaderStateDto> RESULTS = squadQueryService
                     .fetchSquadsWithOwnerState(ANDONG.getId(), CREW2.getId(), PAGE_REQUEST);
 
             // then
             assertThat(RESULTS.size()).isEqualTo(2);
-            assertThat(RESULTS.get(0).isOwner()).isFalse();
+            assertThat(RESULTS.get(0).isLeader()).isFalse();
             assertThat(RESULTS.get(0).squad().id()).isEqualTo(CREW2_SQUAD2.getId());
             assertThat(RESULTS.get(0).squad().title()).isEqualTo(CREW2_SQUAD2.getTitle().getValue());
             assertThat(RESULTS.get(0).squad().categories()).hasSize(CATEGORIES_1().size());
-            assertThat(RESULTS.get(1).isOwner()).isTrue();
+            assertThat(RESULTS.get(1).isLeader()).isTrue();
             assertThat(RESULTS.get(1).squad().id()).isEqualTo(CREW2_SQUAD1.getId());
             assertThat(RESULTS.get(1).squad().title()).isEqualTo(CREW2_SQUAD1.getTitle().getValue());
             assertThat(RESULTS.get(1).squad().categories()).hasSize(0);

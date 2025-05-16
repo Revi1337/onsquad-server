@@ -10,9 +10,9 @@ public record SimpleSquadInfoDto(
         String title,
         int capacity,
         int remain,
-        Boolean isOwner,
+        Boolean isLeader,
         List<String> categories,
-        SimpleMemberInfoDto squadOwner
+        SimpleMemberInfoDto leader
 ) {
     public static SimpleSquadInfoDto from(SimpleSquadInfoDomainDto simpleSquadInfoDomainDto) {
         return new SimpleSquadInfoDto(
@@ -20,7 +20,7 @@ public record SimpleSquadInfoDto(
                 simpleSquadInfoDomainDto.title().getValue(),
                 simpleSquadInfoDomainDto.capacity().getValue(),
                 simpleSquadInfoDomainDto.capacity().getRemain(),
-                simpleSquadInfoDomainDto.isOwner(),
+                simpleSquadInfoDomainDto.isLeader(),
                 simpleSquadInfoDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),

@@ -3,6 +3,7 @@ package revi1337.onsquad.squad.application;
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,11 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-import revi1337.onsquad.squad.application.dto.SquadWithOwnerStateDto;
-import revi1337.onsquad.squad.application.dto.SquadWithParticipantStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
 import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
+import revi1337.onsquad.squad_member.domain.SquadMember;
 import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
 
 @Transactional(readOnly = true)
@@ -27,13 +29,17 @@ public class SquadQueryService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadMemberRepository squadMemberRepository;
 
-    public SquadWithParticipantStateDto fetchSquad(Long memberId, Long crewId, Long squadId) {
+    public SquadWithParticipantAndLeaderAndViewStateDto fetchSquad(Long memberId, Long crewId, Long squadId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        SquadInfoDomainDto squadInfo = squadRepository.getSquadById(squadId);
+        Optional<SquadMember> squadMember = squadMemberRepository
+                .findBySquadIdAndCrewMemberId(squadId, crewMember.getId());
+        SquadInfoDomainDto squad = squadRepository.getSquadById(squadId);
 
-        return squadMemberRepository.findBySquadIdAndCrewMemberId(squadId, crewMember.getId())
-                .map(squadMember -> SquadWithParticipantStateDto.from(true, squadInfo))
-                .orElseGet(() -> SquadWithParticipantStateDto.from(false, squadInfo));
+        boolean alreadyParticipant = squadMember.isPresent();
+        boolean isLeader = squadMember.isPresent() && squadMember.get().isLeader();
+        boolean canSeeMembers = squadMember.isPresent() || crewMember.isOwner();
+
+        return SquadWithParticipantAndLeaderAndViewStateDto.from(alreadyParticipant, canSeeMembers, isLeader, squad);
     }
 
     public List<SquadInfoDto> fetchSquads(Long crewId, CategoryCondition condition, Pageable pageable) {
@@ -42,14 +48,14 @@ public class SquadQueryService {
                 .toList();
     }
 
-    public List<SquadWithOwnerStateDto> fetchSquadsWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
+    public List<SquadWithLeaderStateDto> fetchSquadsWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         if (crewMember.isNotOwner()) {
             throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
         }
 
         return squadRepository.fetchAllWithOwnerState(memberId, crewId, pageable).stream()
-                .map(SquadWithOwnerStateDto::from)
+                .map(SquadWithLeaderStateDto::from)
                 .toList();
     }
 }

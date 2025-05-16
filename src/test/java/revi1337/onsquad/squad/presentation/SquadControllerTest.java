@@ -45,8 +45,8 @@ import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.application.dto.SquadDto;
 import revi1337.onsquad.squad.application.dto.SquadInfoDto;
-import revi1337.onsquad.squad.application.dto.SquadWithOwnerStateDto;
-import revi1337.onsquad.squad.application.dto.SquadWithParticipantStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
+import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
 import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
 
 @WebMvcTest(SquadController.class)
@@ -111,7 +111,9 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            SquadWithParticipantStateDto SERVICE_DTO = new SquadWithParticipantStateDto(
+            SquadWithParticipantAndLeaderAndViewStateDto SERVICE_DTO = new SquadWithParticipantAndLeaderAndViewStateDto(
+                    true,
+                    true,
                     true,
                     new SquadInfoDto(
                             SQUAD_ID,
@@ -209,7 +211,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         @DisplayName("스쿼드 관리를 문서화한다.")
         void success() throws Exception {
             Long CREW_ID = 1L;
-            List<SquadWithOwnerStateDto> SERVICE_DTOS = List.of(new SquadWithOwnerStateDto(
+            List<SquadWithLeaderStateDto> SERVICE_DTOS = List.of(new SquadWithLeaderStateDto(
                     true,
                     new SquadDto(
                             1L,

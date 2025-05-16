@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.squad.domain.dto.SquadInfoDomainDto;
-import revi1337.onsquad.squad.domain.dto.SquadWithOwnerStateDomainDto;
+import revi1337.onsquad.squad.domain.dto.SquadWithLeaderStateDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -47,7 +47,7 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Page<SquadWithOwnerStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
+    public Page<SquadWithLeaderStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
         return squadQueryDslRepository.fetchAllWithOwnerState(memberId, crewId, pageable);
     }
 }

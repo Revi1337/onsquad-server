@@ -10,7 +10,7 @@ public record SquadResponse(
         int capacity,
         int remain,
         List<String> categories,
-        SimpleMemberInfoResponse owner
+        SimpleMemberInfoResponse leader
 ) {
     public static SquadResponse from(SquadDto squadDto) {
         return new SquadResponse(
@@ -19,7 +19,7 @@ public record SquadResponse(
                 squadDto.capacity(),
                 squadDto.remain(),
                 squadDto.categories(),
-                SimpleMemberInfoResponse.from(squadDto.owner())
+                SimpleMemberInfoResponse.from(squadDto.leader())
         );
     }
 }

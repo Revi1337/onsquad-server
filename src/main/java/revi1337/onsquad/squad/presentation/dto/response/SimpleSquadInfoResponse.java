@@ -9,9 +9,9 @@ public record SimpleSquadInfoResponse(
         String title,
         int capacity,
         int remain,
-        Boolean isOwner,
+        Boolean isLeader,
         List<String> categories,
-        SimpleMemberInfoResponse squadOwner
+        SimpleMemberInfoResponse leader
 ) {
     public static SimpleSquadInfoResponse from(SimpleSquadInfoDto simpleSquadInfoDto) {
         return new SimpleSquadInfoResponse(
@@ -19,9 +19,9 @@ public record SimpleSquadInfoResponse(
                 simpleSquadInfoDto.title(),
                 simpleSquadInfoDto.capacity(),
                 simpleSquadInfoDto.remain(),
-                simpleSquadInfoDto.isOwner(),
+                simpleSquadInfoDto.isLeader(),
                 simpleSquadInfoDto.categories(),
-                SimpleMemberInfoResponse.from(simpleSquadInfoDto.squadOwner())
+                SimpleMemberInfoResponse.from(simpleSquadInfoDto.leader())
         );
     }
 }

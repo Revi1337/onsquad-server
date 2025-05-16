@@ -16,7 +16,7 @@ public record SquadInfoDto(
         String kakaoLink,
         String discordLink,
         List<String> categories,
-        SimpleMemberInfoDto owner
+        SimpleMemberInfoDto leader
 ) {
     public static SquadInfoDto from(SquadInfoDomainDto squadInfoDomainDto) {
         return new SquadInfoDto(
@@ -32,7 +32,7 @@ public record SquadInfoDto(
                 squadInfoDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberInfoDto.from(squadInfoDomainDto.owner())
+                SimpleMemberInfoDto.from(squadInfoDomainDto.leader())
         );
     }
 }
