@@ -60,9 +60,11 @@ public class SquadController {
     public ResponseEntity<RestResponse<List<SquadResponse>>> fetchSquads(
             @PathVariable Long crewId,
             @RequestParam CategoryCondition category,
-            @PageableDefault Pageable pageable
+            @PageableDefault Pageable pageable,
+            @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        List<SquadResponse> squadResponses = squadQueryService.fetchSquads(crewId, category, pageable).stream()
+        List<SquadResponse> squadResponses = squadQueryService
+                .fetchSquads(authMemberAttribute.id(), crewId, category, pageable).stream()
                 .map(SquadResponse::from)
                 .toList();
 
