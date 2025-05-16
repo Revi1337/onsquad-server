@@ -24,7 +24,7 @@ public class SquadMemberController {
     private final SquadMemberCommandService squadMemberCommandService;
     private final SquadMemberQueryService squadMemberQueryService;
 
-    @GetMapping("/my/squads")
+    @GetMapping("/squads/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이지가 나뉠 가능성이 매우 큼
     public ResponseEntity<RestResponse<List<EnrolledSquadResponse>>> fetchAllJoinedSquads(
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
