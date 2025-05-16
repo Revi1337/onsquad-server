@@ -29,45 +29,45 @@ public class CrewParticipantController {
     private final CrewParticipantQueryService crewParticipantQueryService;
 
     @PostMapping("/crews/{crewId}/requests")
-    public ResponseEntity<RestResponse<String>> requestInCrew(
+    public ResponseEntity<RestResponse<String>> request(
             @PathVariable Long crewId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantCommandService.requestCrew(authMemberAttribute.id(), crewId);
+        crewParticipantCommandService.request(authMemberAttribute.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
     @PatchMapping("/crews/{crewId}/requests/{requestId}")
-    public ResponseEntity<RestResponse<String>> acceptCrewRequests(
+    public ResponseEntity<RestResponse<String>> acceptRequest(
             @PathVariable Long crewId,
             @PathVariable Long requestId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantCommandService.acceptCrewRequest(authMemberAttribute.id(), crewId, requestId);
+        crewParticipantCommandService.acceptRequest(authMemberAttribute.id(), crewId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @DeleteMapping("/crews/{crewId}/requests/{requestId}")
-    public ResponseEntity<RestResponse<String>> rejectCrewRequest(
+    public ResponseEntity<RestResponse<String>> rejectRequest(
             @PathVariable Long crewId,
             @PathVariable Long requestId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantCommandService.rejectCrewRequest(authMemberAttribute.id(), crewId, requestId);
+        crewParticipantCommandService.rejectRequest(authMemberAttribute.id(), crewId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @GetMapping("/crews/{crewId}/requests")
-    public ResponseEntity<RestResponse<List<CrewRequestWithMemberResponse>>> fetchCrewRequests(
+    public ResponseEntity<RestResponse<List<CrewRequestWithMemberResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
         List<CrewRequestWithMemberResponse> requestResponses = crewParticipantQueryService
-                .fetchCrewRequests(authMemberAttribute.id(), crewId, pageable).stream()
+                .fetchAllRequests(authMemberAttribute.id(), crewId, pageable).stream()
                 .map(CrewRequestWithMemberResponse::from)
                 .toList();
 
@@ -75,11 +75,11 @@ public class CrewParticipantController {
     }
 
     @DeleteMapping("/crews/{crewId}/requests/me")
-    public ResponseEntity<RestResponse<String>> cancelCrewRequest(
+    public ResponseEntity<RestResponse<String>> cancelMyRequest(
             @PathVariable Long crewId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        crewParticipantCommandService.cancelCrewRequest(authMemberAttribute.id(), crewId);
+        crewParticipantCommandService.cancelMyRequest(authMemberAttribute.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

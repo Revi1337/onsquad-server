@@ -31,29 +31,6 @@ public class SquadParticipantController {
     private final SquadParticipantCommandService squadParticipantCommandService;
     private final SquadParticipantQueryService squadParticipantQueryService;
 
-    @GetMapping("/squad-requests/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이징 나뉠 가능성이 매우 큼
-    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> fetchMyAllRequests(
-            @Authenticate AuthMemberAttribute authMemberAttribute
-    ) {
-        List<SquadParticipantRequestResponse> requestResponses = squadParticipantQueryService
-                .fetchAllMyRequests(authMemberAttribute.id()).stream()
-                .map(SquadParticipantRequestResponse::from)
-                .toList();
-
-        return ResponseEntity.ok().body(RestResponse.success(requestResponses));
-    }
-
-    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/me")
-    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> cancelMyRequest(
-            @PathVariable Long crewId,
-            @PathVariable Long squadId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
-    ) {
-        squadParticipantCommandService.cancelMyRequest(authMemberAttribute.id(), crewId, squadId);
-
-        return ResponseEntity.ok().body(RestResponse.noContent());
-    }
-
     @PostMapping("/crews/{crewId}/squads/{squadId}/requests")
     public ResponseEntity<RestResponse<String>> request(
             @PathVariable Long crewId,
@@ -104,5 +81,28 @@ public class SquadParticipantController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(simpleSquadParticipantResponses));
+    }
+
+    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/me")
+    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> cancelMyRequest(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @Authenticate AuthMemberAttribute authMemberAttribute
+    ) {
+        squadParticipantCommandService.cancelMyRequest(authMemberAttribute.id(), crewId, squadId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
+    @GetMapping("/squad-requests/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이지가 나뉠 가능성이 매우 큼
+    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> fetchMyAllRequests(
+            @Authenticate AuthMemberAttribute authMemberAttribute
+    ) {
+        List<SquadParticipantRequestResponse> requestResponses = squadParticipantQueryService
+                .fetchAllMyRequests(authMemberAttribute.id()).stream()
+                .map(SquadParticipantRequestResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(requestResponses));
     }
 }

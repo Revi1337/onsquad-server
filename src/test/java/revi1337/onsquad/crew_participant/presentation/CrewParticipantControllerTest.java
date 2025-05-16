@@ -62,7 +62,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         @DisplayName("Crew 참가신청에 성공한다.")
         void success() throws Exception {
             Long CREW_Id = 1L;
-            doNothing().when(crewParticipantCommandService).requestCrew(any(), anyLong());
+            doNothing().when(crewParticipantCommandService).request(any(), anyLong());
 
             mockMvc.perform(post("/api/crews/{crewId}/requests", CREW_Id)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -87,7 +87,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_Id = 1L;
             Long REQUEST_ID = 3L;
-            doNothing().when(crewParticipantCommandService).acceptCrewRequest(any(), eq(CREW_Id), eq(REQUEST_ID));
+            doNothing().when(crewParticipantCommandService).acceptRequest(any(), eq(CREW_Id), eq(REQUEST_ID));
 
             mockMvc.perform(patch("/api/crews/{crewId}/requests/{requestId}", CREW_Id, REQUEST_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -115,7 +115,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_Id = 1L;
             Long REQUEST_ID = 2L;
-            doNothing().when(crewParticipantCommandService).rejectCrewRequest(any(), eq(CREW_Id), eq(REQUEST_ID));
+            doNothing().when(crewParticipantCommandService).rejectRequest(any(), eq(CREW_Id), eq(REQUEST_ID));
 
             mockMvc.perform(delete("/api/crews/{crewId}/requests/{requestId}", CREW_Id, REQUEST_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -146,7 +146,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
                     new CrewRequestDto(2L, LocalDateTime.now()),
                     new SimpleMemberInfoDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
             ));
-            when(crewParticipantQueryService.fetchCrewRequests(any(), anyLong(), any(Pageable.class)))
+            when(crewParticipantQueryService.fetchAllRequests(any(), anyLong(), any(Pageable.class)))
                     .thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/requests", CREW_Id)
@@ -177,7 +177,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         @DisplayName("내가 신청한 Crew 취소에 성공한다.")
         void success() throws Exception {
             Long CREW_Id = 1L;
-            doNothing().when(crewParticipantCommandService).cancelCrewRequest(any(), anyLong());
+            doNothing().when(crewParticipantCommandService).cancelMyRequest(any(), anyLong());
 
             mockMvc.perform(delete("/api/crews/{crewId}/requests/me", CREW_Id)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
