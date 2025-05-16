@@ -135,11 +135,11 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
     }
 
     @Nested
-    @DisplayName("특정 Crew 의 참가신청 목록 조회를 문서화한다.")
+    @DisplayName("특정 Crew 의 참가신청 관리 목록을 문서화한다.")
     class FetchCrewRequests {
 
         @Test
-        @DisplayName("특정 Crew 의 참가신청 목록 조회에 성공한다.")
+        @DisplayName("특정 Crew 의 참가신청 관리 목록을 성공한다.")
         void success() throws Exception {
             Long CREW_Id = 1L;
             List<CrewRequestWithMemberDto> SERVICE_DTOS = List.of(new CrewRequestWithMemberDto(
@@ -149,7 +149,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
             when(crewParticipantQueryService.fetchAllRequests(any(), anyLong(), any(Pageable.class)))
                     .thenReturn(SERVICE_DTOS);
 
-            mockMvc.perform(get("/api/crews/{crewId}/requests", CREW_Id)
+            mockMvc.perform(get("/api/crews/{crewId}/manage/requests", CREW_Id)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .param("page", "0")
                             .param("size", "3")

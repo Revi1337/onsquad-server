@@ -44,11 +44,11 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
     private CrewMemberService crewMemberService;
 
     @Nested
-    @DisplayName("Crew 에 속한 CrewMember 들 조회를 문서화한다.")
+    @DisplayName("Crew 에 속한 CrewMember 관리 목록 조회를 문서화한다.")
     class FetchCrewMembers {
 
         @Test
-        @DisplayName("Crew 에 속한 CrewMember 들 조회에 성공한다.")
+        @DisplayName("Crew 에 속한 CrewMember 관리 목록 조회에 성공한다.")
         void success() throws Exception {
             Long DUMMY_CREW_ID = 1L;
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
@@ -65,7 +65,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
             Page<CrewMemberDto> PAGE_DTOS = new PageImpl<>(SERVICE_DTOS, PAGE_REQUEST, SERVICE_DTOS.size());
             when(crewMemberService.fetchCrewMembers(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST))).thenReturn(PAGE_DTOS);
 
-            mockMvc.perform(get("/api/crews/{crewId}/members", DUMMY_CREW_ID)
+            mockMvc.perform(get("/api/crews/{crewId}/manage/members", DUMMY_CREW_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .param("page", "0")
                             .param("size", "5")
