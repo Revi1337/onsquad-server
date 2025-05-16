@@ -10,4 +10,8 @@ public class SquadParticipantFixture {
     public static SquadParticipant SQUAD_PARTICIPANT(Squad squad, CrewMember crewMember) {
         return SquadParticipant.of(squad, crewMember, LocalDateTime.now());
     }
+
+    public static SquadParticipant SQUAD_PARTICIPANT(Squad squad, CrewMember crewMember, LocalDateTime requestAt) {
+        return SquadParticipant.of(squad, crewMember, requestAt);
+    }
 }

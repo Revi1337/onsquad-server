@@ -117,7 +117,7 @@ public class Squad extends BaseEntity {
         this.capacity.increaseRemain();
     }
 
-    public boolean doesNotMatchCrewId(Long crewId) {
+    public boolean isNotMatchCrewId(Long crewId) {
         return !matchCrewId(crewId);
     }
 

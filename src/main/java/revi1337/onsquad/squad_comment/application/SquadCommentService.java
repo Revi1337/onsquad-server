@@ -1,6 +1,6 @@
 package revi1337.onsquad.squad_comment.application;
 
-import static revi1337.onsquad.squad.error.SquadErrorCode.NOTMATCH_CREWINFO;
+import static revi1337.onsquad.squad.error.SquadErrorCode.MISMATCH_REFERENCE;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NON_MATCH_SQUAD_ID;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
+import revi1337.onsquad.squad.error.exception.SquadBusinessException.MismatchReference;
 import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
 import revi1337.onsquad.squad_comment.domain.SquadComment;
 import revi1337.onsquad.squad_comment.domain.SquadCommentRepository;
@@ -79,8 +79,8 @@ public class SquadCommentService {
     }
 
     private void validateSquadInCrew(Long crewId, Squad squad) {
-        if (squad.doesNotMatchCrewId(crewId)) {
-            throw new SquadBusinessException.NotMatchCrewInfo(NOTMATCH_CREWINFO);
+        if (squad.isNotMatchCrewId(crewId)) {
+            throw new MismatchReference(MISMATCH_REFERENCE);
         }
     }
 
