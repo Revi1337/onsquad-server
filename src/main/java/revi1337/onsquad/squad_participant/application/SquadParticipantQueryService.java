@@ -25,12 +25,6 @@ public class SquadParticipantQueryService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadMemberRepository squadMemberRepository;
 
-    public List<SquadParticipantRequestDto> fetchAllMyRequests(Long memberId) {
-        return squadParticipantRepository.findSquadParticipantRequestsByMemberId(memberId).stream()
-                .map(SquadParticipantRequestDto::from)
-                .toList();
-    }
-
     public List<SimpleSquadParticipantDto> fetchAllRequests(Long memberId, Long crewId, Long squadId,
                                                             Pageable pageable) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
@@ -41,6 +35,12 @@ public class SquadParticipantQueryService {
 
         return squadParticipantRepository.fetchAllBySquadId(squadId, pageable).stream()
                 .map(SimpleSquadParticipantDto::from)
+                .toList();
+    }
+
+    public List<SquadParticipantRequestDto> fetchAllMyRequests(Long memberId) {
+        return squadParticipantRepository.findSquadParticipantRequestsByMemberId(memberId).stream()
+                .map(SquadParticipantRequestDto::from)
                 .toList();
     }
 }

@@ -47,44 +47,6 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
     private SquadParticipantQueryService squadParticipantQueryService;
 
     @Nested
-    @DisplayName("내가 신청한 스쿼드 신청들 조회를 문서화한다.")
-    class FetchMy {
-
-        @Test // TODO Presentation, Application, Persistence 테스트 보류. 페이징 나뉠 가능성이 매우 큼
-        @DisplayName("내가 신청한 스쿼드 신청들 조회에 성공한다.")
-        void success() {
-        }
-    }
-
-    @Nested
-    @DisplayName("내가 신청한 스쿼드 신청 취소를 문서화한다.")
-    class MyCancel {
-
-        @Test
-        @DisplayName("내가 신청한 스쿼드 신청 취소에 성공한다.")
-        void success() throws Exception {
-            Long CREW_ID = 1L;
-            Long SQUAD_ID = 2L;
-            doNothing().when(squadParticipantCommandService).cancelMyRequest(any(), eq(CREW_ID), eq(SQUAD_ID));
-
-            mockMvc.perform(delete("/api/crews/{crewId}/squads/{squadId}/requests/me", CREW_ID, SQUAD_ID)
-                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                            .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("squads-participants/my-cancel/success",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                            pathParameters(
-                                    parameterWithName("crewId").description("Crew 아이디"),
-                                    parameterWithName("squadId").description("Squad 아이디")
-                            ),
-                            responseBody()
-                    ));
-        }
-    }
-
-    @Nested
     @DisplayName("스쿼드 참가 신청을 문서화한다.")
     class Request {
 
@@ -177,6 +139,34 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("내가 신청한 스쿼드 신청 취소를 문서화한다.")
+    class MyCancel {
+
+        @Test
+        @DisplayName("내가 신청한 스쿼드 신청 취소에 성공한다.")
+        void success() throws Exception {
+            Long CREW_ID = 1L;
+            Long SQUAD_ID = 2L;
+            doNothing().when(squadParticipantCommandService).cancelMyRequest(any(), eq(CREW_ID), eq(SQUAD_ID));
+
+            mockMvc.perform(delete("/api/crews/{crewId}/squads/{squadId}/requests/me", CREW_ID, SQUAD_ID)
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(204))
+                    .andDo(document("squads-participants/my-cancel/success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            pathParameters(
+                                    parameterWithName("crewId").description("Crew 아이디"),
+                                    parameterWithName("squadId").description("Squad 아이디")
+                            ),
+                            responseBody()
+                    ));
+        }
+    }
+
+    @Nested
     @DisplayName("스쿼드 참가신청들 조회를 문서화한다.")
     class FetchAll {
 
@@ -219,6 +209,16 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                             ),
                             responseBody()
                     ));
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 신청한 스쿼드 신청들 조회를 문서화한다.")
+    class FetchMy {
+
+        @Test // TODO Presentation, Application, Persistence 테스트 보류. 페이징 나뉠 가능성이 매우 큼
+        @DisplayName("내가 신청한 스쿼드 신청들 조회에 성공한다.")
+        void success() {
         }
     }
 }
