@@ -22,8 +22,10 @@ import revi1337.onsquad.squad.domain.Squad;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "unique_squadparticipant_squad_crewmember", columnNames = {"squad_id",
-                "crew_member_id"})
+        @UniqueConstraint(
+                name = "squadparticipant_uidx_squad_id_crewmember_id",
+                columnNames = {"squad_id", "crew_member_id"}
+        )
 })
 public class SquadParticipant extends RequestEntity {
 
@@ -51,6 +53,10 @@ public class SquadParticipant extends RequestEntity {
 
     public boolean matchSquadId(Long squadId) {
         return squad.getId().equals(squadId);
+    }
+
+    public boolean isNotMatchSquadId(Long squadId) {
+        return !matchSquadId(squadId);
     }
 
     @Override

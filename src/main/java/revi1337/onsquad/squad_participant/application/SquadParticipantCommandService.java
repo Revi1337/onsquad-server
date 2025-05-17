@@ -1,7 +1,6 @@
 package revi1337.onsquad.squad_participant.application;
 
 import static revi1337.onsquad.squad.error.SquadErrorCode.ALREADY_JOIN;
-import static revi1337.onsquad.squad.error.SquadErrorCode.MISMATCH_REFERENCE;
 import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.NOT_LEADER;
 
 import java.time.LocalDateTime;
@@ -12,12 +11,15 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.squad.error.SquadErrorCode;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 import revi1337.onsquad.squad_participant.domain.SquadParticipant;
 import revi1337.onsquad.squad_participant.domain.SquadParticipantRepository;
+import revi1337.onsquad.squad_participant.error.SquadParticipantErrorCode;
+import revi1337.onsquad.squad_participant.error.exception.SquadParticipantBusinessException;
 
 @Transactional
 @RequiredArgsConstructor
@@ -32,9 +34,8 @@ public class SquadParticipantCommandService {
     public void request(Long memberId, Long crewId, Long squadId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         Squad squad = squadRepository.getByIdWithMembers(squadId);
-
         if (squad.isNotMatchCrewId(crewId)) {
-            throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
+            throw new SquadBusinessException.MismatchReference(SquadErrorCode.MISMATCH_REFERENCE);
         }
         if (squad.existsMember(crewMember.getId())) {
             throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
@@ -53,27 +54,25 @@ public class SquadParticipantCommandService {
     public void acceptRequest(Long memberId, Long crewId, Long squadId, Long requestId) {
         checkMemberIsSquadLeader(memberId, crewId, squadId);
         SquadParticipant participant = squadParticipantRepository.getByIdWithSquad(requestId);
-        Squad squad = participant.getSquad();
-        if (squad.isNotMatchCrewId(crewId)) {
-            throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
+        if (participant.isNotMatchSquadId(squadId)) {
+            throw new SquadParticipantBusinessException.MismatchReference(SquadParticipantErrorCode.MISMATCH_REFERENCE);
         }
 
+        Squad squad = participant.getSquad();
         CrewMember acceptMember = participant.getCrewMember();
         squad.addMembers(SquadMember.forGeneral(squad, acceptMember, LocalDateTime.now()));
         squadRepository.saveAndFlush(squad);
-        squadParticipantRepository.deleteById(participant.getId());
+        squadParticipantRepository.deleteById(requestId);
     }
 
     public void rejectRequest(Long memberId, Long crewId, Long squadId, Long requestId) {
         checkMemberIsSquadLeader(memberId, crewId, squadId);
-        Squad squad = squadRepository.getById(squadId);
-        if (squad.isNotMatchCrewId(crewId)) {
-            throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
+        SquadParticipant participant = squadParticipantRepository.getById(requestId);
+        if (participant.isNotMatchSquadId(squadId)) {
+            throw new SquadParticipantBusinessException.MismatchReference(SquadParticipantErrorCode.MISMATCH_REFERENCE);
         }
 
-        squadParticipantRepository.findById(requestId)
-                .filter(p -> p.matchSquadId(squadId))
-                .ifPresent(p -> squadParticipantRepository.deleteById(requestId));
+        squadParticipantRepository.deleteById(requestId);
     }
 
     public void cancelMyRequest(Long memberId, Long crewId, Long squadId) {
