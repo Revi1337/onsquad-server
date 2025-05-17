@@ -11,7 +11,6 @@ import static revi1337.onsquad.common.fixture.MemberFixtures.KWANGWON;
 import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
 import static revi1337.onsquad.common.fixture.SquadMemberFixture.GENERAL_SQUAD_MEMBER;
-import static revi1337.onsquad.common.fixture.SquadMemberFixture.LEADER_SQUAD_MEMBER;
 import static revi1337.onsquad.common.fixture.SquadParticipantFixture.SQUAD_PARTICIPANT;
 
 import java.time.LocalDateTime;
@@ -36,6 +35,7 @@ import revi1337.onsquad.squad_member.domain.SquadMemberJpaRepository;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 import revi1337.onsquad.squad_participant.domain.SquadParticipant;
 import revi1337.onsquad.squad_participant.domain.SquadParticipantJpaRepository;
+import revi1337.onsquad.squad_participant.error.exception.SquadParticipantBusinessException;
 
 class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
 
@@ -186,7 +186,7 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
         }
 
         @Test
-        @DisplayName("스쿼드가 속한 크루정보가 일치하지 않으면 실패한다.")
+        @DisplayName("신청정보와 스쿼드정보가 일치하지 않으면 실패한다.")
         void fail2() {
             // given
             Member REVI = memberJpaRepository.save(REVI());
@@ -199,14 +199,12 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             CrewMember OWNER2 = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW2.getId(), ANDONG.getId()).get();
             Squad SQUAD2 = squadJpaRepository.save(SQUAD(OWNER2, CREW2));
 
-            crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW2, REVI));
-            squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD1, OWNER1));
-            Long REQUEST_ID = 1L;
+            SquadParticipant PARTICIPANT = squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD2, OWNER2));
             clearPersistenceContext();
 
             assertThatThrownBy(() -> commandService
-                    .acceptRequest(ANDONG.getId(), CREW2.getId(), SQUAD2.getId(), REQUEST_ID))
-                    .isExactlyInstanceOf(SquadBusinessException.MismatchReference.class);
+                    .acceptRequest(REVI.getId(), CREW1.getId(), SQUAD1.getId(), PARTICIPANT.getId()))
+                    .isExactlyInstanceOf(SquadParticipantBusinessException.MismatchReference.class);
         }
 
         @Test
@@ -283,11 +281,8 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
                     .isExactlyInstanceOf(SquadMemberBusinessException.NotLeader.class);
         }
 
-        /**
-         * 이 테스트는 도메인 상 불가능한 상황을 일부러 구성한 것으로, Squad 가 속한 Crew 와 리더의 Crew 가 다를 때 방어적 예외를 테스트한다.
-         */
         @Test
-        @DisplayName("스쿼드가 속한 크루정보가 일치하지 않으면 실패한다.")
+        @DisplayName("신청정보와 스쿼드정보가 일치하지 않으면 실패한다.")
         void fail2() {
             // given
             Member REVI = memberJpaRepository.save(REVI());
@@ -295,19 +290,17 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             CrewMember CREW1_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW1.getId(), REVI.getId()).get();
             Squad SQUAD1 = squadJpaRepository.save(SQUAD(CREW1_OWNER, CREW1));
 
-            Crew CREW2 = crewJpaRepository.save(CREW_2(REVI));
-            CrewMember CREW2_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW2.getId(), REVI.getId()).get();
+            Member ANDO = memberJpaRepository.save(ANDONG());
+            Crew CREW2 = crewJpaRepository.save(CREW_2(ANDO));
+            CrewMember CREW2_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW2.getId(), ANDO.getId()).get();
             Squad SQUAD2 = squadJpaRepository.save(SQUAD(CREW2_OWNER, CREW2));
 
-            squadMemberJpaRepository.save(LEADER_SQUAD_MEMBER(SQUAD1, CREW2_OWNER));
-
-            Long TEST_REQUEST_ID = 1L;
+            SquadParticipant PARTICIPANT = squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD2, CREW2_OWNER));
             clearPersistenceContext();
 
-            // when & then
             assertThatThrownBy(() -> commandService
-                    .rejectRequest(REVI.getId(), CREW2.getId(), SQUAD1.getId(), TEST_REQUEST_ID))
-                    .isExactlyInstanceOf(MismatchReference.class);
+                    .rejectRequest(REVI.getId(), CREW1.getId(), SQUAD1.getId(), PARTICIPANT.getId()))
+                    .isExactlyInstanceOf(SquadParticipantBusinessException.MismatchReference.class);
         }
     }
 

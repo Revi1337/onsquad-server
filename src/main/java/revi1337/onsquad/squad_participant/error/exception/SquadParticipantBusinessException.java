@@ -21,4 +21,10 @@ public abstract class SquadParticipantBusinessException extends RuntimeException
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class MismatchReference extends SquadParticipantBusinessException {
+        public MismatchReference(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }
