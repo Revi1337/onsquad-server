@@ -33,6 +33,11 @@ public class SquadParticipantRepositoryImpl implements SquadParticipantRepositor
     }
 
     @Override
+    public Optional<SquadParticipant> findByIdWithSquad(Long id) {
+        return squadParticipantJpaRepository.findByIdWithSquad(id);
+    }
+
+    @Override
     public Optional<SquadParticipant> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
         return squadParticipantJpaRepository.findBySquadIdAndCrewMemberId(squadId, crewMemberId);
     }

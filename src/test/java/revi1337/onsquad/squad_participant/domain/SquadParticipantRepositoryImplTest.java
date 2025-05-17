@@ -51,14 +51,44 @@ class SquadParticipantRepositoryImplTest {
         verify(squadParticipantJpaRepository).saveAndFlush(participant);
     }
 
-    @Test
-    @DisplayName("findById 위임에 성공한다.")
-    void findById() {
-        Long participantId = 1L;
+    @Nested
+    @DisplayName("findById & getById 위임을 테스트한다.")
+    class FindAndGetById {
 
-        squadParticipantRepository.findById(participantId);
+        @Test
+        @DisplayName("findById 위임에 성공한다.")
+        void findById() {
+            Long participantId = 1L;
 
-        verify(squadParticipantJpaRepository).findById(participantId);
+            squadParticipantRepository.findById(participantId);
+
+            verify(squadParticipantJpaRepository).findById(participantId);
+        }
+
+        @Test
+        @DisplayName("getById 위임에 성공한다.")
+        void getById() {
+            Long participantId = 1L;
+            SquadParticipant participant = mock(SquadParticipant.class);
+            when(squadParticipantJpaRepository.findById(participantId))
+                    .thenReturn(Optional.of(participant));
+
+            squadParticipantRepository.getById(participantId);
+
+            verify(squadParticipantJpaRepository).findById(participantId);
+        }
+
+        @Test
+        @DisplayName("getById 를 호출했을 때, findById 의 결과가 없으면 실패한다.")
+        void getByIdFail() {
+            Long participantId = 1L;
+            when(squadParticipantJpaRepository.findById(participantId))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> squadParticipantRepository
+                    .getById(participantId))
+                    .isExactlyInstanceOf(SquadParticipantBusinessException.NeverRequested.class);
+        }
     }
 
     @Nested
@@ -99,6 +129,46 @@ class SquadParticipantRepositoryImplTest {
                     .thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> squadParticipantRepository.getBySquadIdAndCrewMemberId(squadId, crewMemberId))
+                    .isExactlyInstanceOf(SquadParticipantBusinessException.NeverRequested.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("findByIdWithSquad & getByIdWithSquad 위임을 테스트한다.")
+    class FindAndGetByIdWithSquad {
+
+        @Test
+        @DisplayName("findByIdWithSquad 위임에 성공한다.")
+        void findByIdWithSquad() {
+            Long participantId = 1L;
+
+            squadParticipantRepository.findByIdWithSquad(participantId);
+
+            verify(squadParticipantJpaRepository).findByIdWithSquad(participantId);
+        }
+
+        @Test
+        @DisplayName("getByIdWithSquad 위임에 성공한다.")
+        void getByIdWithSquad() {
+            Long participantId = 1L;
+            SquadParticipant participant = mock(SquadParticipant.class);
+            when(squadParticipantJpaRepository.findByIdWithSquad(participantId))
+                    .thenReturn(Optional.of(participant));
+
+            squadParticipantRepository.getByIdWithSquad(participantId);
+
+            verify(squadParticipantJpaRepository).findByIdWithSquad(participantId);
+        }
+
+        @Test
+        @DisplayName("getByIdWithSquad 를 호출했을 때, findByIdWithSquad 의 결과가 없으면 실패한다.")
+        void getByIdWithSquadFail() {
+            Long participantId = 1L;
+            when(squadParticipantJpaRepository.findByIdWithSquad(participantId))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> squadParticipantRepository
+                    .getByIdWithSquad(participantId))
                     .isExactlyInstanceOf(SquadParticipantBusinessException.NeverRequested.class);
         }
     }

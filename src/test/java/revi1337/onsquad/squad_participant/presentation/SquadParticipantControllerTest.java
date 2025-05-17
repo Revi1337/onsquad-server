@@ -15,8 +15,6 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -35,8 +33,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
-import revi1337.onsquad.squad.application.dto.SquadAcceptDto;
-import revi1337.onsquad.squad.presentation.dto.request.SquadAcceptRequest;
 import revi1337.onsquad.squad_participant.application.SquadParticipantCommandService;
 import revi1337.onsquad.squad_participant.application.SquadParticipantQueryService;
 import revi1337.onsquad.squad_participant.application.dto.SimpleSquadParticipantDto;
@@ -125,13 +121,13 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            SquadAcceptRequest ACCEPT_REQUEST = new SquadAcceptRequest(10L);
+            Long REQUEST_ID = 3L;
             doNothing().when(squadParticipantCommandService)
-                    .acceptRequest(any(), eq(CREW_ID), eq(SQUAD_ID), any(SquadAcceptDto.class));
+                    .acceptRequest(any(), eq(CREW_ID), eq(SQUAD_ID), eq(REQUEST_ID));
 
-            mockMvc.perform(patch("/api/crews/{crewId}/squads/{squadId}/requests", CREW_ID, SQUAD_ID)
+            mockMvc.perform(patch("/api/crews/{crewId}/squads/{squadId}/requests/{requestId}",
+                            CREW_ID, SQUAD_ID, REQUEST_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                            .content(objectMapper.writeValueAsString(ACCEPT_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
                     .andDo(document("squads-participants/accept/success",
@@ -140,10 +136,8 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(
                                     parameterWithName("crewId").description("Crew 아이디"),
-                                    parameterWithName("squadId").description("Squad 아이디")
-                            ),
-                            requestFields(
-                                    fieldWithPath("memberId").description("수락하고자 하는 Member 아이디")
+                                    parameterWithName("squadId").description("Squad 아이디"),
+                                    parameterWithName("requestId").description("Squad Request 아이디")
                             ),
                             responseBody()
                     ));

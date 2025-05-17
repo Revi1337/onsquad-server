@@ -26,7 +26,6 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.squad.application.dto.SquadAcceptDto;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadJpaRepository;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
@@ -157,14 +156,12 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
 
             Member ANDONG = memberJpaRepository.save(ANDONG());
             CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            SquadParticipant PARTICIPANT = squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER));
             clearPersistenceContext();
 
             // when
-            commandService.request(ANDONG.getId(), CREW.getId(), SQUAD.getId());
-
-            // then
-            assertThat(squadParticipantJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
-                    .isPresent();
+            commandService.acceptRequest(REVI.getId(), CREW.getId(), SQUAD.getId(), PARTICIPANT.getId());
+            clearPersistenceContext();
         }
 
         @Test
@@ -179,13 +176,12 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             Member ANDONG = memberJpaRepository.save(ANDONG());
             CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             squadMemberJpaRepository.save(GENERAL_SQUAD_MEMBER(SQUAD, CREW_MEMBER));
-
-            SquadAcceptDto ACCEPT_DTO = new SquadAcceptDto(ANDONG.getId());
+            Long REQUEST_ID = 1L;
             clearPersistenceContext();
 
             // when & then
             assertThatThrownBy(() -> commandService
-                    .acceptRequest(ANDONG.getId(), CREW.getId(), SQUAD.getId(), ACCEPT_DTO))
+                    .acceptRequest(ANDONG.getId(), CREW.getId(), SQUAD.getId(), REQUEST_ID))
                     .isExactlyInstanceOf(SquadMemberBusinessException.NotLeader.class);
         }
 
@@ -194,23 +190,23 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
         void fail2() {
             // given
             Member REVI = memberJpaRepository.save(REVI());
-            Crew CREW1 = crewJpaRepository.save(CREW_1(REVI));
-            CrewMember CREW1_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW1.getId(), REVI.getId()).get();
-            Squad SQUAD1 = squadJpaRepository.save(SQUAD(CREW1_OWNER, CREW1));
-
-            Crew CREW2 = crewJpaRepository.save(CREW_2(REVI));
-            CrewMember CREW2_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW2.getId(), REVI.getId()).get();
-            squadMemberJpaRepository.save(LEADER_SQUAD_MEMBER(SQUAD1, CREW2_OWNER));
+            Crew CREW1 = crewJpaRepository.save(CREW(REVI));
+            CrewMember OWNER1 = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW1.getId(), REVI.getId()).get();
+            Squad SQUAD1 = squadJpaRepository.save(SQUAD(OWNER1, CREW1));
 
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            CrewMember CREW2_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW2, ANDONG));
-            SquadAcceptDto ACCEPT_DTO = new SquadAcceptDto(ANDONG.getId());
+            Crew CREW2 = crewJpaRepository.save(CREW_2(ANDONG));
+            CrewMember OWNER2 = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW2.getId(), ANDONG.getId()).get();
+            Squad SQUAD2 = squadJpaRepository.save(SQUAD(OWNER2, CREW2));
+
+            crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW2, REVI));
+            squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD1, OWNER1));
+            Long REQUEST_ID = 1L;
             clearPersistenceContext();
 
-            // when & then
             assertThatThrownBy(() -> commandService
-                    .acceptRequest(REVI.getId(), CREW2.getId(), SQUAD1.getId(), ACCEPT_DTO))
-                    .isExactlyInstanceOf(MismatchReference.class);
+                    .acceptRequest(ANDONG.getId(), CREW2.getId(), SQUAD2.getId(), REQUEST_ID))
+                    .isExactlyInstanceOf(SquadBusinessException.MismatchReference.class);
         }
 
         @Test
@@ -228,13 +224,13 @@ class SquadParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             Squad SQUAD = squadJpaRepository.save(PRE_SQUAD);
 
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON));
-            SquadAcceptDto ACCEPT_DTO = new SquadAcceptDto(KWANGWON.getId());
+            CrewMember CREW_MEMBER2 = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON));
+            SquadParticipant PARTICIPANT = squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER2));
             clearPersistenceContext();
 
             // when & then
             assertThatThrownBy(() -> commandService
-                    .acceptRequest(REVI.getId(), CREW.getId(), SQUAD.getId(), ACCEPT_DTO))
+                    .acceptRequest(REVI.getId(), CREW.getId(), SQUAD.getId(), PARTICIPANT.getId()))
                     .isExactlyInstanceOf(SquadDomainException.NotEnoughLeft.class);
         }
     }
