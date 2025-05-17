@@ -46,9 +46,7 @@ public class SquadParticipantController {
             @PathVariable Long requestId,
             @Authenticate AuthMemberAttribute authMemberAttribute
     ) {
-        squadParticipantCommandService.acceptRequest(
-                authMemberAttribute.id(), crewId, squadId, requestId
-        );
+        squadParticipantCommandService.acceptRequest(authMemberAttribute.id(), crewId, squadId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
