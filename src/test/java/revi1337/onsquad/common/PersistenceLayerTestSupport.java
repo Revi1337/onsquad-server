@@ -1,5 +1,7 @@
 package revi1337.onsquad.common;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,4 +14,12 @@ import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
 @Import(PersistenceLayerConfiguration.class)
 @Sql({"/h2-truncate.sql"})
 public abstract class PersistenceLayerTestSupport {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    protected void clearPersistenceContext() {
+        entityManager.flush();
+        entityManager.clear();
+    }
 }

@@ -63,6 +63,17 @@ public class SquadParticipantController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
+    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/me")
+    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> cancelMyRequest(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @Authenticate AuthMemberAttribute authMemberAttribute
+    ) {
+        squadParticipantCommandService.cancelMyRequest(authMemberAttribute.id(), crewId, squadId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
     @GetMapping("/crews/{crewId}/squads/{squadId}/requests")
     public ResponseEntity<RestResponse<List<SimpleSquadParticipantResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
@@ -76,17 +87,6 @@ public class SquadParticipantController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(simpleSquadParticipantResponses));
-    }
-
-    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/me")
-    public ResponseEntity<RestResponse<List<SquadParticipantRequestResponse>>> cancelMyRequest(
-            @PathVariable Long crewId,
-            @PathVariable Long squadId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
-    ) {
-        squadParticipantCommandService.cancelMyRequest(authMemberAttribute.id(), crewId, squadId);
-
-        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @GetMapping("/squad-requests/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이지가 나뉠 가능성이 매우 큼

@@ -8,6 +8,8 @@ import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
 import static revi1337.onsquad.common.fixture.SquadParticipantFixture.SQUAD_PARTICIPANT;
 
+import java.util.Optional;
+import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +43,8 @@ class SquadParticipantJpaRepositoryTest extends PersistenceLayerTestSupport {
     private SquadParticipantJpaRepository squadParticipantJpaRepository;
 
     @Test
-    @DisplayName("deleteBySquadIdAndCrewMemberId 를 검증한다.")
-    void findBySquadIdAndCrewMemberId() {
+    @DisplayName("findByIdWithSquad 를 검증한다.")
+    void findByIdWithSquad() {
         Member REVI = memberJpaRepository.save(REVI());
         Crew CREW = crewJpaRepository.save(CREW(REVI));
         CrewMember CREW_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
@@ -51,8 +53,29 @@ class SquadParticipantJpaRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
         squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER));
 
-        assertThat(squadParticipantJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
-                .isPresent();
+        Optional<SquadParticipant> PARTICIPANT = squadParticipantJpaRepository.findByIdWithSquad(SQUAD.getId());
+
+        assertThat(PARTICIPANT).isPresent();
+        assertThat(PARTICIPANT.get().getSquad()).isNotInstanceOf(HibernateProxy.class);
+    }
+
+    @Test
+    @DisplayName("findBySquadIdAndCrewMemberId 를 검증한다.")
+    void findBySquadIdAndCrewMemberId() {
+        Member REVI = memberJpaRepository.save(REVI());
+        Crew CREW = crewJpaRepository.save(CREW(REVI));
+        CrewMember CREW_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+        Squad SQUAD = squadJpaRepository.save(SQUAD(CREW_OWNER, CREW));
+        Member ANDONG = memberJpaRepository.save(ANDONG());
+        CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+        squadParticipantJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER));
+        clearPersistenceContext();
+
+        Optional<SquadParticipant> PARTICIPANT = squadParticipantJpaRepository
+                .findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId());
+
+        assertThat(PARTICIPANT).isPresent();
+        assertThat(PARTICIPANT.get().getSquad()).isInstanceOf(HibernateProxy.class);
     }
 
     @Test
