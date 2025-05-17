@@ -38,8 +38,8 @@ public record EnrolledSquadDto(
             return new SimpleSquadInfoDto(
                     simpleSquadInfoDomainDto.id(),
                     simpleSquadInfoDomainDto.title().getValue(),
-                    simpleSquadInfoDomainDto.capacity().getValue(),
-                    simpleSquadInfoDomainDto.capacity().getRemain(),
+                    simpleSquadInfoDomainDto.capacity(),
+                    simpleSquadInfoDomainDto.capacity(),
                     simpleSquadInfoDomainDto.isLeader(),
                     simpleSquadInfoDomainDto.categories().stream()
                             .map(CategoryType::getText)

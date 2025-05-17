@@ -90,8 +90,8 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             assertThat(DTO.squad().id()).isEqualTo(SQUAD.getId());
             assertThat(DTO.squad().title()).isEqualTo(SQUAD.getTitle().getValue());
             assertThat(DTO.squad().content()).isEqualTo(SQUAD.getContent().getValue());
-            assertThat(DTO.squad().capacity()).isEqualTo(SQUAD.getCapacity().getValue());
-            assertThat(DTO.squad().remain()).isEqualTo(SQUAD.getCapacity().getRemain());
+            assertThat(DTO.squad().capacity()).isEqualTo(SQUAD.getCapacity());
+            assertThat(DTO.squad().remain()).isEqualTo(SQUAD.getRemain());
             assertThat(DTO.squad().address()).isEqualTo(SQUAD.getAddress().getValue());
             assertThat(DTO.squad().addressDetail()).isEqualTo(SQUAD.getAddress().getDetail());
             assertThat(DTO.squad().kakaoLink()).isEqualTo(SQUAD.getKakaoLink());

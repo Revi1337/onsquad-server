@@ -17,8 +17,8 @@ public record SimpleSquadDto(
         return new SimpleSquadDto(
                 simpleSquadDomainDto.id(),
                 simpleSquadDomainDto.title().getValue(),
-                simpleSquadDomainDto.capacity().getValue(),
-                simpleSquadDomainDto.capacity().getRemain(),
+                simpleSquadDomainDto.capacity(),
+                simpleSquadDomainDto.capacity(),
                 simpleSquadDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),

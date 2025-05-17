@@ -4,7 +4,10 @@ import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
+import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
+import static revi1337.onsquad.squad.error.SquadErrorCode.NOT_ENOUGH_LEFT;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,9 +29,9 @@ import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Content;
 import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.error.exception.SquadDomainException;
 import revi1337.onsquad.squad_category.domain.SquadCategory;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 
@@ -37,6 +40,8 @@ import revi1337.onsquad.squad_member.domain.SquadMember;
 @Entity
 public class Squad extends BaseEntity {
 
+    private static final int MIN_CAPACITY = 2;
+    private static final int MAX_CAPACITY = 1000;
     private static final int CATEGORY_BATCH_SIZE = 20;
 
     @Id
@@ -50,10 +55,13 @@ public class Squad extends BaseEntity {
     private Content content;
 
     @Embedded
-    private Capacity capacity;
-
-    @Embedded
     private Address address;
+
+    @Column(name = "capacity", nullable = false)
+    private int capacity;
+
+    @Column(name = "remain", nullable = false)
+    private int remain;
 
     private String kakaoLink;
 
@@ -88,14 +96,24 @@ public class Squad extends BaseEntity {
         return metadata.toEntity();
     }
 
-    private Squad(String title, String content, int capacity, String address, String addressDetail, String kakaoLink,
-                  String discordLink) {
+    private Squad(String title, String content, int capacity, String address, String addressDetail,
+                  String kakaoLink, String discordLink) {
+        validateCapacity(capacity);
         this.title = new Title(title);
         this.content = new Content(content);
-        this.capacity = new Capacity(capacity);
         this.address = new Address(address, addressDetail);
+        this.capacity = capacity;
+        this.remain = capacity;
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
+    }
+
+    public void addMembers(SquadMember... squadMembers) {
+        for (SquadMember squadMember : squadMembers) {
+            decreaseRemain();
+            squadMember.addSquad(this);
+            this.members.add(squadMember);
+        }
     }
 
     public void registerOwner(CrewMember crewMember) {
@@ -106,16 +124,18 @@ public class Squad extends BaseEntity {
         this.crew = crew;
     }
 
-    public void addMembers(SquadMember... squadMembers) {
-        for (SquadMember squadMember : squadMembers) {
-            capacity.decreaseRemain();
-            squadMember.addSquad(this);
-            this.members.add(squadMember);
+    public void increaseRemain() {
+        if (this.remain + 1 > MAX_CAPACITY) {
+            throw new SquadDomainException.NotEnoughLeft(NOT_ENOUGH_LEFT);
         }
+        this.remain += 1;
     }
 
-    public void increaseRemain() {
-        this.capacity.increaseRemain();
+    public void decreaseRemain() {
+        if (this.remain - 1 < 0) {
+            throw new SquadDomainException.NotEnoughLeft(NOT_ENOUGH_LEFT);
+        }
+        this.remain -= 1;
     }
 
     public boolean isNotMatchCrewId(Long crewId) {
@@ -175,6 +195,12 @@ public class Squad extends BaseEntity {
 
     public CrewMember getOwner() {
         return crewMember;
+    }
+
+    private void validateCapacity(int value) {
+        if (value < MIN_CAPACITY || value > MAX_CAPACITY) {
+            throw new SquadDomainException.InvalidCapacitySize(INVALID_CAPACITY_SIZE, MIN_CAPACITY, MAX_CAPACITY);
+        }
     }
 
     public record SquadMetadata(

@@ -70,6 +70,7 @@ public class SquadParticipantQueryDslRepository {
                                         squad.id,
                                         squad.title,
                                         squad.capacity,
+                                        squad.remain,
                                         new QSimpleMemberInfoDomainDto(
                                                 SQUAD_CREATOR.id,
                                                 SQUAD_CREATOR.nickname,
@@ -136,6 +137,7 @@ public class SquadParticipantQueryDslRepository {
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
+                                squad.remain,
                                 list(category.categoryType),
                                 new QSimpleMemberInfoDomainDto(
                                         SQUAD_CREATOR.id,

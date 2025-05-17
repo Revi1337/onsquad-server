@@ -62,6 +62,7 @@ public class SquadMemberQueryDslRepository {
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
+                                squad.remain,
                                 new CaseBuilder()
                                         .when(crewMember.member.id.eq(memberId))
                                         .then(true)
@@ -141,6 +142,7 @@ public class SquadMemberQueryDslRepository {
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
+                                squad.remain,
                                 new CaseBuilder()
                                         .when(squad.crewMember.id.eq(crewMemberId))
                                         .then(TRUE)
@@ -185,6 +187,7 @@ public class SquadMemberQueryDslRepository {
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
+                                squad.remain,
                                 new CaseBuilder()
                                         .when(SQUAD_CREW_MEMBER.member.id.eq(memberId))
                                         .then(TRUE)

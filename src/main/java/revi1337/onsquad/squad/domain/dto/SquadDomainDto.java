@@ -6,7 +6,6 @@ import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Content;
 import revi1337.onsquad.squad.domain.vo.Title;
 
@@ -14,7 +13,8 @@ public record SquadDomainDto(
         Long id,
         Title title,
         Content content,
-        Capacity capacity,
+        int capacity,
+        int remain,
         Address address,
         String kakaoLink,
         String discordLink,
@@ -22,19 +22,20 @@ public record SquadDomainDto(
         SimpleMemberInfoDomainDto leader
 ) {
     @QueryProjection
-    public SquadDomainDto(Long id, Title title, Content content, Capacity capacity, Address address,
+    public SquadDomainDto(Long id, Title title, Content content, int capacity, int remain, Address address,
                           String kakaoLink, String discordLink, SimpleMemberInfoDomainDto owner) {
-        this(id, title, content, capacity, address, kakaoLink, discordLink, new ArrayList<>(), owner);
+        this(id, title, content, capacity, remain, address, kakaoLink, discordLink, new ArrayList<>(), owner);
     }
 
     @QueryProjection
-    public SquadDomainDto(Long id, Title title, Content content, Capacity capacity, Address address,
+    public SquadDomainDto(Long id, Title title, Content content, int capacity, int remain, Address address,
                           String kakaoLink, String discordLink, List<CategoryType> categories,
                           SimpleMemberInfoDomainDto leader) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.capacity = capacity;
+        this.remain = remain;
         this.address = address;
         this.kakaoLink = kakaoLink;
         this.discordLink = discordLink;
