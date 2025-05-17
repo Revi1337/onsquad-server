@@ -18,6 +18,8 @@ public interface SquadParticipantRepository {
 
     Optional<SquadParticipant> findById(Long id);
 
+    Optional<SquadParticipant> findByIdWithSquad(Long id);
+
     Optional<SquadParticipant> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
 
     List<SquadParticipantRequest> findSquadParticipantRequestsByMemberId(Long memberId);
@@ -27,6 +29,16 @@ public interface SquadParticipantRepository {
     void deleteById(Long id);
 
     void deleteBySquadIdCrewMemberId(Long squadId, Long crewMemberId);
+
+    default SquadParticipant getById(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new SquadParticipantBusinessException.NeverRequested(NEVER_REQUESTED));
+    }
+
+    default SquadParticipant getByIdWithSquad(Long id) {
+        return findByIdWithSquad(id)
+                .orElseThrow(() -> new SquadParticipantBusinessException.NeverRequested(NEVER_REQUESTED));
+    }
 
     default SquadParticipant getBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
         return findBySquadIdAndCrewMemberId(squadId, crewMemberId)

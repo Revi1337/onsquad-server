@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.squad.application.dto.SquadAcceptDto;
 import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
@@ -51,21 +50,22 @@ public class SquadParticipantCommandService {
         );
     }
 
-    public void acceptRequest(Long memberId, Long crewId, Long squadId, SquadAcceptDto dto) {
-        validateAuthority(memberId, crewId, squadId);
-        Squad squad = squadRepository.getById(squadId);
+    public void acceptRequest(Long memberId, Long crewId, Long squadId, Long requestId) {
+        checkMemberIsSquadLeader(memberId, crewId, squadId);
+        SquadParticipant participant = squadParticipantRepository.getByIdWithSquad(requestId);
+        Squad squad = participant.getSquad();
         if (squad.isNotMatchCrewId(crewId)) {
             throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
         }
 
-        CrewMember acceptMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, dto.memberId());
+        CrewMember acceptMember = participant.getCrewMember();
         squad.addMembers(SquadMember.forGeneral(squad, acceptMember, LocalDateTime.now()));
         squadRepository.saveAndFlush(squad);
-        squadParticipantRepository.deleteBySquadIdCrewMemberId(squad.getId(), acceptMember.getId());
+        squadParticipantRepository.deleteById(participant.getId());
     }
 
     public void rejectRequest(Long memberId, Long crewId, Long squadId, Long requestId) {
-        validateAuthority(memberId, crewId, squadId);
+        checkMemberIsSquadLeader(memberId, crewId, squadId);
         Squad squad = squadRepository.getById(squadId);
         if (squad.isNotMatchCrewId(crewId)) {
             throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
@@ -84,7 +84,7 @@ public class SquadParticipantCommandService {
         squadParticipantRepository.deleteById(participant.getId());
     }
 
-    private void validateAuthority(Long memberId, Long crewId, Long squadId) {
+    private void checkMemberIsSquadLeader(Long memberId, Long crewId, Long squadId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         SquadMember squadMember = squadMemberRepository.getBySquadIdAndCrewMemberId(squadId, crewMember.getId());
         if (squadMember.isNotLeader()) {

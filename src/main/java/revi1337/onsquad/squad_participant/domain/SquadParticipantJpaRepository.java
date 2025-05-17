@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface SquadParticipantJpaRepository extends JpaRepository<SquadParticipant, Long>,
         SquadParticipantQueryRepository {
 
+    @Query("select sp from SquadParticipant as sp inner join fetch sp.squad where sp.id = :id")
+    Optional<SquadParticipant> findByIdWithSquad(Long id);
+
     @Query("select sp from SquadParticipant as sp where sp.squad.id = :squadId and sp.crewMember.id = :crewMemberId")
     Optional<SquadParticipant> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
 

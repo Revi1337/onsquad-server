@@ -1,5 +1,6 @@
 package revi1337.onsquad.squad.domain;
 
+import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
@@ -72,7 +73,7 @@ public class Squad extends BaseEntity {
     private final List<SquadCategory> categories = new ArrayList<>();
 
     @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "squad", cascade = PERSIST)
+    @OneToMany(mappedBy = "squad", cascade = {PERSIST, MERGE})
     private final List<SquadMember> members = new ArrayList<>();
 
     public static Squad create(SquadMetadata metadata, CrewMember crewMember, Crew crew) {

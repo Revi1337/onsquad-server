@@ -5,61 +5,36 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.squad.error.exception.SquadDomainException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class ContentTest {
 
     @Test
-    @DisplayName("스쿼드 인원이 2 ~ 1000 사이면 성공한다.")
-    void success() {
-        int count = 500;
-
-        Capacity capacity = new Capacity(count);
-
-        assertThat(capacity).isEqualTo(new Capacity(count));
-    }
-
-    @Test
-    @DisplayName("스쿼드 인원 감소에 성공한다.")
-    void success2() {
-        int count = 500;
-        Capacity capacity = new Capacity(count);
-
-        capacity.decreaseRemain();
-
-        assertThat(capacity.getRemain()).isEqualTo(499);
-    }
-
-    @Test
-    @DisplayName("스쿼드 인원이 2 미만이면 실패한다.")
+    @DisplayName("스쿼드 Title 값이 null 이면 실패한다.")
     void fail1() {
-        int count = 1;
-
-        assertThatThrownBy(() -> new Capacity(count))
-                .isExactlyInstanceOf(SquadDomainException.InvalidCapacitySize.class);
+        assertThatThrownBy(() -> new Title(null))
+                .isExactlyInstanceOf(NullPointerException.class);
     }
 
-    @Test
-    @DisplayName("스쿼드 인원이 1000 초과면 실패한다.")
-    void fail2() {
-        int count = 1001;
-
-        assertThatThrownBy(() -> new Capacity(count))
-                .isExactlyInstanceOf(SquadDomainException.InvalidCapacitySize.class);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "", "타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 1"
+    })
+    @DisplayName("스쿼드 Title 값이 1 ~ 40 자가 아니면 실패한다.")
+    void fail2(String value) {
+        assertThatThrownBy(() -> new Title(value))
+                .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    @DisplayName("스쿼드 자리가 다 차면 실패한다.")
-    void fail3() {
-        int count = 5;
-        Capacity capacity = new Capacity(count);
-        capacity.decreaseRemain();
-        capacity.decreaseRemain();
-        capacity.decreaseRemain();
-        capacity.decreaseRemain();
-        capacity.decreaseRemain();
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "타", "타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 타이틀 "
+    })
+    @DisplayName("스쿼드 Title 값이 1 ~ 40 자면 성공한다.")
+    void success(String value) {
+        Title title = new Title(value);
 
-        assertThatThrownBy(capacity::decreaseRemain)
-                .isExactlyInstanceOf(SquadDomainException.NotEnoughLeft.class);
+        assertThat(title).isEqualTo(new Title(value));
     }
 }
