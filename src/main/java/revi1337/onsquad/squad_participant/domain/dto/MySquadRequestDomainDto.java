@@ -7,7 +7,6 @@ import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
-import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Title;
 
 public record MySquadRequestDomainDto(
@@ -35,7 +34,8 @@ public record MySquadRequestDomainDto(
     public record SquadWithParticipant(
             Long id,
             Title title,
-            Capacity capacity,
+            int capacity,
+            int remain,
             List<CategoryType> categories,
             SimpleMemberInfoDomainDto owner,
             RequestParticipantDomainDto request
@@ -44,18 +44,20 @@ public record MySquadRequestDomainDto(
         public SquadWithParticipant(
                 Long id,
                 Title title,
-                Capacity capacity,
+                int capacity,
+                int remain,
                 SimpleMemberInfoDomainDto squadOwner,
                 RequestParticipantDomainDto request
         ) {
-            this(id, title, capacity, new ArrayList<>(), squadOwner, request);
+            this(id, title, capacity, remain, new ArrayList<>(), squadOwner, request);
         }
 
         @QueryProjection
         public SquadWithParticipant(
                 Long id,
                 Title title,
-                Capacity capacity,
+                int capacity,
+                int remain,
                 List<CategoryType> categories,
                 SimpleMemberInfoDomainDto owner,
                 RequestParticipantDomainDto request
@@ -63,6 +65,7 @@ public record MySquadRequestDomainDto(
             this.id = id;
             this.title = title;
             this.capacity = capacity;
+            this.remain = remain;
             this.categories = categories;
             this.owner = owner;
             this.request = request;

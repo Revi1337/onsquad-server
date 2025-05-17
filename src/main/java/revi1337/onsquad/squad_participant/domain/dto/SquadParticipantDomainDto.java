@@ -5,26 +5,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
-import revi1337.onsquad.squad.domain.vo.Capacity;
 import revi1337.onsquad.squad.domain.vo.Title;
 
 public record SquadParticipantDomainDto(
         Long crewId,
         Long id,
         Title title,
-        Capacity capacity,
+        int capacity,
+        int remain,
         List<CategoryType> categories,
         SimpleMemberInfoDomainDto squadOwner,
         RequestParticipantDomainDto request
 ) {
     @QueryProjection
-    public SquadParticipantDomainDto(Long crewId, Long id, Title title, Capacity capacity,
+    public SquadParticipantDomainDto(Long crewId, Long id, Title title, int capacity, int remain,
                                      List<CategoryType> categories, SimpleMemberInfoDomainDto squadOwner,
                                      RequestParticipantDomainDto request) {
         this.crewId = crewId;
         this.id = id;
         this.title = title;
         this.capacity = capacity;
+        this.remain = remain;
         this.categories = categories;
         this.squadOwner = squadOwner;
         this.request = request;

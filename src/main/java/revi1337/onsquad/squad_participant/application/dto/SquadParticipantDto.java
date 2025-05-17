@@ -19,8 +19,8 @@ public record SquadParticipantDto(
         return new SquadParticipantDto(
                 squadParticipantDomainDto.id(),
                 squadParticipantDomainDto.title().getValue(),
-                squadParticipantDomainDto.capacity().getValue(),
-                squadParticipantDomainDto.capacity().getRemain(),
+                squadParticipantDomainDto.capacity(),
+                squadParticipantDomainDto.capacity(),
                 squadParticipantDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
