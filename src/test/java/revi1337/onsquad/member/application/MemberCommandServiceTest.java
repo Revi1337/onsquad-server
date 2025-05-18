@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_ADDRESS_DETAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_ADDRESS_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
@@ -43,7 +43,7 @@ import revi1337.onsquad.auth.error.exception.AuthJoinException;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.inrastructure.file.application.FileStorageManager;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
-import revi1337.onsquad.member.application.dto.MemberJoinDto;
+import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 import revi1337.onsquad.member.application.event.MemberImageDeleteEvent;
@@ -84,7 +84,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         @DisplayName("메일 인증이 되어있지 않으면 회원가입에 실패한다.")
         void newMemberTest1() {
             when(repositoryChain.isMarkedVerificationStatusWith(any(), any())).thenReturn(false);
-            MemberJoinDto memberJoinDto = new MemberJoinDto(
+            MemberCreateDto memberCreateDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
                     REVI_PASSWORD_VALUE,
@@ -93,7 +93,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
                     REVI_ADDRESS_DETAIL_VALUE
             );
 
-            assertThatThrownBy(() -> memberCommandService.newMember(memberJoinDto))
+            assertThatThrownBy(() -> memberCommandService.newMember(memberCreateDto))
                     .isExactlyInstanceOf(AuthJoinException.NonAuthenticateEmail.class);
         }
 
@@ -102,7 +102,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         void newMemberTest2() {
             memberRepository.save(REVI());
             when(repositoryChain.isMarkedVerificationStatusWith(any(), any())).thenReturn(true);
-            MemberJoinDto memberJoinDto = new MemberJoinDto(
+            MemberCreateDto memberCreateDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
                     REVI_PASSWORD_VALUE,
@@ -111,7 +111,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
                     REVI_ADDRESS_DETAIL_VALUE
             );
 
-            assertThatThrownBy(() -> memberCommandService.newMember(memberJoinDto))
+            assertThatThrownBy(() -> memberCommandService.newMember(memberCreateDto))
                     .isExactlyInstanceOf(AuthJoinException.DuplicateNickname.class);
         }
 
@@ -120,7 +120,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         void newMemberTest3() {
             memberRepository.save(REVI());
             when(repositoryChain.isMarkedVerificationStatusWith(any(), any())).thenReturn(true);
-            MemberJoinDto memberJoinDto = new MemberJoinDto(
+            MemberCreateDto memberCreateDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     ANDONG_PASSWORD_VALUE,
                     ANDONG_PASSWORD_VALUE,
@@ -130,7 +130,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
             );
 
             // TODO 왜 AuthJoinException.DuplicateMember 인지? AuthJoinException.DuplicateEmail 이어야하는거 아닌가?
-            assertThatThrownBy(() -> memberCommandService.newMember(memberJoinDto))
+            assertThatThrownBy(() -> memberCommandService.newMember(memberCreateDto))
                     .isExactlyInstanceOf(AuthJoinException.DuplicateMember.class);
         }
     }
@@ -231,7 +231,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         void updateMemberImageTest1() {
             Long DUMMY_MEMBER_ID = 1L;
 
-            assertThatThrownBy(() -> memberCommandService.updateMemberImage(DUMMY_MEMBER_ID, any()))
+            assertThatThrownBy(() -> memberCommandService.updateImage(DUMMY_MEMBER_ID, any()))
                     .isExactlyInstanceOf(MemberBusinessException.NotFound.class);
         }
 
@@ -247,7 +247,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
             );
             when(fileStorageManager.upload(any(MultipartFile.class))).thenReturn(CHANGED_PROFILE_IMAGE_LINK);
 
-            memberCommandService.updateMemberImage(REVI.getId(), MOCK_FILE);
+            memberCommandService.updateImage(REVI.getId(), MOCK_FILE);
 
             assertAll(() -> {
                 verify(fileStorageManager, times(1)).upload(any(MultipartFile.class));
@@ -260,7 +260,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         @DisplayName("사용자가 기본 프로필 이미지를 갖고 있지 않으면, 이미지를 Overwrite 한다.")
         void updateMemberImageTest3() {
             Member REVI = memberRepository.save(REVI());
-            REVI.updateProfileImage(CHANGED_PROFILE_IMAGE_LINK);
+            REVI.updateImage(CHANGED_PROFILE_IMAGE_LINK);
             MockMultipartFile MOCK_FILE = new MockMultipartFile(
                     "file",
                     "test-image.png",
@@ -270,7 +270,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
             when(fileStorageManager.upload(any(MultipartFile.class), anyString()))
                     .thenReturn(CHANGED_PROFILE_IMAGE_LINK);
 
-            memberCommandService.updateMemberImage(REVI.getId(), MOCK_FILE);
+            memberCommandService.updateImage(REVI.getId(), MOCK_FILE);
 
             assertAll(() -> {
                 verify(fileStorageManager, times(1)).upload(any(MultipartFile.class), anyString());
@@ -289,7 +289,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         void deleteMemberImageTest1() {
             Long DUMMY_MEMBER_ID = 1L;
 
-            assertThatThrownBy(() -> memberCommandService.deleteMemberImage(DUMMY_MEMBER_ID))
+            assertThatThrownBy(() -> memberCommandService.deleteImage(DUMMY_MEMBER_ID))
                     .isExactlyInstanceOf(MemberBusinessException.NotFound.class);
         }
 
@@ -297,9 +297,9 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         @DisplayName("사용자가 기본 이미지를 사용하거나 이미지가 없다면, 삭제하지 않는다.")
         void deleteMemberImageTest2() {
             Member REVI = memberRepository.save(REVI());
-            REVI.changeDefaultProfileImage();
+            REVI.changeDefaultImage();
 
-            memberCommandService.deleteMemberImage(REVI.getId());
+            memberCommandService.deleteImage(REVI.getId());
 
             assertThat(events.stream(MemberImageDeleteEvent.class)).hasSize(0);
         }
@@ -308,9 +308,9 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         @DisplayName("사용자가 기본 이미지를 사용하지 않으면 이미지를 삭제한다.")
         void deleteMemberImageTest3() {
             Member REVI = memberRepository.save(REVI());
-            REVI.updateProfileImage(CHANGED_PROFILE_IMAGE_LINK);
+            REVI.updateImage(CHANGED_PROFILE_IMAGE_LINK);
 
-            memberCommandService.deleteMemberImage(REVI.getId());
+            memberCommandService.deleteImage(REVI.getId());
 
             assertAll(() -> {
                 assertThat(events.stream(MemberImageDeleteEvent.class)).hasSize(1);

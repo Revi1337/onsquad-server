@@ -36,7 +36,7 @@ import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeExpiringMa
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRedisRepository;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepositoryCandidates;
 import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleManager;
-import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
+import revi1337.onsquad.member.presentation.dto.request.MemberCreateRequest;
 
 @AutoConfigureMockMvc
 @MockBean({VerificationCacheLifeCycleManager.class, RecycleBinLifeCycleManager.class})
@@ -69,7 +69,7 @@ public class MemberConcurrencyControllerTest {
     @DisplayName("동시 사용자 생성 시, 하나만 성공하고 나머지는 실패한다.")
     @Test
     void concurrentMemberJoin() throws Exception {
-        MemberJoinRequest JOIN_REQUEST = new MemberJoinRequest(
+        MemberCreateRequest JOIN_REQUEST = new MemberCreateRequest(
                 REVI_EMAIL_VALUE, REVI_PASSWORD_VALUE,
                 REVI_PASSWORD_VALUE, REVI_NICKNAME_VALUE, REVI_ADDRESS_VALUE, REVI_ADDRESS_DETAIL_VALUE
         );

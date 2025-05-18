@@ -14,7 +14,7 @@ import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITL
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_4;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_5;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 
 import java.time.LocalDateTime;
 import java.util.List;

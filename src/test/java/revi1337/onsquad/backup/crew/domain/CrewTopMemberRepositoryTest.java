@@ -7,9 +7,9 @@ import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEM
 import static revi1337.onsquad.common.fixture.CrewTopMemberFixture.CREW1_ANDONG_RANK2;
 import static revi1337.onsquad.common.fixture.CrewTopMemberFixture.CREW1_KWANGWON_RANK3;
 import static revi1337.onsquad.common.fixture.CrewTopMemberFixture.CREW1_REVI_RANK1;
-import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
-import static revi1337.onsquad.common.fixture.MemberFixtures.KWANGWON;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
+import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_1;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_2;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_3;

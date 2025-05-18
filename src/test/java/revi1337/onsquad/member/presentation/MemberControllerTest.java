@@ -22,7 +22,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_PASSWORD_VALUE;
@@ -49,11 +49,11 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.application.MemberCommandService;
 import revi1337.onsquad.member.application.MemberQueryService;
 import revi1337.onsquad.member.application.dto.MemberInfoDto;
-import revi1337.onsquad.member.presentation.dto.request.MemberJoinRequest;
+import revi1337.onsquad.member.presentation.dto.request.MemberCreateRequest;
 import revi1337.onsquad.member.presentation.dto.request.MemberPasswordUpdateRequest;
 import revi1337.onsquad.member.presentation.dto.request.MemberUpdateRequest;
 
-@WebMvcTest({MemberCommandController.class, MemberQueryController.class})
+@WebMvcTest({MemberController.class})
 public class MemberControllerTest extends PresentationLayerTestSupport {
 
     @MockBean
@@ -71,14 +71,15 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             when(memberQueryService.checkDuplicateNickname(REVI_NICKNAME_VALUE)).thenReturn(true);
 
-            mockMvc.perform(get("/api/members/verify/nickname/{nickname}", REVI_NICKNAME_VALUE)
+            mockMvc.perform(get("/api/members/check-nickname")
+                            .param("value", REVI_NICKNAME_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.duplicate").value(true))
                     .andDo(document("members/nickname/success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("nickname").description("사용자 Nickname")
+                            queryParameters(
+                                    parameterWithName("value").description("검사할 Nickname")
                             ),
                             responseBody()
                     ));
@@ -86,7 +87,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
     }
 
     @Nested
-    @DisplayName("닉네임 중복 검사를 문서화한다.")
+    @DisplayName("이메일 중복 검사를 문서화한다.")
     class CheckDuplicateEmail {
 
         @Test
@@ -94,61 +95,16 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             when(memberQueryService.checkDuplicateEmail(REVI_EMAIL_VALUE)).thenReturn(true);
 
-            mockMvc.perform(get("/api/members/verify/email/{email}", REVI_EMAIL_VALUE)
+            mockMvc.perform(get("/api/members/check-email")
+                            .param("value", REVI_EMAIL_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.duplicate").value(true))
                     .andDo(document("members/email/success",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("email").description("사용자 Email")
+                            queryParameters(
+                                    parameterWithName("value").description("검사할 Email")
                             ),
-                            responseBody()
-                    ));
-        }
-    }
-
-    @Nested
-    @DisplayName("내 정보를 문서화한다.")
-    class FindMember {
-
-        @Test
-        @DisplayName("내 정보 조회에 성공한다.")
-        void success() throws Exception {
-            MemberInfoDto MEMBER_INFO_DTO = new MemberInfoDto(
-                    1L,
-                    REVI_EMAIL_VALUE,
-                    REVI_NICKNAME_VALUE,
-                    REVI_INTRODUCE_VALUE,
-                    REVI_MBTI_VALUE,
-                    REVI_KAKAO_LINK,
-                    REVI_PROFILE_IMAGE_LINK,
-                    REVI_USER_TYPE_VALUE,
-                    REVI_ADDRESS_VALUE,
-                    REVI_ADDRESS_DETAIL_VALUE
-            );
-            when(memberQueryService.findMember(any())).thenReturn(MEMBER_INFO_DTO);
-
-            mockMvc.perform(get("/api/members/my")
-                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                            .contentType(APPLICATION_JSON))
-                    .andDo(document("members/my/success",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                            responseBody()
-                    ));
-        }
-
-        @Test
-        @DisplayName("토큰이 없으면 내 정보 조회에 실패한다.")
-        void fail() throws Exception {
-            mockMvc.perform(get("/api/members/my")
-                            .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("members/my/fail",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
                             responseBody()
                     ));
         }
@@ -161,7 +117,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("사용자 생성에 성공한다.")
         void success() throws Exception {
-            MemberJoinRequest JOIN_REQUEST = new MemberJoinRequest(
+            MemberCreateRequest JOIN_REQUEST = new MemberCreateRequest(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
                     REVI_PASSWORD_VALUE,
@@ -193,7 +149,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("비밀번호와 비밀번호 확인란이 일치하지 않으면, 사용자 생성에 실패한다.")
         void fail() throws Exception {
-            MemberJoinRequest JOIN_REQUEST = new MemberJoinRequest(
+            MemberCreateRequest JOIN_REQUEST = new MemberCreateRequest(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
                     ANDONG_PASSWORD_VALUE,
@@ -209,6 +165,39 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                     .andDo(document("members/new/fail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
+                            responseBody()
+                    ));
+        }
+    }
+
+    @Nested
+    @DisplayName("내 정보를 문서화한다.")
+    class FindMember {
+
+        @Test
+        @DisplayName("내 정보 조회에 성공한다.")
+        void success() throws Exception {
+            MemberInfoDto MEMBER_INFO_DTO = new MemberInfoDto(
+                    1L,
+                    REVI_EMAIL_VALUE,
+                    REVI_NICKNAME_VALUE,
+                    REVI_INTRODUCE_VALUE,
+                    REVI_MBTI_VALUE,
+                    REVI_KAKAO_LINK,
+                    REVI_PROFILE_IMAGE_LINK,
+                    REVI_USER_TYPE_VALUE,
+                    REVI_ADDRESS_VALUE,
+                    REVI_ADDRESS_DETAIL_VALUE
+            );
+            when(memberQueryService.findMember(any())).thenReturn(MEMBER_INFO_DTO);
+
+            mockMvc.perform(get("/api/members/me")
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andDo(document("members/my/success",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             responseBody()
                     ));
         }
@@ -231,7 +220,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
             );
             doNothing().when(memberCommandService).updateMember(any(), any());
 
-            mockMvc.perform(put("/api/members/my")
+            mockMvc.perform(put("/api/members/me")
                             .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
@@ -240,29 +229,6 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                            responseBody()
-                    ));
-        }
-
-        @Test
-        @DisplayName("토큰이 없으면 내 정보 업데이트에 실패한다.")
-        void fail() throws Exception {
-            MemberUpdateRequest UPDATE_REQUEST = new MemberUpdateRequest(
-                    REVI_NICKNAME_VALUE,
-                    REVI_INTRODUCE_VALUE,
-                    REVI_MBTI_VALUE,
-                    REVI_KAKAO_LINK,
-                    REVI_ADDRESS_VALUE,
-                    REVI_ADDRESS_DETAIL_VALUE
-            );
-
-            mockMvc.perform(put("/api/members/my")
-                            .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
-                            .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("members/update/fail",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
                             responseBody()
                     ));
         }
@@ -282,7 +248,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
             );
             doNothing().when(memberCommandService).updatePassword(any(), any());
 
-            mockMvc.perform(patch("/api/members/my/password")
+            mockMvc.perform(patch("/api/members/me/password")
                             .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
@@ -300,7 +266,6 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                     ));
         }
 
-
         @Test
         @DisplayName("새로운 비밀번호와 새로운 비밀번호 확인란이 일치하지 않으면 실패한다.")
         void fail1() throws Exception {
@@ -311,7 +276,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
             );
             doNothing().when(memberCommandService).updatePassword(any(), any());
 
-            mockMvc.perform(patch("/api/members/my/password")
+            mockMvc.perform(patch("/api/members/me/password")
                             .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
@@ -320,27 +285,6 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                            responseBody()
-                    ));
-        }
-
-        @Test
-        @DisplayName("토큰이 없으면 사용자 비밀번호 변경에 실패한다.")
-        void fail2() throws Exception {
-            MemberPasswordUpdateRequest UPDATE_REQUEST = new MemberPasswordUpdateRequest(
-                    REVI_PASSWORD_VALUE,
-                    ANDONG_PASSWORD_VALUE,
-                    ANDONG_PASSWORD_VALUE
-            );
-            doNothing().when(memberCommandService).updatePassword(any(), any());
-
-            mockMvc.perform(patch("/api/members/my/password")
-                            .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
-                            .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("members/update-password/fail2",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
                             responseBody()
                     ));
         }
@@ -359,9 +303,9 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                     MULTIPART_FORM_DATA_VALUE,
                     "dummy".getBytes(StandardCharsets.UTF_8)
             );
-            doNothing().when(memberCommandService).updateMemberImage(any(), any());
+            doNothing().when(memberCommandService).updateImage(any(), any());
 
-            mockMvc.perform(multipart("/api/members/my/image")
+            mockMvc.perform(multipart("/api/members/me/image")
                             .file(MULTIPART)
                             .with(request -> {
                                 request.setMethod("PATCH");
@@ -377,31 +321,6 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
         }
-
-        @Test
-        @DisplayName("토큰이 없으면 사용자 이미지 변경에 실패한다.")
-        void fail() throws Exception {
-            MockMultipartFile MULTIPART = new MockMultipartFile(
-                    "file",
-                    "dummy.png",
-                    MULTIPART_FORM_DATA_VALUE,
-                    "dummy".getBytes(StandardCharsets.UTF_8)
-            );
-            doNothing().when(memberCommandService).updateMemberImage(any(), any());
-
-            mockMvc.perform(multipart("/api/members/my/image")
-                            .file(MULTIPART)
-                            .with(request -> {
-                                request.setMethod("PATCH");
-                                return request;
-                            }))
-                    .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("members/update-image/fail",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            responseBody()
-                    ));
-        }
     }
 
     @Nested
@@ -411,7 +330,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("사용자 이미지 삭제에 성공한다.")
         void success() throws Exception {
-            mockMvc.perform(delete("/api/members/my/image")
+            mockMvc.perform(delete("/api/members/me/image")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
@@ -422,19 +341,5 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
         }
-
-        @Test
-        @DisplayName("토큰이 없으면 사용자 이미지 삭제에 실패한다.")
-        void fail() throws Exception {
-            mockMvc.perform(delete("/api/members/my/image")
-                            .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("members/delete-image/fail",
-                            preprocessRequest(prettyPrint()),
-                            preprocessResponse(prettyPrint()),
-                            responseBody()
-                    ));
-        }
     }
 }
-

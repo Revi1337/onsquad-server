@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI_WITH_ID;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI_WITH_ID;
 import static revi1337.onsquad.common.fixture.TokenFixture.ACCESS_TOKEN_SUBJECT;
 import static revi1337.onsquad.common.fixture.TokenFixture.REFRESH_TOKEN_SUBJECT;
 

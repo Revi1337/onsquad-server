@@ -10,9 +10,9 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_DETAIL_VALUE
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_IMAGE_LINK_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
-import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
-import static revi1337.onsquad.common.fixture.MemberFixtures.KWANGWON;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
+import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.hashtag.domain.vo.HashtagType.ACTIVE;
 import static revi1337.onsquad.hashtag.domain.vo.HashtagType.ESCAPE;
 

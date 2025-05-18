@@ -37,4 +37,8 @@ public class Nickname {
             throw new MemberDomainException.InvalidNicknameLength(INVALID_NICKNAME_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
     }
+
+    public Nickname update(String value) {
+        return new Nickname(value);
+    }
 }

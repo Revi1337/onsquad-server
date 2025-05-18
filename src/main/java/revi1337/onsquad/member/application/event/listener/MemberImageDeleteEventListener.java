@@ -20,7 +20,7 @@ public class MemberImageDeleteEventListener {
     public void handleMemberImageDeleteEvent(MemberImageDeleteEvent event) {
         Member member = event.member();
         RecycleBin.append(member.getProfileImage());
-        member.changeDefaultProfileImage();
+        member.changeDefaultImage();
         memberRepository.saveAndFlush(member);
     }
 }

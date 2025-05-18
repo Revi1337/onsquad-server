@@ -10,7 +10,7 @@ import static revi1337.onsquad.common.fixture.AnnounceFixture.ANNOUNCE;
 import static revi1337.onsquad.common.fixture.AnnounceFixture.ANNOUNCE_1;
 import static revi1337.onsquad.common.fixture.AnnounceFixture.ANNOUNCE_2;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;

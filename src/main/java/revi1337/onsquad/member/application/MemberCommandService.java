@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.error.exception.AuthJoinException;
 import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
-import revi1337.onsquad.member.application.dto.MemberJoinDto;
+import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 import revi1337.onsquad.member.application.event.MemberImageDeleteEvent;
@@ -36,8 +36,8 @@ public class MemberCommandService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final VerificationCodeRepository repositoryChain;
 
-    public void newMember(MemberJoinDto dto) {
-        ensureMemberRequirements(dto);
+    public void newMember(MemberCreateDto dto) {
+        ensureRequirements(dto);
         Member member = dto.toEntity();
         member.updatePassword(passwordEncoder.encode(dto.password()));
         memberRepository.save(member);
@@ -46,7 +46,7 @@ public class MemberCommandService {
     @Transactional
     public void updateMember(Long memberId, MemberUpdateDto dto) {
         Member member = memberRepository.getById(memberId);
-        member.updateProfile(dto.toEntity());
+        member.updateProfile(dto.toMemberBase());
         memberRepository.saveAndFlush(member);
     }
 
@@ -61,19 +61,19 @@ public class MemberCommandService {
         memberRepository.saveAndFlush(member);
     }
 
-    public void updateMemberImage(Long memberId, MultipartFile file) {
+    public void updateImage(Long memberId, MultipartFile file) {
         Member member = memberRepository.getById(memberId);
         applicationEventPublisher.publishEvent(new MemberImageUpdateEvent(member, file));
     }
 
-    public void deleteMemberImage(Long memberId) {
+    public void deleteImage(Long memberId) {
         Member member = memberRepository.getById(memberId);
-        if (member.hasNotDefaultProfileImage()) {
+        if (member.hasNotDefaultImage()) {
             applicationEventPublisher.publishEvent(new MemberImageDeleteEvent(member));
         }
     }
 
-    private void ensureMemberRequirements(MemberJoinDto dto) {
+    private void ensureRequirements(MemberCreateDto dto) {
         if (!repositoryChain.isMarkedVerificationStatusWith(dto.email(), VerificationStatus.SUCCESS)) {
             throw new AuthJoinException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
         }

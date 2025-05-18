@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_participant.domain;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -34,20 +35,36 @@ public class CrewParticipantJdbcRepository {
         return new CrewParticipant(
                 generatedKeyHolder.getKey() == null ? null : generatedKeyHolder.getKey().longValue(),
                 prepareCrew(crewId),
-                Member.builder().id(memberId).build(),
+                prepareMember(memberId),
                 now
         );
     }
 
+    private Member prepareMember(Long memberId) {
+        try {
+            Constructor<Member> defaultConstructor = ReflectionUtils.accessibleConstructor(Member.class);
+            defaultConstructor.setAccessible(true);
+            Member member = defaultConstructor.newInstance();
+            Field idField = member.getClass().getDeclaredField("id");
+            idField.setAccessible(true);
+            ReflectionUtils.setField(idField, member, memberId);
+            return member;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     private Crew prepareCrew(Long crewId) {
         try {
-            Crew crew = new Crew();
+            Constructor<Crew> defaultConstructor = ReflectionUtils.accessibleConstructor(Crew.class);
+            defaultConstructor.setAccessible(true);
+            Crew crew = defaultConstructor.newInstance();
             Field idField = crew.getClass().getDeclaredField("id");
             idField.setAccessible(true);
             ReflectionUtils.setField(idField, crew, crewId);
             return crew;
-        } catch (NoSuchFieldException ignored) {
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
         }
-        throw new IllegalStateException();
     }
 }

@@ -17,9 +17,9 @@ import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITL
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.MANAGER_CREW_MEMBER;
-import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
-import static revi1337.onsquad.common.fixture.MemberFixtures.KWANGWON;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
+import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

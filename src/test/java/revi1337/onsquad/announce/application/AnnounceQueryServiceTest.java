@@ -8,7 +8,7 @@ import static revi1337.onsquad.common.fixture.AnnounceFixture.FIXED_ANNOUNCE;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
 import org.junit.jupiter.api.BeforeEach;

@@ -2,97 +2,257 @@ package revi1337.onsquad.member.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.ADDRESS_DETAIL_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.ADDRESS_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_ADDRESS_DETAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_ADDRESS_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_KAKAO_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_PROFILE_IMAGE_LINK;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.CHANGED_PROFILE_IMAGE_LINK;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.INTRODUCE_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.KAKAO_LINK;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.NICKNAME_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.PROFILE_IMAGE_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_DETAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_INTRODUCE_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_KAKAO_LINK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_PROFILE_IMAGE_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_OAUTH_PROFILE_IMAGE_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_PASSWORD_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_UUID_PASSWORD_VALUE;
 
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.common.fixture.MemberFixtures;
+import org.springframework.util.ReflectionUtils;
+import revi1337.onsquad.member.domain.Member.MemberBase;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Introduce;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.domain.vo.UserType;
 
 class MemberTest {
 
     @Test
-    @DisplayName("회원의 기본 프로필 이미지, 카카오 링크, 한줄 소개, 유저 타입, MBTI 를 확인합니다.")
+    @DisplayName("일반 사용자 생성에 성공한다.")
     void testMember1() {
-        Member member = MemberFixtures.DEFAULT();
+        Member revi = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
 
         assertAll(() -> {
-            assertThat(member.getEmail()).isEqualTo(new Email(EMAIL_VALUE));
-            assertThat(member.getAddress()).isEqualTo(new Address(ADDRESS_VALUE, ADDRESS_DETAIL_VALUE));
-            assertThat(member.getNickname()).isEqualTo(new Nickname(NICKNAME_VALUE));
-            assertThat(member.getIntroduce()).isEqualTo(new Introduce(INTRODUCE_VALUE));
-            assertThat(member.getProfileImage()).isEqualTo(PROFILE_IMAGE_LINK);
-            assertThat(member.getKakaoLink()).isEqualTo(KAKAO_LINK);
-            assertThat(member.getUserType()).isSameAs(UserType.GENERAL);
-            assertThat(member.getMbti()).isSameAs(Mbti.ENTP);
+            assertThat(revi.getEmail()).isEqualTo(new Email(REVI_EMAIL_VALUE));
+            assertThat(revi.getPassword()).isEqualTo(Password.raw(REVI_PASSWORD_VALUE));
+            assertThat(revi.getAddress()).isEqualTo(new Address(REVI_ADDRESS_VALUE, REVI_ADDRESS_DETAIL_VALUE));
+            assertThat(revi.getNickname()).isEqualTo(new Nickname(REVI_NICKNAME_VALUE));
+
+            assertThat(revi.getIntroduce()).isEqualTo(Member.DEFAULT_INTRODUCE);
+            assertThat(revi.getProfileImage()).isEqualTo(Member.DEFAULT_IMAGE);
+            assertThat(revi.getKakaoLink()).isEqualTo(Member.DEFAULT_KAKAO_LINK);
+            assertThat(revi.getUserType()).isSameAs(Member.DEFAULT_USER_TYPE);
+            assertThat(revi.getMbti()).isNull();
         });
     }
 
     @Test
-    @DisplayName("회원정보 업데이트를 성공합니다.")
+    @DisplayName("OAuth2 사용자 생성에 성공한다.")
     void testMember2() {
-        Member member = MemberFixtures.DEFAULT();
-
-        member.updateProfile(MemberFixtures.ANDONG());
+        Member revi = Member.oauth2(
+                REVI_EMAIL_VALUE,
+                REVI_UUID_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_OAUTH_PROFILE_IMAGE_LINK,
+                UserType.KAKAO
+        );
 
         assertAll(() -> {
-            assertThat(member.getAddress()).isEqualTo(new Address(ANDONG_ADDRESS_VALUE, ANDONG_ADDRESS_DETAIL_VALUE));
-            assertThat(member.getNickname()).isEqualTo(new Nickname(ANDONG_NICKNAME_VALUE));
-            assertThat(member.getIntroduce()).isEqualTo(new Introduce(ANDONG_INTRODUCE_VALUE));
-            assertThat(member.getProfileImage()).isEqualTo(ANDONG_PROFILE_IMAGE_LINK);
-            assertThat(member.getKakaoLink()).isEqualTo(ANDONG_KAKAO_LINK);
-            assertThat(member.getUserType()).isSameAs(UserType.GENERAL);
-            assertThat(member.getMbti()).isSameAs(Mbti.ISFP);
+            assertThat(revi.getEmail()).isEqualTo(new Email(REVI_EMAIL_VALUE));
+            assertThat(revi.getPassword()).isEqualTo(Password.uuid(REVI_UUID_PASSWORD_VALUE));
+            assertThat(revi.getNickname()).isEqualTo(new Nickname(REVI_NICKNAME_VALUE));
+            assertThat(revi.getProfileImage()).isEqualTo(REVI_OAUTH_PROFILE_IMAGE_LINK);
+
+            assertThat(revi.getAddress()).isEqualTo(Member.DEFAULT_ADDRESS);
+            assertThat(revi.getIntroduce()).isEqualTo(Member.DEFAULT_INTRODUCE);
+            assertThat(revi.getKakaoLink()).isEqualTo(Member.DEFAULT_KAKAO_LINK);
+            assertThat(revi.getUserType()).isSameAs(UserType.KAKAO);
+            assertThat(revi.getMbti()).isNull();
         });
     }
 
     @Test
-    @DisplayName("회원 프로필 이미지 정보를 업데이트합니다.")
-    void testMember3() {
-        Member member = MemberFixtures.REVI();
+    @DisplayName("회원정보 프로필 업데이트에 성공한다.")
+    void updateProfile() {
+        Member revi = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        MemberBase andongBase = new MemberBase(
+                ANDONG_NICKNAME_VALUE,
+                ANDONG_INTRODUCE_VALUE,
+                ANDONG_MBTI_VALUE,
+                ANDONG_ADDRESS_VALUE,
+                ANDONG_ADDRESS_DETAIL_VALUE,
+                ANDONG_KAKAO_LINK
+        );
 
-        member.updateProfileImage(CHANGED_PROFILE_IMAGE_LINK);
+        revi.updateProfile(andongBase);
 
-        assertThat(member.getProfileImage()).isEqualTo(CHANGED_PROFILE_IMAGE_LINK);
+        assertAll(() -> {
+            assertThat(revi.getNickname()).isEqualTo(new Nickname(ANDONG_NICKNAME_VALUE));
+            assertThat(revi.getIntroduce()).isEqualTo(new Introduce(ANDONG_INTRODUCE_VALUE));
+            assertThat(revi.getMbti()).isSameAs(Mbti.ISFP);
+            assertThat(revi.getAddress()).isEqualTo(new Address(ANDONG_ADDRESS_VALUE, ANDONG_ADDRESS_DETAIL_VALUE));
+            assertThat(revi.getKakaoLink()).isEqualTo(ANDONG_KAKAO_LINK);
+
+            assertThat(revi.getEmail()).isEqualTo(new Email(REVI_EMAIL_VALUE));
+            assertThat(revi.getPassword()).isEqualTo(Password.raw(REVI_PASSWORD_VALUE));
+        });
     }
 
     @Test
-    @DisplayName("OAuth2 사용자 생성을 테스트합니다.")
-    void testMember4() {
-        Member member = MemberFixtures.REVI_GOOGLE();
+    @DisplayName("프로필 이미지 정보를 업데이트에 성공한다.")
+    void updateImage() {
+        Member revi = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        String changedImage = "https://changeed_img.com";
 
-        assertAll(() -> {
-            assertThat(member.getEmail()).isEqualTo(new Email(REVI_EMAIL_VALUE));
-            assertThat(member.getAddress()).isEqualTo(new Address(ADDRESS_VALUE, ADDRESS_DETAIL_VALUE));
-            assertThat(member.getNickname()).isEqualTo(new Nickname(REVI_NICKNAME_VALUE));
-            assertThat(member.getIntroduce()).isEqualTo(new Introduce(REVI_INTRODUCE_VALUE));
-            assertThat(member.getProfileImage()).isEqualTo(REVI_PROFILE_IMAGE_LINK);
-            assertThat(member.getKakaoLink()).isEqualTo(REVI_KAKAO_LINK);
-            assertThat(member.getUserType()).isSameAs(UserType.GOOGLE);
-            assertThat(member.getMbti()).isSameAs(Mbti.ISTP);
-        });
+        revi.updateImage(changedImage);
+
+        assertThat(revi.getProfileImage()).isEqualTo(changedImage);
+    }
+
+    @Test
+    @DisplayName("기본 프로필 이미지 변경에 성공한다.")
+    void changeDefaultImage() {
+        Member revi = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        String changedImage = "https://changeed_img.com";
+        revi.updateImage(changedImage);
+
+        revi.changeDefaultImage();
+
+        assertThat(revi.hasDefaultImage()).isTrue();
+    }
+
+    @Test
+    @DisplayName("기본 프로필 이미를 갖고있는지 검증에 성공한다.")
+    void hasDefaultImage() {
+        Member revi = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+
+        assertThat(revi.hasDefaultImage()).isTrue();
+    }
+
+    @Test
+    @DisplayName("기본 프로필 이미지를 제외한 이미지를 갖고있는지 검증에 성공한다.")
+    void hasNotDefaultImage() {
+        Member revi = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        String changedImage = "https://changeed_img.com";
+        revi.updateImage(changedImage);
+
+        assertThat(revi.hasNotDefaultImage()).isTrue();
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경에 성공한다.")
+    void updatePassword() {
+        Member revi = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        String changedPassword = "12345!@asb";
+
+        revi.updatePassword(changedPassword);
+
+        assertThat(revi.getPassword()).isEqualTo(Password.raw(changedPassword));
+    }
+
+    @Test
+    @DisplayName("회원이 동등성 검사에 성공한다. (1)")
+    void equalsSuccess() throws NoSuchFieldException {
+        // given
+        Member revi1 = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        Field idField1 = revi1.getClass().getDeclaredField("id");
+        idField1.setAccessible(true);
+        ReflectionUtils.setField(idField1, revi1, 1L);
+
+        Member revi2 = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        Field idField2 = revi2.getClass().getDeclaredField("id");
+        idField2.setAccessible(true);
+        ReflectionUtils.setField(idField2, revi2, 1L);
+
+        // when & then
+        assertThat(revi1).isEqualTo(revi2);
+    }
+
+    @Test
+    @DisplayName("회원이 동등성 검사에 성공한다. (2)")
+    void equalsFail() throws NoSuchFieldException {
+        // given
+        Member revi1 = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        Field idField1 = revi1.getClass().getDeclaredField("id");
+        idField1.setAccessible(true);
+        ReflectionUtils.setField(idField1, revi1, 1L);
+
+        Member revi2 = Member.general(
+                REVI_EMAIL_VALUE,
+                REVI_PASSWORD_VALUE,
+                REVI_NICKNAME_VALUE,
+                REVI_ADDRESS_VALUE,
+                REVI_ADDRESS_DETAIL_VALUE
+        );
+        Field idField2 = revi2.getClass().getDeclaredField("id");
+        idField2.setAccessible(true);
+        ReflectionUtils.setField(idField2, revi2, 2L);
+
+        // when & then
+        assertThat(revi1).isNotEqualTo(revi2);
     }
 }

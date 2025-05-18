@@ -2,7 +2,7 @@ package revi1337.onsquad.crew_participant.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;

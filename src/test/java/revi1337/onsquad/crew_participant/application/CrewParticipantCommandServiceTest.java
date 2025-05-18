@@ -7,9 +7,9 @@ import static revi1337.onsquad.common.fixture.CrewFixture.CREW_1;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_2;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
 import static revi1337.onsquad.common.fixture.CrewParticipantFixture.CREW_PARTICIPANT;
-import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
-import static revi1337.onsquad.common.fixture.MemberFixtures.KWANGWON;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
+import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

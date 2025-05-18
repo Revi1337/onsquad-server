@@ -20,8 +20,8 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VA
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_KAKAO_LINK_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.DEFAULT_ORIGINAL_FILENAME;
-import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.RequestFixture.DEFAULT_MULTIPART_NAME;
 import static revi1337.onsquad.common.fixture.RequestFixture.PNG_MULTIPART;
 

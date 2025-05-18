@@ -23,9 +23,9 @@ public class MemberImageUpdateEventListener {
         Member member = event.member();
         MultipartFile file = event.file();
 
-        if (member.hasDefaultProfileImage()) {
+        if (member.hasDefaultImage()) {
             String uploadUrl = memberS3StorageManager.upload(file);
-            member.updateProfileImage(uploadUrl);
+            member.updateImage(uploadUrl);
             memberRepository.saveAndFlush(member);
             return;
         }

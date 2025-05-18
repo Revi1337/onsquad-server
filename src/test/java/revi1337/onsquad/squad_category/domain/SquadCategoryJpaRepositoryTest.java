@@ -11,8 +11,8 @@ import static revi1337.onsquad.common.fixture.CategoryFixture.GAME_CATEGORY;
 import static revi1337.onsquad.common.fixture.CategoryFixture.TENNIS_CATEGORY;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
-import static revi1337.onsquad.common.fixture.MemberFixtures.ANDONG;
-import static revi1337.onsquad.common.fixture.MemberFixtures.REVI;
+import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
+import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_1;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_2;
 

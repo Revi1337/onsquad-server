@@ -3,7 +3,7 @@ package revi1337.onsquad.crew.domain;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PUBLIC;
+import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.member.domain.Member;
 
 @Getter
-@NoArgsConstructor(access = PUBLIC)
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 @Table(
         uniqueConstraints = {

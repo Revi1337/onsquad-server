@@ -21,7 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.inrastructure.file.support.RecycleBinLifeCycleManager;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
 import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleManager;
-import revi1337.onsquad.member.application.dto.MemberJoinDto;
+import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
@@ -50,14 +50,14 @@ class MemberConcurrencyServiceTest {
         int threadCount = 5;
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-        MemberJoinDto memberJoinDto = new MemberJoinDto(
+        MemberCreateDto memberCreateDto = new MemberCreateDto(
                 EMAIL_VALUE, PASSWORD_VALUE, PASSWORD_VALUE, NICKNAME_VALUE, ADDRESS_VALUE, ADDRESS_DETAIL_VALUE
         );
 
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    memberCommandService.newMember(memberJoinDto);
+                    memberCommandService.newMember(memberCreateDto);
                 } finally {
                     countDownLatch.countDown();
                 }

@@ -39,7 +39,7 @@ import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.domain.vo.UserType;
 
-public class MemberFixtures {
+public class MemberFixture {
 
     public static Member DEFAULT() {
         return Member.builder()
@@ -58,7 +58,7 @@ public class MemberFixtures {
                 .introduce(new Introduce(REVI_INTRODUCE_VALUE))
                 .address(new Address(REVI_ADDRESS_VALUE, REVI_ADDRESS_DETAIL_VALUE))
                 .password(Password.encrypted(REVI_ENCRYPTED_PASSWORD_VALUE))
-                .profileImage(REVI_PROFILE_IMAGE_LINK)
+                .image(REVI_PROFILE_IMAGE_LINK)
                 .kakaoLink(REVI_KAKAO_LINK)
                 .mbti(Mbti.ISTP)
                 .build();
@@ -71,7 +71,7 @@ public class MemberFixtures {
                 .introduce(new Introduce(ANDONG_INTRODUCE_VALUE))
                 .address(new Address(ANDONG_ADDRESS_VALUE, ANDONG_ADDRESS_DETAIL_VALUE))
                 .password(Password.encrypted(ANDONG_ENCRYPTED_PASSWORD_VALUE))
-                .profileImage(ANDONG_PROFILE_IMAGE_LINK)
+                .image(ANDONG_PROFILE_IMAGE_LINK)
                 .kakaoLink(ANDONG_KAKAO_LINK)
                 .mbti(Mbti.ISFP)
                 .build();
@@ -84,7 +84,7 @@ public class MemberFixtures {
                 .introduce(new Introduce(KWANGWON_INTRODUCE_VALUE))
                 .address(new Address(KWANGWON_ADDRESS_VALUE, KWANGWON_ADDRESS_DETAIL_VALUE))
                 .password(Password.encrypted(KWANGWON_ENCRYPTED_PASSWORD_VALUE))
-                .profileImage(KWANGWON_PROFILE_IMAGE_LINK)
+                .image(KWANGWON_PROFILE_IMAGE_LINK)
                 .kakaoLink(KWANGWON_KAKAO_LINK)
                 .mbti(Mbti.ENFJ)
                 .build();

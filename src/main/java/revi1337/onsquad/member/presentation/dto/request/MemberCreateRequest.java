@@ -1,15 +1,14 @@
 package revi1337.onsquad.member.presentation.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import revi1337.onsquad.member.application.dto.MemberJoinDto;
+import java.util.HashMap;
+import java.util.Map;
+import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.presentation.validator.StringComparator;
 import revi1337.onsquad.member.presentation.validator.StringValidator;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @StringValidator
-public record MemberJoinRequest(
+public record MemberCreateRequest(
         @NotEmpty String email,
         @NotEmpty String password,
         @NotEmpty String passwordConfirm,
@@ -18,8 +17,8 @@ public record MemberJoinRequest(
         @NotEmpty String addressDetail
 ) implements StringComparator {
 
-    public MemberJoinDto toDto() {
-        return new MemberJoinDto(email, password, passwordConfirm, nickname, address, addressDetail);
+    public MemberCreateDto toDto() {
+        return new MemberCreateDto(email, password, passwordConfirm, nickname, address, addressDetail);
     }
 
     @Override

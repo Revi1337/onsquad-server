@@ -16,7 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.common.fixture.MemberFixtures;
+import revi1337.onsquad.common.fixture.MemberFixture;
 import revi1337.onsquad.member.application.dto.MemberInfoDto;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
@@ -34,7 +34,7 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     @Test
     @DisplayName("닉네임이 중복되면 true 를 반한한다.")
     void checkDuplicateNickname1() {
-        memberRepository.save(MemberFixtures.REVI());
+        memberRepository.save(MemberFixture.REVI());
 
         boolean exists = memberQueryService.checkDuplicateNickname(REVI_NICKNAME_VALUE);
 
@@ -44,7 +44,7 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     @Test
     @DisplayName("닉네임이 중복되지 않으면 false 를 반한한다.")
     void checkDuplicateNickname2() {
-        memberRepository.save(MemberFixtures.REVI());
+        memberRepository.save(MemberFixture.REVI());
 
         boolean exists = memberQueryService.checkDuplicateNickname(ANDONG_NICKNAME_VALUE);
 
@@ -54,7 +54,7 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     @Test
     @DisplayName("이메일이 중복되면 true 를 반한한다.")
     void checkDuplicateEmail1() {
-        memberRepository.save(MemberFixtures.REVI());
+        memberRepository.save(MemberFixture.REVI());
 
         boolean exists = memberQueryService.checkDuplicateEmail(REVI_EMAIL_VALUE);
 
@@ -64,7 +64,7 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     @Test
     @DisplayName("닉네임이 중복되지 않으면 false 를 반한한다.")
     void checkDuplicateEmail2() {
-        memberRepository.save(MemberFixtures.REVI());
+        memberRepository.save(MemberFixture.REVI());
 
         boolean exists = memberQueryService.checkDuplicateEmail(ANDONG_EMAIL_VALUE);
 
@@ -74,7 +74,7 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     @Test
     @DisplayName("사용자가 존재하면 dto 를 반환한다.")
     void findMember1() {
-        Member revi = memberRepository.save(MemberFixtures.REVI());
+        Member revi = memberRepository.save(MemberFixture.REVI());
         Long reviId = revi.getId();
 
         MemberInfoDto memberInfoDto = memberQueryService.findMember(reviId);

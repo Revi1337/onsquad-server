@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
-import revi1337.onsquad.common.fixture.MemberFixtures;
+import revi1337.onsquad.common.fixture.MemberFixture;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
@@ -30,7 +30,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     @Test
     @DisplayName("사용자의 id 로 조회했을 때, 사용자가 존재하는지 확인한다.")
     void findById() {
-        Member revi = MemberFixtures.REVI();
+        Member revi = MemberFixture.REVI();
         memberRepository.save(revi);
         entityManager.flush();
         entityManager.clear();
@@ -43,7 +43,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     @Test
     @DisplayName("사용자의 Email 로 조회했을 때, 사용자가 존재하는지 확인한다.")
     void findByEmail() {
-        memberRepository.save(MemberFixtures.REVI());
+        memberRepository.save(MemberFixture.REVI());
 
         Optional<Member> optionalMember = memberRepository.findByEmail(new Email(REVI_EMAIL_VALUE));
 
@@ -62,7 +62,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     @Test
     @DisplayName("Email 이 사용되고 있으면 true 를 반환한다.")
     void existsByEmail() {
-        memberRepository.save(MemberFixtures.REVI());
+        memberRepository.save(MemberFixture.REVI());
 
         boolean exists = memberRepository.existsByEmail(new Email(REVI_EMAIL_VALUE));
 
@@ -72,7 +72,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     @Test
     @DisplayName("Nickname 이 사용되고 있으면 true 를 반환한다.")
     void existsByNickname() {
-        memberRepository.save(MemberFixtures.REVI());
+        memberRepository.save(MemberFixture.REVI());
 
         boolean exists = memberRepository.existsByNickname(new Nickname(REVI_NICKNAME_VALUE));
 

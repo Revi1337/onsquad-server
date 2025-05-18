@@ -42,4 +42,11 @@ public abstract class MemberDomainException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription(), begin, end));
         }
     }
+
+    public static class InvalidMbti extends MemberBusinessException {
+
+        public InvalidMbti(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

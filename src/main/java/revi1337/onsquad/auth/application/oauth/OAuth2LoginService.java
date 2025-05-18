@@ -32,8 +32,13 @@ public class OAuth2LoginService {
     private JsonWebToken forceParticipant(PlatformUserProfile platformUserProfile) {
         String encryptedPassword = passwordEncoder.encode(UUID.randomUUID().toString());
         UserType userType = platformUserTypeResolver.resolveUserType(platformUserProfile);
-        Member member = Member.createOAuth2User(platformUserProfile.getEmail(), platformUserProfile.getNickname(),
-                platformUserProfile.getProfileImage(), encryptedPassword, userType);
+        Member member = Member.oauth2(
+                platformUserProfile.getEmail(),
+                encryptedPassword,
+                platformUserProfile.getNickname(),
+                platformUserProfile.getProfileImage(),
+                userType
+        );
         memberRepository.save(member);
 
         JsonWebToken jsonWebToken = jsonWebTokenService.generateTokenPair(MemberDto.from(member));

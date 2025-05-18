@@ -19,6 +19,7 @@ public class Introduce {
     private static final int MIN_LENGTH = 1;
     private static final int MAX_LENGTH = 200;
     private static final int PERSIST_MAX_LENGTH = MAX_LENGTH * 3;
+    private static final String DEFAULT_VALUE = "소개 없음";
 
     @Column(name = "introduce", length = PERSIST_MAX_LENGTH)
     private String value;
@@ -27,6 +28,10 @@ public class Introduce {
         validateNull(value);
         validateSize(value);
         this.value = value;
+    }
+
+    public static Introduce defaultValue() {
+        return new Introduce(DEFAULT_VALUE);
     }
 
     public void validateNull(String value) {
@@ -41,7 +46,7 @@ public class Introduce {
         }
     }
 
-    public Introduce updateIntroduce(String introduce) {
-        return new Introduce(introduce);
+    public Introduce update(String value) {
+        return new Introduce(value);
     }
 }

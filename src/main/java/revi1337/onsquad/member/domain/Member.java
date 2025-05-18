@@ -1,29 +1,24 @@
 package revi1337.onsquad.member.domain;
 
-import static revi1337.onsquad.member.domain.vo.UserType.GENERAL;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
+import static lombok.AccessLevel.PUBLIC;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import revi1337.onsquad.common.domain.BaseEntity;
-import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Introduce;
@@ -32,108 +27,110 @@ import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.domain.vo.UserType;
 
-@DynamicInsert
 @DynamicUpdate
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "name_uniq_idx", columnNames = "email")
+        @UniqueConstraint(name = "member_uidx_email", columnNames = "email")
 })
 @Entity
 public class Member extends BaseEntity {
 
-    private static final Introduce DEFAULT_INTRODUCE = new Introduce("소개 없음");
-    private static final Address DEFAULT_ADDRESS = new Address("공백", "공백");
-    private static final UserType DEFAULT_USER_TYPE = UserType.GENERAL;
-    private static final String DEFAULT_KAKAO_LINK = "";
-    private static final String DEFAULT_PROFILE_IMAGE = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
+    public static final Introduce DEFAULT_INTRODUCE = Introduce.defaultValue();
+    public static final Address DEFAULT_ADDRESS = Address.defaultValue();
+    public static final UserType DEFAULT_USER_TYPE = UserType.GENERAL;
+    public static final String DEFAULT_KAKAO_LINK = "";
+    public static final String DEFAULT_IMAGE = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Embedded
     private Email email;
 
     @Embedded
-    private Address address = DEFAULT_ADDRESS;
+    private Password password;
 
     @Embedded
     private Nickname nickname;
 
     @Embedded
-    private Password password;
+    private Introduce introduce;
 
     @Embedded
-    private Introduce introduce = DEFAULT_INTRODUCE;
+    private Address address;
 
-    private String profileImage = DEFAULT_PROFILE_IMAGE;
+    private String profileImage;
 
-    private String kakaoLink = DEFAULT_KAKAO_LINK;
+    private String kakaoLink;
 
-    @ColumnDefault("'GENERAL'")
-    @Enumerated(EnumType.STRING)
-    private UserType userType = GENERAL;
+    @Enumerated(STRING)
+    @Column(nullable = false)
+    private UserType userType;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     private Mbti mbti;
 
-    @OneToMany(mappedBy = "member")
-    private final Set<Crew> crews = new HashSet<>();
-
-    public static Member createOAuth2User(String email, String nickname,
-                                          String profileImage, String password, UserType userType) {
+    public static Member general(String email, String password, String nickname, String address, String addressDetail) {
         return Member.builder()
                 .email(new Email(email))
+                .password(Password.raw(password))
                 .nickname(new Nickname(nickname))
+                .address(new Address(address, addressDetail))
+                .build();
+    }
+
+    public static Member oauth2(String email, String password, String nickname, String image, UserType userType) {
+        return Member.builder()
+                .email(new Email(email))
                 .password(Password.uuid(password))
-                .address(DEFAULT_ADDRESS)
-                .profileImage(profileImage)
+                .nickname(new Nickname(nickname))
+                .image(image)
                 .userType(userType)
                 .build();
     }
 
-    @Builder
-    private Member(Long id, Email email, Address address, Nickname nickname, Password password, Introduce introduce,
-                   String profileImage, String kakaoLink, UserType userType, Mbti mbti) {
-        this.id = id;
+    @Builder(access = PUBLIC)
+    private Member(Email email, Password password, Nickname nickname, Introduce introduce, Address address,
+                   String image, String kakaoLink, UserType userType, Mbti mbti) {
         this.email = email;
-        this.address = address == null ? DEFAULT_ADDRESS : address;
-        this.nickname = nickname;
         this.password = password;
+        this.nickname = nickname;
         this.introduce = introduce == null ? DEFAULT_INTRODUCE : introduce;
-        this.profileImage = profileImage == null ? DEFAULT_PROFILE_IMAGE : profileImage;
+        this.address = address == null ? DEFAULT_ADDRESS : address;
+        this.profileImage = image == null ? DEFAULT_IMAGE : image;
         this.kakaoLink = kakaoLink == null ? DEFAULT_KAKAO_LINK : kakaoLink;
         this.userType = userType == null ? DEFAULT_USER_TYPE : userType;
         this.mbti = mbti;
     }
 
-    public boolean hasNotDefaultProfileImage() {
-        return !hasDefaultProfileImage();
+    public void updateProfile(MemberBase memberBase) {
+        this.nickname = this.nickname.update(memberBase.nickname());
+        this.introduce = this.introduce.update(memberBase.introduce());
+        this.mbti = Mbti.parse(memberBase.mbti());
+        this.kakaoLink = memberBase.kakaoLink();
+        this.address = this.address.update(memberBase.address(), memberBase.addressDetail());
     }
 
-    public boolean hasDefaultProfileImage() {
-        return DEFAULT_PROFILE_IMAGE.equals(profileImage);
+    public void updateImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
-    public void changeDefaultProfileImage() {
-        this.profileImage = DEFAULT_PROFILE_IMAGE;
+    public void changeDefaultImage() {
+        this.profileImage = DEFAULT_IMAGE;
     }
 
     public void updatePassword(String password) {
         this.password = this.password.update(password);
     }
 
-    public void updateProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+    public boolean hasNotDefaultImage() {
+        return !hasDefaultImage();
     }
 
-    public void updateProfile(Member member) {
-        this.nickname = member.getNickname();
-        this.introduce = member.getIntroduce();
-        this.mbti = member.getMbti();
-        this.kakaoLink = member.getKakaoLink();
-        this.address = member.getAddress();
+    public boolean hasDefaultImage() {
+        return DEFAULT_IMAGE.equals(profileImage);
     }
 
     @Override
@@ -150,5 +147,15 @@ public class Member extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    public record MemberBase(
+            String nickname,
+            String introduce,
+            String mbti,
+            String address,
+            String addressDetail,
+            String kakaoLink
+    ) {
     }
 }

@@ -37,7 +37,7 @@ class IntroduceTest {
     void testIntroduce3() {
         Introduce introduce = new Introduce("aaaaaa");
 
-        Introduce newIntroduce = introduce.updateIntroduce("aaaaaa");
+        Introduce newIntroduce = introduce.update("aaaaaa");
 
         assertNotSame(introduce, newIntroduce);
     }

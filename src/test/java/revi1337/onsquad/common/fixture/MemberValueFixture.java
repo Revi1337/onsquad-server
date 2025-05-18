@@ -1,5 +1,6 @@
 package revi1337.onsquad.common.fixture;
 
+import java.util.UUID;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Introduce;
@@ -32,6 +33,7 @@ public class MemberValueFixture {
 
     public static final String PASSWORD_VALUE = "12345!@asa";
     public static final String REVI_PASSWORD_VALUE = "12345!@asa";
+    public static final String REVI_UUID_PASSWORD_VALUE = UUID.randomUUID().toString();
     public static final String ANDONG_PASSWORD_VALUE = "12345!@asb";
     public static final String KWANGWON_PASSWORD_VALUE = "12345!@asc";
 
@@ -48,6 +50,7 @@ public class MemberValueFixture {
     public static final String PROFILE_IMAGE_LINK = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
     public static final String CHANGED_PROFILE_IMAGE_LINK = "https://changeed_img.com";
     public static final String REVI_PROFILE_IMAGE_LINK = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
+    public static final String REVI_OAUTH_PROFILE_IMAGE_LINK = "https:///oauth2/onsquad/default/member-default.svg";
     public static final String ANDONG_PROFILE_IMAGE_LINK = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
     public static final String KWANGWON_PROFILE_IMAGE_LINK = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
 
