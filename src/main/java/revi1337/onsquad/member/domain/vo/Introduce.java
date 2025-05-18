@@ -42,7 +42,7 @@ public class Introduce {
 
     public void validateSize(String value) {
         if (value.length() > MAX_LENGTH || value.isEmpty()) {
-            throw new MemberDomainException.InvalidIntroduceLength(INVALID_INTRODUCE_LENGTH, MIN_LENGTH, MAX_LENGTH);
+            throw new MemberDomainException.InvalidIntroduceLength(INVALID_INTRODUCE_LENGTH);
         }
     }
 

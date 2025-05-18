@@ -34,12 +34,20 @@ public abstract class MemberDomainException extends RuntimeException {
         public InvalidNicknameLength(ErrorCode errorCode, Number begin, Number end) {
             super(errorCode, String.format(errorCode.getDescription(), begin, end));
         }
+
+        public InvalidNicknameLength(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
     }
 
     public static class InvalidIntroduceLength extends MemberBusinessException {
 
         public InvalidIntroduceLength(ErrorCode errorCode, Number begin, Number end) {
             super(errorCode, String.format(errorCode.getDescription(), begin, end));
+        }
+
+        public InvalidIntroduceLength(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 

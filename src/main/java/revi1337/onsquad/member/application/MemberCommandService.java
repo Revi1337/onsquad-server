@@ -1,8 +1,8 @@
 package revi1337.onsquad.member.application;
 
-import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_MEMBER;
-import static revi1337.onsquad.auth.error.AuthErrorCode.DUPLICATE_NICKNAME;
-import static revi1337.onsquad.auth.error.AuthErrorCode.NON_AUTHENTICATE_EMAIL;
+import static revi1337.onsquad.member.error.MemberErrorCode.DUPLICATE_EMAIL;
+import static revi1337.onsquad.member.error.MemberErrorCode.DUPLICATE_NICKNAME;
+import static revi1337.onsquad.member.error.MemberErrorCode.NON_AUTHENTICATE_EMAIL;
 import static revi1337.onsquad.member.error.MemberErrorCode.WRONG_PASSWORD;
 
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.auth.error.exception.AuthJoinException;
 import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
@@ -54,7 +53,7 @@ public class MemberCommandService {
     public void updatePassword(Long memberId, MemberPasswordUpdateDto dto) {
         Member member = memberRepository.getById(memberId);
         if (!passwordEncoder.matches(dto.currentPassword(), member.getPassword().getValue())) {
-            throw new MemberBusinessException.WrongPassword(WRONG_PASSWORD, member.getId());
+            throw new MemberBusinessException.WrongPassword(WRONG_PASSWORD);
         }
 
         member.updatePassword(passwordEncoder.encode(dto.newPassword()));
@@ -75,13 +74,13 @@ public class MemberCommandService {
 
     private void ensureRequirements(MemberCreateDto dto) {
         if (!repositoryChain.isMarkedVerificationStatusWith(dto.email(), VerificationStatus.SUCCESS)) {
-            throw new AuthJoinException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
+            throw new MemberBusinessException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
         }
         if (memberRepository.existsByNickname(new Nickname(dto.nickname()))) {
-            throw new AuthJoinException.DuplicateNickname(DUPLICATE_NICKNAME, dto.nickname());
+            throw new MemberBusinessException.DuplicateNickname(DUPLICATE_NICKNAME);
         }
         if (memberRepository.existsByEmail(new Email(dto.email()))) {
-            throw new AuthJoinException.DuplicateMember(DUPLICATE_MEMBER);
+            throw new MemberBusinessException.DuplicateEmail(DUPLICATE_EMAIL);
         }
     }
 }

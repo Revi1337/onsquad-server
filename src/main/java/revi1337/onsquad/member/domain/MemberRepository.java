@@ -28,6 +28,6 @@ public interface MemberRepository {
 
     default Member getById(Long id) {
         return findById(id)
-                .orElseThrow(() -> new MemberBusinessException.NotFound(NOTFOUND, id));
+                .orElseThrow(() -> new MemberBusinessException.NotFound(NOTFOUND));
     }
 }

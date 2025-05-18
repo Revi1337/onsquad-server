@@ -34,7 +34,7 @@ public class Nickname {
         }
 
         if (value.length() > MAX_LENGTH || value.length() < MIN_LENGTH) {
-            throw new MemberDomainException.InvalidNicknameLength(INVALID_NICKNAME_LENGTH, MIN_LENGTH, MAX_LENGTH);
+            throw new MemberDomainException.InvalidNicknameLength(INVALID_NICKNAME_LENGTH);
         }
     }
 

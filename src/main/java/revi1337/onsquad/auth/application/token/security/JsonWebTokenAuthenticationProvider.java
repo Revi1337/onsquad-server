@@ -18,7 +18,6 @@ public class JsonWebTokenAuthenticationProvider implements AuthenticationProvide
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String emailPrincipal = authentication.getPrincipal().toString();

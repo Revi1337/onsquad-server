@@ -15,17 +15,38 @@ public abstract class MemberBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
+    public static class DuplicateNickname extends MemberBusinessException {
+
+        public DuplicateNickname(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
+    public static class NonAuthenticateEmail extends MemberBusinessException {
+
+        public NonAuthenticateEmail(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
+    public static class DuplicateEmail extends MemberBusinessException {
+
+        public DuplicateEmail(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
     public static class NotFound extends MemberBusinessException {
 
-        public NotFound(ErrorCode errorCode, Number memberId) {
-            super(errorCode, String.format(errorCode.getDescription(), memberId));
+        public NotFound(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 
     public static class WrongPassword extends MemberBusinessException {
 
-        public WrongPassword(ErrorCode errorCode, Number memberId) {
-            super(errorCode, String.format(errorCode.getDescription(), memberId));
+        public WrongPassword(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 }

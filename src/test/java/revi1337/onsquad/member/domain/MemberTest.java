@@ -11,10 +11,10 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_DETAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ENCRYPTED_PASSWORD_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_OAUTH_PROFILE_IMAGE_LINK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_PASSWORD_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_UUID_PASSWORD_VALUE;
 
 import java.lang.reflect.Field;
 import org.junit.jupiter.api.DisplayName;
@@ -61,7 +61,7 @@ class MemberTest {
     void testMember2() {
         Member revi = Member.oauth2(
                 REVI_EMAIL_VALUE,
-                REVI_UUID_PASSWORD_VALUE,
+                REVI_ENCRYPTED_PASSWORD_VALUE,
                 REVI_NICKNAME_VALUE,
                 REVI_OAUTH_PROFILE_IMAGE_LINK,
                 UserType.KAKAO
@@ -69,7 +69,7 @@ class MemberTest {
 
         assertAll(() -> {
             assertThat(revi.getEmail()).isEqualTo(new Email(REVI_EMAIL_VALUE));
-            assertThat(revi.getPassword()).isEqualTo(Password.uuid(REVI_UUID_PASSWORD_VALUE));
+            assertThat(revi.getPassword()).isEqualTo(Password.encrypted(REVI_ENCRYPTED_PASSWORD_VALUE));
             assertThat(revi.getNickname()).isEqualTo(new Nickname(REVI_NICKNAME_VALUE));
             assertThat(revi.getProfileImage()).isEqualTo(REVI_OAUTH_PROFILE_IMAGE_LINK);
 

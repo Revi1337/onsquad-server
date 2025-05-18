@@ -47,11 +47,6 @@ public class Password {
         return new Password(value);
     }
 
-    public static Password uuid(String value) {
-        validateNull(value);
-        return new Password(value);
-    }
-
     private static void validatePasswordFormat(String value) {
         if (invalidPassword(value)) {
             throw new MemberDomainException.InvalidPasswordFormat(INVALID_PASSWORD_FORMAT);

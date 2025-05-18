@@ -84,7 +84,7 @@ public class Member extends BaseEntity {
     public static Member oauth2(String email, String password, String nickname, String image, UserType userType) {
         return Member.builder()
                 .email(new Email(email))
-                .password(Password.uuid(password))
+                .password(Password.encrypted(password))
                 .nickname(new Nickname(nickname))
                 .image(image)
                 .userType(userType)
