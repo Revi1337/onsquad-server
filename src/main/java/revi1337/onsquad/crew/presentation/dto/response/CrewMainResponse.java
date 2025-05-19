@@ -8,7 +8,7 @@ import revi1337.onsquad.squad.presentation.dto.response.SquadResponse;
 
 public record CrewMainResponse(
         boolean canManage,
-        CrewInfoResponse crew,
+        CrewResponse crew,
         List<AnnounceResponse> announces,
         List<Top5CrewMemberResponse> topMembers,
         List<SquadResponse> squads
@@ -16,7 +16,7 @@ public record CrewMainResponse(
     public static CrewMainResponse from(CrewMainDto crewMainDto) {
         return new CrewMainResponse(
                 crewMainDto.canManage(),
-                CrewInfoResponse.from(crewMainDto.crew()),
+                CrewResponse.from(crewMainDto.crew()),
                 crewMainDto.announces().stream()
                         .map(AnnounceResponse::from)
                         .toList(),

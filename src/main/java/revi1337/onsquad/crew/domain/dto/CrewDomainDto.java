@@ -12,7 +12,7 @@ import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
 
 @Getter
-public class CrewInfoDomainDto {
+public class CrewDomainDto {
 
     private Long id;
     private Name name;
@@ -26,9 +26,9 @@ public class CrewInfoDomainDto {
     private SimpleMemberInfoDomainDto crewOwner;
 
     @QueryProjection
-    public CrewInfoDomainDto(Long id, Name name, Introduce introduce, Detail detail, String imageUrl, String kakaoLink,
-                             Collection<HashtagType> hashtagTypes, Long memberCnt,
-                             SimpleMemberInfoDomainDto crewOwner) {
+    public CrewDomainDto(Long id, Name name, Introduce introduce, Detail detail, String imageUrl, String kakaoLink,
+                         Collection<HashtagType> hashtagTypes, Long memberCnt,
+                         SimpleMemberInfoDomainDto crewOwner) {
         this.id = id;
         this.name = name;
         this.introduce = introduce;
@@ -41,15 +41,15 @@ public class CrewInfoDomainDto {
     }
 
     @QueryProjection
-    public CrewInfoDomainDto(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink,
-                             Collection<HashtagType> hashtagTypes, Long memberCnt,
-                             SimpleMemberInfoDomainDto crewOwner) {
+    public CrewDomainDto(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink,
+                         Collection<HashtagType> hashtagTypes, Long memberCnt,
+                         SimpleMemberInfoDomainDto crewOwner) {
         this(id, name, introduce, null, imageUrl, kakaoLink, hashtagTypes, memberCnt, crewOwner);
     }
 
     @QueryProjection
-    public CrewInfoDomainDto(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink, Long memberCnt,
-                             SimpleMemberInfoDomainDto crewOwner) {
+    public CrewDomainDto(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink, Long memberCnt,
+                         SimpleMemberInfoDomainDto crewOwner) {
         this(id, name, introduce, null, imageUrl, kakaoLink, new ArrayList<>(), memberCnt, crewOwner);
     }
 }

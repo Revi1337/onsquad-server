@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.QSimpleCrewDomainDto;
 import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithCrewDomainDto;
 import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithMemberDomainDto;
 import revi1337.onsquad.crew_participant.domain.dto.QCrewRequestDomainDto;
@@ -29,7 +29,7 @@ public class CrewParticipantQueryDslRepository {
     public List<CrewRequestWithCrewDomainDto> fetchAllWithSimpleCrewByMemberId(Long memberId) {
         return jpaQueryFactory
                 .select(new QCrewRequestWithCrewDomainDto(
-                        new QSimpleCrewInfoDomainDto(
+                        new QSimpleCrewDomainDto(
                                 crew.id,
                                 crew.name,
                                 crew.introduce,

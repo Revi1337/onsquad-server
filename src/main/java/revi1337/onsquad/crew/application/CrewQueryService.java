@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.crew.application.dto.CrewDto;
 import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
@@ -25,20 +25,20 @@ public class CrewQueryService {
         return crewRepository.existsByName(new Name(crewName));
     }
 
-    public CrewInfoDto findCrewById(Long crewId) {
-        return CrewInfoDto.from(crewRepository.getCrewById(crewId));
+    public CrewDto findCrewById(Long crewId) {
+        return CrewDto.from(crewRepository.getCrewById(crewId));
     }
 
     public CrewWithParticipantStateDto findCrewById(Long memberId, Long crewId) {
         Boolean alreadyJoin = crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId);
-        CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
+        CrewDomainDto crewInfo = crewRepository.getCrewById(crewId);
 
         return CrewWithParticipantStateDto.from(alreadyJoin, crewInfo);
     }
 
-    public List<CrewInfoDto> fetchCrewsByName(String crewName, Pageable pageable) {
+    public List<CrewDto> fetchCrewsByName(String crewName, Pageable pageable) {
         return crewRepository.fetchCrewsByName(crewName, pageable).stream()
-                .map(CrewInfoDto::from)
+                .map(CrewDto::from)
                 .toList();
     }
 

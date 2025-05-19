@@ -21,8 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
-import revi1337.onsquad.crew.domain.dto.QCrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
+import revi1337.onsquad.crew.domain.dto.QCrewDomainDto;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
 
@@ -32,14 +32,14 @@ public class CrewQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Optional<CrewInfoDomainDto> findCrewById(Long id) {
-        Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
+    public Optional<CrewDomainDto> findCrewById(Long id) {
+        Map<Long, CrewDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member).on(crew.id.eq(id))
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
                 .transform(groupBy(crew.id)
-                        .as(new QCrewInfoDomainDto(
+                        .as(new QCrewDomainDto(
                                 crew.id,
                                 crew.name,
                                 crew.introduce,
@@ -61,14 +61,14 @@ public class CrewQueryDslRepository {
         return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
     }
 
-    public Optional<CrewInfoDomainDto> findCrewWithJoinStatusByIdAndMemberId(Long id) {
-        Map<Long, CrewInfoDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
+    public Optional<CrewDomainDto> findCrewWithJoinStatusByIdAndMemberId(Long id) {
+        Map<Long, CrewDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member).on(crew.id.eq(id))
                 .leftJoin(crew.hashtags, crewHashtag)
                 .leftJoin(crewHashtag.hashtag, hashtag)
                 .transform(groupBy(crew.id)
-                        .as(new QCrewInfoDomainDto(
+                        .as(new QCrewDomainDto(
                                 crew.id,
                                 crew.name,
                                 crew.introduce,
@@ -90,8 +90,8 @@ public class CrewQueryDslRepository {
         return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
     }
 
-    public Page<CrewInfoDomainDto> fetchCrewsByName(String name, Pageable pageable) {
-        List<CrewInfoDomainDto> transformedCrewInfos = jpaQueryFactory
+    public Page<CrewDomainDto> fetchCrewsByName(String name, Pageable pageable) {
+        List<CrewDomainDto> transformedCrewInfos = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, member)
                 .where(crewNameStartsWith(name))
@@ -99,7 +99,7 @@ public class CrewQueryDslRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .transform(groupBy(crew.id)
-                        .list(new QCrewInfoDomainDto(
+                        .list(new QCrewDomainDto(
                                 crew.id,
                                 crew.name,
                                 crew.introduce,
@@ -117,7 +117,7 @@ public class CrewQueryDslRepository {
                 );
 
         List<Long> crewIds = transformedCrewInfos.stream()
-                .map(CrewInfoDomainDto::getId)
+                .map(CrewDomainDto::getId)
                 .toList();
 
         Map<Long, List<HashtagType>> transformedHashtags = jpaQueryFactory

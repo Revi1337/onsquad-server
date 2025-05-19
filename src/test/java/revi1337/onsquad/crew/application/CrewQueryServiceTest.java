@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.crew.application.dto.CrewDto;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.CrewRepository;
@@ -100,7 +100,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewRepository.save(CREW_WITH_IMAGE(REVI, CREW_IMAGE_LINK_VALUE));
             crewHashtagRepository.batchInsert(CREW.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
 
-            CrewInfoDto CREW_INFO = crewQueryService.findCrewById(CREW.getId());
+            CrewDto CREW_INFO = crewQueryService.findCrewById(CREW.getId());
 
             assertAll(() -> {
                 assertThat(CREW_INFO.id()).isEqualTo(CREW.getId());
@@ -134,7 +134,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             crewHashtagRepository.batchInsert(CREW_2.getId(), Hashtag.fromHashtagTypes(List.of(FOODIE, MOVIE)));
             crewHashtagRepository.batchInsert(CREW_3.getId(), Hashtag.fromHashtagTypes(List.of(IMPULSIVE)));
 
-            List<CrewInfoDto> FIND_CREWS = crewQueryService.fetchCrewsByName(CREW_NAME_VALUE, PageRequest.of(0, 10));
+            List<CrewDto> FIND_CREWS = crewQueryService.fetchCrewsByName(CREW_NAME_VALUE, PageRequest.of(0, 10));
 
             assertAll(() -> {
                 assertThat(FIND_CREWS.get(0).hashtagTypes()).contains(IMPULSIVE.getText());

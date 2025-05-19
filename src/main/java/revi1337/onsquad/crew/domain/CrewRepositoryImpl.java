@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 
 @RequiredArgsConstructor
@@ -41,12 +41,12 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<CrewInfoDomainDto> findCrewById(Long id) {
+    public Optional<CrewDomainDto> findCrewById(Long id) {
         return crewQueryDslRepository.findCrewById(id);
     }
 
     @Override
-    public Page<CrewInfoDomainDto> fetchCrewsByName(String name, Pageable pageable) {
+    public Page<CrewDomainDto> fetchCrewsByName(String name, Pageable pageable) {
         return crewQueryDslRepository.fetchCrewsByName(name, pageable);
     }
 }

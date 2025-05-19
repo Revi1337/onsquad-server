@@ -1,15 +1,15 @@
 package revi1337.onsquad.crew.domain.dto;
 
-import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.crew.application.dto.CrewDto;
 
 public record CrewWithParticipantStateDto(
         boolean alreadyParticipant,
-        CrewInfoDto crew
+        CrewDto crew
 ) {
-    public static CrewWithParticipantStateDto from(boolean alreadyParticipant, CrewInfoDomainDto domainDto) {
+    public static CrewWithParticipantStateDto from(boolean alreadyParticipant, CrewDomainDto domainDto) {
         return new CrewWithParticipantStateDto(
                 alreadyParticipant,
-                CrewInfoDto.from(domainDto)
+                CrewDto.from(domainDto)
         );
     }
 }

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
-import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberQueryDslRepository;
@@ -83,7 +83,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewRepository.save(CREW(REVI));
 
-            Optional<CrewInfoDomainDto> OPTIONAL_CREW = crewRepository.findCrewById(CREW.getId());
+            Optional<CrewDomainDto> OPTIONAL_CREW = crewRepository.findCrewById(CREW.getId());
 
             assertAll(() -> {
                 assertThat(OPTIONAL_CREW).isPresent();

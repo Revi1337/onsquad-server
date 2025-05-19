@@ -16,7 +16,7 @@ import revi1337.onsquad.crew.application.dto.CrewMainDto;
 import revi1337.onsquad.crew.application.dto.CrewStatisticDto;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.CrewStatisticCacheRepository;
-import revi1337.onsquad.crew.domain.dto.CrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
@@ -36,7 +36,7 @@ public class CrewMainService {
 
     public CrewMainDto fetchMain(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        CrewInfoDomainDto crewInfo = crewRepository.getCrewById(crewId);
+        CrewDomainDto crewInfo = crewRepository.getCrewById(crewId);
         List<AnnounceDomainDto> announces = announceCacheRepository.fetchAllCacheInDefaultByCrewId(crewId);
         List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
         Page<SquadDomainDto> squads = squadRepository.fetchAllByCrewId(crewId, CategoryType.ALL, pageable);

@@ -37,7 +37,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew.application.dto.SimpleCrewInfoDto;
+import revi1337.onsquad.crew.application.dto.SimpleCrewDto;
 import revi1337.onsquad.crew_participant.application.CrewParticipantCommandService;
 import revi1337.onsquad.crew_participant.application.CrewParticipantQueryService;
 import revi1337.onsquad.crew_participant.application.dto.CrewRequestDto;
@@ -202,7 +202,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             List<CrewRequestWithCrewDto> SERVICE_DTOS = List.of(new CrewRequestWithCrewDto(
                     new CrewRequestDto(3L, LocalDateTime.now()),
-                    new SimpleCrewInfoDto(
+                    new SimpleCrewDto(
                             1L,
                             CREW_NAME_VALUE,
                             CREW_INTRODUCE_VALUE,

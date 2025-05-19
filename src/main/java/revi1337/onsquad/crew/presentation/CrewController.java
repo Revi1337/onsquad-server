@@ -28,7 +28,7 @@ import revi1337.onsquad.crew.application.CrewCommandExecutor;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
-import revi1337.onsquad.crew.presentation.dto.response.CrewInfoResponse;
+import revi1337.onsquad.crew.presentation.dto.response.CrewResponse;
 import revi1337.onsquad.crew.presentation.dto.response.CrewWithParticipantStateResponse;
 import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
 import revi1337.onsquad.crew_member.presentation.dto.response.EnrolledCrewResponse;
@@ -70,7 +70,7 @@ public class CrewController {
             @Authenticate(required = false) AuthMemberAttribute authMemberAttribute
     ) {
         if (authMemberAttribute == null) {
-            CrewInfoResponse crewResponse = CrewInfoResponse.from(crewQueryService.findCrewById(crewId));
+            CrewResponse crewResponse = CrewResponse.from(crewQueryService.findCrewById(crewId));
             return ResponseEntity.ok().body(RestResponse.success(crewResponse));
         }
 
@@ -122,12 +122,12 @@ public class CrewController {
     }
 
     @GetMapping
-    public ResponseEntity<RestResponse<List<CrewInfoResponse>>> fetchCrewsByName(
+    public ResponseEntity<RestResponse<List<CrewResponse>>> fetchCrewsByName(
             @RequestParam(required = false) String name,
             @PageableDefault Pageable pageable
     ) {
-        List<CrewInfoResponse> crewResponses = crewQueryService.fetchCrewsByName(name, pageable).stream()
-                .map(CrewInfoResponse::from)
+        List<CrewResponse> crewResponses = crewQueryService.fetchCrewsByName(name, pageable).stream()
+                .map(CrewResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(crewResponses));

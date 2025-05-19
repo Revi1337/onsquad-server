@@ -20,8 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.dto.QSimpleCrewInfoDomainDto;
-import revi1337.onsquad.crew.domain.dto.SimpleCrewInfoDomainDto;
+import revi1337.onsquad.crew.domain.dto.QSimpleCrewDomainDto;
+import revi1337.onsquad.crew.domain.dto.SimpleCrewDomainDto;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
@@ -154,12 +154,12 @@ public class SquadParticipantQueryDslRepository {
         Map<Long, List<SquadParticipantDomainDto>> squadParticipantsMap = squadParticipantDtos.stream()
                 .collect(Collectors.groupingBy(SquadParticipantDomainDto::crewId));
 
-        Map<Long, SimpleCrewInfoDomainDto> crewDtoMap = jpaQueryFactory
+        Map<Long, SimpleCrewDomainDto> crewDtoMap = jpaQueryFactory
                 .from(crew)
                 .innerJoin(crew.member, CREW_CREATOR)
                 .where(crew.id.in(squadParticipantsMap.keySet()))
                 .transform(groupBy(crew.id)
-                        .as(new QSimpleCrewInfoDomainDto(
+                        .as(new QSimpleCrewDomainDto(
                                 crew.id,
                                 crew.name,
                                 crew.kakaoLink,
@@ -174,7 +174,7 @@ public class SquadParticipantQueryDslRepository {
 
         return squadParticipantsMap.keySet().stream()
                 .map(crewId -> {
-                    SimpleCrewInfoDomainDto crewInfo = crewDtoMap.get(crewId);
+                    SimpleCrewDomainDto crewInfo = crewDtoMap.get(crewId);
                     List<SquadParticipantDomainDto> squadsInCrew = squadParticipantsMap.get(crewId);
                     return new SquadParticipantRequest(
                             crewInfo.id(),

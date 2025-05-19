@@ -4,12 +4,12 @@ import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 
 public record CrewWithParticipantStateResponse(
         boolean alreadyParticipant,
-        CrewInfoResponse crew
+        CrewResponse crew
 ) {
     public static CrewWithParticipantStateResponse from(CrewWithParticipantStateDto stateDto) {
         return new CrewWithParticipantStateResponse(
                 stateDto.alreadyParticipant(),
-                CrewInfoResponse.from(stateDto.crew())
+                CrewResponse.from(stateDto.crew())
         );
     }
 }

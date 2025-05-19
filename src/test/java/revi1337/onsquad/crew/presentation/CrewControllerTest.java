@@ -68,7 +68,7 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew.application.CrewCommandExecutor;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
-import revi1337.onsquad.crew.application.dto.CrewInfoDto;
+import revi1337.onsquad.crew.application.dto.CrewDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
@@ -211,7 +211,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("토큰이 없는 경우에도 Crew 조회에 성공한다.")
         void success() throws Exception {
-            CrewInfoDto CREW_INFO = new CrewInfoDto(
+            CrewDto CREW_INFO = new CrewDto(
                     1L,
                     CREW_NAME_VALUE,
                     CREW_INTRODUCE_VALUE,
@@ -258,7 +258,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         void success2() throws Exception {
             CrewWithParticipantStateDto CREW_INFO = new CrewWithParticipantStateDto(
                     true,
-                    new CrewInfoDto(
+                    new CrewDto(
                             1L,
                             CREW_NAME_VALUE,
                             CREW_INTRODUCE_VALUE,
@@ -514,7 +514,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 들 조회에 성공한다.")
         void success() throws Exception {
-            CrewInfoDto CREW_INFO = new CrewInfoDto(
+            CrewDto CREW_INFO = new CrewDto(
                     1L,
                     CREW_NAME_VALUE,
                     CREW_INTRODUCE_VALUE,
@@ -529,7 +529,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             REVI_NICKNAME_VALUE, ISTP.name()),
                     null
             );
-            List<CrewInfoDto> CREW_INFOS = List.of(CREW_INFO);
+            List<CrewDto> CREW_INFOS = List.of(CREW_INFO);
             when(crewQueryService.fetchCrewsByName(eq(CREW_NAME_VALUE), any(Pageable.class))).thenReturn(CREW_INFOS);
 
             mockMvc.perform(get("/api/crews")
