@@ -1,7 +1,7 @@
 package revi1337.onsquad.member.application.dto;
 
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 
 public record SimpleMemberInfoDto(
         Long id,
@@ -18,12 +18,12 @@ public record SimpleMemberInfoDto(
         );
     }
 
-    public static SimpleMemberInfoDto from(SimpleMemberInfoDomainDto simpleMemberInfoDomainDto) {
+    public static SimpleMemberInfoDto from(SimpleMemberDomainDto simpleMemberDomainDto) {
         return new SimpleMemberInfoDto(
-                simpleMemberInfoDomainDto.id(),
-                simpleMemberInfoDomainDto.email() != null ? simpleMemberInfoDomainDto.email().getValue() : null,
-                simpleMemberInfoDomainDto.nickname().getValue(),
-                simpleMemberInfoDomainDto.mbti() != null ? simpleMemberInfoDomainDto.mbti().name() : ""
+                simpleMemberDomainDto.id(),
+                simpleMemberDomainDto.email() != null ? simpleMemberDomainDto.email().getValue() : null,
+                simpleMemberDomainDto.nickname().getValue(),
+                simpleMemberDomainDto.mbti() != null ? simpleMemberDomainDto.mbti().name() : ""
         );
     }
 }

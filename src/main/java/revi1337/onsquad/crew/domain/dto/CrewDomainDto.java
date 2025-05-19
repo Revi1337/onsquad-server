@@ -9,7 +9,7 @@ import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 
 @Getter
 public class CrewDomainDto {
@@ -23,12 +23,12 @@ public class CrewDomainDto {
     @Setter
     private Collection<HashtagType> hashtagTypes;
     private Long memberCnt;
-    private SimpleMemberInfoDomainDto crewOwner;
+    private SimpleMemberDomainDto crewOwner;
 
     @QueryProjection
     public CrewDomainDto(Long id, Name name, Introduce introduce, Detail detail, String imageUrl, String kakaoLink,
                          Collection<HashtagType> hashtagTypes, Long memberCnt,
-                         SimpleMemberInfoDomainDto crewOwner) {
+                         SimpleMemberDomainDto crewOwner) {
         this.id = id;
         this.name = name;
         this.introduce = introduce;
@@ -43,13 +43,13 @@ public class CrewDomainDto {
     @QueryProjection
     public CrewDomainDto(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink,
                          Collection<HashtagType> hashtagTypes, Long memberCnt,
-                         SimpleMemberInfoDomainDto crewOwner) {
+                         SimpleMemberDomainDto crewOwner) {
         this(id, name, introduce, null, imageUrl, kakaoLink, hashtagTypes, memberCnt, crewOwner);
     }
 
     @QueryProjection
     public CrewDomainDto(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink, Long memberCnt,
-                         SimpleMemberInfoDomainDto crewOwner) {
+                         SimpleMemberDomainDto crewOwner) {
         this(id, name, introduce, null, imageUrl, kakaoLink, new ArrayList<>(), memberCnt, crewOwner);
     }
 }

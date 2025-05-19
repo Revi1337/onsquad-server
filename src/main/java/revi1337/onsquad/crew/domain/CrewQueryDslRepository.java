@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.QCrewDomainDto;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -50,7 +50,7 @@ public class CrewQueryDslRepository {
                                 select(crewMember.count())
                                         .from(crewMember)
                                         .where(crewMember.crew.id.eq(crew.id)),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -79,7 +79,7 @@ public class CrewQueryDslRepository {
                                 select(crewMember.count())
                                         .from(crewMember)
                                         .where(crewMember.crew.id.eq(crew.id)),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -108,7 +108,7 @@ public class CrewQueryDslRepository {
                                 select(crewMember.count())
                                         .from(crewMember)
                                         .where(crewMember.crew.id.eq(crew.id)),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti

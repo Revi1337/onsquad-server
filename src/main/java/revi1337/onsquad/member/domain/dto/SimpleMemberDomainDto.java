@@ -5,14 +5,14 @@ import revi1337.onsquad.member.domain.vo.Email;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
 
-public record SimpleMemberInfoDomainDto(
+public record SimpleMemberDomainDto(
         Long id,
         Email email,
         Nickname nickname,
         Mbti mbti
 ) {
     @QueryProjection
-    public SimpleMemberInfoDomainDto(Long id, Email email, Nickname nickname, Mbti mbti) {
+    public SimpleMemberDomainDto(Long id, Email email, Nickname nickname, Mbti mbti) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -20,12 +20,12 @@ public record SimpleMemberInfoDomainDto(
     }
 
     @QueryProjection
-    public SimpleMemberInfoDomainDto(Long id, Nickname nickname, Mbti mbti) {
+    public SimpleMemberDomainDto(Long id, Nickname nickname, Mbti mbti) {
         this(id, null, nickname, mbti);
     }
 
     @QueryProjection
-    public SimpleMemberInfoDomainDto(Nickname nickname) {
+    public SimpleMemberDomainDto(Nickname nickname) {
         this(null, null, nickname, null);
     }
 }

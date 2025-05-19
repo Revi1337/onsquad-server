@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto.SimpleSquadInfoDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.QEnrolledSquadDomainDto;
@@ -68,7 +68,7 @@ public class SquadMemberQueryDslRepository {
                                         .then(true)
                                         .otherwise(false),
                                 list(category.categoryType),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -91,7 +91,7 @@ public class SquadMemberQueryDslRepository {
                                 crew.id,
                                 crew.name,
                                 crew.imageUrl,
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         CREW_CREATOR.id,
                                         CREW_CREATOR.nickname,
                                         CREW_CREATOR.mbti
@@ -115,7 +115,7 @@ public class SquadMemberQueryDslRepository {
         return jpaQueryFactory
                 .select(new QSquadMemberDomainDto(
                         squadMember.requestAt,
-                        new QSimpleMemberInfoDomainDto(
+                        new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.mbti
@@ -147,14 +147,14 @@ public class SquadMemberQueryDslRepository {
                                         .when(squad.crewMember.id.eq(crewMemberId))
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         SQUAD_CREATOR.id,
                                         SQUAD_CREATOR.nickname,
                                         SQUAD_CREATOR.mbti
                                 ),
                                 list(new QSquadMemberDomainDto(
                                         squadMember.requestAt,
-                                        new QSimpleMemberInfoDomainDto(
+                                        new QSimpleMemberDomainDto(
                                                 member.id,
                                                 member.nickname,
                                                 member.mbti
@@ -192,14 +192,14 @@ public class SquadMemberQueryDslRepository {
                                         .when(SQUAD_CREW_MEMBER.member.id.eq(memberId))
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         SQUAD_CREATOR.id,
                                         SQUAD_CREATOR.nickname,
                                         SQUAD_CREATOR.mbti
                                 ),
                                 list(new QSquadMemberDomainDto(
                                         squadMember.requestAt,
-                                        new QSimpleMemberInfoDomainDto(
+                                        new QSimpleMemberDomainDto(
                                                 member.id,
                                                 member.nickname,
                                                 member.mbti

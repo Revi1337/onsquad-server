@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.squad.domain.vo.Content;
 import revi1337.onsquad.squad.domain.vo.Title;
@@ -19,18 +19,18 @@ public record SquadDomainDto(
         String kakaoLink,
         String discordLink,
         List<CategoryType> categories,
-        SimpleMemberInfoDomainDto leader
+        SimpleMemberDomainDto leader
 ) {
     @QueryProjection
     public SquadDomainDto(Long id, Title title, Content content, int capacity, int remain, Address address,
-                          String kakaoLink, String discordLink, SimpleMemberInfoDomainDto owner) {
+                          String kakaoLink, String discordLink, SimpleMemberDomainDto owner) {
         this(id, title, content, capacity, remain, address, kakaoLink, discordLink, new ArrayList<>(), owner);
     }
 
     @QueryProjection
     public SquadDomainDto(Long id, Title title, Content content, int capacity, int remain, Address address,
                           String kakaoLink, String discordLink, List<CategoryType> categories,
-                          SimpleMemberInfoDomainDto leader) {
+                          SimpleMemberDomainDto leader) {
         this.id = id;
         this.title = title;
         this.content = content;

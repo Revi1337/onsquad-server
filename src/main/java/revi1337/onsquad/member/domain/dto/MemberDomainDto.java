@@ -8,7 +8,7 @@ import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.member.domain.vo.UserType;
 
-public record MemberInfoDomainDto(
+public record MemberDomainDto(
         Long id,
         Email email,
         Nickname nickname,
@@ -20,7 +20,7 @@ public record MemberInfoDomainDto(
         Address address
 ) {
     @QueryProjection
-    public MemberInfoDomainDto(
+    public MemberDomainDto(
             Long id,
             Email email,
             Nickname nickname,

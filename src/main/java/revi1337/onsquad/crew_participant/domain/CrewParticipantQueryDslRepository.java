@@ -18,7 +18,7 @@ import revi1337.onsquad.crew_participant.domain.dto.CrewRequestWithMemberDomainD
 import revi1337.onsquad.crew_participant.domain.dto.QCrewRequestDomainDto;
 import revi1337.onsquad.crew_participant.domain.dto.QCrewRequestWithCrewDomainDto;
 import revi1337.onsquad.crew_participant.domain.dto.QCrewRequestWithMemberDomainDto;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -35,7 +35,7 @@ public class CrewParticipantQueryDslRepository {
                                 crew.introduce,
                                 crew.kakaoLink,
                                 crew.imageUrl,
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -56,7 +56,7 @@ public class CrewParticipantQueryDslRepository {
     public Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable) {
         List<CrewRequestWithMemberDomainDto> results = jpaQueryFactory
                 .select(new QCrewRequestWithMemberDomainDto(
-                        new QSimpleMemberInfoDomainDto(
+                        new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.mbti

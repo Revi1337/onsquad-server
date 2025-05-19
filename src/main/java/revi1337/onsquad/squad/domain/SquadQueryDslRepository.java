@@ -25,7 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSimpleSquadDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSquadDomainDto;
 import revi1337.onsquad.squad.domain.dto.QSquadWithLeaderStateDomainDto;
@@ -61,7 +61,7 @@ public class SquadQueryDslRepository {
                                 squad.kakaoLink,
                                 squad.discordLink,
                                 list(category.categoryType),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -111,7 +111,7 @@ public class SquadQueryDslRepository {
                                 squad.kakaoLink,
                                 squad.discordLink,
                                 list(category.categoryType),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -150,7 +150,7 @@ public class SquadQueryDslRepository {
                                 squad.title,
                                 squad.capacity,
                                 squad.remain,
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -216,7 +216,7 @@ public class SquadQueryDslRepository {
                         squad.address,
                         squad.kakaoLink,
                         squad.discordLink,
-                        new QSimpleMemberInfoDomainDto(
+                        new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.mbti
@@ -258,7 +258,7 @@ public class SquadQueryDslRepository {
                                 squad.kakaoLink,
                                 squad.discordLink,
                                 list(category.categoryType),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti

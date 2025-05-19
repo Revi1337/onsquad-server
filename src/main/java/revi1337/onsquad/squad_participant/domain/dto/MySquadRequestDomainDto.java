@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.squad.domain.vo.Title;
 
 public record MySquadRequestDomainDto(
         Long id,
         Name name,
         String imageUrl,
-        SimpleMemberInfoDomainDto owner,
+        SimpleMemberDomainDto owner,
         List<SquadWithParticipant> squads
 ) {
     @QueryProjection
@@ -21,7 +21,7 @@ public record MySquadRequestDomainDto(
             Long id,
             Name name,
             String imageUrl,
-            SimpleMemberInfoDomainDto owner,
+            SimpleMemberDomainDto owner,
             List<SquadWithParticipant> squads
     ) {
         this.id = id;
@@ -37,7 +37,7 @@ public record MySquadRequestDomainDto(
             int capacity,
             int remain,
             List<CategoryType> categories,
-            SimpleMemberInfoDomainDto owner,
+            SimpleMemberDomainDto owner,
             RequestParticipantDomainDto request
     ) {
         @QueryProjection
@@ -46,7 +46,7 @@ public record MySquadRequestDomainDto(
                 Title title,
                 int capacity,
                 int remain,
-                SimpleMemberInfoDomainDto squadOwner,
+                SimpleMemberDomainDto squadOwner,
                 RequestParticipantDomainDto request
         ) {
             this(id, title, capacity, remain, new ArrayList<>(), squadOwner, request);
@@ -59,7 +59,7 @@ public record MySquadRequestDomainDto(
                 int capacity,
                 int remain,
                 List<CategoryType> categories,
-                SimpleMemberInfoDomainDto owner,
+                SimpleMemberDomainDto owner,
                 RequestParticipantDomainDto request
         ) {
             this.id = id;

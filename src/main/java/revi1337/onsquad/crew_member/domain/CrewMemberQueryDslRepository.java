@@ -19,7 +19,7 @@ import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.QCrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.dto.QEnrolledCrewDomainDto;
 import revi1337.onsquad.member.domain.QMember;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -39,7 +39,7 @@ public class CrewMemberQueryDslRepository {
                                 .when(CREW_CREATOR.id.eq(memberId))
                                 .then(true)
                                 .otherwise(false),
-                        new QSimpleMemberInfoDomainDto(
+                        new QSimpleMemberDomainDto(
                                 CREW_CREATOR.id,
                                 CREW_CREATOR.nickname,
                                 CREW_CREATOR.mbti
@@ -55,7 +55,7 @@ public class CrewMemberQueryDslRepository {
     public Page<CrewMemberDomainDto> fetchAllByCrewId(Long crewId, Pageable pageable) {
         List<CrewMemberDomainDto> results = jpaQueryFactory
                 .select(new QCrewMemberDomainDto(
-                        new QSimpleMemberInfoDomainDto(
+                        new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.mbti
@@ -91,7 +91,7 @@ public class CrewMemberQueryDslRepository {
                         crew.name,
                         crew.imageUrl,
                         isCrewOwner,
-                        new QSimpleMemberInfoDomainDto(
+                        new QSimpleMemberDomainDto(
                                 CREW_CREATOR.id,
                                 CREW_CREATOR.nickname,
                                 CREW_CREATOR.mbti

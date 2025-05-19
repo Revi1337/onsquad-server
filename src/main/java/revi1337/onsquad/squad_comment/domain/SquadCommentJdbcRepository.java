@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
@@ -61,7 +61,7 @@ public class SquadCommentJdbcRepository {
                     rs.getString("content"),
                     rs.getObject("created_at", LocalDateTime.class),
                     rs.getObject("updated_at", LocalDateTime.class),
-                    new SimpleMemberInfoDomainDto(
+                    new SimpleMemberDomainDto(
                             rs.getLong("comment_creator_id"),
                             new Nickname(rs.getString("comment_creator_nickname")),
                             mbti

@@ -24,7 +24,7 @@ import revi1337.onsquad.crew.domain.dto.QSimpleCrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.SimpleCrewDomainDto;
 import revi1337.onsquad.crew_member.domain.QCrewMember;
 import revi1337.onsquad.member.domain.QMember;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.MySquadRequestDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QMySquadRequestDomainDto;
 import revi1337.onsquad.squad_participant.domain.dto.QMySquadRequestDomainDto_SquadWithParticipant;
@@ -61,7 +61,7 @@ public class SquadParticipantQueryDslRepository {
                                 crew.id,
                                 crew.name,
                                 crew.imageUrl,
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
                                         member.mbti
@@ -71,7 +71,7 @@ public class SquadParticipantQueryDslRepository {
                                         squad.title,
                                         squad.capacity,
                                         squad.remain,
-                                        new QSimpleMemberInfoDomainDto(
+                                        new QSimpleMemberDomainDto(
                                                 SQUAD_CREATOR.id,
                                                 SQUAD_CREATOR.nickname,
                                                 SQUAD_CREATOR.mbti
@@ -92,7 +92,7 @@ public class SquadParticipantQueryDslRepository {
                 .select(new QSimpleSquadParticipantDomainDto(
                         squadParticipant.id,
                         squadParticipant.requestAt,
-                        new QSimpleMemberInfoDomainDto(
+                        new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.mbti
@@ -139,7 +139,7 @@ public class SquadParticipantQueryDslRepository {
                                 squad.capacity,
                                 squad.remain,
                                 list(category.categoryType),
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         SQUAD_CREATOR.id,
                                         SQUAD_CREATOR.nickname,
                                         SQUAD_CREATOR.mbti
@@ -164,7 +164,7 @@ public class SquadParticipantQueryDslRepository {
                                 crew.name,
                                 crew.kakaoLink,
                                 crew.imageUrl,
-                                new QSimpleMemberInfoDomainDto(
+                                new QSimpleMemberDomainDto(
                                         CREW_CREATOR.id,
                                         CREW_CREATOR.nickname,
                                         CREW_CREATOR.mbti

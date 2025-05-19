@@ -40,7 +40,7 @@ import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.MemberRepositoryImpl;
-import revi1337.onsquad.member.domain.dto.SimpleMemberInfoDomainDto;
+import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
 
@@ -94,7 +94,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
                 assertThat(OPTIONAL_CREW.get().getImageUrl()).isNull();
                 assertThat(OPTIONAL_CREW.get().getKakaoLink()).isNull();
                 assertThat(OPTIONAL_CREW.get().getMemberCnt()).isEqualTo(1);
-                assertThat(OPTIONAL_CREW.get().getCrewOwner()).isEqualTo(new SimpleMemberInfoDomainDto(
+                assertThat(OPTIONAL_CREW.get().getCrewOwner()).isEqualTo(new SimpleMemberDomainDto(
                         REVI.getId(),
                         new Nickname(REVI_NICKNAME_VALUE),
                         Mbti.ISTP
