@@ -17,7 +17,7 @@ public class RedisRefreshTokenManager implements RefreshTokenManager {
     private final TokenProperties tokenProperties;
 
     @Override
-    public void saveToken(RefreshToken refreshToken, Long memberId) {
+    public void saveTokenFor(Long memberId, RefreshToken refreshToken) {
         Duration expired = tokenProperties.refreshTokenAttributes().tokenAttributes().expired();
         redisTokenOperation.save(refreshToken, memberId, expired);
     }

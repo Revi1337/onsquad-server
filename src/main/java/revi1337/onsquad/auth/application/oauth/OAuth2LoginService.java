@@ -1,48 +1,61 @@
 package revi1337.onsquad.auth.application.oauth;
 
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.auth.application.token.JsonWebTokenService;
+import revi1337.onsquad.auth.application.token.JsonWebTokenManager;
 import revi1337.onsquad.auth.model.oauth.PlatformUserProfile;
 import revi1337.onsquad.auth.model.oauth.PlatformUserTypeResolver;
+import revi1337.onsquad.auth.model.token.AccessToken;
 import revi1337.onsquad.auth.model.token.JsonWebToken;
-import revi1337.onsquad.member.application.dto.MemberDto;
+import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.UserType;
 
 @RequiredArgsConstructor
 @Service
 public class OAuth2LoginService {
 
-    private final MemberRepository memberRepository;
+    private final MemberJpaRepository memberJpaRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JsonWebTokenService jsonWebTokenService;
+    private final JsonWebTokenManager jsonWebTokenManager;
     private final PlatformUserTypeResolver platformUserTypeResolver;
 
     public JsonWebToken loginOAuth2User(PlatformUserProfile platformUserProfile) {
-        return memberRepository.findByEmail(new Email(platformUserProfile.getEmail()))
-                .map(member -> jsonWebTokenService.generateTokenPair(MemberDto.from(member)))
-                .orElseGet(() -> forceParticipant(platformUserProfile));
+        Optional<Member> optionalMember = memberJpaRepository.findByEmail(new Email(platformUserProfile.getEmail()));
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+            return generateTokenPair(member);
+        }
+
+        return forceParticipant(platformUserProfile);
     }
 
     private JsonWebToken forceParticipant(PlatformUserProfile platformUserProfile) {
+        Member member = memberJpaRepository.save(createOAuthMember(platformUserProfile));
+        return generateTokenPair(member);
+    }
+
+    private Member createOAuthMember(PlatformUserProfile platformUserProfile) {
         String encryptedPassword = passwordEncoder.encode(UUID.randomUUID().toString());
-        UserType userType = platformUserTypeResolver.resolveUserType(platformUserProfile);
-        Member member = Member.oauth2(
+        return Member.oauth2(
                 platformUserProfile.getEmail(),
                 encryptedPassword,
                 platformUserProfile.getNickname(),
                 platformUserProfile.getProfileImage(),
-                userType
+                platformUserTypeResolver.resolveUserType(platformUserProfile)
         );
-        memberRepository.save(member);
+    }
 
-        JsonWebToken jsonWebToken = jsonWebTokenService.generateTokenPair(MemberDto.from(member));
-        jsonWebTokenService.saveRefreshToken(jsonWebToken.refreshToken(), member.getId());
-        return jsonWebToken;
+    private JsonWebToken generateTokenPair(Member member) {
+        AccessToken accessToken = jsonWebTokenManager.generateAccessToken(MemberSummary.from(member));
+        RefreshToken refreshToken = jsonWebTokenManager.generateRefreshToken(member.getId());
+        jsonWebTokenManager.storeRefreshTokenFor(member.getId(), refreshToken);
+
+        return JsonWebToken.create(accessToken, refreshToken);
     }
 }

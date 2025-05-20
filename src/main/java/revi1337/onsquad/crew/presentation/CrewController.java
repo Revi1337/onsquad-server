@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewCommandExecutor;
@@ -44,7 +44,7 @@ public class CrewController {
     @GetMapping("/check")
     public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkCrewNameDuplicate(
             @RequestParam String name,
-            @Authenticate AuthMemberAttribute ignored
+            @Authenticate CurrentMember ignored
     ) {
         if (crewQueryService.isDuplicateCrewName(name)) {
             return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(true)));
@@ -57,9 +57,9 @@ public class CrewController {
     public ResponseEntity<RestResponse<String>> newCrew(
             @Valid @RequestPart CrewCreateRequest request,
             @RequestPart(required = false) MultipartFile file,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewCommandExecutor.newCrew(authMemberAttribute.id(), request.toDto(), file);
+        crewCommandExecutor.newCrew(currentMember.id(), request.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -67,15 +67,15 @@ public class CrewController {
     @GetMapping("/{crewId}")
     public ResponseEntity<RestResponse<?>> findCrew(
             @PathVariable Long crewId,
-            @Authenticate(required = false) AuthMemberAttribute authMemberAttribute
+            @Authenticate(required = false) CurrentMember currentMember
     ) {
-        if (authMemberAttribute == null) {
+        if (currentMember == null) {
             CrewResponse crewResponse = CrewResponse.from(crewQueryService.findCrewById(crewId));
             return ResponseEntity.ok().body(RestResponse.success(crewResponse));
         }
 
         CrewWithParticipantStateResponse crewResponse = CrewWithParticipantStateResponse
-                .from(crewQueryService.findCrewById(authMemberAttribute.id(), crewId));
+                .from(crewQueryService.findCrewById(currentMember.id(), crewId));
         return ResponseEntity.ok().body(RestResponse.success(crewResponse));
     }
 
@@ -83,9 +83,9 @@ public class CrewController {
     public ResponseEntity<RestResponse<String>> updateCrew(
             @PathVariable Long crewId,
             @Valid @RequestBody CrewUpdateRequest crewUpdateRequest,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewCommandExecutor.updateCrew(authMemberAttribute.id(), crewId, crewUpdateRequest.toDto());
+        crewCommandExecutor.updateCrew(currentMember.id(), crewId, crewUpdateRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -93,9 +93,9 @@ public class CrewController {
     @DeleteMapping("/{crewId}") // TODO 여기 구현해야 함.
     public ResponseEntity<RestResponse<String>> deleteCrew(
             @PathVariable Long crewId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewCommandExecutor.deleteCrew(authMemberAttribute.id(), crewId);
+        crewCommandExecutor.deleteCrew(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -104,9 +104,9 @@ public class CrewController {
     public ResponseEntity<RestResponse<String>> updateCrewImage(
             @PathVariable Long crewId,
             @RequestPart MultipartFile file,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewCommandExecutor.updateCrewImage(authMemberAttribute.id(), crewId, file);
+        crewCommandExecutor.updateCrewImage(currentMember.id(), crewId, file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -114,9 +114,9 @@ public class CrewController {
     @DeleteMapping("/{crewId}/image")
     public ResponseEntity<RestResponse<String>> deleteCrewImage(
             @PathVariable Long crewId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewCommandExecutor.deleteCrewImage(authMemberAttribute.id(), crewId);
+        crewCommandExecutor.deleteCrewImage(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -135,10 +135,10 @@ public class CrewController {
 
     @GetMapping("/me")
     public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchMyParticipants(
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         List<EnrolledCrewResponse> ownedCrewResponses = crewQueryService
-                .fetchMyParticipants(authMemberAttribute.id()).stream()
+                .fetchMyParticipants(currentMember.id()).stream()
                 .map(EnrolledCrewResponse::from)
                 .toList();
 

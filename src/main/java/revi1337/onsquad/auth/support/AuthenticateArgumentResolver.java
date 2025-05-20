@@ -10,16 +10,17 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
+import revi1337.onsquad.auth.application.token.ClaimsParser;
 import revi1337.onsquad.auth.application.token.JsonWebTokenEvaluator;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
+import revi1337.onsquad.common.constant.Sign;
 
 @RequiredArgsConstructor
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final int TOKEN_INDEX = 1;
-    private static final String EXTRACT_KEY = "memberId";
     private static final String TOKEN_PREFIX = "Bearer ";
 
     private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
@@ -38,13 +39,10 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
         }
 
         validateAuthorizationHeader(authorizationHeader);
-        String accessToken = authorizationHeader.split(" ")[TOKEN_INDEX];
-        Long memberId = jsonWebTokenEvaluator.extractSpecificClaim(
-                jsonWebTokenEvaluator.verifyAccessToken(accessToken),
-                extracted -> extracted.get(EXTRACT_KEY, Long.class)
-        );
+        final String accessToken = authorizationHeader.split(Sign.WHITESPACE)[TOKEN_INDEX];
+        final ClaimsParser claimsParser = jsonWebTokenEvaluator.verifyAccessToken(accessToken);
 
-        return AuthMemberAttribute.of(memberId);
+        return CurrentMember.of(claimsParser.parseIdentity(), claimsParser.parseEmail(), claimsParser.parseUserType());
     }
 
     private boolean isTokenDoesntRequired(MethodParameter parameter) {

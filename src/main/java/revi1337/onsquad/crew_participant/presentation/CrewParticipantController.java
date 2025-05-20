@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_participant.application.CrewParticipantCommandService;
@@ -31,9 +31,9 @@ public class CrewParticipantController {
     @PostMapping("/crews/{crewId}/requests")
     public ResponseEntity<RestResponse<String>> request(
             @PathVariable Long crewId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewParticipantCommandService.request(authMemberAttribute.id(), crewId);
+        crewParticipantCommandService.request(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -42,9 +42,9 @@ public class CrewParticipantController {
     public ResponseEntity<RestResponse<String>> acceptRequest(
             @PathVariable Long crewId,
             @PathVariable Long requestId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewParticipantCommandService.acceptRequest(authMemberAttribute.id(), crewId, requestId);
+        crewParticipantCommandService.acceptRequest(currentMember.id(), crewId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -53,9 +53,9 @@ public class CrewParticipantController {
     public ResponseEntity<RestResponse<String>> rejectRequest(
             @PathVariable Long crewId,
             @PathVariable Long requestId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewParticipantCommandService.rejectRequest(authMemberAttribute.id(), crewId, requestId);
+        crewParticipantCommandService.rejectRequest(currentMember.id(), crewId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -64,10 +64,10 @@ public class CrewParticipantController {
     public ResponseEntity<RestResponse<List<CrewRequestWithMemberResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         List<CrewRequestWithMemberResponse> requestResponses = crewParticipantQueryService
-                .fetchAllRequests(authMemberAttribute.id(), crewId, pageable).stream()
+                .fetchAllRequests(currentMember.id(), crewId, pageable).stream()
                 .map(CrewRequestWithMemberResponse::from)
                 .toList();
 
@@ -77,19 +77,19 @@ public class CrewParticipantController {
     @DeleteMapping("/crews/{crewId}/requests/me")
     public ResponseEntity<RestResponse<String>> cancelMyRequest(
             @PathVariable Long crewId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        crewParticipantCommandService.cancelMyRequest(authMemberAttribute.id(), crewId);
+        crewParticipantCommandService.cancelMyRequest(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @GetMapping("/crew-requests/me")
     public ResponseEntity<RestResponse<List<CrewRequestWithCrewResponse>>> fetchAllCrewRequests(
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         List<CrewRequestWithCrewResponse> crewRequestWithCrewResponse = crewParticipantQueryService
-                .fetchAllCrewRequests(authMemberAttribute.id()).stream()
+                .fetchAllCrewRequests(currentMember.id()).stream()
                 .map(CrewRequestWithCrewResponse::from)
                 .toList();
 

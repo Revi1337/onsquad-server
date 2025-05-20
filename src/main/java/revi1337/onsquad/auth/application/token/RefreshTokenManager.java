@@ -5,7 +5,7 @@ import revi1337.onsquad.auth.model.token.RefreshToken;
 
 public interface RefreshTokenManager {
 
-    void saveToken(RefreshToken refreshToken, Long memberId);
+    void saveTokenFor(Long memberId, RefreshToken refreshToken);
 
     Optional<RefreshToken> findTokenBy(Long memberId);
 

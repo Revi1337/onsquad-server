@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberCommandService;
@@ -68,10 +68,10 @@ public class MemberController {
 
     @GetMapping("/me")
     public ResponseEntity<RestResponse<MemberInfoResponse>> findMember(
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         MemberInfoResponse memberInfoResponse = MemberInfoResponse.from(
-                memberQueryService.findMember(authMemberAttribute.id())
+                memberQueryService.findMember(currentMember.id())
         );
 
         return ResponseEntity.ok().body(RestResponse.success(memberInfoResponse));
@@ -80,9 +80,9 @@ public class MemberController {
     @PutMapping("/me")
     public ResponseEntity<RestResponse<String>> updateMember(
             @Valid @RequestBody MemberUpdateRequest request,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        memberCommandService.updateMember(authMemberAttribute.id(), request.toDto());
+        memberCommandService.updateMember(currentMember.id(), request.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -90,9 +90,9 @@ public class MemberController {
     @PatchMapping("/me/password")
     public ResponseEntity<RestResponse<String>> updatePassword(
             @Valid @RequestBody MemberPasswordUpdateRequest request,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        memberCommandService.updatePassword(authMemberAttribute.id(), request.toDto());
+        memberCommandService.updatePassword(currentMember.id(), request.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -100,18 +100,18 @@ public class MemberController {
     @PatchMapping(value = "/me/image", consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RestResponse<String>> updateImage(
             @RequestPart MultipartFile file,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        memberCommandService.updateImage(authMemberAttribute.id(), file);
+        memberCommandService.updateImage(currentMember.id(), file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @DeleteMapping("/me/image")
     public ResponseEntity<RestResponse<String>> deleteImage(
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        memberCommandService.deleteImage(authMemberAttribute.id());
+        memberCommandService.deleteImage(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

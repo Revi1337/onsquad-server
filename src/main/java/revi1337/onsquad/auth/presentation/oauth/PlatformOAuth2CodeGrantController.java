@@ -44,8 +44,8 @@ public class PlatformOAuth2CodeGrantController {
 
     private URI buildRedirectUri(JsonWebToken jsonWebToken) {
         return ServletUriComponentsBuilder.fromHttpUrl(onsquadProperties.getFrontendBaseUrl())
-                .queryParam("accessToken", jsonWebToken.accessToken().value())
-                .queryParam("refreshToken", jsonWebToken.refreshToken().value())
+                .queryParam("accessToken", jsonWebToken.accessToken())
+                .queryParam("refreshToken", jsonWebToken.refreshToken())
                 .build()
                 .toUri();
     }

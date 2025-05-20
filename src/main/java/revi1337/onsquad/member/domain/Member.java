@@ -91,6 +91,11 @@ public class Member extends BaseEntity {
                 .build();
     }
 
+    /**
+     * A builder that incrementally initializes fields to construct a {@link Member} object. It is intended for use
+     * within the {@code Member} class via factory methods, and for testing purposes only. Usage for any other purposes
+     * is not recommended.
+     */
     @Builder(access = PUBLIC)
     private Member(Email email, Password password, Nickname nickname, Introduce introduce, Address address,
                    String image, String kakaoLink, UserType userType, Mbti mbti) {

@@ -1,6 +1,7 @@
 package revi1337.onsquad.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Validator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import revi1337.onsquad.auth.application.token.JsonWebTokenService;
+import revi1337.onsquad.auth.application.token.JsonWebTokenManager;
 import revi1337.onsquad.auth.application.token.security.JsonWebTokenAuthenticationProvider;
 import revi1337.onsquad.auth.application.token.security.JsonWebTokenFailureHandler;
 import revi1337.onsquad.auth.application.token.security.JsonWebTokenLoginFilter;
@@ -39,7 +40,8 @@ public class SecurityConfig {
 
     private final MemberRepository memberRepository;
     private final ObjectMapper objectMapper;
-    private final JsonWebTokenService jsonWebTokenService;
+    private final JsonWebTokenManager jsonWebTokenManager;
+    private final Validator validator;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -72,7 +74,7 @@ public class SecurityConfig {
     @Bean
     public AbstractAuthenticationProcessingFilter loginFilter() {
         JsonWebTokenLoginFilter jsonWebTokenFilter =
-                new JsonWebTokenLoginFilter(authenticationManager(), objectMapper);
+                new JsonWebTokenLoginFilter(authenticationManager(), objectMapper, validator);
         jsonWebTokenFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         jsonWebTokenFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         return jsonWebTokenFilter;
@@ -80,7 +82,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new JsonWebTokenSuccessHandler(jsonWebTokenService, objectMapper);
+        return new JsonWebTokenSuccessHandler(jsonWebTokenManager, objectMapper);
     }
 
     @Bean

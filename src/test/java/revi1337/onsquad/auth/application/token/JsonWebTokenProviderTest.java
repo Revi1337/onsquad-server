@@ -45,9 +45,8 @@ class JsonWebTokenProviderTest {
         AccessToken ACCESS_TOKEN = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT, TOKEN_CLAIMS);
 
         // then
-        Map<String, String> PAYLOAD_MAP = parseAccessTokenPayload(ACCESS_TOKEN);
         assertThat(ACCESS_TOKEN).isNotNull();
-        assertThat(PAYLOAD_MAP.get("sub")).isEqualTo(ACCESS_TOKEN_SUBJECT);
+        assertThat(parseAccessTokenPayload(ACCESS_TOKEN).get("sub")).isEqualTo(ACCESS_TOKEN_SUBJECT);
     }
 
     @Test
@@ -60,9 +59,8 @@ class JsonWebTokenProviderTest {
         RefreshToken REFRESH_TOKEN = jsonWebTokenProvider.generateRefreshToken(REFRESH_TOKEN_SUBJECT, TOKEN_CLAIMS);
 
         // then
-        Map<String, String> PAYLOAD_MAP = parseRefreshTokenPayload(REFRESH_TOKEN);
         assertThat(REFRESH_TOKEN).isNotNull();
-        assertThat(PAYLOAD_MAP.get("sub")).isEqualTo(REFRESH_TOKEN_SUBJECT);
+        assertThat(parseRefreshTokenPayload(REFRESH_TOKEN).get("sub")).isEqualTo(REFRESH_TOKEN_SUBJECT);
     }
 
     private Map<String, String> parseAccessTokenPayload(AccessToken accessToken) throws IOException {

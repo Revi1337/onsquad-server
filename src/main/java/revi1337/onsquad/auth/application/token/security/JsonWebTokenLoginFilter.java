@@ -1,14 +1,18 @@
 package revi1337.onsquad.auth.application.token.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,11 +23,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import revi1337.onsquad.auth.application.token.dto.LoginRequest;
 import revi1337.onsquad.auth.error.exception.UnsupportedLoginUrlMethod;
 import revi1337.onsquad.common.error.CommonErrorCode;
 
-@Slf4j
 public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     private static final String DEFAULT_LOGIN_URL = "/api/auth/login";
@@ -32,10 +36,18 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
             new AntPathRequestMatcher(DEFAULT_LOGIN_URL, ALLOW_HTTP_METHOD);
 
     private final ObjectMapper objectMapper;
+    private final Validator validator;
 
-    public JsonWebTokenLoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper) {
+    @Qualifier("handlerExceptionResolver")
+    @Autowired
+    private HandlerExceptionResolver handlerExceptionResolver;
+
+    public JsonWebTokenLoginFilter(AuthenticationManager authenticationManager,
+                                   ObjectMapper objectMapper,
+                                   Validator validator) {
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
         this.objectMapper = objectMapper;
+        this.validator = validator;
     }
 
     @Override
@@ -64,31 +76,32 @@ public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFil
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
-                                                HttpServletResponse response)
-            throws AuthenticationException, IOException {
-        LoginRequest loginRequest = objectMapper.readValue(
-                StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8), LoginRequest.class
-        );
-        UsernamePasswordAuthenticationToken unauthenticatedToken = UsernamePasswordAuthenticationToken.unauthenticated(
-                loginRequest.email(), loginRequest.password()
-        );
+                                                HttpServletResponse response) throws AuthenticationException {
+        try {
+            final String jsonString = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+            final LoginRequest loginRequest = objectMapper.readValue(jsonString, LoginRequest.class);
+            if (!isValidOrHandleError(loginRequest, request, response)) {
+                return null;
+            }
 
-        return getAuthenticationManager().authenticate(unauthenticatedToken);
+            final UsernamePasswordAuthenticationToken unauthenticatedToken = UsernamePasswordAuthenticationToken
+                    .unauthenticated(loginRequest.email(), loginRequest.password());
+
+            return getAuthenticationManager().authenticate(unauthenticatedToken);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
-        log.info("{} --> successfulAuthentication", getClass().getSimpleName());
-        super.successfulAuthentication(request, response, chain, authResult);
-    }
+    private boolean isValidOrHandleError(LoginRequest loginReq, HttpServletRequest request,
+                                         HttpServletResponse response) {
+        Set<ConstraintViolation<LoginRequest>> violations = validator.validate(loginReq);
+        if (violations.isEmpty()) {
+            return true;
+        }
 
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                              AuthenticationException failed) throws IOException, ServletException {
-        log.info("{} --> unsuccessfulAuthentication", getClass().getSimpleName());
-        super.unsuccessfulAuthentication(request, response, failed);
+        ConstraintViolationException violationException = new ConstraintViolationException(violations);
+        handlerExceptionResolver.resolveException(request, response, null, violationException);
+        return false;
     }
 }

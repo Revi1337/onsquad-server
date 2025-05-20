@@ -16,7 +16,7 @@ public class ExpiringMapRefreshTokenManager implements RefreshTokenManager {
     private final ExpiringMapTokenRepository tokenRepository;
 
     @Override
-    public void saveToken(RefreshToken refreshToken, Long memberId) {
+    public void saveTokenFor(Long memberId, RefreshToken refreshToken) {
         Duration expired = tokenProperties.refreshTokenAttributes().tokenAttributes().expired();
         tokenRepository.save(refreshToken, memberId, expired);
     }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewMainService;
@@ -26,10 +26,10 @@ public class CrewMainController {
     public ResponseEntity<RestResponse<CrewMainResponse>> fetchMain(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         CrewMainResponse crewMainResponse = CrewMainResponse.from(
-                crewMainService.fetchMain(authMemberAttribute.id(), crewId, pageable)
+                crewMainService.fetchMain(currentMember.id(), crewId, pageable)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(crewMainResponse));
@@ -38,10 +38,10 @@ public class CrewMainController {
     @GetMapping("/{crewId}/manage")
     public ResponseEntity<RestResponse<CrewStatisticResponse>> fetchCrewStatistic(
             @PathVariable Long crewId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         CrewStatisticResponse crewStatisticResponse = CrewStatisticResponse.from(
-                crewMainService.calculateStatistic(authMemberAttribute.id(), crewId)
+                crewMainService.calculateStatistic(currentMember.id(), crewId)
         );
 
         return ResponseEntity.ok(RestResponse.success(crewStatisticResponse));

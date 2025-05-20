@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
@@ -27,10 +27,10 @@ public class CrewMemberController {
     public ResponseEntity<RestResponse<PageResponse<CrewMemberResponse>>> fetchCrewMembers(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         Page<CrewMemberResponse> pageResponse = crewMemberService
-                .fetchCrewMembers(authMemberAttribute.id(), crewId, pageable)
+                .fetchCrewMembers(currentMember.id(), crewId, pageable)
                 .map(CrewMemberResponse::from);
 
         return ResponseEntity.ok().body(RestResponse.success(PageResponse.from(pageResponse)));

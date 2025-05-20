@@ -8,32 +8,31 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 
 @RequiredArgsConstructor
 public class JsonWebTokenAuthenticationProvider implements AuthenticationProvider {
 
-    private static final String BAD_CREDENTIALS = "invalid user credentials";
+    private static final String BAD_CREDENTIALS = "비밀번호가 일치하지 않습니다.";
 
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
 
     @Override
+    public boolean supports(Class<?> authentication) {
+        return authentication.isAssignableFrom(UsernamePasswordAuthenticationToken.class);
+    }
+
+    @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String emailPrincipal = authentication.getPrincipal().toString();
-        AuthMemberAttribute authMemberAttribute = (AuthMemberAttribute) userDetailsService
-                .loadUserByUsername(emailPrincipal);
-        if (!passwordEncoder.matches(authentication.getCredentials().toString(), authMemberAttribute.getPassword())) {
+        CurrentMember currentMember = (CurrentMember) userDetailsService.loadUserByUsername(emailPrincipal);
+        if (!passwordEncoder.matches(authentication.getCredentials().toString(), currentMember.getPassword())) {
             throw new BadCredentialsException(BAD_CREDENTIALS);
         }
 
         return UsernamePasswordAuthenticationToken.authenticated(
-                authMemberAttribute, authMemberAttribute.getPassword(), authMemberAttribute.getAuthorities()
+                currentMember, currentMember.getPassword(), currentMember.getAuthorities()
         );
-    }
-
-    @Override
-    public boolean supports(Class<?> authentication) {
-        return authentication.isAssignableFrom(UsernamePasswordAuthenticationToken.class);
     }
 }

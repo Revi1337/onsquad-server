@@ -1,10 +1,10 @@
 package revi1337.onsquad.auth.model.token;
 
 public record JsonWebToken(
-        AccessToken accessToken,
-        RefreshToken refreshToken
+        String accessToken,
+        String refreshToken
 ) {
-    public static JsonWebToken of(AccessToken accessToken, RefreshToken refreshToken) {
-        return new JsonWebToken(accessToken, refreshToken);
+    public static JsonWebToken create(AccessToken accessToken, RefreshToken refreshToken) {
+        return new JsonWebToken(accessToken.value(), refreshToken.value());
     }
 }

@@ -3,14 +3,11 @@ package revi1337.onsquad.auth.application.token;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_USER_TYPE;
 import static revi1337.onsquad.common.fixture.TokenFixture.ACCESS_TOKEN_SUBJECT;
 import static revi1337.onsquad.common.fixture.TokenFixture.REFRESH_TOKEN_SUBJECT;
-import static revi1337.onsquad.common.fixture.TokenFixture.TEST_CLAIM_KEY_1;
-import static revi1337.onsquad.common.fixture.TokenFixture.TEST_CLAIM_KEY_2;
-import static revi1337.onsquad.common.fixture.TokenFixture.TEST_CLAIM_VALUE_1;
-import static revi1337.onsquad.common.fixture.TokenFixture.TEST_CLAIM_VALUE_2;
 
-import io.jsonwebtoken.Claims;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +30,7 @@ import revi1337.onsquad.auth.model.token.AccessToken;
 import revi1337.onsquad.auth.model.token.RefreshToken;
 import revi1337.onsquad.common.YamlPropertySourceFactory;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
+import revi1337.onsquad.member.application.dto.MemberSummary;
 
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 @EnableConfigurationProperties({TokenProperties.class, OnsquadProperties.class})
@@ -56,59 +54,33 @@ class JsonWebTokenEvaluatorTest {
         @Test
         @DisplayName("AccessToken 검증에 성공한다.")
         void success() {
-            AccessToken ACCESS_TOKEN = jsonWebTokenProvider
+            AccessToken accessToken = jsonWebTokenProvider
                     .generateAccessToken(ACCESS_TOKEN_SUBJECT, generatePayload());
 
-            Claims claims = jsonWebTokenEvaluator.verifyAccessToken(ACCESS_TOKEN.value());
+            ClaimsParser claimsParser = jsonWebTokenEvaluator.verifyAccessToken(accessToken.value());
 
-            assertThat(claims).isNotNull();
-        }
-
-        @Test
-        @DisplayName("AccessToken Payload 의 subject 검증에 성공한다.")
-        void success2() {
-            AccessToken ACCESS_TOKEN = jsonWebTokenProvider
-                    .generateAccessToken(ACCESS_TOKEN_SUBJECT, generatePayload());
-            Claims CLAIMS = jsonWebTokenEvaluator.verifyAccessToken(ACCESS_TOKEN.value());
-
-            String SUBJECT = CLAIMS.getSubject();
-
-            assertThat(SUBJECT).isEqualTo(ACCESS_TOKEN_SUBJECT);
-        }
-
-        @Test
-        @DisplayName("AccessToken Payload 의 기타 필드에 대한 검증에 성공한다.")
-        void success3() {
-            AccessToken ACCESS_TOKEN = jsonWebTokenProvider
-                    .generateAccessToken(ACCESS_TOKEN_SUBJECT, generatePayload());
-            Claims CLAIMS = jsonWebTokenEvaluator.verifyAccessToken(ACCESS_TOKEN.value());
-
-            Object EXTRA_CLAIM = jsonWebTokenEvaluator
-                    .extractSpecificClaim(CLAIMS, claims -> claims.get(TEST_CLAIM_KEY_1));
-
-            assertThat(EXTRA_CLAIM).isEqualTo(TEST_CLAIM_VALUE_1);
+            assertThat(claimsParser).isNotNull();
         }
 
         @Test
         @DisplayName("Signature 가 다르면 AccessToken 검증에 실패한다.")
         void fail1() {
-            AccessToken ACCESS_TOKEN = jsonWebTokenProvider
-                    .generateAccessToken(ACCESS_TOKEN_SUBJECT, generatePayload());
-            String INVALID_ACCESS_TOKEN = ACCESS_TOKEN.value() + "salt";
+            AccessToken accessToken = jsonWebTokenProvider.generateAccessToken(ACCESS_TOKEN_SUBJECT, generatePayload());
+            String invalidAccessToken = accessToken.value() + "salt";
 
-            assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyAccessToken(INVALID_ACCESS_TOKEN))
+            assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyAccessToken(invalidAccessToken))
                     .isExactlyInstanceOf(AuthTokenException.InvalidTokenSignature.class);
         }
 
         @Test
         @DisplayName("Expired Time 이 지나면 AccessToken 검증에 실패한다.")
         void fail2() {
-            AccessTokenAttributes ACCESS_TOKEN_ATTRIBUTES = tokenProperties.accessTokenAttributes();
-            TokenAttributes TOKEN_ATTRIBUTES = ACCESS_TOKEN_ATTRIBUTES.tokenAttributes();
-            AccessTokenAttributes STUB_ATTRIBUTES = new AccessTokenAttributes(
-                    new TokenAttributes(Duration.ofNanos(1), TOKEN_ATTRIBUTES.secretKey())
+            AccessTokenAttributes accessTokenAttributes = tokenProperties.accessTokenAttributes();
+            TokenAttributes tokenAttributes = accessTokenAttributes.tokenAttributes();
+            AccessTokenAttributes stubAttributes = new AccessTokenAttributes(
+                    new TokenAttributes(Duration.ofNanos(1), tokenAttributes.secretKey())
             );
-            when(tokenProperties.accessTokenAttributes()).thenReturn(STUB_ATTRIBUTES);
+            when(tokenProperties.accessTokenAttributes()).thenReturn(stubAttributes);
             AccessToken ACCESS_TOKEN = jsonWebTokenProvider
                     .generateAccessToken(ACCESS_TOKEN_SUBJECT, generatePayload());
 
@@ -124,72 +96,49 @@ class JsonWebTokenEvaluatorTest {
         @Test
         @DisplayName("RefreshToken 검증에 성공한다.")
         void success1() {
-            RefreshToken REFRESH_TOKEN = jsonWebTokenProvider
+            RefreshToken refreshToken = jsonWebTokenProvider
                     .generateRefreshToken(REFRESH_TOKEN_SUBJECT, generatePayload());
 
-            Claims claims = jsonWebTokenEvaluator.verifyRefreshToken(REFRESH_TOKEN.value());
+            ClaimsParser claimsParser = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
 
-            assertThat(claims).isNotNull();
-        }
-
-        @Test
-        @DisplayName("RefreshToken Payload 의 subject 검증에 성공한다.")
-        void success2() {
-            RefreshToken REFRESH_TOKEN = jsonWebTokenProvider
-                    .generateRefreshToken(REFRESH_TOKEN_SUBJECT, generatePayload());
-            Claims claims = jsonWebTokenEvaluator.verifyRefreshToken(REFRESH_TOKEN.value());
-
-            String SUBJECT = claims.getSubject();
-
-            assertThat(SUBJECT).isEqualTo(REFRESH_TOKEN_SUBJECT);
-        }
-
-        @Test
-        @DisplayName("RefreshToken Payload 의 기타 필드에 대한 검증에 성공한다.")
-        void success3() {
-            RefreshToken REFRESH_TOKEN = jsonWebTokenProvider
-                    .generateRefreshToken(REFRESH_TOKEN_SUBJECT, generatePayload());
-            Claims CLAIMS = jsonWebTokenEvaluator.verifyRefreshToken(REFRESH_TOKEN.value());
-
-            Object EXTRA_CLAIM = jsonWebTokenEvaluator
-                    .extractSpecificClaim(CLAIMS, claims -> claims.get(TEST_CLAIM_KEY_2));
-
-            assertThat(EXTRA_CLAIM).isEqualTo(TEST_CLAIM_VALUE_2);
+            assertThat(claimsParser).isNotNull();
         }
 
         @Test
         @DisplayName("Signature 가 다르면 RefreshToken 검증에 실패한다.")
         void fail1() {
-            RefreshToken REFRESH_TOKEN = jsonWebTokenProvider
+            RefreshToken refreshToken = jsonWebTokenProvider
                     .generateRefreshToken(REFRESH_TOKEN_SUBJECT, generatePayload());
-            String INVALID_REFRESH_TOKEN = REFRESH_TOKEN.value() + "salt";
+            String invalidRefreshToken = refreshToken.value() + "salt";
 
-            assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyRefreshToken(INVALID_REFRESH_TOKEN))
+            assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyRefreshToken(invalidRefreshToken))
                     .isExactlyInstanceOf(AuthTokenException.InvalidTokenSignature.class);
         }
 
         @Test
         @DisplayName("Expired Time 이 지나면 RefreshToken 검증에 실패한다.")
         void fail2() {
-            RefreshTokenAttributes REFRESH_TOKEN_ATTRIBUTES = tokenProperties.refreshTokenAttributes();
-            TokenAttributes TOKEN_ATTRIBUTES = REFRESH_TOKEN_ATTRIBUTES.tokenAttributes();
-            RefreshTokenAttributes STUB_ATTRIBUTES = new RefreshTokenAttributes(
-                    new TokenAttributes(Duration.ofNanos(1), TOKEN_ATTRIBUTES.secretKey())
+            RefreshTokenAttributes refreshTokenAttributes = tokenProperties.refreshTokenAttributes();
+            TokenAttributes tokenAttributes = refreshTokenAttributes.tokenAttributes();
+            RefreshTokenAttributes stubAttributes = new RefreshTokenAttributes(
+                    new TokenAttributes(Duration.ofNanos(1), tokenAttributes.secretKey())
             );
-            when(tokenProperties.refreshTokenAttributes()).thenReturn(STUB_ATTRIBUTES);
-            RefreshToken REFRESH_TOKEN = jsonWebTokenProvider
+            when(tokenProperties.refreshTokenAttributes()).thenReturn(stubAttributes);
+            RefreshToken refreshToken = jsonWebTokenProvider
                     .generateRefreshToken(REFRESH_TOKEN_SUBJECT, generatePayload());
 
-            assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyRefreshToken(REFRESH_TOKEN.value()))
+            assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value()))
                     .isExactlyInstanceOf(AuthTokenException.TokenExpired.class);
         }
     }
 
-    private Map<String, String> generatePayload() {
+    private Map<String, Object> generatePayload() {
+        MemberSummary summary = new MemberSummary(1L, REVI_EMAIL_VALUE, null, REVI_USER_TYPE);
         return new HashMap<>() {
             {
-                put(TEST_CLAIM_KEY_1, TEST_CLAIM_VALUE_1);
-                put(TEST_CLAIM_KEY_2, TEST_CLAIM_VALUE_2);
+                put(ClaimsParser.IDENTITY_CLAIM, summary.id());
+                put(ClaimsParser.EMAIL_CLAIM, summary.email());
+                put(ClaimsParser.USERTYPE_CLAIM, summary.userType().name());
             }
         };
     }

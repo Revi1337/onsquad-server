@@ -9,7 +9,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
-import java.util.function.Function;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.config.properties.TokenProperties.AccessTokenAttributes;
@@ -27,18 +26,14 @@ public class JsonWebTokenEvaluator {
         this.refreshTokenAttributes = tokenProperties.refreshTokenAttributes();
     }
 
-    public Claims verifyAccessToken(String accessToken) {
+    public ClaimsParser verifyAccessToken(String accessToken) {
         String accessTokenSecretKey = accessTokenAttributes.tokenAttributes().secretKey();
-        return verifyToken(accessToken, accessTokenSecretKey);
+        return new ClaimsParser(verifyToken(accessToken, accessTokenSecretKey));
     }
 
-    public Claims verifyRefreshToken(String refreshToken) {
+    public ClaimsParser verifyRefreshToken(String refreshToken) {
         String refreshTokenSecretKey = refreshTokenAttributes.tokenAttributes().secretKey();
-        return verifyToken(refreshToken, refreshTokenSecretKey);
-    }
-
-    public <V extends Claims, T> T extractSpecificClaim(V claims, Function<V, T> claimsResolver) {
-        return claimsResolver.apply(claims);
+        return new ClaimsParser(verifyToken(refreshToken, refreshTokenSecretKey));
     }
 
     private Claims verifyToken(String token, String secretKey) {

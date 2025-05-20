@@ -1,5 +1,9 @@
 package revi1337.onsquad.common;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +20,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import revi1337.onsquad.auth.application.token.ClaimsParser;
 import revi1337.onsquad.auth.application.token.JsonWebTokenEvaluator;
 import revi1337.onsquad.common.config.PresentationLayerConfiguration;
 import revi1337.onsquad.common.config.WebMvcConfig;
+import revi1337.onsquad.member.domain.vo.UserType;
 
 @Import({WebMvcConfig.class, PresentationLayerConfiguration.class})
 @WebMvcTest
@@ -47,5 +53,10 @@ public abstract class PresentationLayerTestSupport {
                 .alwaysDo(MockMvcResultHandlers.print())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+
+        ClaimsParser claimsParser = mock(ClaimsParser.class);
+        when(claimsParser.parseIdentity()).thenReturn(1L);
+        when(claimsParser.parseUserType()).thenReturn(UserType.GENERAL);
+        when(jsonWebTokenEvaluator.verifyAccessToken(any())).thenReturn(claimsParser);
     }
 }

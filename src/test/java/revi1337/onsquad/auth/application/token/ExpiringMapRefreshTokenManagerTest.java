@@ -39,14 +39,14 @@ class ExpiringMapRefreshTokenManagerTest {
 
     @Test
     @DisplayName("RefreshToken 저장에 성공한다.")
-    void saveToken() {
+    void saveTokenFor() {
         Long MEMBER_ID = 1L;
         Duration DURATION = Duration.ofSeconds(300);
         when(tokenProperties.refreshTokenAttributes()).thenReturn(refreshTokenAttributes);
         when(refreshTokenAttributes.tokenAttributes()).thenReturn(tokenAttributes);
         when(tokenAttributes.expired()).thenReturn(DURATION);
 
-        tokenManager.saveToken(REFRESH_TOKEN, MEMBER_ID);
+        tokenManager.saveTokenFor(MEMBER_ID, REFRESH_TOKEN);
 
         verify(repository).save(REFRESH_TOKEN, MEMBER_ID, DURATION);
     }

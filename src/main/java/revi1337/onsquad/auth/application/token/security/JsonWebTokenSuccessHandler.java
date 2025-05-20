@@ -10,40 +10,44 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
-import revi1337.onsquad.auth.application.token.JsonWebTokenService;
+import revi1337.onsquad.auth.application.CurrentMember;
+import revi1337.onsquad.auth.application.token.JsonWebTokenManager;
+import revi1337.onsquad.auth.model.token.AccessToken;
 import revi1337.onsquad.auth.model.token.JsonWebToken;
+import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.common.dto.RestResponse;
 
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class JsonWebTokenSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JsonWebTokenService jsonWebTokenService;
+    private static final String SERIALIZE_IO_ERROR_LOG_FORMAT = "인증 토큰 JSON 직렬화 또는 출력 중 예외 발생";
+    private static final String LOGIN_LOG = "[사용자 로그인 성공] - id : {}, email : {}";
+
+    private final JsonWebTokenManager jsonWebTokenManager;
     private final ObjectMapper objectMapper;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
-        log.info("{} --> onAuthenticationSuccess", getClass().getSimpleName());
-        if (authentication.getPrincipal() instanceof AuthMemberAttribute authMemberAttribute) {
-            JsonWebToken jsonWebToken = generateJsonWebTokenPair(authMemberAttribute);
-            jsonWebTokenService.saveRefreshToken(jsonWebToken.refreshToken(), authMemberAttribute.id());
-            sendTokenResponseToClient(response, jsonWebToken);
-            return;
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) {
+        if (authentication.getPrincipal() instanceof CurrentMember currentMember) {
+            AccessToken accessToken = jsonWebTokenManager.generateAccessToken(currentMember.summary());
+            RefreshToken refreshToken = jsonWebTokenManager.generateRefreshToken(currentMember.id());
+            jsonWebTokenManager.storeRefreshTokenFor(currentMember.id(), refreshToken);
+            sendTokenResponseToClient(response, JsonWebToken.create(accessToken, refreshToken));
+            log.info(LOGIN_LOG, currentMember.id(), currentMember.email());
         }
-
-        throw new RuntimeException("unexpected principal type");
     }
 
-    private JsonWebToken generateJsonWebTokenPair(AuthMemberAttribute authMemberAttribute) {
-        return jsonWebTokenService.generateTokenPair(authMemberAttribute.toDto());
-    }
+    private void sendTokenResponseToClient(HttpServletResponse response, JsonWebToken jsonWebToken) {
+        try {
+            response.setContentType(APPLICATION_JSON_VALUE);
+            response.getWriter()
+                    .write(objectMapper.writeValueAsString(RestResponse.success(jsonWebToken)));
 
-    private void sendTokenResponseToClient(HttpServletResponse response,
-                                           JsonWebToken jsonWebToken) throws IOException {
-        response.setContentType(APPLICATION_JSON_VALUE);
-        response.getWriter()
-                .write(objectMapper.writeValueAsString(jsonWebToken));
+        } catch (IOException e) {
+            log.error(SERIALIZE_IO_ERROR_LOG_FORMAT, e);
+            throw new IllegalArgumentException(e);
+        }
     }
 }

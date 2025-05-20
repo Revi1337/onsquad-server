@@ -21,7 +21,7 @@ import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceUpdateRequest;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceWithFixAndModifyStateResponse;
 import revi1337.onsquad.announce.presentation.dto.response.AnnouncesWithWriteStateResponse;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.common.dto.RestResponse;
 
@@ -36,10 +36,10 @@ public class AnnounceController {
     @PostMapping("/{crewId}/announces")
     public ResponseEntity<RestResponse<String>> newAnnounce(
             @PathVariable Long crewId,
-            @Authenticate AuthMemberAttribute authMemberAttribute,
+            @Authenticate CurrentMember currentMember,
             @Valid @RequestBody AnnounceCreateRequest createRequest
     ) {
-        announceCommandService.newAnnounce(authMemberAttribute.id(), crewId, createRequest.toDto());
+        announceCommandService.newAnnounce(currentMember.id(), crewId, createRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -48,10 +48,10 @@ public class AnnounceController {
     public ResponseEntity<RestResponse<AnnounceWithFixAndModifyStateResponse>> findAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         AnnounceWithFixAndModifyStateResponse announceInfoResponse = AnnounceWithFixAndModifyStateResponse.from(
-                announceQueryService.findAnnounce(authMemberAttribute.id(), crewId, announceId)
+                announceQueryService.findAnnounce(currentMember.id(), crewId, announceId)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(announceInfoResponse));
@@ -61,10 +61,10 @@ public class AnnounceController {
     public ResponseEntity<RestResponse<AnnouncesWithWriteStateResponse>> findAnnounces(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         AnnouncesWithWriteStateResponse announceResponses = AnnouncesWithWriteStateResponse.from(
-                announceQueryService.findAnnounces(authMemberAttribute.id(), crewId, pageable)
+                announceQueryService.findAnnounces(currentMember.id(), crewId, pageable)
         );
 
         return ResponseEntity.ok().body(RestResponse.success(announceResponses));
@@ -75,9 +75,9 @@ public class AnnounceController {
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @Valid @RequestBody AnnounceUpdateRequest updateRequest,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        announceCommandService.updateAnnounce(authMemberAttribute.id(), crewId, announceId, updateRequest.toDto());
+        announceCommandService.updateAnnounce(currentMember.id(), crewId, announceId, updateRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -87,9 +87,9 @@ public class AnnounceController {
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @RequestParam boolean state,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        announceCommandService.fixOrUnfixAnnounce(authMemberAttribute.id(), crewId, announceId, state);
+        announceCommandService.fixOrUnfixAnnounce(currentMember.id(), crewId, announceId, state);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -98,9 +98,9 @@ public class AnnounceController {
     public ResponseEntity<RestResponse<String>> deleteAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        announceCommandService.deleteAnnounce(authMemberAttribute.id(), crewId, announceId);
+        announceCommandService.deleteAnnounce(currentMember.id(), crewId, announceId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

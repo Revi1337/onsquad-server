@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.application.AuthMemberAttribute;
+import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.config.Authenticate;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.common.dto.RestResponse;
@@ -36,9 +36,9 @@ public class SquadController {
     public ResponseEntity<RestResponse<String>> newSquad(
             @PathVariable Long crewId,
             @Valid @RequestBody SquadCreateRequest squadCreateRequest,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
-        squadCommandService.newSquad(authMemberAttribute.id(), crewId, squadCreateRequest.toDto());
+        squadCommandService.newSquad(currentMember.id(), crewId, squadCreateRequest.toDto());
 
         return ResponseEntity.ok(RestResponse.created());
     }
@@ -47,10 +47,10 @@ public class SquadController {
     public ResponseEntity<RestResponse<SquadWithParticipantAndLeaderAndViewStateResponse>> fetchSquad(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         SquadWithParticipantAndLeaderAndViewStateResponse squadResponse = SquadWithParticipantAndLeaderAndViewStateResponse.from(
-                squadQueryService.fetchSquad(authMemberAttribute.id(), crewId, squadId)
+                squadQueryService.fetchSquad(currentMember.id(), crewId, squadId)
         );
 
         return ResponseEntity.ok(RestResponse.success(squadResponse));
@@ -61,10 +61,10 @@ public class SquadController {
             @PathVariable Long crewId,
             @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         List<SquadResponse> squadResponses = squadQueryService
-                .fetchSquads(authMemberAttribute.id(), crewId, category, pageable).stream()
+                .fetchSquads(currentMember.id(), crewId, category, pageable).stream()
                 .map(SquadResponse::from)
                 .toList();
 
@@ -75,10 +75,10 @@ public class SquadController {
     public ResponseEntity<RestResponse<List<SquadWithLeaderStateResponse>>> fetchSquadsWithOwnerState(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
-            @Authenticate AuthMemberAttribute authMemberAttribute
+            @Authenticate CurrentMember currentMember
     ) {
         List<SquadWithLeaderStateResponse> squadResponses = squadQueryService
-                .fetchSquadsWithOwnerState(authMemberAttribute.id(), crewId, pageable).stream()
+                .fetchSquadsWithOwnerState(currentMember.id(), crewId, pageable).stream()
                 .map(SquadWithLeaderStateResponse::from)
                 .toList();
 
