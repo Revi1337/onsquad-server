@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 
 class ExpiringMapTokenRepositoryTest {
 

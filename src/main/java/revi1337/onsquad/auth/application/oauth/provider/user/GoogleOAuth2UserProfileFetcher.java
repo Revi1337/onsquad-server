@@ -6,9 +6,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.auth.model.oauth.GoogleUserProfile;
-import revi1337.onsquad.auth.model.oauth.PlatformUserProfile;
-import revi1337.onsquad.auth.model.token.AccessToken;
+import revi1337.onsquad.auth.application.oauth.model.GoogleUserProfile;
+import revi1337.onsquad.auth.application.oauth.model.PlatformUserProfile;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
 import revi1337.onsquad.auth.presentation.oauth.dto.response.GoogleUserInfoResponse;
 
 public class GoogleOAuth2UserProfileFetcher implements PlatformOAuth2UserProfileFetcher {

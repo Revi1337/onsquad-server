@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.model.token;
+package revi1337.onsquad.auth.application.token.model;
 
 public record JsonWebToken(
         String accessToken,

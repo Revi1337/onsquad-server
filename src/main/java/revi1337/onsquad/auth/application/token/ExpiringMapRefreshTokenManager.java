@@ -5,7 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.auth.repository.token.ExpiringMapTokenRepository;
 
 @RequiredArgsConstructor

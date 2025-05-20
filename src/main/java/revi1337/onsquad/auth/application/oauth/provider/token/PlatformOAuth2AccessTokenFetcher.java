@@ -1,7 +1,7 @@
 package revi1337.onsquad.auth.application.oauth.provider.token;
 
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.auth.model.token.AccessToken;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
 
 public interface PlatformOAuth2AccessTokenFetcher {
 

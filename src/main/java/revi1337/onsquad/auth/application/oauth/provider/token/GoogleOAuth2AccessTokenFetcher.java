@@ -11,7 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.auth.model.token.AccessToken;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
 
 public class GoogleOAuth2AccessTokenFetcher implements PlatformOAuth2AccessTokenFetcher {
 

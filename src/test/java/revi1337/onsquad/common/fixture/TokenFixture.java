@@ -1,8 +1,8 @@
 package revi1337.onsquad.common.fixture;
 
 import java.util.HashMap;
-import revi1337.onsquad.auth.model.token.AccessToken;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 
 public class TokenFixture {
 

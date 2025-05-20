@@ -13,9 +13,9 @@ import revi1337.onsquad.auth.application.oauth.OAuth2LoginService;
 import revi1337.onsquad.auth.application.oauth.OAuth2Platform;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties;
 import revi1337.onsquad.auth.config.properties.SupportOAuth2Platform;
-import revi1337.onsquad.auth.model.oauth.PlatformUserProfile;
-import revi1337.onsquad.auth.model.token.AccessToken;
-import revi1337.onsquad.auth.model.token.JsonWebToken;
+import revi1337.onsquad.auth.application.oauth.model.PlatformUserProfile;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
+import revi1337.onsquad.auth.application.token.model.JsonWebToken;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
 
 @RequiredArgsConstructor

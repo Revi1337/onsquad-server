@@ -17,7 +17,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.common.TestContainerSupport;
 
 @ImportAutoConfiguration(RedisAutoConfiguration.class)

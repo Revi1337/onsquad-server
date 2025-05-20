@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.model.oauth;
+package revi1337.onsquad.auth.application.oauth.model;
 
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.member.domain.vo.UserType;

@@ -1,7 +1,7 @@
 package revi1337.onsquad.auth.application.token;
 
 import java.util.Optional;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 
 public interface RefreshTokenManager {
 

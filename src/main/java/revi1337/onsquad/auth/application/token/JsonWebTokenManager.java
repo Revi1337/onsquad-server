@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.auth.model.token.AccessToken;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 
 @RequiredArgsConstructor

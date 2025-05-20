@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.config.properties.TokenProperties.RefreshTokenAttributes;
 import revi1337.onsquad.auth.config.properties.TokenProperties.TokenAttributes;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.auth.repository.token.RedisHashTokenRepository;
 
 @ExtendWith(MockitoExtension.class)

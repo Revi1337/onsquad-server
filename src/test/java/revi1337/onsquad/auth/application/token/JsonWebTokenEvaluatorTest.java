@@ -26,8 +26,8 @@ import revi1337.onsquad.auth.config.properties.TokenProperties.AccessTokenAttrib
 import revi1337.onsquad.auth.config.properties.TokenProperties.RefreshTokenAttributes;
 import revi1337.onsquad.auth.config.properties.TokenProperties.TokenAttributes;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
-import revi1337.onsquad.auth.model.token.AccessToken;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.common.YamlPropertySourceFactory;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
 import revi1337.onsquad.member.application.dto.MemberSummary;

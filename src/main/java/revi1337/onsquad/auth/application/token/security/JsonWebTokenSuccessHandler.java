@@ -12,9 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import revi1337.onsquad.auth.application.CurrentMember;
 import revi1337.onsquad.auth.application.token.JsonWebTokenManager;
-import revi1337.onsquad.auth.model.token.AccessToken;
-import revi1337.onsquad.auth.model.token.JsonWebToken;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
+import revi1337.onsquad.auth.application.token.model.JsonWebToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.common.dto.RestResponse;
 
 @Slf4j

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.application.token.TokenReissueService;
-import revi1337.onsquad.auth.model.token.JsonWebToken;
-import revi1337.onsquad.auth.model.token.RefreshToken;
+import revi1337.onsquad.auth.application.token.model.JsonWebToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.auth.presentation.token.dto.request.ReissueRequest;
 import revi1337.onsquad.common.dto.RestResponse;
 
