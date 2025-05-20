@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.auth.application.token.model.AccessToken;
+import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
 
 public class GoogleOAuth2AccessTokenFetcher implements PlatformOAuth2AccessTokenFetcher {
 
@@ -39,6 +39,6 @@ public class GoogleOAuth2AccessTokenFetcher implements PlatformOAuth2AccessToken
                 }
         );
 
-        return AccessToken.of(tokenAttributeResponse.getBody().get("access_token"));
+        return new AccessToken(tokenAttributeResponse.getBody().get("access_token"));
     }
 }

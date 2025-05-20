@@ -1,5 +1,6 @@
 package revi1337.onsquad.auth.application.token;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -12,12 +13,12 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
+import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.config.properties.TokenProperties.AccessTokenAttributes;
 import revi1337.onsquad.auth.config.properties.TokenProperties.RefreshTokenAttributes;
 import revi1337.onsquad.auth.config.properties.TokenProperties.TokenAttributes;
-import revi1337.onsquad.auth.application.token.model.AccessToken;
-import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
 
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class JsonWebTokenProvider {
 
     public AccessToken generateAccessToken(String subject, Map<String, ?> extraClaims) {
         AccessTokenAttributes accessTokenAttributes = tokenProperties.accessTokenAttributes();
-        return AccessToken.of(
+        return new AccessToken(
                 buildToken(
                         subject,
                         extraClaims,
@@ -40,7 +41,7 @@ public class JsonWebTokenProvider {
 
     public RefreshToken generateRefreshToken(String subject, Map<String, ?> extraClaims) {
         RefreshTokenAttributes refreshTokenAttributes = tokenProperties.refreshTokenAttributes();
-        return RefreshToken.of(
+        return new RefreshToken(
                 buildToken(
                         subject,
                         extraClaims,
@@ -62,7 +63,7 @@ public class JsonWebTokenProvider {
         Instant currentTime = Instant.now();
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .claim("jti", UUID.randomUUID().toString())
+                .claim(Claims.ID, UUID.randomUUID().toString())
                 .setSubject(subject)
                 .setIssuer(onsquadProperties.getApplicationName().toUpperCase())
                 .setIssuedAt(Date.from(currentTime))

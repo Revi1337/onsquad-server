@@ -48,7 +48,7 @@ public class RedisHashTokenRepository implements TokenRepository {
         HashOperations<String, Object, Object> hashOperations = stringRedisTemplate.opsForHash();
         return Optional.ofNullable(hashOperations.get(cacheName, TOKEN_KEY))
                 .map(String::valueOf)
-                .map(RefreshToken::of);
+                .map(RefreshToken::new);
     }
 
     @Override

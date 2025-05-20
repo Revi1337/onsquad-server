@@ -33,6 +33,8 @@ public abstract class PresentationLayerTestSupport {
 
     protected static final String AUTHORIZATION_HEADER_KEY = HttpHeaders.AUTHORIZATION;
     protected static final String AUTHORIZATION_HEADER_VALUE = "Bearer header.payload.signature";
+    protected static final String ACCESS_TOKEN = "header.access-token-payload.signature";
+    protected static final String REFRESH_TOKEN = "header.refresh-token-payload.signature";
 
     @Autowired
     protected MockMvc mockMvc;
@@ -44,14 +46,14 @@ public abstract class PresentationLayerTestSupport {
     protected JsonWebTokenEvaluator jsonWebTokenEvaluator;
 
     @BeforeEach
-    void setUp(
+    protected void setUp(
             final WebApplicationContext applicationContext,
             final RestDocumentationContextProvider provider
     ) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
                 .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
                 .alwaysDo(MockMvcResultHandlers.print())
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .build();
 
         ClaimsParser claimsParser = mock(ClaimsParser.class);

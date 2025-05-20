@@ -26,6 +26,6 @@ public class RefreshTokenController {
     ) {
         JsonWebToken jsonWebToken = tokenReissueService.reissue(new RefreshToken(reissueRequest.refreshToken()));
 
-        return ResponseEntity.ok().body(RestResponse.success(jsonWebToken));
+        return ResponseEntity.ok().body(RestResponse.created(jsonWebToken));
     }
 }
