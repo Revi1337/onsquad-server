@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
@@ -42,7 +41,6 @@ import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad_category.domain.SquadCategoryJdbcRepository;
 import revi1337.onsquad.squad_member.domain.SquadMemberJpaRepository;
 
-@Sql({"/h2-category.sql"})
 class SquadQueryServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
@@ -78,6 +76,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewRepository.save(CREW(REVI));
             CrewMember CREW_OWNER = crewMemberRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
             Squad SQUAD = squadRepository.save(SQUAD(CREW_OWNER, CREW));
+            clearPersistenceContext();
 
             // when
             SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
@@ -114,6 +113,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
 
             Member ANDONG = memberRepository.save(ANDONG());
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            clearPersistenceContext();
 
             // when
             SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
@@ -137,6 +137,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             Member ANDONG = memberRepository.save(ANDONG());
             CrewMember ANDONG_MEMBER = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             squadMemberRepository.save(GENERAL_SQUAD_MEMBER(SQUAD, ANDONG_MEMBER));
+            clearPersistenceContext();
 
             // when
             SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
@@ -158,6 +159,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             Member ANDONG = memberRepository.save(ANDONG());
             CrewMember ANDONG_MEMBER = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             Squad SQUAD = squadRepository.save(SQUAD(ANDONG_MEMBER, CREW));
+            clearPersistenceContext();
 
             // when
             SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
@@ -192,6 +194,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             squadCategoryRepository.batchInsert(SQUAD_3.getId(), CATEGORIES_2());
             CategoryCondition CONDITION = new CategoryCondition(CategoryType.BADMINTON);
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
+            clearPersistenceContext();
 
             // when
             List<SquadDto> SQUADS = squadQueryService
@@ -256,6 +259,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             Squad CREW2_SQUAD2 = squadRepository.save(SQUAD_2(CREW2_GENERAL, CREW2));
             squadCategoryRepository.batchInsert(CREW2_SQUAD2.getId(), CATEGORIES_1());
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
+            clearPersistenceContext();
 
             // when
             List<SquadWithLeaderStateDto> RESULTS = squadQueryService

@@ -10,11 +10,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 
-@Sql({"/h2-category.sql"})
 class CachedCategoryServiceTest extends ApplicationLayerTestSupport {
 
     @SpyBean

@@ -6,11 +6,9 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 
-@Sql({"/h2-category.sql"})
 class DefaultCategoryServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired

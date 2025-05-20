@@ -21,7 +21,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.Crew;
@@ -34,7 +33,6 @@ import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad.domain.SquadJpaRepository;
 
 @Import({SquadCategoryJdbcRepository.class})
-@Sql({"/h2-category.sql"})
 class SquadCategoryJpaRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired

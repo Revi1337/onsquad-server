@@ -24,7 +24,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew.domain.CrewJpaRepository;
@@ -37,7 +36,6 @@ import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad_category.domain.SquadCategoryJpaRepository;
 import revi1337.onsquad.squad_member.domain.SquadMemberJpaRepository;
 
-@Sql({"/h2-category.sql"})
 class SquadCommandServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
@@ -85,6 +83,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
                     SQUAD_KAKAO_LINK_VALUE,
                     SQUAD_DISCORD_LINK_VALUE
             );
+            clearPersistenceContext();
 
             Long SQUAD_ID = squadCommandService.newSquad(ANDONG.getId(), CREW.getId(), CREATE_DTO);
 
@@ -114,6 +113,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
                     SQUAD_KAKAO_LINK_VALUE,
                     SQUAD_DISCORD_LINK_VALUE
             );
+            clearPersistenceContext();
 
             Long SQUAD_ID = squadCommandService.newSquad(ANDONG.getId(), CREW.getId(), CREATE_DTO);
 
@@ -143,6 +143,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
                     SQUAD_KAKAO_LINK_VALUE,
                     SQUAD_DISCORD_LINK_VALUE
             );
+            clearPersistenceContext();
 
             Long SQUAD_ID = squadCommandService.newSquad(ANDONG.getId(), CREW.getId(), CREATE_DTO);
 
@@ -172,6 +173,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
                     SQUAD_KAKAO_LINK_VALUE,
                     SQUAD_DISCORD_LINK_VALUE
             );
+            clearPersistenceContext();
 
             Long SQUAD_ID = squadCommandService.newSquad(ANDONG.getId(), CREW.getId(), CREATE_DTO);
 
