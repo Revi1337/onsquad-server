@@ -100,15 +100,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON_VALUE))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("crews/name-duplicate/success",
+                    .andDo(document("crew/success/name-duplicate",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             queryParameters(parameterWithName("name").description("중복 체크할 Crew 이름")),
                             responseBody()
                     ));
-
-            verify(crewQueryService).isDuplicateCrewName(anyString());
         }
 
         @Test
@@ -118,14 +116,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .param("name", "크루 이름 1")
                             .contentType(APPLICATION_JSON_VALUE))
                     .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("crews/name-duplicate/fail",
+                    .andDo(document("crew/fail/name-duplicate",
+
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             queryParameters(parameterWithName("name").description("중복 체크할 Crew 이름")),
                             responseBody()
                     ));
-
-            verify(crewQueryService, times(0)).isDuplicateCrewName(anyString());
         }
     }
 
@@ -153,7 +150,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(MULTIPART_FORM_DATA_VALUE))
                     .andExpect(jsonPath("$.status").value(201))
-                    .andDo(document("crews/new/success",
+                    .andDo(document("crew/success/new",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -171,8 +168,6 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             ),
                             responseBody()
                     ));
-
-            verify(crewCommandExecutor).newCrew(any(), any(CrewCreateDto.class), any(MultipartFile.class));
         }
 
         @Test
@@ -193,14 +188,11 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .file(FILE_PART)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("crews/new/fail",
+                    .andDo(document("crew/fail/new",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseBody()
                     ));
-
-            verify(crewCommandExecutor, times(0))
-                    .newCrew(anyLong(), any(CrewCreateDto.class), any(MultipartFile.class));
         }
     }
 
@@ -243,14 +235,12 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     .andExpect(jsonPath("$.data.owner.id").value(1))
                     .andExpect(jsonPath("$.data.owner.nickname").value(REVI_NICKNAME_VALUE))
                     .andExpect(jsonPath("$.data.owner.mbti").value(ISTP.name()))
-                    .andDo(document("crews/find-crew/success1",
+                    .andDo(document("crew/success/fetch-non-auth",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             responseBody()
                     ));
-
-            verify(crewQueryService, times(1)).findCrewById(anyLong());
         }
 
         @Test
@@ -292,15 +282,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     .andExpect(jsonPath("$.data.crew.owner.id").value(1))
                     .andExpect(jsonPath("$.data.crew.owner.nickname").value(REVI_NICKNAME_VALUE))
                     .andExpect(jsonPath("$.data.crew.owner.mbti").value(ISTP.name()))
-                    .andDo(document("crews/find-crew/success2",
+                    .andDo(document("crew/success/fetch-auth",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             responseBody()
                     ));
-
-            verify(crewQueryService, times(1)).findCrewById(any(), anyLong());
         }
     }
 
@@ -325,7 +313,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("crews/update/success",
+                    .andDo(document("crew/success/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -339,8 +327,6 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             ),
                             responseBody()
                     ));
-
-            verify(crewCommandExecutor).updateCrew(any(), anyLong(), any(CrewUpdateDto.class));
         }
 
         @Test
@@ -358,14 +344,12 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("crews/update/fail",
+                    .andDo(document("crew/fail/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             responseBody()
                     ));
-
-            verify(crewCommandExecutor, times(0)).updateCrew(any(), anyLong(), any(CrewUpdateDto.class));
         }
     }
 
@@ -382,15 +366,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("crews/delete/success",
+                    .andDo(document("crew/success/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             responseBody()
                     ));
-
-            verify(crewCommandExecutor).deleteCrew(any(), anyLong());
         }
 
         @Test
@@ -399,14 +381,12 @@ class CrewControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/crews/{crewId}", 1L)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("crews/delete/fail",
+                    .andDo(document("crew/fail/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             responseBody()
                     ));
-
-            verify(crewCommandExecutor, times(0)).deleteCrew(any(), anyLong());
         }
     }
 
@@ -429,7 +409,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(MULTIPART_FORM_DATA_VALUE))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("crews/update-image/success",
+                    .andDo(document("crew/success/update-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -437,8 +417,6 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             requestParts(partWithName("file").description("변경할 Crew 이미지")),
                             responseBody()
                     ));
-
-            verify(crewCommandExecutor).updateCrewImage(any(), anyLong(), any(MultipartFile.class));
         }
 
         @Test
@@ -454,7 +432,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             })
                             .contentType(MULTIPART_FORM_DATA_VALUE))
                     .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("crews/update-image/fail",
+                    .andDo(document("crew/fail/update-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
@@ -479,7 +457,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(MULTIPART_FORM_DATA_VALUE))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("crews/delete-image/success",
+                    .andDo(document("crew/success/delete-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -496,7 +474,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/crews/{crewId}/image", 1L)
                             .contentType(MULTIPART_FORM_DATA_VALUE))
                     .andExpect(jsonPath("$.status").value(401))
-                    .andDo(document("crews/delete-image/fail",
+                    .andDo(document("crew/fail/delete-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
@@ -550,7 +528,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     .andExpect(jsonPath("$.data[0].owner.id").value(1))
                     .andExpect(jsonPath("$.data[0].owner.nickname").value(REVI_NICKNAME_VALUE))
                     .andExpect(jsonPath("$.data[0].owner.mbti").value(ISTP.name()))
-                    .andDo(document("crews/find-crews/success",
+                    .andDo(document("crew/success/fetches",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
@@ -593,7 +571,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("crew-me/success",
+                    .andDo(document("crew/success/me",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),

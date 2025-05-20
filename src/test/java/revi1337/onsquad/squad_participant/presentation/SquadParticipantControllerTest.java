@@ -61,7 +61,7 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(201))
-                    .andDo(document("squads-participants/request/success",
+                    .andDo(document("squad-participant/success/request",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -92,7 +92,7 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("squads-participants/accept/success",
+                    .andDo(document("squad-participant/success/accept",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -124,7 +124,7 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("squads-participants/reject/success",
+                    .andDo(document("squad-participant/success/reject",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -153,7 +153,7 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("squads-participants/my-cancel/success",
+                    .andDo(document("squad-participant/success/cancel",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -195,7 +195,7 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("squads-participants/fetches/success",
+                    .andDo(document("squad-participant/success/fetches",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),

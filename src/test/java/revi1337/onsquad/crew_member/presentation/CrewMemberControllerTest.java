@@ -71,7 +71,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
                             .param("size", "5")
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("crew-members/success",
+                    .andDo(document("crew-member/success/fetches",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),

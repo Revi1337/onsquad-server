@@ -45,7 +45,7 @@ class RefreshTokenControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(REISSUE_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(201))
-                    .andDo(document("token/reissue/success",
+                    .andDo(document("auth/success/reissue",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(fieldWithPath("refreshToken").description("만료되는 RefreshToken")),

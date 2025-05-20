@@ -82,7 +82,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(CREATE_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(201))
-                    .andDo(document("squads/new/success",
+                    .andDo(document("squad/success/new",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -140,7 +140,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("squads/fetch/success",
+                    .andDo(document("squad/success/fetch",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -190,7 +190,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("squads/fetches/success",
+                    .andDo(document("squad/success/fetches",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -238,7 +238,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("squads/manage/success",
+                    .andDo(document("squad/success/manage",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),

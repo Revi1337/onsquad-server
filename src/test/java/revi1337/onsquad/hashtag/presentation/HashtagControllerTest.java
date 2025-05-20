@@ -41,7 +41,7 @@ class HashtagControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(get("/api/hashtags")
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("hashtags/success",
+                    .andDo(document("hashtag/success/fetches",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseBody()

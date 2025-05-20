@@ -66,8 +66,8 @@ public class MemberConcurrencyControllerTest {
                 .build();
     }
 
-    @DisplayName("동시 사용자 생성 시, 하나만 성공하고 나머지는 실패한다.")
     @Test
+    @DisplayName("동시 사용자 생성 시, 하나만 성공하고 나머지는 실패한다.")
     void concurrentMemberJoin() throws Exception {
         MemberCreateRequest JOIN_REQUEST = new MemberCreateRequest(
                 REVI_EMAIL_VALUE, REVI_PASSWORD_VALUE,
@@ -108,7 +108,5 @@ public class MemberConcurrencyControllerTest {
         }
 
         countDownLatch.await();
-        System.out.println("===== 모든 요청 결과 =====");
-        responses.forEach(System.out::println);
     }
 }

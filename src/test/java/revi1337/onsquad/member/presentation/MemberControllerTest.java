@@ -75,7 +75,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .param("value", REVI_NICKNAME_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.duplicate").value(true))
-                    .andDo(document("members/nickname/success",
+                    .andDo(document("member/success/check-nickname",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
@@ -99,7 +99,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .param("value", REVI_EMAIL_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.data.duplicate").value(true))
-                    .andDo(document("members/email/success",
+                    .andDo(document("member/success/check-email",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             queryParameters(
@@ -131,7 +131,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(JOIN_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(201))
-                    .andDo(document("members/new/success",
+                    .andDo(document("member/success/new",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestFields(
@@ -162,7 +162,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(JOIN_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(400))
-                    .andDo(document("members/new/fail",
+                    .andDo(document("member/fail/new",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseBody()
@@ -194,7 +194,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(get("/api/members/me")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andDo(document("members/my/success",
+                    .andDo(document("member/success/me",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -225,7 +225,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("members/update/success",
+                    .andDo(document("member/success/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -253,7 +253,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("members/update-password/success",
+                    .andDo(document("member/success/update-password",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -281,7 +281,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(400))
-                    .andDo(document("members/update-password/fail1",
+                    .andDo(document("member/fail/update-password",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -313,7 +313,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             })
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("members/update-image/success",
+                    .andDo(document("member/success/update-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -334,7 +334,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("members/delete-image/success",
+                    .andDo(document("member/success/delete-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),

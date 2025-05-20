@@ -109,7 +109,7 @@ class JsonWebTokenLoginFilterTest extends PresentationLayerTestSupport {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
-                .andDo(document("login/success",
+                .andDo(document("auth/success/login",
                         requestFields(
                                 fieldWithPath("email").description("이메일"),
                                 fieldWithPath("password").description("비밀번호")
@@ -137,7 +137,7 @@ class JsonWebTokenLoginFilterTest extends PresentationLayerTestSupport {
                         .content(objectMapper.writeValueAsString(loginRequest))
                         .contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(401))
-                .andDo(document("login/fail",
+                .andDo(document("auth/fail/login",
                         requestFields(
                                 fieldWithPath("email").description("이메일"),
                                 fieldWithPath("password").description("비밀번호")

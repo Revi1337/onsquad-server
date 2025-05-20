@@ -79,7 +79,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(CREATE_DTO))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(201))
-                    .andDo(document("crew-announce/new/success",
+                    .andDo(document("crew-announce/success/new",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -128,7 +128,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("crew-announce/fetch/success",
+                    .andDo(document("crew-announce/success/fetch",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -178,7 +178,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .queryParam("size", "10")
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("crew-announce/fetches/success",
+                    .andDo(document("crew-announce/success/fetches",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -213,7 +213,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(UPDATE_REQUEST))
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("crew-announce/update/success",
+                    .andDo(document("crew-announce/success/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -248,7 +248,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .queryParam("state", "true")
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("crew-announce/fix/success",
+                    .andDo(document("crew-announce/success/fix",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
@@ -289,14 +289,13 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
         void success1() throws Exception {
             Long CREW_ID = 1L;
             Long ANNOUNCE_ID = 1L;
-            doNothing().when(announceCommandService)
-                    .deleteAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID));
+            doNothing().when(announceCommandService).deleteAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID));
 
             mockMvc.perform(delete("/api/crews/{crewId}/announces/{announceId}", CREW_ID, ANNOUNCE_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
-                    .andDo(document("crew-announce/delete/success",
+                    .andDo(document("crew-announce/success/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),

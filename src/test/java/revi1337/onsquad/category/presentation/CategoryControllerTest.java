@@ -37,7 +37,7 @@ class CategoryControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(get("/api/categories")
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("categories/fetch/success",
+                    .andDo(document("category/success/fetches",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             responseBody()
