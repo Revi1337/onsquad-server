@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_participant.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_1;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_2;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
@@ -61,7 +62,7 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW_1(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW, ANDONG, NOW));
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW, KWANGWON, NOW.plusHours(1)));
             clearPersistenceContext();
@@ -87,7 +88,7 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW_1(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW, ANDONG, NOW));
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW, KWANGWON, NOW.plusHours(1)));
             clearPersistenceContext();
@@ -124,7 +125,7 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
             Crew CREW1 = crewJpaRepository.save(CREW_1(KWANGWON));
             Crew CREW2 = crewJpaRepository.save(CREW_2(REVI));
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW1, ANDONG, NOW));
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW1, REVI, NOW.plusHours(1)));
             crewParticipantRepository.save(CREW_PARTICIPANT(CREW2, ANDONG, NOW.plusHours(2)));

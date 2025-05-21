@@ -1,6 +1,7 @@
 package revi1337.onsquad.crew_participant.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewParticipantFixture.CREW_PARTICIPANT;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
@@ -47,7 +48,7 @@ class CrewParticipantJdbcRepositoryTest extends PersistenceLayerTestSupport {
         void success1() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime now = LocalDateTime.now(CLOCK);
 
             crewParticipantJdbcRepository.upsertCrewParticipant(CREW.getId(), REVI.getId(), now);
 
@@ -61,7 +62,7 @@ class CrewParticipantJdbcRepositoryTest extends PersistenceLayerTestSupport {
             // given
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewParticipantJpaRepository.save(CREW_PARTICIPANT(CREW, REVI, NOW));
 
             // when
