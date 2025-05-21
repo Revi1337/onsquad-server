@@ -2,6 +2,7 @@ package revi1337.onsquad.announce.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.AnnounceFixture.ANNOUNCE;
 import static revi1337.onsquad.common.fixture.AnnounceFixture.ANNOUNCE_1;
 import static revi1337.onsquad.common.fixture.AnnounceFixture.ANNOUNCE_2;
@@ -123,7 +124,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             CrewMember CREW_MEMBER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             Announce ANNOUNCE_1 = ANNOUNCE_1(CREW, CREW_MEMBER);
             Announce ANNOUNCE_2 = ANNOUNCE_2(CREW, CREW_MEMBER);
             Announce ANNOUNCE_3 = ANNOUNCE_3(CREW, CREW_MEMBER);

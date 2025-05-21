@@ -1,6 +1,7 @@
 package revi1337.onsquad.crew_participant.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 
@@ -17,7 +18,7 @@ class CrewParticipantTest {
     void newCrewParticipant() {
         Member revi = REVI();
         Crew crew = CREW(revi);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(CLOCK);
 
         CrewParticipant crewParticipant = new CrewParticipant(crew, revi, now);
 

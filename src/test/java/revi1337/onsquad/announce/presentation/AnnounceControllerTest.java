@@ -23,6 +23,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE_1;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE;
@@ -103,7 +104,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long MEMBER_ID = 1L;
             Long CREW_ID = 2L;
             Long ANNOUNCE_ID = 3L;
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             AnnounceWithFixAndModifyStateDto SERVICE_DTO = new AnnounceWithFixAndModifyStateDto(
                     true,
                     true,
@@ -152,7 +153,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long CREW_ID = 2L;
             Long ANNOUNCE_ID = 3L;
             PageRequest PAGE_REQUEST = PageRequest.of(0, 10);
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             AnnouncesWithWriteStateDto SERVICE_DTO = new AnnouncesWithWriteStateDto(
                     true,
                     List.of(new AnnounceDto(

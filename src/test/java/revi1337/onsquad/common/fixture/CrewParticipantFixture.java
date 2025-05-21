@@ -1,5 +1,7 @@
 package revi1337.onsquad.common.fixture;
 
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
+
 import java.time.LocalDateTime;
 import revi1337.onsquad.crew.domain.Crew;
 import revi1337.onsquad.crew_participant.domain.CrewParticipant;
@@ -12,6 +14,6 @@ public class CrewParticipantFixture {
     }
 
     public static CrewParticipant CREW_PARTICIPANT(Crew crew, Member member) {
-        return new CrewParticipant(crew, member, LocalDateTime.now());
+        return new CrewParticipant(crew, member, LocalDateTime.now(CLOCK));
     }
 }

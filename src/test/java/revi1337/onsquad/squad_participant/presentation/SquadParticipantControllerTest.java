@@ -20,6 +20,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
@@ -177,7 +178,7 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
             Long SQUAD_ID = 2L;
             List<SimpleSquadParticipantDto> SERVICE_DTOS = List.of(new SimpleSquadParticipantDto(
                     SQUAD_ID,
-                    LocalDateTime.now(),
+                    LocalDateTime.now(CLOCK),
                     new SimpleMemberInfoDto(
                             1L,
                             null,

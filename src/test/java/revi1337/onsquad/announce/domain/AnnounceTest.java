@@ -1,6 +1,7 @@
 package revi1337.onsquad.announce.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
 
@@ -35,7 +36,7 @@ class AnnounceTest {
         Crew CREW = CREW();
         CrewMember CREW_MEMBER = GENERAL_CREW_MEMBER();
         Announce ANNOUNCE = new Announce(TITLE, CONTENT, CREW, CREW_MEMBER);
-        LocalDateTime NOW = LocalDateTime.now();
+        LocalDateTime NOW = LocalDateTime.now(CLOCK);
 
         ANNOUNCE.fix(NOW);
 

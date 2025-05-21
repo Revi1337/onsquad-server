@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_member.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
@@ -57,7 +58,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG, NOW));
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
@@ -91,7 +92,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, NOW));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
