@@ -2,7 +2,6 @@ package revi1337.onsquad.crew_participant.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewParticipantFixture.CREW_PARTICIPANT;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
@@ -40,7 +39,7 @@ class CrewParticipantJpaRepositoryTest extends PersistenceLayerTestSupport {
         void save() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now(CLOCK));
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
 
             CrewParticipant SAVED_PARTICIPANT = crewParticipantJpaRepository.save(CREW_PARTICIPANT);
 
@@ -52,9 +51,9 @@ class CrewParticipantJpaRepositoryTest extends PersistenceLayerTestSupport {
         void fail() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = new CrewParticipant(CREW, REVI, LocalDateTime.now(CLOCK));
+            CrewParticipant CREW_PARTICIPANT = new CrewParticipant(CREW, REVI, LocalDateTime.now());
             crewParticipantJpaRepository.save(CREW_PARTICIPANT);
-            CrewParticipant DUPLICATE = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now(CLOCK));
+            CrewParticipant DUPLICATE = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
 
             assertThatThrownBy(() -> crewParticipantJpaRepository.save(DUPLICATE))
                     .isInstanceOf(DataIntegrityViolationException.class);
@@ -70,7 +69,7 @@ class CrewParticipantJpaRepositoryTest extends PersistenceLayerTestSupport {
         void findByCrewIdAndMemberId() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now(CLOCK));
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
             crewParticipantJpaRepository.save(CREW_PARTICIPANT);
 
             Optional<CrewParticipant> optionalParticipant = crewParticipantJpaRepository
@@ -89,7 +88,7 @@ class CrewParticipantJpaRepositoryTest extends PersistenceLayerTestSupport {
         void deleteById() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now(CLOCK));
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
             CrewParticipant SAVED_PARTICIPANT = crewParticipantJpaRepository.save(CREW_PARTICIPANT);
 
             crewParticipantJpaRepository.deleteById(SAVED_PARTICIPANT.getId());
@@ -102,7 +101,7 @@ class CrewParticipantJpaRepositoryTest extends PersistenceLayerTestSupport {
         void deleteByCrewIdAndMemberId() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now(CLOCK));
+            CrewParticipant CREW_PARTICIPANT = CREW_PARTICIPANT(CREW, REVI, LocalDateTime.now());
             CrewParticipant SAVED_PARTICIPANT = crewParticipantJpaRepository.save(CREW_PARTICIPANT);
 
             crewParticipantJpaRepository.deleteByCrewIdAndMemberId(CREW.getId(), REVI.getId());

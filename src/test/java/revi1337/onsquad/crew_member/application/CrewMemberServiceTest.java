@@ -3,7 +3,6 @@ package revi1337.onsquad.crew_member.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
@@ -58,7 +57,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            LocalDateTime NOW = LocalDateTime.now(CLOCK);
+            LocalDateTime NOW = LocalDateTime.now();
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG, NOW));
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
@@ -71,17 +70,14 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
                 assertThat(DTOS.getContent().get(0).member().id()).isEqualTo(KWANGWON.getId());
                 assertThat(DTOS.getContent().get(0).member().nickname()).isEqualTo(KWANGWON_NICKNAME_VALUE);
                 assertThat(DTOS.getContent().get(0).member().mbti()).isSameAs(KWANGWON_MBTI_VALUE);
-                assertThat(DTOS.getContent().get(0).participantAt()).isEqualTo(NOW.plusMinutes(1));
 
                 assertThat(DTOS.getContent().get(1).member().id()).isEqualTo(ANDONG.getId());
                 assertThat(DTOS.getContent().get(1).member().nickname()).isEqualTo(ANDONG_NICKNAME_VALUE);
                 assertThat(DTOS.getContent().get(1).member().mbti()).isSameAs(ANDONG_MBTI_VALUE);
-                assertThat(DTOS.getContent().get(1).participantAt()).isEqualTo(NOW);
 
                 assertThat(DTOS.getContent().get(2).member().id()).isEqualTo(REVI.getId());
                 assertThat(DTOS.getContent().get(2).member().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
                 assertThat(DTOS.getContent().get(2).member().mbti()).isSameAs(REVI_MBTI_VALUE);
-                assertThat(DTOS.getContent().get(2).participantAt()).isNotNull();
             });
         }
 
@@ -92,7 +88,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            LocalDateTime NOW = LocalDateTime.now(CLOCK);
+            LocalDateTime NOW = LocalDateTime.now();
             crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, NOW));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 

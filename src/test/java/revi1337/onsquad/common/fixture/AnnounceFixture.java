@@ -1,6 +1,5 @@
 package revi1337.onsquad.common.fixture;
 
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE_1;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE_2;
@@ -31,7 +30,7 @@ public class AnnounceFixture {
 
     public static Announce FIXED_ANNOUNCE(Crew crew, CrewMember crewMember) {
         Announce announce = new Announce(ANNOUNCE_TITLE_VALUE, ANNOUNCE_CONTENT_VALUE, crew, crewMember);
-        announce.fix(LocalDateTime.now(CLOCK));
+        announce.fix(LocalDateTime.now());
         return announce;
     }
 

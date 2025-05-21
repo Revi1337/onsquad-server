@@ -18,9 +18,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.auth.application.token.model.AccessToken;
 import revi1337.onsquad.auth.application.token.model.RefreshToken;
+import revi1337.onsquad.auth.config.properties.TokenProperties;
 import revi1337.onsquad.common.YamlPropertySourceFactory;
 import revi1337.onsquad.common.config.properties.OnsquadProperties;
 

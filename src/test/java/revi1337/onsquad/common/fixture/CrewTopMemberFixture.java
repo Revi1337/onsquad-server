@@ -1,6 +1,5 @@
 package revi1337.onsquad.common.fixture;
 
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.KWANGWON_MBTI_VALUE;
@@ -20,7 +19,7 @@ public class CrewTopMemberFixture {
             1L,
             REVI_NICKNAME_VALUE,
             REVI_MBTI_VALUE,
-            LocalDateTime.now(CLOCK)
+            LocalDateTime.now()
     );
 
     public static final CrewTopMember CREW1_ANDONG_RANK2 = new CrewTopMember(
@@ -30,7 +29,7 @@ public class CrewTopMemberFixture {
             1L,
             ANDONG_NICKNAME_VALUE,
             ANDONG_MBTI_VALUE,
-            LocalDateTime.now(CLOCK)
+            LocalDateTime.now()
     );
 
     public static final CrewTopMember CREW1_KWANGWON_RANK3 = new CrewTopMember(
@@ -40,6 +39,6 @@ public class CrewTopMemberFixture {
             1L,
             KWANGWON_NICKNAME_VALUE,
             KWANGWON_MBTI_VALUE,
-            LocalDateTime.now(CLOCK)
+            LocalDateTime.now()
     );
 }
