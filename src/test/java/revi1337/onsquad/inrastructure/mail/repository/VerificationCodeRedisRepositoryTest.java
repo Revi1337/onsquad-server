@@ -22,7 +22,7 @@ import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         RedisAutoConfiguration.class,
-        VerificationCodeRedisRepository.class,
+        VerificationCodeRedisRepository.class
 })
 class VerificationCodeRedisRepositoryTest extends TestContainerSupport {
 
@@ -33,7 +33,7 @@ class VerificationCodeRedisRepositoryTest extends TestContainerSupport {
     private StringRedisTemplate redisTemplate;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         redisTemplate.getConnectionFactory()
                 .getConnection()
                 .serverCommands()

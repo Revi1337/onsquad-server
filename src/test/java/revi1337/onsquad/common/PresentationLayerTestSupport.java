@@ -22,11 +22,11 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import revi1337.onsquad.auth.application.token.ClaimsParser;
 import revi1337.onsquad.auth.application.token.JsonWebTokenEvaluator;
-import revi1337.onsquad.common.config.PresentationLayerConfiguration;
+import revi1337.onsquad.common.config.TestObjectMapperConfiguration;
 import revi1337.onsquad.common.config.WebMvcConfig;
 import revi1337.onsquad.member.domain.vo.UserType;
 
-@Import({WebMvcConfig.class, PresentationLayerConfiguration.class})
+@Import({WebMvcConfig.class, TestObjectMapperConfiguration.class})
 @WebMvcTest
 @ExtendWith({RestDocumentationExtension.class})
 public abstract class PresentationLayerTestSupport {

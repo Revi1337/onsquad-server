@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
 
     private final List<RequestCacheHandler> requestCacheHandlers =
-            new ArrayList<>(Collections.singletonList(new ExpiredMapRequestCacheHandler()));
+            new ArrayList<>(Collections.singletonList(new ExpiringMapRequestCacheHandler()));
 
     public void addRequestCacheHandlerBefore(RequestCacheHandler requestCacheHandler,
                                              Class<? extends RequestCacheHandler> clazz) {
@@ -29,5 +29,9 @@ public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("[모든 캐싱 후보군을 사용할 수 없습니다.]"));
+    }
+
+    public List<RequestCacheHandler> getRequestCacheHandlers() {
+        return requestCacheHandlers.stream().toList();
     }
 }

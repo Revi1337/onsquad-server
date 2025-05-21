@@ -18,7 +18,7 @@ import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.common.aspect.ExpiredMapRequestCacheHandler;
+import revi1337.onsquad.common.aspect.ExpiringMapRequestCacheHandler;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.error.exception.CommonBusinessException;
 import revi1337.onsquad.crew.domain.Crew;
@@ -73,7 +73,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             // given
             AspectJProxyFactory aspectJProxyFactory = new AspectJProxyFactory(crewParticipantCommandService);
             aspectJProxyFactory.setProxyTargetClass(true);
-            aspectJProxyFactory.addAspect(new ThrottlingAspect(new ExpiredMapRequestCacheHandler()));
+            aspectJProxyFactory.addAspect(new ThrottlingAspect(new ExpiringMapRequestCacheHandler()));
             CrewParticipantCommandService proxyService = aspectJProxyFactory.getProxy();
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));

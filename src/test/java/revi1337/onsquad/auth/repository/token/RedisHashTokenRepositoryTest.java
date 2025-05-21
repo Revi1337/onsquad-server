@@ -32,7 +32,7 @@ class RedisHashTokenRepositoryTest extends TestContainerSupport {
     private StringRedisTemplate redisTemplate;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         redisTemplate.getConnectionFactory()
                 .getConnection()
                 .serverCommands()

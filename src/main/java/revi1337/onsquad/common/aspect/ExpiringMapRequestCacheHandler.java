@@ -9,9 +9,9 @@ import net.jodah.expiringmap.ExpiringMap;
  *
  * @see RequestCacheHandlerExecutionChain
  */
-public final class ExpiredMapRequestCacheHandler implements RequestCacheHandler {
+public final class ExpiringMapRequestCacheHandler implements RequestCacheHandler {
 
-    private static final int MAX_CACHE_SIZE = 100_000;
+    private static final int MAX_CACHE_SIZE = 10_000;
     private static final ExpiringMap<String, String> REQUEST_CACHE = ExpiringMap.builder()
             .maxSize(MAX_CACHE_SIZE)
             .variableExpiration()
