@@ -3,7 +3,6 @@ package revi1337.onsquad.crew.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_1;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_2;
@@ -150,7 +149,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
             Crew CREW1 = crewRepository.save(CREW_1(ANDONG));
             Crew CREW2 = crewRepository.save(CREW_2(KWANGWON));
             Crew CREW3 = crewRepository.save(CREW_3(REVI));
-            LocalDateTime NOW = LocalDateTime.now(CLOCK);
+            LocalDateTime NOW = LocalDateTime.now();
             crewMemberRepository.save(CrewMember.forGeneral(CREW1, REVI, NOW));
             crewMemberRepository.save(CrewMember.forGeneral(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberRepository.save(CrewMember.forGeneral(CREW2, ANDONG, NOW.plusMinutes(1)));

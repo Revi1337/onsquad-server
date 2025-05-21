@@ -21,7 +21,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_IMAGE_LINK_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_KAKAO_LINK_VALUE;
@@ -144,7 +143,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_Id = 1L;
             List<CrewRequestWithMemberDto> SERVICE_DTOS = List.of(new CrewRequestWithMemberDto(
-                    new CrewRequestDto(2L, LocalDateTime.now(CLOCK)),
+                    new CrewRequestDto(2L, LocalDateTime.now()),
                     new SimpleMemberInfoDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
             ));
             when(crewParticipantQueryService.fetchAllRequests(any(), anyLong(), any(Pageable.class)))
@@ -202,7 +201,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
         @DisplayName("내가 보낸 Crew 신청들 조회에 성공한다.")
         void success() throws Exception {
             List<CrewRequestWithCrewDto> SERVICE_DTOS = List.of(new CrewRequestWithCrewDto(
-                    new CrewRequestDto(3L, LocalDateTime.now(CLOCK)),
+                    new CrewRequestDto(3L, LocalDateTime.now()),
                     new SimpleCrewDto(
                             1L,
                             CREW_NAME_VALUE,

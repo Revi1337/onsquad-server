@@ -1,7 +1,6 @@
 package revi1337.onsquad.backup.crew.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
@@ -23,7 +22,7 @@ class CrewTopMemberTest {
                 1L,
                 REVI_NICKNAME_VALUE,
                 REVI_MBTI_VALUE,
-                LocalDateTime.now(CLOCK)
+                LocalDateTime.now()
         );
 
         assertThat(TOP_MEMBER.getCrewId()).isEqualTo(1L);

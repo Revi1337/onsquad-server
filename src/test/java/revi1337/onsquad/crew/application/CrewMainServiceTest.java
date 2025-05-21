@@ -2,7 +2,6 @@ package revi1337.onsquad.crew.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.AnnounceFixture.ANNOUNCE;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONTENT_VALUE;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE;
@@ -66,8 +65,8 @@ class CrewMainServiceTest extends ApplicationLayerTestSupport {
         Member ANDONG = memberRepository.save(ANDONG());
         Member KWANGWON = memberRepository.save(KWANGWON());
         Crew CREW = CREW_WITH_IMAGE(REVI, CREW_IMAGE_LINK_VALUE);
-        CREW.addCrewMember(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now(CLOCK)));
-        CREW.addCrewMember(CrewMember.forGeneral(CREW, KWANGWON, LocalDateTime.now(CLOCK)));
+        CREW.addCrewMember(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+        CREW.addCrewMember(CrewMember.forGeneral(CREW, KWANGWON, LocalDateTime.now()));
         crewRepository.save(CREW);
         crewHashtagRepository.batchInsert(CREW.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
         Announce ANNOUNCE = ANNOUNCE(CREW, crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId()));
