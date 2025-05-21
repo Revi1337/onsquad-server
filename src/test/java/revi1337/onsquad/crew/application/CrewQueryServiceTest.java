@@ -2,6 +2,7 @@ package revi1337.onsquad.crew.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_1;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_2;
@@ -157,7 +158,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW1 = crewJpaRepository.save(CREW_1(ANDONG));
             Crew CREW2 = crewJpaRepository.save(CREW_2(KWANGWON));
             Crew CREW3 = crewJpaRepository.save(CREW_3(REVI));
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewMemberJpaRepository.save(CrewMember.forGeneral(CREW1, REVI, NOW));
             crewMemberJpaRepository.save(CrewMember.forGeneral(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberJpaRepository.save(CrewMember.forGeneral(CREW2, ANDONG, NOW.plusMinutes(1)));

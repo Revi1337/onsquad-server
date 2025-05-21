@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_member.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
 import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON;
@@ -57,7 +58,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
 
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now(CLOCK)));
 
             assertThat(crewMemberRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isPresent();
         }
@@ -73,7 +74,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now(CLOCK)));
 
             Optional<CrewMember> CREW_MEMBER = crewMemberRepository
                     .findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId());
@@ -104,7 +105,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now(CLOCK)));
 
             Boolean exists = crewMemberRepository.existsByMemberIdAndCrewId(ANDONG.getId(), CREW.getId());
 
@@ -134,7 +135,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now(CLOCK)));
 
             crewMemberRepository.deleteAllByCrewId(CREW.getId());
 
@@ -153,7 +154,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
-            LocalDateTime NOW = LocalDateTime.now();
+            LocalDateTime NOW = LocalDateTime.now(CLOCK);
             crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, NOW));
             crewMemberRepository.save(CrewMember.forGeneral(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);

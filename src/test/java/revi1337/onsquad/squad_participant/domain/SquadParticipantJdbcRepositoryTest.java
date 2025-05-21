@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad_participant.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEMBER;
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
@@ -59,7 +60,8 @@ class SquadParticipantJdbcRepositoryTest extends PersistenceLayerTestSupport {
         entityManager.clear();
 
         // when
-        squadParticipantJdbcRepository.upsertSquadParticipant(SQUAD.getId(), CREW_MEMBER.getId(), LocalDateTime.now());
+        squadParticipantJdbcRepository.upsertSquadParticipant(SQUAD.getId(), CREW_MEMBER.getId(),
+                LocalDateTime.now(CLOCK));
 
         // then
         assertThat(entityManager
@@ -82,7 +84,7 @@ class SquadParticipantJdbcRepositoryTest extends PersistenceLayerTestSupport {
         Squad SQUAD = squadJpaRepository.save(SQUAD(CREW_OWNER, CREW));
         Member ANDONG = memberJpaRepository.save(ANDONG());
         CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
-        LocalDateTime NOW = LocalDateTime.now();
+        LocalDateTime NOW = LocalDateTime.now(CLOCK);
         squadParticipantJdbcRepository.upsertSquadParticipant(SQUAD.getId(), CREW_MEMBER.getId(), NOW);
         entityManager.flush();
         entityManager.clear();
