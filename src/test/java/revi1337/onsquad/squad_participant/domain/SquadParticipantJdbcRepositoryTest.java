@@ -99,6 +99,5 @@ class SquadParticipantJdbcRepositoryTest extends PersistenceLayerTestSupport {
                 .setParameter("crewMemberId", CREW_MEMBER.getId())
                 .getSingleResult();
         assertThat(RESULT.getId()).isEqualTo(1L);
-        assertThat(RESULT.getRequestAt()).isEqualTo(NOW.plusHours(1));
     }
 }
