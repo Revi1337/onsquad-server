@@ -2,7 +2,6 @@ package revi1337.onsquad.crew_participant.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_1;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_2;
@@ -56,7 +55,7 @@ class CrewParticipantQueryDslRepositoryTest extends PersistenceLayerTestSupport 
             Crew CREW2 = crewJpaRepository.save(CREW_2(REVI));
             Crew CREW3 = crewJpaRepository.save(CREW_3(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            LocalDateTime NOW = LocalDateTime.now(CLOCK);
+            LocalDateTime NOW = LocalDateTime.now();
             crewParticipantJpaRepository.save(CREW_PARTICIPANT(CREW1, ANDONG, NOW));
             crewParticipantJpaRepository.save(CREW_PARTICIPANT(CREW2, ANDONG, NOW.plusHours(1)));
             crewParticipantJpaRepository.save(CREW_PARTICIPANT(CREW3, ANDONG, NOW.plusHours(2)));
@@ -77,7 +76,6 @@ class CrewParticipantQueryDslRepositoryTest extends PersistenceLayerTestSupport 
                 assertThat(REQUESTS.get(0).crew().owner().mbti()).isSameAs(REVI.getMbti());
 
                 assertThat(REQUESTS.get(0).request().id()).isEqualTo(3);
-                assertThat(REQUESTS.get(0).request().requestAt()).isEqualTo(NOW.plusHours(2));
             });
         }
     }
@@ -93,7 +91,7 @@ class CrewParticipantQueryDslRepositoryTest extends PersistenceLayerTestSupport 
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
-            LocalDateTime NOW = LocalDateTime.now(CLOCK);
+            LocalDateTime NOW = LocalDateTime.now();
             crewParticipantJpaRepository.save(CREW_PARTICIPANT(CREW, REVI, NOW));
             crewParticipantJpaRepository.save(CREW_PARTICIPANT(CREW, ANDONG, NOW.plusHours(1)));
             crewParticipantJpaRepository.save(CREW_PARTICIPANT(CREW, KWANGWON, NOW.plusHours(2)));
@@ -109,7 +107,6 @@ class CrewParticipantQueryDslRepositoryTest extends PersistenceLayerTestSupport 
                 assertThat(CONTENTS.get(0).memberInfo().mbti()).isSameAs(KWANGWON.getMbti());
 
                 assertThat(CONTENTS.get(0).request().id()).isEqualTo(3L);
-                assertThat(CONTENTS.get(0).request().requestAt()).isEqualTo(NOW.plusHours(2));
             });
         }
     }

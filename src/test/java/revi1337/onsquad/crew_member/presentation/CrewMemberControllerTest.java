@@ -17,7 +17,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE;
@@ -53,7 +52,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long DUMMY_CREW_ID = 1L;
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
-            LocalDateTime NOW = LocalDateTime.now(CLOCK);
+            LocalDateTime NOW = LocalDateTime.now();
             CrewMemberDto SERVICE_DTO1 = new CrewMemberDto(
                     NOW.plusDays(1),
                     new SimpleMemberInfoDto(1L, null, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE)

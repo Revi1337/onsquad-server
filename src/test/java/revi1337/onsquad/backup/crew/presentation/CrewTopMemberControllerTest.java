@@ -16,7 +16,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static revi1337.onsquad.common.config.FixedTime.CLOCK;
 import static revi1337.onsquad.common.fixture.CrewTopMemberFixture.CREW1_ANDONG_RANK2;
 import static revi1337.onsquad.common.fixture.CrewTopMemberFixture.CREW1_REVI_RANK1;
 
@@ -45,7 +44,7 @@ class CrewTopMemberControllerTest extends PresentationLayerTestSupport {
         @DisplayName("Crew 상위 랭커 조회에 성공한다.")
         void success() throws Exception {
             Long DUMMY_CREW_ID = 1L;
-            LocalDateTime NOW = LocalDateTime.now(CLOCK);
+            LocalDateTime NOW = LocalDateTime.now();
             Top5CrewMemberDto SERVICE_DTO1 = new Top5CrewMemberDto(
                     CREW1_REVI_RANK1.getCrewId(), CREW1_REVI_RANK1.getRanks(), CREW1_REVI_RANK1.getContribute(),
                     CREW1_REVI_RANK1.getMemberId(), CREW1_REVI_RANK1.getNickname(), CREW1_REVI_RANK1.getMbti(),
