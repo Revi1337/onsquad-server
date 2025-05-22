@@ -16,31 +16,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class VerificationCodeEmailSender implements EmailSender {
 
+    private static final String MIME_SETTING_ERROR = "MimeMessage 설정 중 예외 발생 - 메일 발송 중단";
+    private static final String SEND_VERIFICATION_CODE_ERROR = "이메일 인증코드 발송 중 예외 발생";
+
     private final JavaMailSender javaMailSender;
 
     @Async("sending-verification-code-executor")
     @Override
     public void sendEmail(String subject, String body, String to) {
-        MimeMessage mimeMessage = createEmailForm(subject, body, to);
         try {
+            MimeMessage mimeMessage = createEmailForm(subject, body, to);
             javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            log.error(MIME_SETTING_ERROR, e);
         } catch (MailException e) {
-            log.error("Exception Invoked While Sending Verification Code", e);
+            log.error(SEND_VERIFICATION_CODE_ERROR, e);
         }
     }
 
-    private MimeMessage createEmailForm(String subject, String body, String to) {
+    private MimeMessage createEmailForm(String subject, String body, String to) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, StandardCharsets.UTF_8.name());
+
         String baseHyperText = buildHyperText(body);
-        try {
-            mimeMessageHelper.setText(baseHyperText, true);
-            mimeMessageHelper.setTo(to);
-            mimeMessageHelper.setSubject(subject);
-        } catch (MessagingException e) {
-            log.error("Exception Invoked While Create MIME Message", e);
-        }
+        mimeMessageHelper.setText(baseHyperText, true);
+        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setSubject(subject);
+
         return mimeMessage;
     }
-
 }

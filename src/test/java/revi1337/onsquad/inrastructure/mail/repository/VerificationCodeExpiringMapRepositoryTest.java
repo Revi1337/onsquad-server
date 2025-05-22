@@ -5,6 +5,7 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.INVALID_AUTHENT
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.VALID_AUTHENTICATION_CODE;
 
+import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -12,28 +13,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 import revi1337.onsquad.inrastructure.mail.support.VerificationSnapshots;
 import revi1337.onsquad.inrastructure.mail.support.VerificationState;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = VerificationCodeExpiringMapRepository.class)
 class VerificationCodeExpiringMapRepositoryTest {
 
-    @Autowired
-    private VerificationCodeExpiringMapRepository repository;
+    private VerificationCodeExpiringMapRepository repository = new VerificationCodeExpiringMapRepository();
 
     @BeforeEach
     void tearDown() {
-        Map<String, VerificationState> tracker = (Map<String, VerificationState>)
-                ReflectionTestUtils.getField(VerificationCodeExpiringMapRepository.class, "VERIFICATION_TRACKER");
-        Map<String, String> store = (Map<String, String>)
-                ReflectionTestUtils.getField(VerificationCodeExpiringMapRepository.class, "VERIFICATION_STORE");
+        Class<?> clazz = VerificationCodeExpiringMapRepository.class;
+        Map<String, VerificationState> tracker = getVerificationTracker(clazz);
+        Map<String, String> store = getVerificationStore(clazz);
         tracker.clear();
         store.clear();
     }
@@ -146,7 +138,7 @@ class VerificationCodeExpiringMapRepositoryTest {
     }
 
     @Test
-    @DisplayName("인증 코드 Snapshot 들을 추출한다.")
+    @DisplayName("인증 코드 Snapshot 들 추출에 성공한다.")
     void collectAvailableSnapshots() {
         Duration duration = Duration.ofMillis(1);
         IntStream.rangeClosed(1, 1000)
@@ -158,5 +150,25 @@ class VerificationCodeExpiringMapRepositoryTest {
         VerificationSnapshots verificationSnapshots = repository.collectAvailableSnapshots();
 
         assertThat(verificationSnapshots.size()).isEqualTo(1000);
+    }
+
+    private Map<String, VerificationState> getVerificationTracker(Class<?> clazz) {
+        try {
+            Field trackerField = clazz.getDeclaredField("VERIFICATION_TRACKER");
+            trackerField.setAccessible(true);
+            return (Map<String, VerificationState>) trackerField.get(null);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private Map<String, String> getVerificationStore(Class<?> clazz) {
+        try {
+            Field storeField = clazz.getDeclaredField("VERIFICATION_STORE");
+            storeField.setAccessible(true);
+            return (Map<String, String>) storeField.get(null);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

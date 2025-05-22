@@ -51,8 +51,7 @@ class VerificationCodeRedisRepositoryTest extends TestContainerSupport {
 
             repository.saveVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE, expiringTime);
 
-            boolean valid = repository.isValidVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE);
-            assertThat(valid).isTrue();
+            assertThat(repository.isValidVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE)).isTrue();
         }
     }
 
