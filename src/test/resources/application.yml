@@ -160,14 +160,14 @@ onsquad:
 logging:
   level:
     org:
-      springframework.jdbc: DEBUG
-      hibernate.SQL: DEBUG
-      hibernate.orm.jdbc.bind: DEBUG
+      springframework.jdbc: ERROR
+      hibernate.SQL: ERROR
+      hibernate.orm.jdbc.bind: ERROR
 
-      springframework.transaction.interceptor: TRACE
-      springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
-      springframework.orm.jpa.JpaTransactionManager: DEBUG
+      springframework.transaction.interceptor: ERROR
+      springframework.jdbc.datasource.DataSourceTransactionManager: ERROR
+      springframework.orm.jpa.JpaTransactionManager: ERROR
 
     revi1337:
       onsquad:
-        INFO
+        ERROR
