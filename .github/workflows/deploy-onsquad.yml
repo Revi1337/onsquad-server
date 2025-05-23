@@ -70,7 +70,7 @@ jobs:
             
             SOURCE_DIR=$(echo $HOME)/${{ env.PROJECT_NAME }}
             EXECUTABLE_SPRING_JAR_PATH=$(find $SOURCE_DIR -name '*.jar' 2>/dev/null)
-            PROCESS_ID=$(ps aux | grep -i 'java -jar' | grep -v grep | tr ' ' '\n' | sed -e '/^$/d' | head -2 | tail -1)
+            PROCESS_ID=$(ps aux | grep -E 'java .* -jar' | grep -v grep | tr ' ' '\n' | sed -e '/^$/d' | head -2 | tail -1)
             if [[ -z $PROCESS_ID ]]; then
                 echo 'Nothing Process Running'
                 if [[ -d $BACKUP_TMP_DIR ]]; then
