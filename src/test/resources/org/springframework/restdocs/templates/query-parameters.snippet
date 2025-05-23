@@ -1,0 +1,10 @@
+//===== Query Parameters
+|===
+|이름|설명|필수값
+
+{{#parameters}}
+    |{{#tableCellContent}}`{{name}}`{{/tableCellContent}}
+    |{{#tableCellContent}}{{description}}{{/tableCellContent}}
+    |{{#tableCellContent}}{{^optional}}true{{/optional}}{{#optional}}false{{/optional}}{{/tableCellContent}}
+{{/parameters}}
+|===
