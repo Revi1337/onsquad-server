@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class VerificationCodeGenerator {
 
+    private static final int VERIFICATION_CODE_MAX_LENGTH = 8;
+
     @Value("${spring.mail.code-seed}")
     private String seed;
 
@@ -18,7 +20,7 @@ public class VerificationCodeGenerator {
 
     private void mapCodeBookToIndex(StringBuilder stringBuilder) {
         ThreadLocalRandom.current().ints(0, seed.length())
-                .limit(8)
+                .limit(VERIFICATION_CODE_MAX_LENGTH)
                 .forEach(integer -> stringBuilder.append(seed.charAt(integer)));
     }
 }

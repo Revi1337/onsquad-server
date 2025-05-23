@@ -6,6 +6,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
@@ -110,6 +113,8 @@ class JsonWebTokenLoginFilterTest extends PresentationLayerTestSupport {
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andDo(document("auth/success/login",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("email").description("이메일"),
                                 fieldWithPath("password").description("비밀번호")
@@ -138,6 +143,8 @@ class JsonWebTokenLoginFilterTest extends PresentationLayerTestSupport {
                         .contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(401))
                 .andDo(document("auth/fail/login",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("email").description("이메일"),
                                 fieldWithPath("password").description("비밀번호")

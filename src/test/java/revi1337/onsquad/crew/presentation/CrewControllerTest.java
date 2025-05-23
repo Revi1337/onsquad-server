@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -155,8 +156,10 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             requestParts(
-                                    partWithName("file").description("Crew 이미지"),
-                                    partWithName("request").description("Crew 정보 JSON")
+                                    partWithName("file")
+                                            .description("Crew 이미지 파일 (Content-Type: multipart/form-data)"),
+                                    partWithName("request")
+                                            .description("Crew 생성 요청 JSON 데이터 (Content-Type: application/json)")
                             ),
                             requestPartFields(
                                     "request",
@@ -164,7 +167,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                                     fieldWithPath("introduce").description("Crew 한줄 소개"),
                                     fieldWithPath("detail").description("Crew 상세 정보"),
                                     fieldWithPath("hashtags").description("Crew 해시태그"),
-                                    fieldWithPath("kakaoLink").description("Crew 오픈 카카오 링크")
+                                    fieldWithPath("kakaoLink").description("Crew 오픈 카카오톡 링크")
                             ),
                             responseBody()
                     ));
@@ -210,7 +213,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_DETAIL_VALUE,
                     CREW_IMAGE_LINK_VALUE,
                     CREW_KAKAO_LINK_VALUE,
-                    List.of(HashtagType.ACTIVE.name()),
+                    List.of(HashtagType.ACTIVE.getText()),
                     1L,
                     new SimpleMemberInfoDto(
                             1L,
@@ -231,7 +234,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     .andExpect(jsonPath("$.data.imageUrl").value(CREW_IMAGE_LINK_VALUE))
                     .andExpect(jsonPath("$.data.kakaoLink").value(CREW_KAKAO_LINK_VALUE))
                     .andExpect(jsonPath("$.data.memberCount").value(1))
-                    .andExpect(jsonPath("$.data.hashtags[0]").value(HashtagType.ACTIVE.name()))
+                    .andExpect(jsonPath("$.data.hashtags[0]").value(HashtagType.ACTIVE.getText()))
                     .andExpect(jsonPath("$.data.owner.id").value(1))
                     .andExpect(jsonPath("$.data.owner.nickname").value(REVI_NICKNAME_VALUE))
                     .andExpect(jsonPath("$.data.owner.mbti").value(ISTP.name()))
@@ -255,7 +258,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             CREW_DETAIL_VALUE,
                             CREW_IMAGE_LINK_VALUE,
                             CREW_KAKAO_LINK_VALUE,
-                            List.of(HashtagType.ACTIVE.name()),
+                            List.of(HashtagType.ACTIVE.getText()),
                             1L,
                             new SimpleMemberInfoDto(
                                     1L,
@@ -278,14 +281,16 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     .andExpect(jsonPath("$.data.crew.imageUrl").value(CREW_IMAGE_LINK_VALUE))
                     .andExpect(jsonPath("$.data.crew.kakaoLink").value(CREW_KAKAO_LINK_VALUE))
                     .andExpect(jsonPath("$.data.crew.memberCount").value(1))
-                    .andExpect(jsonPath("$.data.crew.hashtags[0]").value(HashtagType.ACTIVE.name()))
+                    .andExpect(jsonPath("$.data.crew.hashtags[0]").value(HashtagType.ACTIVE.getText()))
                     .andExpect(jsonPath("$.data.crew.owner.id").value(1))
                     .andExpect(jsonPath("$.data.crew.owner.nickname").value(REVI_NICKNAME_VALUE))
                     .andExpect(jsonPath("$.data.crew.owner.mbti").value(ISTP.name()))
                     .andDo(document("crew/success/fetch-auth",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            requestHeaders(
+                                    headerWithName(AUTHORIZATION_HEADER_KEY).optional().description("사용자 JWT 인증 정보")
+                            ),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
                             responseBody()
                     ));
@@ -414,7 +419,9 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(parameterWithName("crewId").description("Crew 아이디")),
-                            requestParts(partWithName("file").description("변경할 Crew 이미지")),
+                            requestParts(
+                                    partWithName("file")
+                                            .description("변경할 Crew 이미지 파일 (Content-Type: multipart/form-data)")),
                             responseBody()
                     ));
         }
@@ -440,7 +447,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(crewCommandExecutor, times(0)).updateCrewImage(any(), anyLong(), any(MultipartFile.class));
+            verify(crewCommandExecutor, never()).updateCrewImage(any(), anyLong(), any(MultipartFile.class));
         }
     }
 
@@ -455,7 +462,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
 
             mockMvc.perform(delete("/api/crews/{crewId}/image", 1L)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                            .contentType(MULTIPART_FORM_DATA_VALUE))
+                            .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
                     .andDo(document("crew/success/delete-image",
                             preprocessRequest(prettyPrint()),
@@ -499,7 +506,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_DETAIL_VALUE,
                     CREW_IMAGE_LINK_VALUE,
                     CREW_KAKAO_LINK_VALUE,
-                    List.of(HashtagType.ACTIVE.name()),
+                    List.of(HashtagType.ACTIVE.getText()),
                     1L,
                     new SimpleMemberInfoDto(
                             1L,
@@ -523,7 +530,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     .andExpect(jsonPath("$.data[0].detail").value(CREW_DETAIL_VALUE))
                     .andExpect(jsonPath("$.data[0].imageUrl").value(CREW_IMAGE_LINK_VALUE))
                     .andExpect(jsonPath("$.data[0].kakaoLink").value(CREW_KAKAO_LINK_VALUE))
-                    .andExpect(jsonPath("$.data[0].hashtags[0]").value(HashtagType.ACTIVE.name()))
+                    .andExpect(jsonPath("$.data[0].hashtags[0]").value(HashtagType.ACTIVE.getText()))
                     .andExpect(jsonPath("$.data[0].alreadyJoin").doesNotExist())
                     .andExpect(jsonPath("$.data[0].owner.id").value(1))
                     .andExpect(jsonPath("$.data[0].owner.nickname").value(REVI_NICKNAME_VALUE))
@@ -534,7 +541,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             queryParameters(
                                     parameterWithName("name").description("Crew 이름"),
                                     parameterWithName("page").description("페이지").optional(),
-                                    parameterWithName("size").description("크기").optional()
+                                    parameterWithName("size").description("페이지 당 사이즈").optional()
                             ),
                             responseBody()
                     ));

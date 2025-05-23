@@ -1,0 +1,461 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 해시태그
+
+==== 전체 조회
+
+[black]#Request#
+
+include::{snippets}/hashtag/success/fetches/http-request.adoc[]
+
+[black]#Response#
+
+include::{snippets}/hashtag/success/fetches/http-response.adoc[]
+
+---
+
+=== 참가신청
+
+==== 신청
+
+[black]#Request#
+
+include::{snippets}/crew-participant/success/new/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-participant/success/new/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-participant/success/new/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-participant/success/new/http-response.adoc[]
+
+---
+
+==== 관리
+
+[black]#Request#
+
+include::{snippets}/crew-participant/success/fetch/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-participant/success/fetch/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-participant/success/fetch/path-parameters.adoc[]
+
+[black]#Query Parameter#
+
+include::{snippets}/crew-participant/success/fetch/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-participant/success/fetch/http-response.adoc[]
+
+---
+
+==== 수락
+
+[black]#Request#
+
+include::{snippets}/crew-participant/success/accept/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-participant/success/accept/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-participant/success/accept/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-participant/success/accept/http-response.adoc[]
+
+---
+
+==== 거절
+
+[black]#Request#
+
+include::{snippets}/crew-participant/success/reject/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-participant/success/reject/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-participant/success/reject/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-participant/success/reject/http-response.adoc[]
+
+---
+
+=== 공지사항
+
+==== 생성
+
+[black]#Request#
+
+include::{snippets}/crew-announce/success/new/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-announce/success/new/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-announce/success/new/path-parameters.adoc[]
+
+[black]#Request Body#
+
+include::{snippets}/crew-announce/success/new/request-fields.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-announce/success/new/http-response.adoc[]
+
+---
+
+==== 조회
+
+[black]#Request#
+
+include::{snippets}/crew-announce/success/fetch/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-announce/success/fetch/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-announce/success/fetch/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-announce/success/fetch/http-response.adoc[]
+
+---
+
+==== 전체 조회
+
+[black]#Request#
+
+include::{snippets}/crew-announce/success/fetches/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-announce/success/fetches/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-announce/success/fetches/path-parameters.adoc[]
+
+[black]#Query Parameter#
+
+include::{snippets}/crew-announce/success/fetches/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-announce/success/fetches/http-response.adoc[]
+
+---
+
+==== 정보 수정
+
+[black]#Request#
+
+include::{snippets}/crew-announce/success/update/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-announce/success/update/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-announce/success/update/path-parameters.adoc[]
+
+[black]#Request Body#
+
+include::{snippets}/crew-announce/success/update/request-fields.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-announce/success/update/http-response.adoc[]
+
+---
+
+==== 상단 고정
+
+[black]#Request#
+
+include::{snippets}/crew-announce/success/fix/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-announce/success/fix/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-announce/success/fix/path-parameters.adoc[]
+
+[black]#Query Parameter#
+
+include::{snippets}/crew-announce/success/fix/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-announce/success/fix/http-response.adoc[]
+
+---
+
+==== 삭제
+
+[black]#Request#
+
+include::{snippets}/crew-announce/success/delete/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-announce/success/delete/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-announce/success/delete/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-announce/success/delete/http-response.adoc[]
+
+---
+
+=== 멤버
+
+==== 관리
+
+[black]#Request#
+
+include::{snippets}/crew-member/success/fetches/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-member/success/fetches/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-member/success/fetches/path-parameters.adoc[]
+
+[black]#Query Parameter#
+
+include::{snippets}/crew-member/success/fetches/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-member/success/fetches/http-response.adoc[]
+
+---
+
+=== 이름 중복 검사
+
+[black]#Request#
+
+include::{snippets}/crew/success/name-duplicate/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew/success/name-duplicate/request-headers.adoc[]
+
+[black]#Query Parameter#
+
+include::{snippets}/crew/success/name-duplicate/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/name-duplicate/http-response.adoc[]
+
+---
+
+=== 생성
+
+[black]#Request#
+
+include::{snippets}/crew/success/new/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew/success/new/request-headers.adoc[]
+
+[black]#Request Parts#
+
+include::{snippets}/crew/success/new/request-parts.adoc[]
+
+[black]#크루 생성 요청 JSON#
+
+include::{snippets}/crew/success/new/request-part-request-fields.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/new/http-response.adoc[]
+
+---
+
+=== 메인 페이지
+
+[NOTE]
+해당 API 는 테스트가 완료되지 않았습니다.
+
+---
+
+=== 조회
+
+[black]#Request#
+
+include::{snippets}/crew/success/fetch-auth/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew/success/fetch-auth/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew/success/fetch-auth/path-parameters.adoc[]
+
+[black]#Response (토큰 있을 시)#
+
+include::{snippets}/crew/success/fetch-auth/http-response.adoc[]
+
+[black]#Response (토큰 없을 시)#
+
+include::{snippets}/crew/success/fetch-non-auth/http-response.adoc[]
+
+---
+
+=== 검색 및 전체 조회
+
+[black]#Request#
+
+include::{snippets}/crew/success/fetches/http-request.adoc[]
+
+NOTE: `name=%ED%81%AC%EB%A3%A8+%EC%9D%B4%EB%A6%84` → 디코딩하면 `name=크루 이름`
+
+[black]#Query Parameter#
+
+include::{snippets}/crew/success/fetches/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/fetches/http-response.adoc[]
+
+---
+
+=== 랭커
+
+[black]#Request#
+
+include::{snippets}/crew-top-member/success/fetches/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew-top-member/success/fetches/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew-top-member/success/fetches/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-top-member/success/fetches/http-response.adoc[]
+
+---
+
+=== 관리
+
+[NOTE]
+해당 API 는 테스트가 완료되지 않았습니다.
+
+=== 이미지 변경
+
+[black]#Request#
+
+include::{snippets}/crew/success/update-image/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew/success/update-image/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew/success/update-image/path-parameters.adoc[]
+
+[black]#Request Parts#
+
+include::{snippets}/crew/success/update-image/request-parts.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/update-image/http-response.adoc[]
+
+---
+
+=== 이미지 삭제
+
+[black]#Request#
+
+include::{snippets}/crew/success/delete-image/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew/success/delete-image/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew/success/delete-image/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/delete-image/http-response.adoc[]
+
+---
+
+=== 정보 수정
+
+[black]#Request#
+
+include::{snippets}/crew/success/update/http-request.adoc[]
+
+[black]#Request Headers#
+
+include::{snippets}/crew/success/update/request-headers.adoc[]
+
+[black]#Path Parameter#
+
+include::{snippets}/crew/success/update/path-parameters.adoc[]
+
+[black]#Request Body#
+
+include::{snippets}/crew/success/update/request-fields.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/update/http-response.adoc[]
+
+---
+
+=== 삭제
+
+[NOTE]
+해당 API 는 아직 구현되지 않았습니다.

@@ -3,7 +3,6 @@ package revi1337.onsquad.inrastructure.mail.presentation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,18 +18,18 @@ public class EmailVerificationCodeController {
 
     private final AuthMailService authMailService;
 
-    @PostMapping("/auth/send/email/{email}")
+    @PostMapping("/auth/send")
     public ResponseEntity<RestResponse<String>> sendVerificationCode(
-            @PathVariable String email
+            @RequestParam String email
     ) {
         authMailService.sendVerificationCode(email);
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @GetMapping("/auth/verify/email/{email}")
+    @GetMapping("/auth/verify")
     public ResponseEntity<RestResponse<EmailValidResponse>> verifyVerificationCode(
-            @PathVariable String email,
+            @RequestParam String email,
             @RequestParam String code
     ) {
         if (authMailService.isValidVerificationCode(email, code)) {

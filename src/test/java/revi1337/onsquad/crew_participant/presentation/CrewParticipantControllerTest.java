@@ -161,8 +161,8 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             pathParameters(parameterWithName("crewId").description("크루 Id")),
                             queryParameters(
-                                    parameterWithName("page").description("페이지"),
-                                    parameterWithName("size").description("페이지당 사이즈")
+                                    parameterWithName("page").description("페이지").optional(),
+                                    parameterWithName("size").description("페이지 당 사이즈").optional()
                             ),
                             responseBody()
                     ));

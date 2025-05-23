@@ -186,8 +186,8 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                                     parameterWithName("crewId").description("Crew 아이디")
                             ),
                             queryParameters(
-                                    parameterWithName("page").description("페이지"),
-                                    parameterWithName("size").description("페이지 당 크기")
+                                    parameterWithName("page").description("페이지").optional(),
+                                    parameterWithName("size").description("페이지 당 사이즈").optional()
                             ),
                             responseBody()
                     ));

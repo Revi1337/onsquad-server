@@ -204,8 +204,8 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
                                     parameterWithName("squadId").description("Squad 아이디")
                             ),
                             queryParameters(
-                                    parameterWithName("page").description("페이지"),
-                                    parameterWithName("size").description("페이지당 사이즈")
+                                    parameterWithName("page").description("페이지").optional(),
+                                    parameterWithName("size").description("페이지 당 사이즈").optional()
                             ),
                             responseBody()
                     ));

@@ -1,0 +1,10 @@
+//===== Request Headers
+|===
+|이름|설명|필수값
+
+{{#headers}}
+    |{{#tableCellContent}}`{{name}}`{{/tableCellContent}}
+    |{{#tableCellContent}}{{description}}{{/tableCellContent}}
+    |{{#tableCellContent}}{{^optional}}true{{/optional}}{{#optional}}false{{/optional}}{{/tableCellContent}}
+{{/headers}}
+|===

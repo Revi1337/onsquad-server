@@ -1,4 +1,3 @@
-= OnSquad REST API 문서
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -6,16 +5,12 @@
 :toclevels: 3
 :sectlinks:
 
-== 멤버 API
+= OnSquad REST API 문서
 
-include::member.adoc[]
+== 회원가입 및 인증토큰
 
-== 스쿼드 API
+include::auth.adoc[]
 
-include::squad.adoc[]
+== 크루
 
-== 예외코드 및 Description
-
-include::error.adoc[]
-
-
+include::crew.adoc[]

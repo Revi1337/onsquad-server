@@ -1,180 +1,237 @@
 package revi1337.onsquad.inrastructure.mail.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doThrow;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.INVALID_AUTHENTICATION_CODE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.VALID_AUTHENTICATION_CODE;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_CODE;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_CODE_TIMEOUT;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_SUCCESS;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.EMAIL_VALUE;
 
 import io.lettuce.core.RedisConnectionException;
-import java.time.Duration;
-import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
-import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
-import revi1337.onsquad.inrastructure.mail.support.VerificationState;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        VerificationCodeRedisRepository.class,
-        VerificationCodeExpiringMapRepository.class,
-        VerificationCodeRepositoryCandidates.class
-})
 class VerificationCodeRepositoryCandidatesTest {
 
     private static final String REDIS_CONNECTION_ERROR_MSG = "Redis Connection Fail";
 
-    @MockBean
-    private VerificationCodeRedisRepository redisRepository;
-
-    @Autowired
-    private VerificationCodeExpiringMapRepository mapRepository;
-
-    @Autowired
-    private VerificationCodeRepositoryCandidates repositoryCandidates;
-
-    @BeforeEach
-    void tearDown() {
-        Map<String, VerificationState> tracker = (Map<String, VerificationState>)
-                ReflectionTestUtils.getField(VerificationCodeExpiringMapRepository.class, "VERIFICATION_TRACKER");
-        Map<String, String> store = (Map<String, String>)
-                ReflectionTestUtils.getField(VerificationCodeExpiringMapRepository.class, "VERIFICATION_STORE");
-        tracker.clear();
-        store.clear();
-    }
+    private VerificationCodeRepository firstRepository = mock(VerificationCodeRedisRepository.class);
+    private VerificationCodeRepository secondRepository = mock(VerificationCodeRepository.class);
+    private VerificationCodeRepository lastRepository = mock(VerificationCodeExpiringMapRepository.class);
+    private final VerificationCodeRepositoryCandidates repositoryCandidates =
+            new VerificationCodeRepositoryCandidates(List.of(firstRepository, secondRepository, lastRepository));
 
     @Nested
-    @DisplayName("이메일 인증 코드 저장 위임 테스트")
+    @DisplayName("이메일 인증 코드 저장 위임을 테스트한다.")
     class SaveVerificationCode {
 
         @Test
-        @DisplayName("인증 코드를 저장에 성공한다.")
-        void saveVerificationCode() {
+        @DisplayName("SaveVerificationCode 시, 첫번째 Repository 에서 예외가 터지면 다음 Repository 로 위임한다.")
+        void success1() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .saveVerificationCode(any(), any(), any());
+                    .when(firstRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
 
             repositoryCandidates
-                    .saveVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE, Duration.ofMinutes(1));
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
 
-            boolean valid = mapRepository.isValidVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE);
-            assertThat(valid).isTrue();
+            verify(secondRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+        }
+
+        @Test
+        @DisplayName("SaveVerificationCode 시, 모든 Repository 에서 예외를 던져도 마지막 Repository 에서는 예외가 나지 않는다.")
+        void success2() {
+            doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
+                    .when(firstRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+
+            repositoryCandidates
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+
+            verify(lastRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+        }
+
+        @Test
+        @DisplayName("SaveVerificationCode 시, 모든 Repository 에서 예외를 던지면 실패한다.")
+        void fail() {
+            doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
+                    .when(firstRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+            doThrow(new IllegalArgumentException())
+                    .when(lastRepository)
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT);
+
+            assertThatThrownBy(() -> repositoryCandidates
+                    .saveVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT))
+                    .isExactlyInstanceOf(UnsupportedOperationException.class);
         }
     }
 
     @Nested
-    @DisplayName("이메일 인증 코드 유효성 위임 테스트")
+    @DisplayName("이메일 인증 코드 유효성 위임을 테스트한다.")
     class IsValidVerificationCode {
 
         @Test
-        @DisplayName("인증 코드가 유효하면 True 를 반환한다.")
-        void isValidVerificationCode1() {
-            mapRepository.saveVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE, Duration.ofMinutes(1));
+        @DisplayName("isValidVerificationCode 시, 첫번째 Repository 에서 예외가 터지면 다음 Repository 로 위임한다.")
+        void success1() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .isValidVerificationCode(any(), any());
+                    .when(firstRepository)
+                    .isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
 
-            boolean valid = mapRepository.isValidVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE);
+            boolean ignored = repositoryCandidates.isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
 
-            assertThat(valid).isTrue();
+            verify(secondRepository).isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
         }
 
         @Test
-        @DisplayName("인증 코드가 유효하지 않으면 False 를 반환한다.")
-        void isValidVerificationCode2() {
-            mapRepository.saveVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE, Duration.ofMinutes(1));
+        @DisplayName("isValidVerificationCode 시, 모든 Repository 에서 예외를 던져도 마지막 Repository 에서는 예외가 나지 않는다.")
+        void success2() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .isValidVerificationCode(any(), any());
+                    .when(firstRepository)
+                    .isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
 
-            boolean valid = mapRepository.isValidVerificationCode(REVI_EMAIL_VALUE, INVALID_AUTHENTICATION_CODE);
+            boolean ignored = repositoryCandidates.isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
 
-            assertThat(valid).isFalse();
+            verify(lastRepository).isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
+        }
+
+        @Test
+        @DisplayName("isValidVerificationCode 시, 모든 Repository 에서 예외를 던지면 실패한다.")
+        void fail() {
+            doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
+                    .when(firstRepository)
+                    .isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
+            doThrow(new IllegalArgumentException())
+                    .when(lastRepository)
+                    .isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE);
+
+            assertThatThrownBy(() -> repositoryCandidates
+                    .isValidVerificationCode(EMAIL_VALUE, TEST_VERIFICATION_CODE))
+                    .isExactlyInstanceOf(UnsupportedOperationException.class);
         }
     }
 
     @Nested
-    @DisplayName("이메일 인증 코드 검증 완료 Mark 위임 테스트")
+    @DisplayName("이메일 인증 코드 검증 완료 Mark 위임을 테스트한다.")
     class MarkVerificationStatus {
 
         @Test
-        @DisplayName("인증코드를 발급받았다면, Mark 하고 True 를 반환한다.")
-        void markVerificationStatus1() {
-            mapRepository.saveVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE, Duration.ofMinutes(1));
+        @DisplayName("markVerificationStatus 시, 첫번째 Repository 에서 예외가 터지면 다음 Repository 로 위임한다.")
+        void success1() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .markVerificationStatus(any(), any(), any());
+                    .when(firstRepository)
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
 
-            boolean marked = mapRepository
-                    .markVerificationStatus(REVI_EMAIL_VALUE, VerificationStatus.SUCCESS, Duration.ofMillis(1));
+            boolean ignored = repositoryCandidates
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
 
-            assertThat(marked).isTrue();
+            verify(secondRepository).markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS,
+                    TEST_VERIFICATION_CODE_TIMEOUT);
         }
 
         @Test
-        @DisplayName("인증코드를 발급 받지 않았다면, Mark 하지 못하고 False 를 반환한다.")
-        void markVerificationStatus2() {
+        @DisplayName("markVerificationStatus 시, 모든 Repository 에서 예외를 던져도 마지막 Repository 에서는 예외가 나지 않는다.")
+        void success2() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .markVerificationStatus(any(), any(), any());
+                    .when(firstRepository)
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
 
-            boolean marked = mapRepository
-                    .markVerificationStatus(REVI_EMAIL_VALUE, VerificationStatus.SUCCESS, Duration.ofMillis(1));
+            boolean ignored = repositoryCandidates
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
 
-            assertThat(marked).isFalse();
+            verify(lastRepository).markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS,
+                    TEST_VERIFICATION_CODE_TIMEOUT);
+        }
+
+        @Test
+        @DisplayName("markVerificationStatus 시, 모든 Repository 에서 예외를 던지면 실패한다.")
+        void fail() {
+            doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
+                    .when(firstRepository)
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
+            doThrow(new IllegalArgumentException())
+                    .when(lastRepository)
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT);
+
+            assertThatThrownBy(() -> repositoryCandidates
+                    .markVerificationStatus(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS, TEST_VERIFICATION_CODE_TIMEOUT))
+                    .isExactlyInstanceOf(UnsupportedOperationException.class);
         }
     }
 
     @Nested
-    @DisplayName("인증 완료 위임 테스트")
+    @DisplayName("인증이 완료 여부 확인 위임을 테스트한다.")
     class IsMarkedVerificationStatusWith {
 
         @Test
-        @DisplayName("인증이 완료되었으면 True 를 반환한다.")
-        void isMarkedVerificationStatusWith1() {
-            mapRepository.saveVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE, Duration.ofMinutes(1));
-            mapRepository.markVerificationStatus(REVI_EMAIL_VALUE, VerificationStatus.SUCCESS, Duration.ofMinutes(1));
+        @DisplayName("isMarkedVerificationStatusWith 시, 첫번째 Repository 에서 예외가 터지면 다음 Repository 로 위임한다.")
+        void success1() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .isMarkedVerificationStatusWith(any(), any());
+                    .when(firstRepository)
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
 
-            boolean marked = mapRepository.isMarkedVerificationStatusWith(REVI_EMAIL_VALUE, VerificationStatus.SUCCESS);
+            boolean ignored = repositoryCandidates
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
 
-            assertThat(marked).isTrue();
+            verify(secondRepository).isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
         }
 
         @Test
-        @DisplayName("인증 코드는 발급받았지만, 인증이 완료되지 않았으면, False 를 반환한다.")
-        void isMarkedVerificationStatusWith2() {
-            mapRepository.saveVerificationCode(REVI_EMAIL_VALUE, VALID_AUTHENTICATION_CODE, Duration.ofMinutes(1));
+        @DisplayName("isMarkedVerificationStatusWith 시, 첫번째 Repository 에서 예외가 터지면 다음 Repository 로 위임한다.")
+        void success2() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .isMarkedVerificationStatusWith(any(), any());
+                    .when(firstRepository)
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
 
-            boolean marked = mapRepository.isMarkedVerificationStatusWith(REVI_EMAIL_VALUE, VerificationStatus.SUCCESS);
+            boolean ignored = repositoryCandidates
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
 
-            assertThat(marked).isFalse();
+            verify(lastRepository).isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
         }
 
         @Test
-        @DisplayName("인증 코드 자체를 발급 받지 않았으면 False 를 반환한다.")
-        void isMarkedVerificationStatusWith3() {
+        @DisplayName("isMarkedVerificationStatusWith 시, 모든 Repository 에서 예외를 던지면 실패한다.")
+        void fail() {
             doThrow(new RedisConnectionException(REDIS_CONNECTION_ERROR_MSG))
-                    .when(redisRepository)
-                    .isMarkedVerificationStatusWith(any(), any());
+                    .when(firstRepository)
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
+            doThrow(new IllegalArgumentException())
+                    .when(secondRepository)
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
+            doThrow(new IllegalArgumentException())
+                    .when(lastRepository)
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS);
 
-            boolean marked = mapRepository.isMarkedVerificationStatusWith(REVI_EMAIL_VALUE, VerificationStatus.SUCCESS);
-
-            assertThat(marked).isFalse();
+            assertThatThrownBy(() -> repositoryCandidates
+                    .isMarkedVerificationStatusWith(EMAIL_VALUE, TEST_VERIFICATION_SUCCESS))
+                    .isExactlyInstanceOf(UnsupportedOperationException.class);
         }
     }
 }

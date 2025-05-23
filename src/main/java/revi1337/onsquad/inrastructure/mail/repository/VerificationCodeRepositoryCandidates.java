@@ -3,6 +3,7 @@ package revi1337.onsquad.inrastructure.mail.repository;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
@@ -11,9 +12,14 @@ import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 @Slf4j
 public class VerificationCodeRepositoryCandidates implements VerificationCodeRepository {
 
+    private static final String REPOSITORIES_CANNOT_NULL = "Repositories must not be null";
+    private static final String ALL_OF_REPOSITORY_FAILED_ERROR = "All of Repository Failed. Fatal Error";
+    private static final String NEXT_REPOSITORY_INVOCATION_LOG_FORMAT = "{} throws [{}]. Invoke next Repository";
+
     private final List<VerificationCodeRepository> mailRepositories = new ArrayList<>();
 
     public VerificationCodeRepositoryCandidates(List<VerificationCodeRepository> mailRepositories) {
+        Objects.requireNonNull(mailRepositories, REPOSITORIES_CANNOT_NULL);
         this.mailRepositories.addAll(mailRepositories);
     }
 
@@ -42,11 +48,11 @@ public class VerificationCodeRepositoryCandidates implements VerificationCodeRep
             try {
                 return function.apply(repository);
             } catch (Exception exception) {
-                printNextRepositoryNavigateLog(repository, exception);
+                logNextRepositoryInvoke(repository, exception);
             }
         }
-        printNoneMatchRepositoryLog();
-        throw new UnsupportedOperationException("All of Repository Failed. Fatal Error");
+        logAllRepositoriesNonMatch();
+        throw new UnsupportedOperationException(ALL_OF_REPOSITORY_FAILED_ERROR);
     }
 
     private void delegateVoid(Consumer<VerificationCodeRepository> consumer) {
@@ -55,19 +61,18 @@ public class VerificationCodeRepositoryCandidates implements VerificationCodeRep
                 consumer.accept(repository);
                 return;
             } catch (Exception exception) {
-                printNextRepositoryNavigateLog(repository, exception);
+                logNextRepositoryInvoke(repository, exception);
             }
         }
-        printNoneMatchRepositoryLog();
-        throw new UnsupportedOperationException("All of Repository Failed. Fatal Error");
+        logAllRepositoriesNonMatch();
+        throw new UnsupportedOperationException(ALL_OF_REPOSITORY_FAILED_ERROR);
     }
 
-    private void printNextRepositoryNavigateLog(VerificationCodeRepository repository, Exception exception) {
-        log.info("{} throws [{}]. Invoke next Repository", repository.getClass().getSimpleName(),
-                exception.getMessage());
+    private void logNextRepositoryInvoke(VerificationCodeRepository repository, Exception exception) {
+        log.debug(NEXT_REPOSITORY_INVOCATION_LOG_FORMAT, repository.getClass().getSimpleName(), exception.getMessage());
     }
 
-    private void printNoneMatchRepositoryLog() {
-        log.error("All of Repository Failed. Fatal Error");
+    private void logAllRepositoriesNonMatch() {
+        log.error(ALL_OF_REPOSITORY_FAILED_ERROR);
     }
 }
