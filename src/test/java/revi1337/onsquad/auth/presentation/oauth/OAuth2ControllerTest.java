@@ -12,6 +12,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
@@ -29,17 +30,21 @@ import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Prop
 import revi1337.onsquad.auth.config.properties.SupportOAuth2Platform;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.common.YamlPropertySourceFactory;
+import revi1337.onsquad.common.config.properties.OnsquadProperties;
 
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
-@EnableConfigurationProperties(OAuth2ClientProperties.class)
-@WebMvcTest(OAuth2RedirectionController.class)
-class OAuth2RedirectionControllerTest extends PresentationLayerTestSupport {
+@EnableConfigurationProperties({OAuth2ClientProperties.class, OnsquadProperties.class})
+@WebMvcTest(OAuth2Controller.class)
+class OAuth2ControllerTest extends PresentationLayerTestSupport {
 
-    @MockBean
-    private OAuth2Service oAuth2Service;
+    @Autowired
+    private OnsquadProperties onsquadProperties;
 
     @Autowired
     private OAuth2ClientProperties oAuth2ClientProperties;
+
+    @MockBean
+    private OAuth2Service oAuth2Service;
 
     @Nested
     @DisplayName("카카오 OAuth2 로그인 엔드포인트 생성을 문서화한다.")
@@ -66,7 +71,43 @@ class OAuth2RedirectionControllerTest extends PresentationLayerTestSupport {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             pathParameters(
-                                    parameterWithName("platform").description("OAuth 인증 Platform (현재 kakao 만 존재")),
+                                    parameterWithName("platform").description("OAuth 인증 Platform (현재 kakao 만 존재")
+                            ),
+                            responseBody()
+                    ));
+        }
+    }
+
+    @Nested
+    @DisplayName("카카오 OAuth2 로그인을 문서화한다.")
+    class HandleOAuth2Login {
+
+        @Test
+        @DisplayName("카카오 OAuth2 로그인을 문서화에 성공한다.")
+        void success() throws Exception {
+            String oauth2Platform = "google";
+            String authorizationCode = "authorization-code";
+            String redirectUri = UriComponentsBuilder
+                    .fromHttpUrl(onsquadProperties.getFrontendBaseUrl())
+                    .queryParam("accessToken", ACCESS_TOKEN)
+                    .queryParam("refreshToken", REFRESH_TOKEN)
+                    .build()
+                    .toUriString();
+            when(oAuth2Service.handleOAuth2Login(anyString(), eq(oauth2Platform), eq(authorizationCode)))
+                    .thenReturn(URI.create(redirectUri));
+
+            mockMvc.perform(get("/api/login/oauth2/code/{platform}", oauth2Platform)
+                            .queryParam("code", authorizationCode)
+                            .contentType(APPLICATION_JSON))
+                    .andDo(document("auth/success/kakao-login",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("platform").description("OAuth 인증 Platform (현재 kakao 만 존재")
+                            ),
+                            queryParameters(
+                                    parameterWithName("code").description("인가코드")
+                            ),
                             responseBody()
                     ));
         }
