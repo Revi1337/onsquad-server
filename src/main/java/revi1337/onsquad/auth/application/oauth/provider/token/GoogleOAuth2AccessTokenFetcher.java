@@ -16,7 +16,7 @@ import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Prop
 public class GoogleOAuth2AccessTokenFetcher implements PlatformOAuth2AccessTokenFetcher {
 
     @Override
-    public AccessToken fetchAccessToken(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {
+    public AccessToken fetch(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {
         return fetchToken(baseUrl, authorizationCode, oAuth2Properties);
     }
 

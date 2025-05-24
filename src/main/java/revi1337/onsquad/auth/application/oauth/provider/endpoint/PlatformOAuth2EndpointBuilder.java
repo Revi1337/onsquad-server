@@ -5,6 +5,6 @@ import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Prop
 
 public interface PlatformOAuth2EndpointBuilder {
 
-    URI provideUsing(String baseUrl, OAuth2Properties oAuth2Properties);
+    URI build(String baseUrl, OAuth2Properties oAuth2Properties);
 
 }

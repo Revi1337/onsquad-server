@@ -1,7 +1,9 @@
 package revi1337.onsquad.auth.config.properties;
 
+import lombok.Getter;
 import revi1337.onsquad.auth.application.oauth.OAuth2Platform;
 
+@Getter
 public enum SupportOAuth2Platform {
 
     KAKAO(OAuth2Platform.KAKAO),
@@ -13,13 +15,16 @@ public enum SupportOAuth2Platform {
         this.platform = platform;
     }
 
-    public static OAuth2Platform getAvailableFromSpecific(String platform) {
+    public static SupportOAuth2Platform from(String platform) {
         try {
-            String ignoreCaseOAuthorizationPlatform = platform.toUpperCase();
-            SupportOAuth2Platform supportOAuth2Platform = valueOf(ignoreCaseOAuthorizationPlatform);
-            return supportOAuth2Platform.platform;
+            return valueOf(platform.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new UnsupportedOperationException("unsupported authorization platform " + platform);
         }
+    }
+
+    public static OAuth2Platform getAvailableFrom(String platform) {
+        SupportOAuth2Platform supportOAuth2Platform = from(platform);
+        return supportOAuth2Platform.platform;
     }
 }
