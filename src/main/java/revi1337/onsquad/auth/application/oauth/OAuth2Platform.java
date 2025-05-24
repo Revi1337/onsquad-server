@@ -1,6 +1,7 @@
 package revi1337.onsquad.auth.application.oauth;
 
 import java.net.URI;
+import revi1337.onsquad.auth.application.oauth.model.PlatformUserProfile;
 import revi1337.onsquad.auth.application.oauth.provider.endpoint.GoogleOAuth2EndpointBuilder;
 import revi1337.onsquad.auth.application.oauth.provider.endpoint.KakaoOAuth2EndpointBuilder;
 import revi1337.onsquad.auth.application.oauth.provider.endpoint.PlatformOAuth2EndpointBuilder;
@@ -10,11 +11,10 @@ import revi1337.onsquad.auth.application.oauth.provider.token.PlatformOAuth2Acce
 import revi1337.onsquad.auth.application.oauth.provider.user.GoogleOAuth2UserProfileFetcher;
 import revi1337.onsquad.auth.application.oauth.provider.user.KakaoOAuth2UserProfileFetcher;
 import revi1337.onsquad.auth.application.oauth.provider.user.PlatformOAuth2UserProfileFetcher;
+import revi1337.onsquad.auth.application.token.model.AccessToken;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties;
 import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.auth.config.properties.SupportOAuth2Platform;
-import revi1337.onsquad.auth.application.oauth.model.PlatformUserProfile;
-import revi1337.onsquad.auth.application.token.model.AccessToken;
 
 public enum OAuth2Platform implements AuthorizationEndPointProvider, AuthorizationAccessTokenProvider,
         AuthorizationUserProfileProvider {
@@ -52,6 +52,7 @@ public enum OAuth2Platform implements AuthorizationEndPointProvider, Authorizati
     @Override
     public URI provideUsing(String baseUrl, OAuth2ClientProperties oAuth2ClientProperties) {
         OAuth2Properties oAuth2Properties = getPropertyFrom(oAuth2ClientProperties);
+
         return endpointBuilder.provideUsing(baseUrl, oAuth2Properties);
     }
 

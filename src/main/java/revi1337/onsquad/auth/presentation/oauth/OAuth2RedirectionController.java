@@ -8,23 +8,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import revi1337.onsquad.auth.application.oauth.OAuth2Platform;
-import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties;
-import revi1337.onsquad.auth.config.properties.SupportOAuth2Platform;
+import revi1337.onsquad.auth.application.oauth.OAuth2Service;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
 public class OAuth2RedirectionController {
 
-    private final OAuth2ClientProperties oAuth2ClientProperties;
+    private final OAuth2Service oAuth2Service;
 
     @GetMapping("/login/oauth2/{platform}")
-    public ResponseEntity<String> handlePlatformOAuth2Login(@PathVariable String platform) {
-        OAuth2Platform oAuth2Platform = SupportOAuth2Platform.getAvailableFromSpecific(platform);
+    public ResponseEntity<String> buildAuthorizationEndpoint(@PathVariable String platform) {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        URI compositeAuthorizationEndpoint = oAuth2Platform.provideUsing(baseUrl, oAuth2ClientProperties);
+        URI authorizationEndpoint = oAuth2Service.buildAuthorizationEndpoint(baseUrl, platform);
 
-        return ResponseEntity.ok().location(compositeAuthorizationEndpoint).build();
+        return ResponseEntity.ok().location(authorizationEndpoint).build();
     }
 }
