@@ -47,15 +47,3 @@ public record GoogleUserProfile(
         return thumbnailImage;
     }
 }
-
-//package revi1337.onsquad.auth.application.oauth2.model;
-//
-//public record GoogleUserProfile(
-//        String name,
-//        String nickname,
-//        String email,
-//        boolean isEmailVerified,
-//        String profileImage,
-//        String thumbnailImage
-//) {
-//}
