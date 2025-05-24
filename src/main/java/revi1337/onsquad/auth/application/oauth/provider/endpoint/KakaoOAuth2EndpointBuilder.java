@@ -7,7 +7,7 @@ import revi1337.onsquad.auth.config.properties.OAuth2ClientProperties.OAuth2Prop
 public class KakaoOAuth2EndpointBuilder implements PlatformOAuth2EndpointBuilder {
 
     @Override
-    public URI provideUsing(String baseUrl, OAuth2Properties oAuth2Properties) {
+    public URI build(String baseUrl, OAuth2Properties oAuth2Properties) {
         return ServletUriComponentsBuilder
                 .fromHttpUrl(oAuth2Properties.authorizationUri())
                 .queryParam("client_id", oAuth2Properties.clientId())
