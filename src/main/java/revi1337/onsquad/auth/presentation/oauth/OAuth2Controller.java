@@ -25,9 +25,9 @@ public class OAuth2Controller {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         URI authorizationEndpoint = oAuth2Service.buildAuthorizationEndpoint(baseUrl, platform);
 
-        return ResponseEntity.status(FOUND).location(authorizationEndpoint).build();
+        return ResponseEntity.ok().location(authorizationEndpoint).build();
     }
-    
+
     @GetMapping("/login/oauth2/code/{platform}")
     public ResponseEntity<Void> handleOAuth2Login(
             @PathVariable String platform,
