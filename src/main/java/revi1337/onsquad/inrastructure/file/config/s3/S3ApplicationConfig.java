@@ -17,13 +17,13 @@ import software.amazon.awssdk.services.s3.S3Client;
 public class S3ApplicationConfig {
 
     private final S3BucketProperties s3BucketProperties;
-    private final CloudFrontProperties cloudFrontProperties;
     private final CloudFrontCacheInvalidator cacheInvalidator;
+    private final CloudFrontProperties cloudFrontProperties;
     private final S3Client s3Client;
 
     @Bean
     public S3StorageCleaner s3StorageCleaner() {
-        return new S3StorageCleaner(s3Client, s3BucketProperties.bucket(), cloudFrontProperties.baseDomain());
+        return new S3StorageCleaner(s3Client, s3BucketProperties.bucket());
     }
 
     @Bean

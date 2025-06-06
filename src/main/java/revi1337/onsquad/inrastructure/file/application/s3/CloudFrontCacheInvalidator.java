@@ -28,13 +28,6 @@ public class CloudFrontCacheInvalidator {
         logInvalidationResponse(response);
     }
 
-    private CreateInvalidationRequest createInvalidationRequest(InvalidationBatch invalidationBatch) {
-        return CreateInvalidationRequest.builder()
-                .distributionId(distributionId)
-                .invalidationBatch(invalidationBatch)
-                .build();
-    }
-
     private InvalidationBatch createInvalidationBatch(String[] paths) {
         List<String> items = List.of(paths);
         return InvalidationBatch.builder()
@@ -43,6 +36,13 @@ public class CloudFrontCacheInvalidator {
                         .quantity(items.size())
                         .build())
                 .callerReference(UUID.randomUUID().toString())
+                .build();
+    }
+
+    private CreateInvalidationRequest createInvalidationRequest(InvalidationBatch invalidationBatch) {
+        return CreateInvalidationRequest.builder()
+                .distributionId(distributionId)
+                .invalidationBatch(invalidationBatch)
                 .build();
     }
 

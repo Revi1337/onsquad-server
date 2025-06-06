@@ -37,6 +37,9 @@ public abstract class ApplicationLayerTestSupport {
     @PersistenceContext
     protected EntityManager entityManager;
 
+    @Autowired
+    private CategoryJpaRepository categoryJpaRepository;
+
     @BeforeAll
     void initCategory() {
         if (categoryJpaRepository.count() == 0) {
@@ -45,9 +48,6 @@ public abstract class ApplicationLayerTestSupport {
                     .toList());
         }
     }
-
-    @Autowired
-    private CategoryJpaRepository categoryJpaRepository;
 
     protected void clearPersistenceContext() {
         entityManager.flush();
