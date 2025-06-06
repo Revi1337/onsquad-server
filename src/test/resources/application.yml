@@ -134,8 +134,8 @@ onsquad:
       region: aws-global
       distribution-id: aaaaaaaaaaaaaa
     s3:
-      access-key: accesskey
-      secret-key: secretkey
+      access-key: access-key
+      secret-key: secret-key
       bucket: onsquad
       region: ap-northeast-2
       directory:

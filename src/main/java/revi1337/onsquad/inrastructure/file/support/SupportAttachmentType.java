@@ -1,4 +1,4 @@
-package revi1337.onsquad.inrastructure.file.application;
+package revi1337.onsquad.inrastructure.file.support;
 
 import java.util.Arrays;
 import java.util.EnumSet;

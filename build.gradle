@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.blazebit:blaze-persistence-integration-hibernate-6.2:1.6.11'
     implementation 'com.blazebit:blaze-persistence-core-impl-jakarta:1.6.11'
 
-    implementation platform('software.amazon.awssdk:bom:2.17.230')
+    implementation platform('software.amazon.awssdk:bom:2.31.17')
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:cloudfront'
 
@@ -57,7 +57,7 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
     testImplementation 'com.redis.testcontainers:testcontainers-redis-junit:1.6.4'
-    testImplementation 'org.testcontainers:localstack'
+    testImplementation "org.testcontainers:localstack:1.19.0"
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
