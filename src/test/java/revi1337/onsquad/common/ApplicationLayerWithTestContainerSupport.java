@@ -17,6 +17,7 @@ import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.CategoryJpaRepository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
+import revi1337.onsquad.inrastructure.file.application.s3.CloudFrontCacheInvalidator;
 import revi1337.onsquad.inrastructure.file.support.RecycleBinLifeCycleManager;
 import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleManager;
 
@@ -34,8 +35,14 @@ public abstract class ApplicationLayerWithTestContainerSupport extends TestConta
     @MockBean
     protected VerificationCacheLifeCycleManager verificationCacheLifeCycleManager;
 
+    @MockBean
+    protected CloudFrontCacheInvalidator cloudFrontCacheInvalidator;
+
     @PersistenceContext
     protected EntityManager entityManager;
+
+    @Autowired
+    private CategoryJpaRepository categoryJpaRepository;
 
     @BeforeAll
     void initCategory() {
@@ -45,9 +52,6 @@ public abstract class ApplicationLayerWithTestContainerSupport extends TestConta
                     .toList());
         }
     }
-
-    @Autowired
-    private CategoryJpaRepository categoryJpaRepository;
 
     protected void clearPersistenceContext() {
         entityManager.flush();
