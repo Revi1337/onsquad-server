@@ -30,7 +30,7 @@ public class AuthMailService {
         repositoryChain.saveVerificationCode(email, authCode, VERIFICATION_CODE_TIMEOUT);
     }
 
-    public boolean isValidVerificationCode(String email, String authCode) {
+    public boolean validateVerificationCode(String email, String authCode) {
         if (repositoryChain.isValidVerificationCode(email, authCode)) {
             boolean mark = repositoryChain.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
             log.info(VERIFY_CODE_VERIFICATION_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());

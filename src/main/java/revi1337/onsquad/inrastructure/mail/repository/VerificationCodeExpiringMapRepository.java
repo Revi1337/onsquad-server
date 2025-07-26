@@ -33,9 +33,7 @@ public class VerificationCodeExpiringMapRepository implements VerificationCodeRe
     @Override
     public void saveVerificationCode(String email, String verificationCode, Duration duration) {
         String inMemoryKey = getKey(email);
-        VERIFICATION_STORE.put(
-                inMemoryKey, verificationCode, ExpirationPolicy.CREATED, duration.toMillis(), TimeUnit.MILLISECONDS
-        );
+        VERIFICATION_STORE.put(inMemoryKey, verificationCode, ExpirationPolicy.CREATED, duration.toMillis(), TimeUnit.MILLISECONDS);
 
         if (VERIFICATION_STORE.containsKey(inMemoryKey)) {
             long expectedTime = getExpiredTime(duration);

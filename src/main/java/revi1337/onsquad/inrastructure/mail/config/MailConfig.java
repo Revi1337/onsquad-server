@@ -39,12 +39,14 @@ public class MailConfig {
         executor.setQueueCapacity(100);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.initialize();
+
         return executor;
     }
 
     private Properties getMailProperties(MailProperties mailProperties) {
         Properties properties = new Properties();
         properties.putAll(mailProperties.getProperties());
+
         return properties;
     }
 }

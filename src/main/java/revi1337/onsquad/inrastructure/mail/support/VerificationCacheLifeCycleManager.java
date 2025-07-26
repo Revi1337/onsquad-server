@@ -7,9 +7,10 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
@@ -18,63 +19,87 @@ import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeExpiringMapRepository;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
 public class VerificationCacheLifeCycleManager {
 
-    private static final String VERIFICATION_BACKUP_PATH = "backup/verification_backup.json";
     private static final String RESTORE_ERROR_LOG = "Error Occur While Restoring Verification Code";
     private static final String RESTORE_LOG_FORMAT = "Restored Verification Code - path : {}";
     private static final String WRITING_ERROR_LOG = "Error Occur While Writing Verification Snapshots";
     private static final String WRITING_LOG = "Writing Verification Code Snapshots";
 
+    private final String backupPath;
     private final VerificationCodeExpiringMapRepository repository;
     private final ObjectMapper objectMapper;
 
+    public VerificationCacheLifeCycleManager(
+            @Value("${spring.mail.verification-code-backup-path}") String backupPath,
+            VerificationCodeExpiringMapRepository repository,
+            ObjectMapper objectMapper
+    ) {
+        this.backupPath = backupPath;
+        this.repository = repository;
+        this.objectMapper = objectMapper;
+    }
+
     @EventListener(ApplicationReadyEvent.class)
-    public void initializeVerificationCacheInRepository() {
-        File backupFile = Paths.get(VERIFICATION_BACKUP_PATH).toFile();
+    public void restore() {
+        Optional<File> optionalFile = getBackupFileIfExists();
         long currentEpochMilli = Instant.now()
                 .atZone(TimeZone.getDefault().toZoneId())
                 .toInstant()
                 .toEpochMilli();
-        try {
-            VerificationSnapshots snapshots = objectMapper.readValue(backupFile, VerificationSnapshots.class);
-            List<VerificationSnapshot> availableSnapshots = snapshots.extractAvailableBefore(currentEpochMilli);
 
-            log.info(RESTORE_LOG_FORMAT, VERIFICATION_BACKUP_PATH);
-            restoreVerificationsUsingSnapshots(availableSnapshots, currentEpochMilli);
-        } catch (IOException exception) {
-            log.error(RESTORE_ERROR_LOG, exception);
-        }
-
+        optionalFile.ifPresent(backupFile -> restoreVerificationCodeSnapshots(backupFile, currentEpochMilli));
     }
 
     @EventListener(ContextClosedEvent.class)
-    public void storeVerificationCacheInFile() {
+    public void backup() {
+        Optional<File> optionalFile = getBackupFileIfExists();
         VerificationSnapshots verificationSnapshots = repository.collectAvailableSnapshots();
-        File backupFile = Paths.get(VERIFICATION_BACKUP_PATH).toFile();
+
+        optionalFile.ifPresent(backupFile -> backupVerificationCodeSnapshots(backupFile, verificationSnapshots));
+    }
+
+    private Optional<File> getBackupFileIfExists() {
+        File file = Paths.get(backupPath).toFile();
+        if (file.exists()) {
+            return Optional.of(file);
+        }
+
+        return Optional.empty();
+    }
+
+    private void restoreVerificationCodeSnapshots(File backupFile, long epochMilli) {
         try {
-            log.info(WRITING_LOG);
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(backupFile, verificationSnapshots);
-        } catch (IOException e) {
-            log.error(WRITING_ERROR_LOG, e);
+            VerificationSnapshots snapshots = objectMapper.readValue(backupFile, VerificationSnapshots.class);
+            List<VerificationSnapshot> availableSnapshots = snapshots.extractAvailableBefore(epochMilli);
+
+            log.info(RESTORE_LOG_FORMAT, backupPath);
+            restoreSnapshots(availableSnapshots, epochMilli);
+        } catch (IOException exception) {
+            log.error(RESTORE_ERROR_LOG, exception);
         }
     }
 
-    private void restoreVerificationsUsingSnapshots(List<VerificationSnapshot> snapshots, long currentEpochMilli) {
-        for (VerificationSnapshot availableSnapshot : snapshots) {
-            final VerificationState state = availableSnapshot.state();
-            final String verificationCode = state.code();
-            final String target = state.target();
-            final long expiredTime = state.predictedExpiredTime();
+    private void restoreSnapshots(List<VerificationSnapshot> snapshots, long epochMilli) {
+        for (VerificationSnapshot snapshot : snapshots) {
+            final String email = snapshot.getTarget();
+            final long expiredTime = snapshot.getExpireTime();
+            final Duration duration = Duration.ofMillis(expiredTime - epochMilli);
 
-            final Duration duration = Duration.ofMillis(expiredTime - currentEpochMilli);
-            if (VerificationStatus.supports(verificationCode)) {
-                repository.markVerificationStatus(target, VerificationStatus.valueOf(verificationCode), duration);
-            } else {
-                repository.saveVerificationCode(target, verificationCode, duration);
+            repository.saveVerificationCode(email, snapshot.getCode(), duration);
+            if (snapshot.authenticated()) {
+                repository.markVerificationStatus(email, VerificationStatus.valueOf(snapshot.getCode()), duration);
             }
+        }
+    }
+
+    private void backupVerificationCodeSnapshots(File backupFile, VerificationSnapshots snapshots) {
+        try {
+            log.info(WRITING_LOG);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(backupFile, snapshots);
+        } catch (IOException e) {
+            log.error(WRITING_ERROR_LOG, e);
         }
     }
 }
