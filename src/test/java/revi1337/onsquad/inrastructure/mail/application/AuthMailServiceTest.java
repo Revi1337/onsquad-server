@@ -71,7 +71,7 @@ class AuthMailServiceTest {
             when(repositoryChain.markVerificationStatus(testEmail, VerificationStatus.SUCCESS, Duration.ofMinutes(5)))
                     .thenReturn(true);
 
-            boolean valid = authMailService.isValidVerificationCode(testEmail, verificationCode);
+            boolean valid = authMailService.validateVerificationCode(testEmail, verificationCode);
 
             verify(repositoryChain).isValidVerificationCode(testEmail, verificationCode);
             verify(repositoryChain)
@@ -86,7 +86,7 @@ class AuthMailServiceTest {
             String verificationCode = "test-verification-code";
             when(repositoryChain.isValidVerificationCode(testEmail, verificationCode)).thenReturn(false);
 
-            boolean valid = authMailService.isValidVerificationCode(testEmail, verificationCode);
+            boolean valid = authMailService.validateVerificationCode(testEmail, verificationCode);
 
             verify(repositoryChain).isValidVerificationCode(testEmail, verificationCode);
             verify(repositoryChain, never()).markVerificationStatus(eq(testEmail), any(), any());
