@@ -31,15 +31,14 @@ public class VerificationCodeExpiringMapRepository implements VerificationCodeRe
             .build();
 
     @Override
-    public void saveVerificationCode(String email, String verificationCode, Duration duration) {
+    public long saveVerificationCode(String email, String verificationCode, Duration duration) {
         String inMemoryKey = getKey(email);
-        VERIFICATION_STORE.put(inMemoryKey, verificationCode, ExpirationPolicy.CREATED, duration.toMillis(), TimeUnit.MILLISECONDS);
+        long expectedTime = getExpiredTime(duration);
 
-        if (VERIFICATION_STORE.containsKey(inMemoryKey)) {
-            long expectedTime = getExpiredTime(duration);
-            VerificationState state = new VerificationState(verificationCode, email, expectedTime);
-            VERIFICATION_TRACKER.put(inMemoryKey, state);
-        }
+        VERIFICATION_STORE.put(inMemoryKey, verificationCode, ExpirationPolicy.CREATED, duration.toMillis(), TimeUnit.MILLISECONDS);
+        VERIFICATION_TRACKER.put(inMemoryKey, new VerificationState(verificationCode, email, expectedTime));
+
+        return expectedTime;
     }
 
     @Override

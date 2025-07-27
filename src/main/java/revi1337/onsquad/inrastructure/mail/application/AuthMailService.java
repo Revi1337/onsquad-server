@@ -24,10 +24,10 @@ public class AuthMailService {
 
     public void sendVerificationCode(String email) {
         String authCode = verificationCodeGenerator.generate();
-        emailSender.sendEmail(MAIL_SUBJECT, authCode, email);
-        log.info(SEND_VERIFICATION_CODE_LOG_FORMAT, email, authCode);
+        long expireMilli = repositoryChain.saveVerificationCode(email, authCode, VERIFICATION_CODE_TIMEOUT);
 
-        repositoryChain.saveVerificationCode(email, authCode, VERIFICATION_CODE_TIMEOUT);
+        emailSender.sendEmail(MAIL_SUBJECT, new VerificationCode(authCode, expireMilli), email);
+        log.info(SEND_VERIFICATION_CODE_LOG_FORMAT, email, authCode);
     }
 
     public boolean validateVerificationCode(String email, String authCode) {
