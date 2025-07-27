@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.List;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
+import revi1337.onsquad.inrastructure.mail.application.VerificationCode;
 import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 import revi1337.onsquad.inrastructure.mail.support.VerificationSnapshot;
 import revi1337.onsquad.inrastructure.mail.support.VerificationSnapshots;
@@ -32,8 +33,11 @@ public abstract class InfrastructureValueFixture {
     public static final VerificationStatus TEST_VERIFICATION_FAIL = VerificationStatus.FAIL;
 
     public static final Duration TEST_VERIFICATION_CODE_TIMEOUT = Duration.ofMinutes(3);
-    public static final Duration TEST_VERIFICATION_CODE_HOUR_TIMEOUT = Duration.ofHours(1);
     public static final Duration TEST_JOINING_TIMEOUT = Duration.ofMinutes(5);
+    public static final Duration TEST_VERIFICATION_CODE_HOUR_TIMEOUT = Duration.ofHours(1);
+    public static final long TEST_VERIFICATION_CODE_MILLI_TIMEOUT = 100000;
+
+    public static final VerificationCode TEST_VERIFICATION_CODE_1 = new VerificationCode(TEST_EMAIL_BODY, TEST_VERIFICATION_CODE_MILLI_TIMEOUT);
 
     private static final Instant NOW = Instant.now();
 

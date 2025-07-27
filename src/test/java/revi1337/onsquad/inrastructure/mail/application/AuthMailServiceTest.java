@@ -8,8 +8,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_JOINING_TIMEOUT;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_CODE;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_CODE_MILLI_TIMEOUT;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_CODE_TIMEOUT;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_SUCCESS;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VALUE_1;
 
-import java.time.Duration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,9 +27,6 @@ import revi1337.onsquad.inrastructure.mail.support.VerificationCodeGenerator;
 
 @ExtendWith(MockitoExtension.class)
 class AuthMailServiceTest {
-
-    private static final Duration VERIFICATION_CODE_TIMEOUT = Duration.ofMinutes(3);
-    private static final Duration JOINING_TIMEOUT = Duration.ofMinutes(5);
 
     @Mock
     private VerificationCodeEmailSender emailSender;
@@ -45,16 +47,15 @@ class AuthMailServiceTest {
         @Test
         @DisplayName("이메일 인증 코드 발송에 성공한다.")
         void success() {
-            String testEmail = "email@email.com";
-            String verificationCode = "test-verification-code";
-            when(verificationCodeGenerator.generate()).thenReturn(verificationCode);
-            doNothing().when(emailSender).sendEmail(anyString(), eq(verificationCode), eq(testEmail));
+            when(verificationCodeGenerator.generate()).thenReturn(TEST_VERIFICATION_CODE);
+            when(repositoryChain.saveVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE, TEST_VERIFICATION_CODE_TIMEOUT))
+                    .thenReturn(TEST_VERIFICATION_CODE_MILLI_TIMEOUT);
+            doNothing().when(emailSender).sendEmail(anyString(), any(VerificationCode.class), eq(DUMMY_EMAIL_VALUE_1));
 
-            authMailService.sendVerificationCode(testEmail);
+            authMailService.sendVerificationCode(DUMMY_EMAIL_VALUE_1);
 
             verify(verificationCodeGenerator).generate();
-            verify(emailSender).sendEmail(anyString(), eq(verificationCode), eq(testEmail));
-            verify(repositoryChain).saveVerificationCode(testEmail, verificationCode, VERIFICATION_CODE_TIMEOUT);
+            verify(emailSender).sendEmail(anyString(), any(VerificationCode.class), eq(DUMMY_EMAIL_VALUE_1));
         }
     }
 
@@ -65,31 +66,25 @@ class AuthMailServiceTest {
         @Test
         @DisplayName("이메일 인증 코드가 유효하면, 인증완료 처리에 성공한다.")
         void success() {
-            String testEmail = "email@email.com";
-            String verificationCode = "test-verification-code";
-            when(repositoryChain.isValidVerificationCode(testEmail, verificationCode)).thenReturn(true);
-            when(repositoryChain.markVerificationStatus(testEmail, VerificationStatus.SUCCESS, Duration.ofMinutes(5)))
-                    .thenReturn(true);
+            when(repositoryChain.isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE)).thenReturn(true);
+            when(repositoryChain.markVerificationStatus(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_SUCCESS, TEST_JOINING_TIMEOUT)).thenReturn(true);
 
-            boolean valid = authMailService.validateVerificationCode(testEmail, verificationCode);
+            boolean valid = authMailService.validateVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
 
-            verify(repositoryChain).isValidVerificationCode(testEmail, verificationCode);
-            verify(repositoryChain)
-                    .markVerificationStatus(testEmail, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
+            verify(repositoryChain).isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
+            verify(repositoryChain).markVerificationStatus(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_SUCCESS, TEST_JOINING_TIMEOUT);
             assertThat(valid).isTrue();
         }
 
         @Test
         @DisplayName("이메일 인증 코드가 유효하지 않으면, 인증완료 처리에 실패한다.")
         void fail() {
-            String testEmail = "email@email.com";
-            String verificationCode = "test-verification-code";
-            when(repositoryChain.isValidVerificationCode(testEmail, verificationCode)).thenReturn(false);
+            when(repositoryChain.isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE)).thenReturn(false);
 
-            boolean valid = authMailService.validateVerificationCode(testEmail, verificationCode);
+            boolean valid = authMailService.validateVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
 
-            verify(repositoryChain).isValidVerificationCode(testEmail, verificationCode);
-            verify(repositoryChain, never()).markVerificationStatus(eq(testEmail), any(), any());
+            verify(repositoryChain).isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
+            verify(repositoryChain, never()).markVerificationStatus(eq(DUMMY_EMAIL_VALUE_1), any(), any());
             assertThat(valid).isFalse();
         }
     }

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_EMAIL_BODY;
 import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_EMAIL_SUBJECT;
+import static revi1337.onsquad.common.fixture.InfrastructureValueFixture.TEST_VERIFICATION_CODE_1;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
 
 import jakarta.mail.MessagingException;
@@ -39,7 +40,7 @@ class VerificationCodeEmailSenderTest {
         MimeMessage mockMessage = new MimeMessage((Session) null);
         when(javaMailSender.createMimeMessage()).thenReturn(mockMessage);
 
-        verificationCodeEmailSender.sendEmail(TEST_EMAIL_SUBJECT, TEST_EMAIL_BODY, REVI_EMAIL_VALUE);
+        verificationCodeEmailSender.sendEmail(TEST_EMAIL_SUBJECT, TEST_VERIFICATION_CODE_1, REVI_EMAIL_VALUE);
 
         ArgumentCaptor<MimeMessage> captor = ArgumentCaptor.forClass(MimeMessage.class);
         verify(javaMailSender).send(captor.capture());
@@ -56,7 +57,7 @@ class VerificationCodeEmailSenderTest {
         doThrow(new MessagingException())
                 .when(mockMimeMessage).setContent(anyString(), anyString());
 
-        verificationCodeEmailSender.sendEmail(TEST_EMAIL_SUBJECT, TEST_EMAIL_BODY, REVI_EMAIL_VALUE);
+        verificationCodeEmailSender.sendEmail(TEST_EMAIL_SUBJECT, TEST_VERIFICATION_CODE_1, REVI_EMAIL_VALUE);
 
         verify(javaMailSender, never()).send(any(MimeMessage.class));
     }
