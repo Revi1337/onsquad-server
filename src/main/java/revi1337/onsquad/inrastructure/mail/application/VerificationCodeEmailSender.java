@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.inrastructure.mail.error.exception.EmailException;
 
 @Slf4j
 @Component
@@ -35,7 +35,6 @@ public class VerificationCodeEmailSender implements EmailSender {
         this.cloudfrontBaseDomain = cloudfrontBaseDomain;
     }
 
-    @Async("sending-verification-code-executor")
     @Override
     public void sendEmail(String subject, EmailContent content, String to) {
         try {
@@ -43,8 +42,10 @@ public class VerificationCodeEmailSender implements EmailSender {
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             log.error(MIME_SETTING_ERROR_LOG, e);
+            throw new EmailException.MimeSettingError(MIME_SETTING_ERROR_LOG, e);
         } catch (MailException e) {
             log.error(SEND_VERIFICATION_CODE_ERROR_LOG, e);
+            throw new EmailException.SendError(SEND_VERIFICATION_CODE_ERROR_LOG, e);
         }
     }
 

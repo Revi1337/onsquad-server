@@ -25,7 +25,7 @@ public class VerificationCacheLifeCycleManager {
     private static final String RESTORE_ERROR_LOG = "Error Occur While Restoring Verification Code";
     private static final String RESTORE_LOG_FORMAT = "Restored Verification Code - path : {}";
     private static final String WRITING_ERROR_LOG = "Error Occur While Writing Verification Snapshots";
-    private static final String WRITING_LOG = "Writing Verification Code Snapshots";
+    private static final String WRITING_LOG = "Backup Verification Code Snapshots";
 
     private final String backupPath;
     private final VerificationCodeExpiringMapRepository repository;
@@ -74,7 +74,6 @@ public class VerificationCacheLifeCycleManager {
             VerificationSnapshots snapshots = objectMapper.readValue(backupFile, VerificationSnapshots.class);
             List<VerificationSnapshot> availableSnapshots = snapshots.extractAvailableBefore(epochMilli);
 
-            log.info(RESTORE_LOG_FORMAT, backupPath);
             restoreSnapshots(availableSnapshots, epochMilli);
         } catch (IOException exception) {
             log.error(RESTORE_ERROR_LOG, exception);
@@ -92,12 +91,13 @@ public class VerificationCacheLifeCycleManager {
                 repository.markVerificationStatus(email, VerificationStatus.valueOf(snapshot.getCode()), duration);
             }
         }
+        log.info(RESTORE_LOG_FORMAT, backupPath);
     }
 
     private void backupVerificationCodeSnapshots(File backupFile, VerificationSnapshots snapshots) {
         try {
-            log.info(WRITING_LOG);
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(backupFile, snapshots);
+            log.info(WRITING_LOG);
         } catch (IOException e) {
             log.error(WRITING_ERROR_LOG, e);
         }
