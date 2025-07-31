@@ -1,7 +1,6 @@
 package revi1337.onsquad.squad_comment.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,8 +18,8 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     private final SquadCommentJdbcRepository squadCommentJdbcRepository;
 
     @Override
-    public SquadComment save(SquadComment crewComment) {
-        return squadCommentJpaRepository.save(crewComment);
+    public SquadComment save(SquadComment comment) {
+        return squadCommentJpaRepository.save(comment);
     }
 
     @Override
@@ -29,53 +28,27 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
+    public Optional<SquadComment> findByIdAndSquadIdAndCrewId(Long id, Long squadId, Long crewId) {
+        return squadCommentJpaRepository.findByIdAndSquadIdAndCrewId(id, squadId, crewId);
+    }
+
+    @Override
+    public Map<Long, SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
+        return squadCommentQueryDslRepository.fetchAllParentsBySquadId(squadId, pageable);
+    }
+
+    @Override
+    public List<SquadCommentDomainDto> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childSize) {
+        return squadCommentJdbcRepository.fetchAllChildrenByParentIdIn(parentIds, childSize);
+    }
+
+    @Override
+    public List<SquadCommentDomainDto> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
+        return squadCommentQueryDslRepository.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
+    }
+
+    @Override
     public List<SquadCommentDomainDto> findAllWithMemberBySquadId(Long squadId) {
-        List<SquadCommentDomainDto> comments = squadCommentQueryDslRepository.findCommentsWithMemberByCrewId(squadId);
-        return modifyCommentsHierarchy(comments);
-    }
-
-    private List<SquadCommentDomainDto> modifyCommentsHierarchy(List<SquadCommentDomainDto> comments) {
-        List<SquadCommentDomainDto> commentList = new ArrayList<>();
-        Map<Long, SquadCommentDomainDto> hashMap = new HashMap<>();
-        comments.forEach(comment -> {
-            hashMap.put(comment.commentId(), comment);
-            if (comment.parentCommentId() != null) {
-                hashMap.get(comment.parentCommentId()).replies().add(comment);
-            } else {
-                commentList.add(comment);
-            }
-        });
-
-        return commentList;
-    }
-
-    @Override
-    public List<SquadCommentDomainDto> fetchPageableParentCommentsWithLimitChildren(Long squadId, Pageable pageable,
-                                                                                    int childSize) {
-        Map<Long, SquadCommentDomainDto> parentComments = squadCommentQueryDslRepository
-                .fetchPageableParentCommentsBySquadId(squadId, pageable);
-        if (parentComments.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<SquadCommentDomainDto> childComments = squadCommentJdbcRepository
-                .fetchLimitChildCommentsByParentIdIn(parentComments.keySet(), childSize);
-        linkChildCommentsToParent(parentComments, childComments);
-
-        return parentComments.values().stream()
-                .map(comment -> parentComments.get(comment.commentId()))
-                .toList();
-    }
-
-    private void linkChildCommentsToParent(Map<Long, SquadCommentDomainDto> parentCommentMap,
-                                           List<SquadCommentDomainDto> childComments) {
-        childComments.forEach(childComment -> {
-            SquadCommentDomainDto squadCommentDomainDto = parentCommentMap.get(childComment.parentCommentId());
-            squadCommentDomainDto.replies().add(childComment);
-        });
-    }
-
-    @Override
-    public List<SquadCommentDomainDto> findChildComments(Long squadId, Long parentId, Pageable pageable) {
-        return squadCommentQueryDslRepository.findChildComments(squadId, parentId, pageable);
+        return squadCommentQueryDslRepository.findAllWithMemberBySquadId(squadId);
     }
 }

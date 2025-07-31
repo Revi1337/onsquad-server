@@ -13,17 +13,17 @@ public record SquadCommentResponse(
         String content,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        SimpleMemberInfoResponse memberInfo,
+        SimpleMemberInfoResponse writer,
         List<SquadCommentResponse> replies
 ) {
     public static SquadCommentResponse from(SquadCommentDto squadCommentDto) {
         return new SquadCommentResponse(
-                squadCommentDto.parentCommentId(),
+                squadCommentDto.parentId(),
                 squadCommentDto.commentId(),
                 squadCommentDto.content(),
                 squadCommentDto.createdAt(),
                 squadCommentDto.updatedAt(),
-                SimpleMemberInfoResponse.from(squadCommentDto.memberInfo()),
+                SimpleMemberInfoResponse.from(squadCommentDto.writer()),
                 squadCommentDto.replies().stream()
                         .map(SquadCommentResponse::from)
                         .toList()

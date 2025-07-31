@@ -20,8 +20,7 @@ public class SquadCommentJdbcRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<SquadCommentDomainDto> fetchLimitChildCommentsByParentIdIn(Collection<Long> parentIds,
-                                                                           int childrenSize) {
+    public List<SquadCommentDomainDto> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childrenSize) {
         String sql = "SELECT * FROM (" +
                 "    SELECT " +
                 "        squad_comment.parent_id, " +

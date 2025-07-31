@@ -15,10 +15,10 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
         this.errorMessage = errorMessage;
     }
 
-    public static class NotFoundById extends SquadCommentBusinessException {
+    public static class NotFound extends SquadCommentBusinessException {
 
-        public NotFoundById(ErrorCode errorCode, Number commentId) {
-            super(errorCode, String.format(errorCode.getDescription(), commentId));
+        public NotFound(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 
