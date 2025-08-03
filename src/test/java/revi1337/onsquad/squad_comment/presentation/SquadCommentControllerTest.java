@@ -2,12 +2,14 @@ package revi1337.onsquad.squad_comment.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
@@ -265,6 +267,40 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     parameterWithName("page").description("페이지 사이즈").optional(),
                                     parameterWithName("size").description("페이지 당 사이즈").optional()
                             ),
+                            responseBody()
+                    ));
+        }
+    }
+
+    @Nested
+    @DisplayName("댓글 수정을 문서화한다.")
+    class UpdateComment {
+
+        @Test
+        @DisplayName("댓글 수정에 성공한다.")
+        void success() throws Exception {
+            Long MEMBER_ID = 1L;
+            Long CREW_ID = 1L;
+            Long SQUAD_ID = 2L;
+            Long COMMENT_ID = 10L;
+            CommentCreateRequest REQUEST = new CommentCreateRequest("update-content");
+            doNothing().when(squadCommentCommandService).update(MEMBER_ID, CREW_ID, SQUAD_ID, COMMENT_ID, REQUEST.content());
+
+            mockMvc.perform(patch("/api/crews/{crewId}/squads/{squadId}/comments/{commentId}", CREW_ID, SQUAD_ID, COMMENT_ID)
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .content(objectMapper.writeValueAsString(REQUEST))
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(204))
+                    .andDo(document("squad-comment/success/update",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            pathParameters(
+                                    parameterWithName("crewId").description("Crew 아이디"),
+                                    parameterWithName("squadId").description("Squad 아이디"),
+                                    parameterWithName("commentId").description("Comment 아이디")
+                            ),
+                            requestFields(fieldWithPath("content").description("수정 내용")),
                             responseBody()
                     ));
         }

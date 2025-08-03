@@ -3,9 +3,13 @@ package revi1337.onsquad.squad_comment.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
+import java.lang.reflect.Constructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.ReflectionUtils;
+import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.squad.domain.Squad;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentDomainException;
 
 class SquadCommentTest {
@@ -59,5 +63,72 @@ class SquadCommentTest {
 
         assertThatThrownBy(() -> SquadComment.create(content, null, null))
                 .isExactlyInstanceOf(SquadCommentDomainException.InvalidLength.class);
+    }
+
+    @Test
+    @DisplayName("댓글이 업데이트에 성공한다.")
+    void success4() {
+        SquadComment comment = SquadComment.create("parent", null, null);
+        String content = "update-content";
+
+        comment.update(content);
+
+        assertThat(comment.getContent()).isEqualTo(content);
+    }
+
+    @Test
+    @DisplayName("댓글 작성자 정보가 일치하지 않으면 true 를 반환한다.")
+    void success5() {
+        CrewMember crewMember = defaultInstance(CrewMember.class, 1L);
+        SquadComment comment = SquadComment.create("parent", null, crewMember);
+
+        boolean mismatch = comment.misMatchWriterId(100L);
+
+        assertThat(mismatch).isTrue();
+    }
+
+    @Test
+    @DisplayName("댓글 작성자 정보가 일치하지 않으면 false 를 반환한다.")
+    void success6() {
+        CrewMember crewMember = defaultInstance(CrewMember.class, 1L);
+        SquadComment comment = SquadComment.create("parent", null, crewMember);
+
+        boolean mismatch = comment.misMatchWriterId(crewMember.getId());
+
+        assertThat(mismatch).isFalse();
+    }
+
+    @Test
+    @DisplayName("댓글이 속한 스쿼드 정보가 일치하지 않으면 true 를 반환한다.")
+    void success7() {
+        Squad squad = defaultInstance(Squad.class, 1L);
+        SquadComment comment = SquadComment.create("parent", squad, null);
+
+        boolean mismatch = comment.isNotBelongTo(100L);
+
+        assertThat(mismatch).isTrue();
+    }
+
+    @Test
+    @DisplayName("댓글이 속한 스쿼드 정보가 일치하면 false 를 반환한다.")
+    void success8() {
+        Squad squad = defaultInstance(Squad.class, 1L);
+        SquadComment comment = SquadComment.create("parent", squad, null);
+
+        boolean mismatch = comment.isNotBelongTo(squad.getId());
+
+        assertThat(mismatch).isFalse();
+    }
+
+    private <T> T defaultInstance(Class<T> clazz, Long value) {
+        try {
+            Constructor<T> constructor = ReflectionUtils.accessibleConstructor(clazz);
+            constructor.setAccessible(true);
+            T instance = constructor.newInstance();
+            ReflectionTestUtils.setField(instance, "id", value);
+            return instance;
+        } catch (Exception exception) {
+            throw new IllegalArgumentException();
+        }
     }
 }
