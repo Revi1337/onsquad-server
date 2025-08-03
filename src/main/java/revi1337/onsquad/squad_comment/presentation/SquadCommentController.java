@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -98,5 +99,18 @@ public class SquadCommentController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
+    }
+
+    @PatchMapping("/{crewId}/squads/{squadId}/comments/{commentId}")
+    public ResponseEntity<RestResponse<List<SquadCommentResponse>>> updateComment(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @PathVariable Long commentId,
+            @Valid @RequestBody CommentCreateRequest request,
+            @Authenticate CurrentMember currentMember
+    ) {
+        squadCommentCommandService.update(currentMember.id(), crewId, squadId, commentId, request.content());
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 }

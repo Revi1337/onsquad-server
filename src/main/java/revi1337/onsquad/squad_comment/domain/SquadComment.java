@@ -72,12 +72,24 @@ public class SquadComment extends BaseEntity {
         return new SquadComment(content, squad, crewMember, parent);
     }
 
+    public void update(String content) {
+        this.content = content;
+    }
+
     public boolean isNotParent() {
         return !isParent();
     }
 
     public boolean isParent() {
         return parent == null;
+    }
+
+    public boolean misMatchWriterId(Long crewMemberId) {
+        return !crewMember.hasSameId(crewMemberId);
+    }
+
+    public boolean isNotBelongTo(Long squadId) {
+        return !squad.hasSameId(squadId);
     }
 
     private void validate(String content) {

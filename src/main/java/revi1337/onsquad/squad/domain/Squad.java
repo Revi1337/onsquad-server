@@ -96,8 +96,7 @@ public class Squad extends BaseEntity {
         return metadata.toEntity();
     }
 
-    private Squad(String title, String content, int capacity, String address, String addressDetail,
-                  String kakaoLink, String discordLink) {
+    private Squad(String title, String content, int capacity, String address, String addressDetail, String kakaoLink, String discordLink) {
         validateCapacity(capacity);
         this.title = new Title(title);
         this.content = new Content(content);
@@ -146,6 +145,10 @@ public class Squad extends BaseEntity {
         return getCrewId().equals(crewId);
     }
 
+    public boolean hasSameId(Long squadId) {
+        return id.equals(squadId);
+    }
+
     public boolean doesNotMatchOwner(Long crewMemberId) {
         return !matchOwner(crewMemberId);
     }
@@ -157,8 +160,7 @@ public class Squad extends BaseEntity {
     /**
      * Squad 에 속한 SquadMember 의 실제 memberId 를 비교하여, Squad 의 특정 Member 가 있는지 확인한다.
      * <p>
-     * 매우 주의해야 할 것은 Squad 조회 시, SquadMember 들을 같이 fetch 해오지 않으면, 반복문을 도는 과정에서 프록시 객체 초기화로 인해 size(this.members) 수 만큼 조회
-     * 쿼리가 나간다.
+     * 매우 주의해야 할 것은 Squad 조회 시, SquadMember 들을 같이 fetch 해오지 않으면, 반복문을 도는 과정에서 프록시 객체 초기화로 인해 size(this.members) 수 만큼 조회 쿼리가 나간다.
      */
     public boolean existsMember(Long crewMemberId) {
         for (SquadMember squadMember : this.members) {
@@ -187,10 +189,6 @@ public class Squad extends BaseEntity {
 
     public Long getCrewId() {
         return crew.getId();
-    }
-
-    public Long getOwnerId() {
-        return crewMember.getId();
     }
 
     public CrewMember getOwner() {

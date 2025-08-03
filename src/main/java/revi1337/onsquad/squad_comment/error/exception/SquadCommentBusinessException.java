@@ -22,13 +22,6 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
         }
     }
 
-    public static class NonMatchSquadId extends SquadCommentBusinessException {
-
-        public NonMatchSquadId(ErrorCode errorCode) {
-            super(errorCode, errorCode.getDescription());
-        }
-    }
-
     public static class NotParent extends SquadCommentBusinessException {
 
         public NotParent(ErrorCode errorCode, Number commentId) {
@@ -36,11 +29,17 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
         }
     }
 
-    public static class NotFoundSquadComment extends SquadCommentBusinessException {
+    public static class NonMatchSquadId extends SquadCommentBusinessException {
 
-        public NotFoundSquadComment(ErrorCode errorCode, Number crewId, Number commentId) {
-            super(errorCode, String.format(errorCode.getDescription(), crewId, commentId));
+        public NonMatchSquadId(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 
+    public static class NonMatchWriterId extends SquadCommentBusinessException {
+
+        public NonMatchWriterId(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }
