@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad_comment.application;
 
 import static revi1337.onsquad.squad.error.SquadErrorCode.MISMATCH_REFERENCE;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.DELETED;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.MISMATCH_WRITER;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUND_COMMENT;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOT_PARENT;
@@ -52,6 +53,7 @@ public class SquadCommentCommandService {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         SquadComment comment = squadCommentRepository.getWithSquadByIdAndSquadId(commentId, squadId);
         checkSquadInCrew(comment.getSquad(), crewId);
+        checkCommentIsDeleted(comment);
         checkCommentWriter(comment, crewMember);
 
         comment.update(content);
@@ -89,6 +91,12 @@ public class SquadCommentCommandService {
     private void checkSquadInCrew(Squad squad, Long crewId) {
         if (squad.misMatchCrewId(crewId)) {
             throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
+        }
+    }
+
+    private void checkCommentIsDeleted(SquadComment comment) {
+        if (comment.isDeleted()) {
+            throw new SquadCommentBusinessException.Deleted(DELETED);
         }
     }
 

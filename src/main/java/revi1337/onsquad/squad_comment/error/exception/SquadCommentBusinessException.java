@@ -29,16 +29,16 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
         }
     }
 
-    public static class NonMatchSquadId extends SquadCommentBusinessException {
+    public static class NonMatchWriterId extends SquadCommentBusinessException {
 
-        public NonMatchSquadId(ErrorCode errorCode) {
+        public NonMatchWriterId(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
 
-    public static class NonMatchWriterId extends SquadCommentBusinessException {
+    public static class Deleted extends SquadCommentBusinessException {
 
-        public NonMatchWriterId(ErrorCode errorCode) {
+        public Deleted(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
