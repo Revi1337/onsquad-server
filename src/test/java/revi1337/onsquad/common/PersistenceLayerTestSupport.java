@@ -24,10 +24,10 @@ import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
 public abstract class PersistenceLayerTestSupport {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     @Autowired
-    private CategoryJpaRepository categoryJpaRepository;
+    protected CategoryJpaRepository categoryJpaRepository;
 
     @BeforeAll
     void initCategory() {

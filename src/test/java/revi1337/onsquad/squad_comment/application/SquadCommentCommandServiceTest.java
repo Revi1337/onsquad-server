@@ -201,11 +201,11 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
-    @DisplayName("댓글 업데이트를 테스트한다.")
+    @DisplayName("댓글 수정을 테스트한다.")
     class Update {
 
         @Test
-        @DisplayName("댓글 업데이트에 성공한다.")
+        @DisplayName("본인이 작성한 댓글 수정에 성공한다.")
         void success1() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
@@ -223,7 +223,7 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
         }
 
         @Test
-        @DisplayName("대댓글 업데이트에 성공한다.")
+        @DisplayName("본인이 작성한 대댓글 수정에 성공한다.")
         void success2() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
@@ -242,24 +242,27 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
         }
 
         @Test
-        @DisplayName("댓글이 속한 스쿼드 정보가 다르면 댓글 업데이트에 실패한다.")
+        @DisplayName("댓글이 속한 스쿼드 정보가 다르면 댓글 수정에 실패한다.")
         void fail1() {
             Member REVI = memberJpaRepository.save(REVI());
-            Crew CREW = crewJpaRepository.save(CREW(REVI));
-            CrewMember OWNER = crewMemberRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
-            Squad SQUAD = squadRepository.save(SQUAD(OWNER, CREW));
-            SquadComment PARENT = squadCommentRepository.save(SquadComment.create("parent_1", SQUAD, OWNER));
-            SquadComment REPLY = squadCommentRepository.save(SquadComment.createReply(PARENT, "reply_1", SQUAD, OWNER));
-            Long dummySquadId = 100L;
+            Crew CREW1 = crewJpaRepository.save(CREW_1(REVI));
+            CrewMember OWNER1 = crewMemberRepository.findByCrewIdAndMemberId(CREW1.getId(), REVI.getId()).get();
+            Squad SQUAD1 = squadRepository.save(SQUAD(OWNER1, CREW1));
+            squadCommentRepository.save(SquadComment.create("parent_1", SQUAD1, OWNER1));
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            Crew CREW2 = crewJpaRepository.save(CREW_2(ANDONG));
+            CrewMember OWNER2 = crewMemberRepository.findByCrewIdAndMemberId(CREW2.getId(), ANDONG.getId()).get();
+            Squad SQUAD2 = squadRepository.save(SQUAD(OWNER2, CREW2));
+            SquadComment PARENT2 = squadCommentRepository.save(SquadComment.create("parent_1", SQUAD2, OWNER2));
             String content = "update-content";
             clearPersistenceContext();
 
-            assertThatThrownBy(() -> squadCommentCommandService.update(REVI.getId(), CREW.getId(), dummySquadId, REPLY.getId(), content))
-                    .isExactlyInstanceOf(SquadCommentBusinessException.NonMatchSquadId.class);
+            assertThatThrownBy(() -> squadCommentCommandService.update(REVI.getId(), CREW1.getId(), SQUAD2.getId(), PARENT2.getId(), content))
+                    .isExactlyInstanceOf(SquadBusinessException.MismatchReference.class);
         }
 
         @Test
-        @DisplayName("댓글 작성자 정보가 다르면 댓글 업데이트에 실패한다.")
+        @DisplayName("댓글 작성자 정보가 다르면 댓글 수정에 실패한다.")
         void fail2() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
@@ -273,6 +276,85 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> squadCommentCommandService.update(GENERAL.getId(), CREW.getId(), SQUAD.getId(), REPLY.getId(), content))
+                    .isExactlyInstanceOf(SquadCommentBusinessException.NonMatchWriterId.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("댓글 삭제를 테스트한다.")
+    class Delete {
+
+        @Test
+        @DisplayName("본인이 작성한 댓글 삭제에 성공한다.")
+        void success1() {
+            Member REVI = memberJpaRepository.save(REVI());
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            Crew CREW = crewJpaRepository.save(CREW(REVI));
+            CrewMember OWNER = crewMemberRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+            CrewMember GENERAL = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            Squad SQUAD = squadRepository.save(SQUAD(OWNER, CREW));
+            SquadComment PARENT = squadCommentRepository.save(SquadComment.create("parent_1", SQUAD, GENERAL));
+            squadCommentRepository.save(SquadComment.createReply(PARENT, "reply_1", SQUAD, OWNER));
+            clearPersistenceContext();
+
+            squadCommentCommandService.delete(ANDONG.getId(), CREW.getId(), SQUAD.getId(), PARENT.getId());
+            clearPersistenceContext();
+
+            assertThat(squadCommentRepository.getById(PARENT.getId()).isDeleted()).isTrue();
+        }
+
+        @Test
+        @DisplayName("스쿼드 작성자는 스쿼드에 속한 댓글을 지울 수 있다.")
+        void success2() {
+            Member REVI = memberJpaRepository.save(REVI());
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            Crew CREW = crewJpaRepository.save(CREW(REVI));
+            CrewMember OWNER = crewMemberRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+            CrewMember GENERAL = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
+            Squad SQUAD = squadRepository.save(SQUAD(OWNER, CREW));
+            SquadComment PARENT = squadCommentRepository.save(SquadComment.create("parent_1", SQUAD, OWNER));
+            SquadComment REPLY = squadCommentRepository.save(SquadComment.createReply(PARENT, "reply_1", SQUAD, GENERAL));
+            clearPersistenceContext();
+
+            squadCommentCommandService.delete(REVI.getId(), CREW.getId(), SQUAD.getId(), REPLY.getId());
+            clearPersistenceContext();
+
+            assertThat(squadCommentRepository.getById(REPLY.getId()).isDeleted()).isTrue();
+        }
+
+        @Test
+        @DisplayName("댓글이 속한 스쿼드가 크루에 속하지 않으면 삭제에 실패한다.")
+        void fail1() {
+            Member REVI = memberJpaRepository.save(REVI());
+            Crew CREW1 = crewJpaRepository.save(CREW_1(REVI));
+            CrewMember OWNER1 = crewMemberRepository.findByCrewIdAndMemberId(CREW1.getId(), REVI.getId()).get();
+            Squad SQUAD1 = squadRepository.save(SQUAD(OWNER1, CREW1));
+            squadCommentRepository.save(SquadComment.create("parent_1", SQUAD1, OWNER1));
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            Crew CREW2 = crewJpaRepository.save(CREW_2(ANDONG));
+            CrewMember OWNER2 = crewMemberRepository.findByCrewIdAndMemberId(CREW2.getId(), ANDONG.getId()).get();
+            Squad SQUAD2 = squadRepository.save(SQUAD(OWNER2, CREW2));
+            SquadComment PARENT2 = squadCommentRepository.save(SquadComment.create("parent_1", SQUAD2, OWNER2));
+            clearPersistenceContext();
+
+            assertThatThrownBy(() -> squadCommentCommandService.delete(REVI.getId(), CREW1.getId(), SQUAD2.getId(), PARENT2.getId()))
+                    .isExactlyInstanceOf(SquadBusinessException.MismatchReference.class);
+        }
+
+        @Test
+        @DisplayName("스쿼드장이 아니거나, 댓글의 작성자가 아니라면 삭제에 실패한다.")
+        void fail2() {
+            Member REVI = memberJpaRepository.save(REVI());
+            Crew CREW1 = crewJpaRepository.save(CREW_1(REVI));
+            CrewMember OWNER1 = crewMemberRepository.findByCrewIdAndMemberId(CREW1.getId(), REVI.getId()).get();
+            Squad SQUAD1 = squadRepository.save(SQUAD(OWNER1, CREW1));
+            SquadComment PARENT1 = squadCommentRepository.save(SquadComment.create("parent_1", SQUAD1, OWNER1));
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW1, ANDONG));
+
+            clearPersistenceContext();
+
+            assertThatThrownBy(() -> squadCommentCommandService.delete(ANDONG.getId(), CREW1.getId(), SQUAD1.getId(), PARENT1.getId()))
                     .isExactlyInstanceOf(SquadCommentBusinessException.NonMatchWriterId.class);
         }
     }

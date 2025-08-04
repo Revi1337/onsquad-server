@@ -5,6 +5,7 @@ import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
 
+import jakarta.persistence.PersistenceUnitUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,9 +45,9 @@ class SquadCommentJpaRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
         Squad SQUAD = squadJpaRepository.save(SQUAD(OWNER, CREW));
         SquadComment PARENT1 = squadCommentJpaRepository.save(SquadComment.create("parent_1", SQUAD, OWNER));
+        clearPersistenceContext();
 
-        Optional<SquadComment> parentComment = squadCommentJpaRepository
-                .findByIdAndSquadIdAndCrewId(PARENT1.getId(), SQUAD.getId(), CREW.getId());
+        Optional<SquadComment> parentComment = squadCommentJpaRepository.findByIdAndSquadIdAndCrewId(PARENT1.getId(), SQUAD.getId(), CREW.getId());
 
         assertThat(parentComment).isPresent();
     }
@@ -59,10 +60,72 @@ class SquadCommentJpaRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
         Squad SQUAD = squadJpaRepository.save(SQUAD(OWNER, CREW));
         Long DUMMY_PARENT_ID = 1L;
+        clearPersistenceContext();
 
-        Optional<SquadComment> parentComment = squadCommentJpaRepository
-                .findByIdAndSquadIdAndCrewId(DUMMY_PARENT_ID, SQUAD.getId(), CREW.getId());
+        Optional<SquadComment> parentComment = squadCommentJpaRepository.findByIdAndSquadIdAndCrewId(DUMMY_PARENT_ID, SQUAD.getId(), CREW.getId());
 
         assertThat(parentComment).isEmpty();
+    }
+
+    @Test
+    @DisplayName("댓글 ID, 스쿼드 ID 로 댓글 조회에 성공한다. (1)")
+    void findByIdAndSquadId() {
+        Member REVI = memberJpaRepository.save(REVI());
+        Crew CREW = crewJpaRepository.save(CREW(REVI));
+        CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+        Squad SQUAD = squadJpaRepository.save(SQUAD(OWNER, CREW));
+        SquadComment COMMENT = squadCommentJpaRepository.save(SquadComment.create("comment", SQUAD, OWNER));
+        clearPersistenceContext();
+
+        Optional<SquadComment> comment = squadCommentJpaRepository.findByIdAndSquadId(COMMENT.getId(), SQUAD.getId());
+
+        assertThat(comment).isPresent();
+    }
+
+    @Test
+    @DisplayName("댓글 ID, 스쿼드 ID 로 댓글 조회에 성공한다. (2)")
+    void findByIdAndSquadId2() {
+        Member REVI = memberJpaRepository.save(REVI());
+        Crew CREW = crewJpaRepository.save(CREW(REVI));
+        CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+        Squad SQUAD = squadJpaRepository.save(SQUAD(OWNER, CREW));
+        SquadComment COMMENT = squadCommentJpaRepository.save(SquadComment.create("comment", SQUAD, OWNER));
+        clearPersistenceContext();
+
+        Optional<SquadComment> comment = squadCommentJpaRepository.findByIdAndSquadId(COMMENT.getId(), 100L);
+
+        assertThat(comment).isEmpty();
+    }
+
+    @Test
+    @DisplayName("댓글 ID, 스쿼드 ID 로 댓글과 스쿼드를 함께 조회한다. (1)")
+    void findWithSquadByIdAndSquadId() {
+        Member REVI = memberJpaRepository.save(REVI());
+        Crew CREW = crewJpaRepository.save(CREW(REVI));
+        CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+        Squad SQUAD = squadJpaRepository.save(SQUAD(OWNER, CREW));
+        SquadComment COMMENT = squadCommentJpaRepository.save(SquadComment.create("comment", SQUAD, OWNER));
+        clearPersistenceContext();
+        PersistenceUnitUtil persistenceUnitUtil = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        Optional<SquadComment> comment = squadCommentJpaRepository.findWithSquadByIdAndSquadId(COMMENT.getId(), SQUAD.getId());
+
+        assertThat(comment).isPresent();
+        assertThat(persistenceUnitUtil.isLoaded(comment.get().getSquad())).isTrue();
+    }
+
+    @Test
+    @DisplayName("댓글 ID, 스쿼드 ID 로 댓글과 스쿼드를 함께 조회한다. (2)")
+    void findWithSquadByIdAndSquadId2() {
+        Member REVI = memberJpaRepository.save(REVI());
+        Crew CREW = crewJpaRepository.save(CREW(REVI));
+        CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+        Squad SQUAD = squadJpaRepository.save(SQUAD(OWNER, CREW));
+        SquadComment COMMENT = squadCommentJpaRepository.save(SquadComment.create("comment", SQUAD, OWNER));
+        clearPersistenceContext();
+
+        Optional<SquadComment> comment = squadCommentJpaRepository.findWithSquadByIdAndSquadId(COMMENT.getId(), 100L);
+
+        assertThat(comment).isEmpty();
     }
 }
