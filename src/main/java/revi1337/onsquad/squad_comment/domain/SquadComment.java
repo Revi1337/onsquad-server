@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +37,10 @@ public class SquadComment extends BaseEntity {
 
     @Column(nullable = false, length = PERSIST_MAX_LENGTH)
     private String content;
+
+    private boolean deleted;
+
+    private LocalDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "squad_id", nullable = false)
@@ -76,6 +81,13 @@ public class SquadComment extends BaseEntity {
         this.content = content;
     }
 
+    public void delete() {
+        if (!deleted) {
+            this.deleted = true;
+            this.deletedAt = LocalDateTime.now();
+        }
+    }
+
     public boolean isNotParent() {
         return !isParent();
     }
@@ -84,8 +96,12 @@ public class SquadComment extends BaseEntity {
         return parent == null;
     }
 
+    public boolean matchWriterId(Long crewMemberId) {
+        return crewMember.hasSameId(crewMemberId);
+    }
+
     public boolean misMatchWriterId(Long crewMemberId) {
-        return !crewMember.hasSameId(crewMemberId);
+        return !matchWriterId(crewMemberId);
     }
 
     public boolean isNotBelongTo(Long squadId) {

@@ -24,8 +24,8 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
 
     public static class NotParent extends SquadCommentBusinessException {
 
-        public NotParent(ErrorCode errorCode, Number commentId) {
-            super(errorCode, String.format(errorCode.getDescription(), commentId));
+        public NotParent(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 

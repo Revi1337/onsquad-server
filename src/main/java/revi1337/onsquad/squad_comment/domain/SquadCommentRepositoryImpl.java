@@ -28,6 +28,16 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
+    public Optional<SquadComment> findByIdAndSquadId(Long id, Long squadId) {
+        return squadCommentJpaRepository.findByIdAndSquadId(id, squadId);
+    }
+
+    @Override
+    public Optional<SquadComment> findWithSquadByIdAndSquadId(Long id, Long squadId) {
+        return squadCommentJpaRepository.findWithSquadByIdAndSquadId(id, squadId);
+    }
+
+    @Override
     public Optional<SquadComment> findByIdAndSquadIdAndCrewId(Long id, Long squadId, Long crewId) {
         return squadCommentJpaRepository.findByIdAndSquadIdAndCrewId(id, squadId, crewId);
     }

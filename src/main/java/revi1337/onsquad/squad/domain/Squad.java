@@ -3,6 +3,7 @@ package revi1337.onsquad.squad.domain;
 import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.NOT_ENOUGH_LEFT;
@@ -11,7 +12,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -45,7 +45,7 @@ public class Squad extends BaseEntity {
     private static final int CATEGORY_BATCH_SIZE = 20;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Embedded
@@ -137,7 +137,7 @@ public class Squad extends BaseEntity {
         this.remain -= 1;
     }
 
-    public boolean isNotMatchCrewId(Long crewId) {
+    public boolean misMatchCrewId(Long crewId) {
         return !matchCrewId(crewId);
     }
 

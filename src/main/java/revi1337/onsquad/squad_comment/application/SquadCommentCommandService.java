@@ -1,8 +1,7 @@
 package revi1337.onsquad.squad_comment.application;
 
 import static revi1337.onsquad.squad.error.SquadErrorCode.MISMATCH_REFERENCE;
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NON_MATCH_SQUAD_ID;
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NON_MATCH_WRITER_ID;
+import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.MISMATCH_WRITER;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUND_COMMENT;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOT_PARENT;
 
@@ -31,7 +30,7 @@ public class SquadCommentCommandService {
     public Long add(Long memberId, Long crewId, Long squadId, String content) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         Squad squad = squadRepository.getById(squadId);
-        checkSquadCrewReference(crewId, squad);
+        checkSquadInCrew(squad, crewId);
 
         return persist(content, squad, crewMember);
     }
@@ -51,11 +50,25 @@ public class SquadCommentCommandService {
 
     public void update(Long memberId, Long crewId, Long squadId, Long commentId, String content) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        SquadComment comment = squadCommentRepository.getById(commentId);
-
-        checkCommentCanModify(comment, squadId, crewMember.getId());
+        SquadComment comment = squadCommentRepository.getWithSquadByIdAndSquadId(commentId, squadId);
+        checkSquadInCrew(comment.getSquad(), crewId);
+        checkCommentWriter(comment, crewMember);
 
         comment.update(content);
+    }
+
+    public void delete(Long memberId, Long crewId, Long squadId, Long commentId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        SquadComment comment = squadCommentRepository.getWithSquadByIdAndSquadId(commentId, squadId);
+        Squad squad = comment.getSquad();
+        checkSquadInCrew(squad, crewId);
+
+        if (squad.matchOwner(crewMember.getId()) || comment.matchWriterId(crewMember.getId())) {
+            comment.delete();
+            return;
+        }
+
+        throw new SquadCommentBusinessException.NonMatchWriterId(MISMATCH_WRITER);
     }
 
     private Long persist(String content, Squad squad, CrewMember crewMember) {
@@ -69,27 +82,25 @@ public class SquadCommentCommandService {
         Squad squad = parentComment.getSquad();
         SquadComment comment = SquadComment.createReply(parentComment, content, squad, crewMember);
         SquadComment persistComment = squadCommentRepository.save(comment);
+
         return persistComment.getId();
     }
 
-    private void checkSquadCrewReference(Long crewId, Squad squad) {
-        if (squad.isNotMatchCrewId(crewId)) {
+    private void checkSquadInCrew(Squad squad, Long crewId) {
+        if (squad.misMatchCrewId(crewId)) {
             throw new SquadBusinessException.MismatchReference(MISMATCH_REFERENCE);
         }
     }
 
     private void checkCommentIsParent(SquadComment comment) {
         if (comment.isNotParent()) {
-            throw new SquadCommentBusinessException.NotParent(NOT_PARENT, comment.getId());
+            throw new SquadCommentBusinessException.NotParent(NOT_PARENT);
         }
     }
 
-    private void checkCommentCanModify(SquadComment comment, Long squadId, Long crewMemberId) {
-        if (comment.isNotBelongTo(squadId)) {
-            throw new SquadCommentBusinessException.NonMatchSquadId(NON_MATCH_SQUAD_ID);
-        }
-        if (comment.misMatchWriterId(crewMemberId)) {
-            throw new SquadCommentBusinessException.NonMatchWriterId(NON_MATCH_WRITER_ID);
+    private void checkCommentWriter(SquadComment comment, CrewMember crewMember) {
+        if (comment.misMatchWriterId(crewMember.getId())) {
+            throw new SquadCommentBusinessException.NonMatchWriterId(MISMATCH_WRITER);
         }
     }
 }

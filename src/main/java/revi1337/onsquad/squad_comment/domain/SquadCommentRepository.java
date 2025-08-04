@@ -16,6 +16,10 @@ public interface SquadCommentRepository {
 
     Optional<SquadComment> findById(Long id);
 
+    Optional<SquadComment> findByIdAndSquadId(Long id, Long squadId);
+
+    Optional<SquadComment> findWithSquadByIdAndSquadId(Long id, Long squadId);
+
     Optional<SquadComment> findByIdAndSquadIdAndCrewId(Long id, Long squadId, Long crewId);
 
     Map<Long, SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
@@ -28,6 +32,16 @@ public interface SquadCommentRepository {
 
     default SquadComment getById(Long id) {
         return findById(id)
+                .orElseThrow(() -> new SquadCommentBusinessException.NotFound(NOTFOUND_COMMENT));
+    }
+
+    default SquadComment getByIdAndSquadId(Long id, Long squadId) {
+        return findByIdAndSquadId(id, squadId)
+                .orElseThrow(() -> new SquadCommentBusinessException.NotFound(NOTFOUND_COMMENT));
+    }
+
+    default SquadComment getWithSquadByIdAndSquadId(Long id, Long squadId) {
+        return findWithSquadByIdAndSquadId(id, squadId)
                 .orElseThrow(() -> new SquadCommentBusinessException.NotFound(NOTFOUND_COMMENT));
     }
 }

@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -110,6 +111,18 @@ public class SquadCommentController {
             @Authenticate CurrentMember currentMember
     ) {
         squadCommentCommandService.update(currentMember.id(), crewId, squadId, commentId, request.content());
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
+    @DeleteMapping("/{crewId}/squads/{squadId}/comments/{commentId}")
+    public ResponseEntity<RestResponse<List<SquadCommentResponse>>> deleteComment(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @PathVariable Long commentId,
+            @Authenticate CurrentMember currentMember
+    ) {
+        squadCommentCommandService.delete(currentMember.id(), crewId, squadId, commentId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
