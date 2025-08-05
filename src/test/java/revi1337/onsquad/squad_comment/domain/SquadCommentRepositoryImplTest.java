@@ -4,8 +4,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +70,7 @@ class SquadCommentRepositoryImplTest {
         Long squadId = 2L;
         PageRequest pageRequest = mock(PageRequest.class);
         when(squadCommentQueryDslRepository.fetchAllParentsBySquadId(squadId, pageRequest))
-                .thenReturn(new HashMap<>());
+                .thenReturn(new ArrayList<>());
 
         squadCommentRepositoryImpl.fetchAllParentsBySquadId(squadId, pageRequest);
 

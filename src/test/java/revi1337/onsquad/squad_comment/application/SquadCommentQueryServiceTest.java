@@ -73,12 +73,10 @@ class SquadCommentQueryServiceTest extends ApplicationLayerTestSupport {
             assertThat(comments).hasSize(2);
             assertThat(comments.get(0).content()).isEqualTo("parent_2");
             assertThat(comments.get(0).replies()).hasSize(3);
-            assertThat(comments.get(0).replies()).extracting("content")
-                    .containsExactlyInAnyOrder("reply_4", "reply_5", "reply_6");
+            assertThat(comments.get(0).replies()).extracting("content").containsExactlyInAnyOrder("reply_4", "reply_5", "reply_6");
             assertThat(comments.get(1).content()).isEqualTo("parent_1");
             assertThat(comments.get(1).replies()).hasSize(3);
-            assertThat(comments.get(1).replies()).extracting("content")
-                    .containsExactlyInAnyOrder("reply_1", "reply_2", "reply_3");
+            assertThat(comments.get(1).replies()).extracting("content").containsExactlyInAnyOrder("reply_1", "reply_2", "reply_3");
         }
 
         @Test

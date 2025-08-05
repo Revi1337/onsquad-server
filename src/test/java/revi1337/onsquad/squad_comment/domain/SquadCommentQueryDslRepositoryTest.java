@@ -8,7 +8,6 @@ import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
 
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -70,10 +69,10 @@ class SquadCommentQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             PageRequest PAGE_REQUEST = PageRequest.of(0, 1);
             clearPersistenceContext();
 
-            Map<Long, SquadCommentDomainDto> parents = squadCommentQueryDslRepository.fetchAllParentsBySquadId(SQUAD2.getId(), PAGE_REQUEST);
+            List<SquadCommentDomainDto> parents = squadCommentQueryDslRepository.fetchAllParentsBySquadId(SQUAD2.getId(), PAGE_REQUEST);
 
             assertThat(parents).hasSize(1);
-            assertThat(parents.get(PARENT_1.getId()).content()).isEqualTo("parent_4");
+            assertThat(parents.get(0).content()).isEqualTo("parent_4");
         }
     }
 

@@ -137,6 +137,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                             new SquadCommentDto(null,
                                     1L,
                                     "parent_1",
+                                    false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
                                     new SimpleMemberInfoDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE),
@@ -145,6 +146,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     1L,
                                                     2L,
                                                     "child_1",
+                                                    false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
                                                     new SimpleMemberInfoDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE),
@@ -154,6 +156,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     1L,
                                                     3L,
                                                     "child_2",
+                                                    false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
                                                     new SimpleMemberInfoDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE),
@@ -165,6 +168,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     null,
                                     4L,
                                     "parent_2",
+                                    false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
                                     new SimpleMemberInfoDto(3L, KWANGWON_EMAIL_VALUE, KWANGWON_NICKNAME_VALUE, KWANGWON_MBTI_VALUE),
@@ -173,6 +177,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     4L,
                                                     5L,
                                                     "child_3",
+                                                    false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
                                                     new SimpleMemberInfoDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE),
@@ -182,6 +187,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     4L,
                                                     6L,
                                                     "child_4",
+                                                    false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
                                                     new SimpleMemberInfoDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE),
@@ -232,6 +238,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     PARENT_ID,
                                     7L,
                                     "child_4",
+                                    false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
                                     new SimpleMemberInfoDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE),
@@ -241,6 +248,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     PARENT_ID,
                                     8L,
                                     "child_5",
+                                    false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
                                     new SimpleMemberInfoDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE),
@@ -286,7 +294,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
             CommentCreateRequest REQUEST = new CommentCreateRequest("update-content");
             doNothing().when(squadCommentCommandService).update(MEMBER_ID, CREW_ID, SQUAD_ID, COMMENT_ID, REQUEST.content());
 
-            mockMvc.perform(patch("/api/crews/{crewId}/squads/{squadId}/comments/{commentId}", CREW_ID, SQUAD_ID, COMMENT_ID)
+            mockMvc.perform(patch("/api/crews/{crewId}/squads/{squadId}/comments/{id}", CREW_ID, SQUAD_ID, COMMENT_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .content(objectMapper.writeValueAsString(REQUEST))
                             .contentType(APPLICATION_JSON))
@@ -298,7 +306,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                             pathParameters(
                                     parameterWithName("crewId").description("Crew 아이디"),
                                     parameterWithName("squadId").description("Squad 아이디"),
-                                    parameterWithName("commentId").description("Comment 아이디")
+                                    parameterWithName("id").description("Comment 아이디")
                             ),
                             requestFields(fieldWithPath("content").description("수정 내용")),
                             responseBody()

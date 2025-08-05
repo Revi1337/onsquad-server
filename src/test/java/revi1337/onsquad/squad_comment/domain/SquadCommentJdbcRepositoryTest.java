@@ -64,6 +64,6 @@ class SquadCommentJdbcRepositoryTest extends PersistenceLayerTestSupport {
                 .fetchAllChildrenByParentIdIn(List.of(PARENT1.getId(), PARENT2.getId()), childSize);
 
         assertThat(children).hasSize(4);
-        assertThat(children).extracting("commentId").containsExactlyInAnyOrder(3L, 4L, 7L, 8L);
+        assertThat(children).extracting("id").containsExactlyInAnyOrder(3L, 4L, 7L, 8L);
     }
 }
