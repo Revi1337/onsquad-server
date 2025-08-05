@@ -9,6 +9,7 @@ public record SquadCommentDto(
         Long parentId,
         Long commentId,
         String content,
+        boolean deleted,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         SimpleMemberInfoDto writer,
@@ -17,11 +18,12 @@ public record SquadCommentDto(
     public static SquadCommentDto from(SquadCommentDomainDto squadCommentDomainDto) {
         return new SquadCommentDto(
                 squadCommentDomainDto.parentId(),
-                squadCommentDomainDto.commentId(),
+                squadCommentDomainDto.id(),
                 squadCommentDomainDto.content(),
+                squadCommentDomainDto.deleted(),
                 squadCommentDomainDto.createdAt(),
                 squadCommentDomainDto.updatedAt(),
-                SimpleMemberInfoDto.from(squadCommentDomainDto.memberInfo()),
+                squadCommentDomainDto.writer() != null ? SimpleMemberInfoDto.from(squadCommentDomainDto.writer()) : null,
                 squadCommentDomainDto.replies().stream()
                         .map(SquadCommentDto::from)
                         .toList()

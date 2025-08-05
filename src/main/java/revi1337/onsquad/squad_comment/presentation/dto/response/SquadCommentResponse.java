@@ -11,20 +11,22 @@ public record SquadCommentResponse(
         Long parentId,
         Long id,
         String content,
+        boolean deleted,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         SimpleMemberInfoResponse writer,
         List<SquadCommentResponse> replies
 ) {
-    public static SquadCommentResponse from(SquadCommentDto squadCommentDto) {
+    public static SquadCommentResponse from(SquadCommentDto dto) {
         return new SquadCommentResponse(
-                squadCommentDto.parentId(),
-                squadCommentDto.commentId(),
-                squadCommentDto.content(),
-                squadCommentDto.createdAt(),
-                squadCommentDto.updatedAt(),
-                SimpleMemberInfoResponse.from(squadCommentDto.writer()),
-                squadCommentDto.replies().stream()
+                dto.parentId(),
+                dto.commentId(),
+                dto.content(),
+                dto.deleted(),
+                dto.createdAt(),
+                dto.updatedAt(),
+                dto.writer() != null ? SimpleMemberInfoResponse.from(dto.writer()) : null,
+                dto.replies().stream()
                         .map(SquadCommentResponse::from)
                         .toList()
         );

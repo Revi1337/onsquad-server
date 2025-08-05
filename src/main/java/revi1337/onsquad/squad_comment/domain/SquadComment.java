@@ -1,12 +1,12 @@
 package revi1337.onsquad.squad_comment.domain;
 
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.INVALID_LENGTH;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -32,7 +32,7 @@ public class SquadComment extends BaseEntity {
     private static final int PERSIST_MAX_LENGTH = MAX_LENGTH * 3;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = PERSIST_MAX_LENGTH)
@@ -42,15 +42,15 @@ public class SquadComment extends BaseEntity {
 
     private LocalDateTime deletedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "squad_id", nullable = false)
     private Squad squad;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_member_id", nullable = false)
     private CrewMember crewMember;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private SquadComment parent;
 

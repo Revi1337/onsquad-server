@@ -1,13 +1,11 @@
 package revi1337.onsquad.squad_comment.domain;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
 import static revi1337.onsquad.member.domain.QMember.member;
 import static revi1337.onsquad.squad_comment.domain.QSquadComment.squadComment;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -24,8 +22,20 @@ public class SquadCommentQueryDslRepository {
     /**
      * 페이징처리에 맞게 부모 댓글들을 가져오고, id 별로 묶어서 반환한다.
      */
-    public Map<Long, SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
+    public List<SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return jpaQueryFactory
+                .select(new QSquadCommentDomainDto(
+                        squadComment.id,
+                        squadComment.content,
+                        squadComment.deleted,
+                        squadComment.createdAt,
+                        squadComment.updatedAt,
+                        new QSimpleMemberDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.mbti
+                        )
+                ))
                 .from(squadComment)
                 .innerJoin(squadComment.crewMember, crewMember)
                 .on(
@@ -36,18 +46,7 @@ public class SquadCommentQueryDslRepository {
                 .orderBy(squadComment.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .transform(groupBy(squadComment.id)
-                        .as(new QSquadCommentDomainDto(
-                                squadComment.id,
-                                squadComment.content,
-                                squadComment.createdAt,
-                                squadComment.updatedAt,
-                                new QSimpleMemberDomainDto(
-                                        member.id,
-                                        member.nickname,
-                                        member.mbti
-                                )
-                        )));
+                .fetch();
     }
 
     public List<SquadCommentDomainDto> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
@@ -55,6 +54,7 @@ public class SquadCommentQueryDslRepository {
                 .select(new QSquadCommentDomainDto(
                         squadComment.id,
                         squadComment.content,
+                        squadComment.deleted,
                         squadComment.createdAt,
                         squadComment.updatedAt,
                         new QSimpleMemberDomainDto(
@@ -86,6 +86,7 @@ public class SquadCommentQueryDslRepository {
                         squadComment.parent.id,
                         squadComment.id,
                         squadComment.content,
+                        squadComment.deleted,
                         squadComment.createdAt,
                         squadComment.updatedAt,
                         new QSimpleMemberDomainDto(

@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_comment.application;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,13 +19,20 @@ public class SquadCommentQueryService {
     private final CrewMemberRepository crewMemberRepository;
     private final SquadCommentRepository commentRepository;
     private final CommentCombinator commentCombinator;
+    private final CommentSanitizer commentSanitizer;
 
     public List<SquadCommentDto> fetchInitialComments(Long memberId, Long crewId, Long squadId, Pageable pageable, int childSize) {
         crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        Map<Long, SquadCommentDomainDto> parents = commentRepository.fetchAllParentsBySquadId(squadId, pageable);
-        List<SquadCommentDomainDto> children = commentRepository.fetchAllChildrenByParentIdIn(parents.keySet(), childSize);
+        List<SquadCommentDomainDto> parents = commentRepository.fetchAllParentsBySquadId(squadId, pageable);
+        if (parents.isEmpty()) {
+            return new ArrayList<>();
+        }
 
-        return commentCombinator.combine(parents, children).stream()
+        List<Long> parentIds = parents.stream().map(SquadCommentDomainDto::id).toList();
+        List<SquadCommentDomainDto> replies = commentRepository.fetchAllChildrenByParentIdIn(parentIds, childSize);
+        List<SquadCommentDomainDto> comments = commentCombinator.combine(parents, replies);
+
+        return commentSanitizer.sanitizeUsingStack(comments).stream()
                 .map(SquadCommentDto::from)
                 .toList();
     }

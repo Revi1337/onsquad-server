@@ -4,7 +4,6 @@ import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.NOTFOUN
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
@@ -22,7 +21,7 @@ public interface SquadCommentRepository {
 
     Optional<SquadComment> findByIdAndSquadIdAndCrewId(Long id, Long squadId, Long crewId);
 
-    Map<Long, SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
+    List<SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
 
     List<SquadCommentDomainDto> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childSize);
 

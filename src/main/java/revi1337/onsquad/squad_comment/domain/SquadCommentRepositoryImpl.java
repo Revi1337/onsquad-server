@@ -2,7 +2,6 @@ package revi1337.onsquad.squad_comment.domain;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +42,7 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
-    public Map<Long, SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
+    public List<SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return squadCommentQueryDslRepository.fetchAllParentsBySquadId(squadId, pageable);
     }
 
