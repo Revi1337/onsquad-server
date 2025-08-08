@@ -7,23 +7,32 @@ import java.util.List;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 
 public record SquadCommentDomainDto(
-        Long parentCommentId,
-        Long commentId,
+        Long parentId,
+        Long id,
         String content,
+        boolean deleted,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        SimpleMemberDomainDto memberInfo,
+        SimpleMemberDomainDto writer,
         List<SquadCommentDomainDto> replies
 ) {
     @QueryProjection
-    public SquadCommentDomainDto(Long parentCommentId, Long commentId, String content, LocalDateTime createdAt,
+    public SquadCommentDomainDto(Long parentId, Long commentId, String content, boolean deleted, LocalDateTime createdAt,
                                  LocalDateTime updatedAt, SimpleMemberDomainDto memberInfo) {
-        this(parentCommentId, commentId, content, createdAt, updatedAt, memberInfo, new ArrayList<>());
+        this(parentId, commentId, content, deleted, createdAt, updatedAt, memberInfo, new ArrayList<>());
     }
 
     @QueryProjection
-    public SquadCommentDomainDto(Long commentId, String content, LocalDateTime createdAt, LocalDateTime updatedAt,
+    public SquadCommentDomainDto(Long commentId, String content, boolean deleted, LocalDateTime createdAt, LocalDateTime updatedAt,
                                  SimpleMemberDomainDto memberInfo) {
-        this(null, commentId, content, createdAt, updatedAt, memberInfo, new ArrayList<>());
+        this(null, commentId, content, deleted, createdAt, updatedAt, memberInfo, new ArrayList<>());
+    }
+
+    public void addReply(SquadCommentDomainDto reply) {
+        this.replies.add(reply);
+    }
+
+    public void addReplies(List<SquadCommentDomainDto> replies) {
+        this.replies.addAll(replies);
     }
 }

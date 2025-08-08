@@ -5,7 +5,7 @@ import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
 
 public interface VerificationCodeRepository {
 
-    void saveVerificationCode(String email, String verificationCode, Duration minutes);
+    long saveVerificationCode(String email, String verificationCode, Duration minutes);
 
     boolean isValidVerificationCode(String email, String verificationCode);
 

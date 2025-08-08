@@ -59,7 +59,7 @@ class EmailVerificationCodeControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("이메일 인증코드 검증에 성공한다.")
         void success() throws Exception {
-            when(authMailService.isValidVerificationCode(REVI_EMAIL_VALUE, TEST_VERIFICATION_CODE))
+            when(authMailService.validateVerificationCode(REVI_EMAIL_VALUE, TEST_VERIFICATION_CODE))
                     .thenReturn(true);
 
             mockMvc.perform(get("/api/auth/verify")

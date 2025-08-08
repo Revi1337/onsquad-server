@@ -20,13 +20,13 @@ public class SquadCommentJdbcRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<SquadCommentDomainDto> fetchLimitChildCommentsByParentIdIn(Collection<Long> parentIds,
-                                                                           int childrenSize) {
+    public List<SquadCommentDomainDto> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childrenSize) {
         String sql = "SELECT * FROM (" +
                 "    SELECT " +
                 "        squad_comment.parent_id, " +
                 "        squad_comment.id, " +
                 "        squad_comment.content, " +
+                "        squad_comment.deleted, " +
                 "        squad_comment.created_at, " +
                 "        squad_comment.updated_at, " +
                 "        squad_comment.crew_member_id, " +
@@ -59,6 +59,7 @@ public class SquadCommentJdbcRepository {
                     rs.getLong("parent_id"),
                     rs.getLong("id"),
                     rs.getString("content"),
+                    rs.getBoolean("deleted"),
                     rs.getObject("created_at", LocalDateTime.class),
                     rs.getObject("updated_at", LocalDateTime.class),
                     new SimpleMemberDomainDto(

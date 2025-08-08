@@ -69,8 +69,7 @@ public class Crew extends BaseEntity {
     @OneToMany(mappedBy = "crew", cascade = PERSIST)
     private final List<CrewMember> crewMembers = new ArrayList<>();
 
-    public static Crew create(Member owner, String name, String introduce, String detail,
-                              String kakaoLink, String imageUrl) {
+    public static Crew create(Member owner, String name, String introduce, String detail, String kakaoLink, String imageUrl) {
         Crew crew = new Crew(name, introduce, detail, kakaoLink, imageUrl);
         crew.registerOwner(owner);
         crew.addCrewMember(CrewMember.forOwner(owner, LocalDateTime.now()));
