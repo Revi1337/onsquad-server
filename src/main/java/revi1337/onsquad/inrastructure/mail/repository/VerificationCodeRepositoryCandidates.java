@@ -24,8 +24,8 @@ public class VerificationCodeRepositoryCandidates implements VerificationCodeRep
     }
 
     @Override
-    public void saveVerificationCode(String email, String verificationCode, Duration minutes) {
-        delegateVoid(repository -> repository.saveVerificationCode(email, verificationCode, minutes));
+    public long saveVerificationCode(String email, String verificationCode, Duration minutes) {
+        return delegate(repository -> repository.saveVerificationCode(email, verificationCode, minutes));
     }
 
     @Override

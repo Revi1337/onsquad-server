@@ -11,7 +11,7 @@ public record VerificationSnapshots(
 
     public List<VerificationSnapshot> extractAvailableBefore(long epochMillis) {
         return snapshots.stream()
-                .filter(snapshot -> snapshot.canUseBy(epochMillis))
+                .filter(snapshot -> snapshot.canUse(epochMillis))
                 .toList();
     }
 }

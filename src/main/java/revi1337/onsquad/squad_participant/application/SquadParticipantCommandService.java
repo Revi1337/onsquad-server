@@ -34,7 +34,7 @@ public class SquadParticipantCommandService {
     public void request(Long memberId, Long crewId, Long squadId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         Squad squad = squadRepository.getByIdWithMembers(squadId);
-        if (squad.isNotMatchCrewId(crewId)) {
+        if (squad.misMatchCrewId(crewId)) {
             throw new SquadBusinessException.MismatchReference(SquadErrorCode.MISMATCH_REFERENCE);
         }
         if (squad.existsMember(crewMember.getId())) {

@@ -10,10 +10,8 @@ import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository
 public class MailRepositoryConfig {
 
     @Bean("repositoryChain")
-    public VerificationCodeRepository verificationCodeRepositoryCandidates(
-            VerificationCodeRepository redisCodeRepository,
-            VerificationCodeRepository expiringMapCodeRepository
-    ) {
+    public VerificationCodeRepository repositoryChain(VerificationCodeRepository redisCodeRepository,
+                                                      VerificationCodeRepository expiringMapCodeRepository) {
         return new VerificationCodeRepositoryCandidates(List.of(redisCodeRepository, expiringMapCodeRepository));
     }
 }

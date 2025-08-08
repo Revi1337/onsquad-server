@@ -1,7 +1,10 @@
 package revi1337.onsquad.inrastructure.mail.repository;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -17,11 +20,12 @@ public class VerificationCodeRedisRepository implements VerificationCodeReposito
     private final StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public void saveVerificationCode(String email, String verificationCode, Duration minutes) {
+    public long saveVerificationCode(String email, String verificationCode, Duration minutes) {
         String redisKey = getKey(email);
-        RedisSafeExecutor.run(() ->
-                stringRedisTemplate.opsForValue().set(redisKey, verificationCode, minutes)
-        );
+        long expiredTime = getExpiredTime(minutes);
+        RedisSafeExecutor.run(() -> stringRedisTemplate.opsForValue().set(redisKey, verificationCode, minutes.toMillis(), TimeUnit.MILLISECONDS));
+
+        return expiredTime;
     }
 
     @Override
@@ -52,5 +56,13 @@ public class VerificationCodeRedisRepository implements VerificationCodeReposito
 
     private String getKey(String email) {
         return String.format(CacheFormat.COMPLEX, CacheConst.VERIFICATION_CODE, email);
+    }
+
+    private long getExpiredTime(Duration duration) {
+        return Instant.now()
+                .plusMillis(duration.toMillis())
+                .atZone(TimeZone.getDefault().toZoneId())
+                .toInstant()
+                .toEpochMilli();
     }
 }

@@ -32,7 +32,8 @@ public class EmailVerificationCodeController {
             @RequestParam String email,
             @RequestParam String code
     ) {
-        if (authMailService.isValidVerificationCode(email, code)) {
+        boolean valid = authMailService.validateVerificationCode(email, code);
+        if (valid) {
             return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(true)));
         }
 

@@ -15,32 +15,31 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
         this.errorMessage = errorMessage;
     }
 
-    public static class NotFoundById extends SquadCommentBusinessException {
+    public static class NotFound extends SquadCommentBusinessException {
 
-        public NotFoundById(ErrorCode errorCode, Number commentId) {
-            super(errorCode, String.format(errorCode.getDescription(), commentId));
-        }
-    }
-
-    public static class NonMatchSquadId extends SquadCommentBusinessException {
-
-        public NonMatchSquadId(ErrorCode errorCode) {
+        public NotFound(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
 
     public static class NotParent extends SquadCommentBusinessException {
 
-        public NotParent(ErrorCode errorCode, Number commentId) {
-            super(errorCode, String.format(errorCode.getDescription(), commentId));
+        public NotParent(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 
-    public static class NotFoundSquadComment extends SquadCommentBusinessException {
+    public static class NonMatchWriterId extends SquadCommentBusinessException {
 
-        public NotFoundSquadComment(ErrorCode errorCode, Number crewId, Number commentId) {
-            super(errorCode, String.format(errorCode.getDescription(), crewId, commentId));
+        public NonMatchWriterId(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
         }
     }
 
+    public static class Deleted extends SquadCommentBusinessException {
+
+        public Deleted(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

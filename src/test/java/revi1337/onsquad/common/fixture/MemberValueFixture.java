@@ -15,6 +15,13 @@ public class MemberValueFixture {
     public static final String REVI_EMAIL_VALUE = "david122123@gmail.com";
     public static final String ANDONG_EMAIL_VALUE = "ax34554@gmail.com";
     public static final String KWANGWON_EMAIL_VALUE = "kakd1313@gmail.com";
+    public static final String DUMMY_EMAIL_VALUE_1 = "dummy1@gmail.com";
+    public static final String DUMMY_EMAIL_VALUE_2 = "dummy2@gmail.com";
+    public static final String DUMMY_EMAIL_VALUE_3 = "dummy3@gmail.com";
+    public static final String DUMMY_EMAIL_VALUE_4 = "dummy4@gmail.com";
+    public static final String DUMMY_EMAIL_VALUE_5 = "dummy5@gmail.com";
+    public static final String DUMMY_EMAIL_VALUE_6 = "dummy6@gmail.com";
+    public static final String DUMMY_EMAIL_VALUE_7 = "dummy7@gmail.com";
 
     public static final String NICKNAME_VALUE = "nickname";
     public static final String REVI_NICKNAME_VALUE = "revi1337";
@@ -70,7 +77,6 @@ public class MemberValueFixture {
     public static final String VALID_AUTHENTICATION_CODE = "VALID_CODE";
     public static final String INVALID_AUTHENTICATION_CODE = "INVALID_CODE";
 
-
     public static final Email EMAIL = new Email("email@gmail.com");
     public static final Email REVI_EMAIL = new Email("david122123@gmail.com");
     public static final Email ANDONG_EMAIL = new Email("ax34554@gmail.com");
@@ -90,14 +96,10 @@ public class MemberValueFixture {
     public static final Password REVI_PASSWORD = Password.raw("12345!@asa");
     public static final Password ANDONG_PASSWORD = Password.raw("12345!@asb");
     public static final Password KWANGWON_PASSWORD = Password.raw("12345!@asc");
-    public static final Password ENCRYPTED_PASSWORD =
-            Password.encrypted("{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.");
-    public static final Password REVI_ENCRYPTED_PASSWORD =
-            Password.encrypted("{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.");
-    public static final Password ANDONG_ENCRYPTED_PASSWORD =
-            Password.encrypted("{bcrypt}$2a$10$ocuCgB1yFSe34jsD20MC4eWiXIoUqtUaRpw2DaAbLMrJpDGp2fSYW");
-    public static final Password KWANGWON_ENCRYPTED_PASSWORD =
-            Password.encrypted("{bcrypt}$2a$10$NaBOLRjMFC0BHl7AnnXrV.srIYwV9uTwiStOHdr15P4mR6vEVp2Z2");
+    public static final Password ENCRYPTED_PASSWORD = Password.encrypted("{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.");
+    public static final Password REVI_ENCRYPTED_PASSWORD = Password.encrypted("{bcrypt}$2a$10$9qzyli03H7Z2dsPn3e56Su5CoOolFJApvRS86AA7d8cSvuBwnqLG.");
+    public static final Password ANDONG_ENCRYPTED_PASSWORD = Password.encrypted("{bcrypt}$2a$10$ocuCgB1yFSe34jsD20MC4eWiXIoUqtUaRpw2DaAbLMrJpDGp2fSYW");
+    public static final Password KWANGWON_ENCRYPTED_PASSWORD = Password.encrypted("{bcrypt}$2a$10$NaBOLRjMFC0BHl7AnnXrV.srIYwV9uTwiStOHdr15P4mR6vEVp2Z2");
 
     public static final Introduce INTRODUCE = new Introduce("소개 없음");
     public static final Introduce REVI_INTRODUCE = new Introduce("Hello World REVI");

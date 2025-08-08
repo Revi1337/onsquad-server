@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 
-@EnableJpaAuditing
 @Configuration
+@EnableJpaAuditing
 public class JpaConfig {
 
     @Bean

@@ -2,10 +2,10 @@ package revi1337.onsquad.inrastructure.mail.support;
 
 public record VerificationState(
         String code,
-        String target,
-        long predictedExpiredTime
+        String email,
+        long expireTime
 ) {
-    public boolean canUseBy(long epochMillis) {
-        return predictedExpiredTime > epochMillis;
+    public boolean canUse(long epochMillis) {
+        return expireTime > epochMillis;
     }
 }
