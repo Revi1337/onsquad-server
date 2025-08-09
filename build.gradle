@@ -65,13 +65,15 @@ dependencies {
 
     implementation 'net.jodah:expiringmap:0.5.10'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 String ENABLE_PREVIEW = "--enable-preview"
 String PARAMETERS = "-parameters"
 
-def gradleProfile = project.hasProperty("profile") ?
-        project.property("profile").toString() : "test"
+def gradleProfile = project.hasProperty("profile") ? project.property("profile").toString() : "test"
 
 ext {
     applicationName = 'onsquad'
