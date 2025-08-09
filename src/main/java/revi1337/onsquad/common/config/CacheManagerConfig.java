@@ -73,8 +73,7 @@ public class CacheManagerConfig {
             CREW_ANNOUNCES(CacheConst.CREW_ANNOUNCES, Duration.ofHours(1)),
             CREW_ANNOUNCE(CacheConst.CREW_ANNOUNCE, Duration.ofHours(1)),
             CREW_STATISTIC(CacheConst.CREW_STATISTIC, Duration.ofHours(1)),
-            CREW_TOP_USERS(CacheConst.CREW_TOP_USERS, Duration.ofHours(1)),
-            REFRESH_TOKEN(CacheConst.CREW_TOP_USERS, Duration.ofHours(1));
+            CREW_TOP_USERS(CacheConst.CREW_TOP_USERS, Duration.ofHours(1));
 
             private final String cacheName;
             private final Duration expired;
