@@ -17,11 +17,13 @@ import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtagRepository;
+import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.hashtag.domain.Hashtag;
 import revi1337.onsquad.inrastructure.file.application.event.FileDeleteEvent;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.squad.domain.SquadJpaRepository;
 
 @RequiredArgsConstructor
 @Service
@@ -31,14 +33,13 @@ public class CrewCommandService {
     private final CrewRepository crewRepository;
     private final CrewMemberRepository crewMemberRepository;
     private final CrewHashtagRepository crewHashtagRepository;
+    private final SquadJpaRepository squadJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public Long newCrew(Long memberId, CrewCreateDto dto, String imageUrl) {
         Member member = memberRepository.getById(memberId);
-        if (crewRepository.existsByName(new Name(dto.name()))) {
-            throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, dto.name());
-        }
+        checkCrewNameIsDuplicate(dto.name());
 
         Crew crew = Crew.create(member, dto.name(), dto.introduce(), dto.detail(), imageUrl, dto.kakaoLink());
         Crew persistedCrew = crewRepository.save(crew);
@@ -48,11 +49,9 @@ public class CrewCommandService {
 
     @Transactional
     public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto) {
-        memberRepository.getById(memberId);
-        Crew crew = crewRepository.getById(crewId);
-        if (!crew.isCreatedBy(memberId)) {
-            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
-        }
+        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        Crew crew = crewMember.getCrew();
+        checkMemberIsCrewOwner(crew.getId(), crewMember);
 
         crew.update(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
         crewHashtagRepository.deleteByCrewId(crew.getId());
@@ -61,38 +60,43 @@ public class CrewCommandService {
 
     @Transactional
     public void deleteCrew(Long memberId, Long crewId) {
-        memberRepository.getById(memberId);
-        Crew crew = crewRepository.getById(crewId);
-        if (!crew.isCreatedBy(memberId)) {
-            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
-        }
+        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        Crew crew = crewMember.getCrew();
+        checkMemberIsCrewOwner(crewId, crewMember);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
         }
 
-        crewHashtagRepository.deleteByCrewId(crewId);
-        crewMemberRepository.deleteAllByCrewId(crewId);
-        crewRepository.deleteById(crew.getId());
+        squadJpaRepository.deleteByCrewId(crewId);
+        crewRepository.deleteById(crewId);
     }
 
     public void updateCrewImage(Long memberId, Long crewId, MultipartFile file) {
-        memberRepository.getById(memberId);
-        Crew crew = crewRepository.getById(crewId);
-        if (!crew.isCreatedBy(memberId)) {
-            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
-        }
+        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        Crew crew = crewMember.getCrew();
+        checkMemberIsCrewOwner(crewId, crewMember);
 
         eventPublisher.publishEvent(new CrewImageUpdateEvent(crew, file));
     }
 
     public void deleteCrewImage(Long memberId, Long crewId) {
-        memberRepository.getById(memberId);
-        Crew crew = crewRepository.getById(crewId);
-        if (!crew.isCreatedBy(memberId)) {
-            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crew.getId());
-        }
+        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        Crew crew = crewMember.getCrew();
+        checkMemberIsCrewOwner(crewId, crewMember);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new CrewImageDeleteEvent(crew));
+        }
+    }
+
+    private void checkCrewNameIsDuplicate(String crewName) {
+        if (crewRepository.existsByName(new Name(crewName))) {
+            throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, crewName);
+        }
+    }
+
+    private void checkMemberIsCrewOwner(Long crewId, CrewMember crewMember) {
+        if (crewMember.isNotOwner()) {
+            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crewId);
         }
     }
 }

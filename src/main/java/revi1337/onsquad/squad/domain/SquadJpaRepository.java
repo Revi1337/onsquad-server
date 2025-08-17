@@ -14,4 +14,8 @@ public interface SquadJpaRepository extends JpaRepository<Squad, Long> {
     @Query("delete Squad s where s.id = :id")
     void deleteById(Long id);
 
+    @Modifying(clearAutomatically = true)
+    @Query("delete Squad s where s.crew.id = :crewId")
+    void deleteByCrewId(Long crewId);
+
 }

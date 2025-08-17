@@ -18,16 +18,19 @@ public interface CrewMemberRepository {
 
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
+    Optional<CrewMember> findWithCrewByCrewIdAndMemberId(Long crewId, Long memberId);
+
     Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
-
-    boolean existsCrewMember(Long memberId);
-
-    boolean existsParticipantCrewMember(Long memberId);
 
     Page<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId, Pageable pageable);
 
     default CrewMember getByCrewIdAndMemberId(Long crewId, Long memberId) {
         return findByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT));
+    }
+
+    default CrewMember getWithCrewByCrewIdAndMemberId(Long crewId, Long memberId) {
+        return findWithCrewByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(NOT_PARTICIPANT));
     }
 }

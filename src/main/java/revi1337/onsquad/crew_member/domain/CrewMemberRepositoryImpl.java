@@ -35,18 +35,13 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
+    public Optional<CrewMember> findWithCrewByCrewIdAndMemberId(Long crewId, Long memberId) {
+        return crewMemberJpaRepository.findWithCrewByCrewIdAndMemberId(crewId, memberId);
+    }
+
+    @Override
     public Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId) {
         return crewMemberJpaRepository.existsByMemberIdAndCrewId(memberId, crewId);
-    }
-
-    @Override
-    public boolean existsCrewMember(Long memberId) {
-        return crewMemberJpaRepository.existsCrewMember(memberId);
-    }
-
-    @Override
-    public boolean existsParticipantCrewMember(Long memberId) {
-        return crewMemberJpaRepository.existsParticipantCrewMember(memberId);
     }
 
     @Override

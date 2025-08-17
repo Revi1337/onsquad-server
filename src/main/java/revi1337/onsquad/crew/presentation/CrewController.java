@@ -90,7 +90,7 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @DeleteMapping("/{crewId}") // TODO 여기 구현해야 함.
+    @DeleteMapping("/{crewId}")
     public ResponseEntity<RestResponse<String>> deleteCrew(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
