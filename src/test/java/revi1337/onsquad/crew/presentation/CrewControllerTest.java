@@ -373,9 +373,11 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 삭제에 성공한다.")
         void success() throws Exception {
-            doNothing().when(crewCommandExecutor).deleteCrew(any(), anyLong());
+            Long MEMBER_ID = 1L;
+            Long CREW_ID = 2L;
+            doNothing().when(crewCommandExecutor).deleteCrew(MEMBER_ID, CREW_ID);
 
-            mockMvc.perform(delete("/api/crews/{crewId}", 1L)
+            mockMvc.perform(delete("/api/crews/{crewId}", CREW_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(204))
@@ -391,7 +393,8 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("토큰이 없으면 Crew 삭제에 실패한다.")
         void fail() throws Exception {
-            mockMvc.perform(delete("/api/crews/{crewId}", 1L)
+            Long CREW_ID = 2L;
+            mockMvc.perform(delete("/api/crews/{crewId}", CREW_ID)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(401))
                     .andDo(document("crew/fail/delete",

@@ -95,6 +95,36 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("CrewMember 단일 조회 + Crew 페치 조회를 테스트한다.")
+    class FindWithCrew {
+
+        @Test
+        @DisplayName("CrewMember + Crew 페치 조회에 성공한다.")
+        void success1() {
+            Member REVI = memberJpaRepository.save(REVI());
+            Crew CREW = crewJpaRepository.save(CREW(REVI));
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+
+            Optional<CrewMember> CREW_MEMBER = crewMemberRepository.findWithCrewByCrewIdAndMemberId(CREW.getId(), ANDONG.getId());
+
+            assertThat(CREW_MEMBER).isPresent();
+        }
+
+        @Test
+        @DisplayName("CrewMember 를 찾지 못하면 예외가 발생한다.")
+        void success2() {
+            Member REVI = memberJpaRepository.save(REVI());
+            Crew CREW = crewJpaRepository.save(CREW(REVI));
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+
+            assertThatThrownBy(() -> crewMemberRepository
+                    .getWithCrewByCrewIdAndMemberId(CREW.getId(), ANDONG.getId()))
+                    .isExactlyInstanceOf(CrewMemberBusinessException.NotParticipant.class);
+        }
+    }
+
+    @Nested
     @DisplayName("CrewMember 존재여부를 테스트한다.")
     class Exists {
 

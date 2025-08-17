@@ -6,6 +6,7 @@ import static revi1337.onsquad.common.fixture.CrewMemberFixture.GENERAL_CREW_MEM
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
+import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD_2;
 import static revi1337.onsquad.common.fixture.SquadMemberFixture.GENERAL_SQUAD_MEMBER;
 
 import java.util.Optional;
@@ -69,5 +70,23 @@ class SquadJpaRepositoryTest extends PersistenceLayerTestSupport {
         clearPersistenceContext();
 
         assertThat(squadJpaRepository.findById(SQUAD.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("크루에 속한 스쿼드 삭제에 성공한다.")
+    void deleteByCrewId() {
+        Member REVI = memberJpaRepository.save(REVI());
+        Crew CREW = crewJpaRepository.save(CREW(REVI));
+        CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+        squadJpaRepository.save(SQUAD(OWNER, CREW));
+        squadJpaRepository.save(SQUAD_2(OWNER, CREW));
+        clearPersistenceContext();
+
+        squadJpaRepository.deleteByCrewId(CREW.getId());
+        clearPersistenceContext();
+
+        assertThat(entityManager.createQuery("select s from Squad s where s.crew.id = :crewId", Squad.class)
+                .setParameter("crewId", CREW.getId())
+                .getResultList()).isEmpty();
     }
 }
