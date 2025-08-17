@@ -137,8 +137,8 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
                 assertThat(REQUESTS.get(0).crew().id()).isEqualTo(2);
                 assertThat(REQUESTS.get(0).crew().name()).isEqualTo(CREW2.getName().getValue());
                 assertThat(REQUESTS.get(0).crew().introduce()).isEqualTo(CREW2.getIntroduce().getValue());
-                assertThat(REQUESTS.get(0).crew().kakaoLink()).isEqualTo(CREW2.getKakaoLink());
-                assertThat(REQUESTS.get(0).crew().imageUrl()).isBlank();
+                assertThat(REQUESTS.get(0).crew().kakaoLink()).isEmpty();
+                assertThat(REQUESTS.get(0).crew().imageUrl()).isEmpty();
                 assertThat(REQUESTS.get(0).crew().owner().id()).isEqualTo(1);
                 assertThat(REQUESTS.get(0).crew().owner().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
                 assertThat(REQUESTS.get(0).crew().owner().mbti()).isEqualTo(REVI_MBTI_VALUE);
@@ -147,8 +147,8 @@ class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
                 assertThat(REQUESTS.get(1).crew().id()).isEqualTo(1);
                 assertThat(REQUESTS.get(1).crew().name()).isEqualTo(CREW1.getName().getValue());
                 assertThat(REQUESTS.get(1).crew().introduce()).isEqualTo(CREW1.getIntroduce().getValue());
-                assertThat(REQUESTS.get(1).crew().kakaoLink()).isEqualTo(CREW1.getKakaoLink());
-                assertThat(REQUESTS.get(1).crew().imageUrl()).isBlank();
+                assertThat(REQUESTS.get(1).crew().kakaoLink()).isEmpty();
+                assertThat(REQUESTS.get(1).crew().imageUrl()).isEmpty();
                 assertThat(REQUESTS.get(1).crew().owner().id()).isEqualTo(3);
                 assertThat(REQUESTS.get(1).crew().owner().nickname()).isEqualTo(KWANGWON_NICKNAME_VALUE);
                 assertThat(REQUESTS.get(1).crew().owner().mbti()).isEqualTo(KWANGWON_MBTI_VALUE);

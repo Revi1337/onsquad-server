@@ -18,6 +18,7 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.KWANGWON_MBTI;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.KWANGWON_NICKNAME;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
@@ -44,6 +45,7 @@ import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.MemberRepositoryImpl;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.vo.Introduce;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
 
@@ -104,6 +106,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
                 assertThat(OPTIONAL_CREW.get().getCrewOwner()).isEqualTo(new SimpleMemberDomainDto(
                         REVI.getId(),
                         new Nickname(REVI_NICKNAME_VALUE),
+                        new Introduce(REVI_INTRODUCE_VALUE),
                         Mbti.ISTP
                 ));
             });

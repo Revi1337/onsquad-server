@@ -20,6 +20,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
@@ -32,7 +33,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.squad_participant.application.SquadParticipantCommandService;
 import revi1337.onsquad.squad_participant.application.SquadParticipantQueryService;
 import revi1337.onsquad.squad_participant.application.dto.SimpleSquadParticipantDto;
@@ -178,10 +179,11 @@ class SquadParticipantControllerTest extends PresentationLayerTestSupport {
             List<SimpleSquadParticipantDto> SERVICE_DTOS = List.of(new SimpleSquadParticipantDto(
                     SQUAD_ID,
                     LocalDateTime.now(),
-                    new SimpleMemberInfoDto(
+                    new SimpleMemberDto(
                             1L,
                             null,
                             REVI_NICKNAME_VALUE,
+                            REVI_INTRODUCE_VALUE,
                             REVI_MBTI_VALUE
                     )
             ));

@@ -47,6 +47,7 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_KAKAO_LINK_V
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.RequestFixture.JSON_MULTIPART;
@@ -77,7 +78,7 @@ import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 @WebMvcTest(CrewController.class)
 class CrewControllerTest extends PresentationLayerTestSupport {
@@ -216,10 +217,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_KAKAO_LINK_VALUE,
                     List.of(HashtagType.ACTIVE.getText()),
                     1L,
-                    new SimpleMemberInfoDto(
+                    new SimpleMemberDto(
                             1L,
                             null,
-                            REVI_NICKNAME_VALUE, ISTP.name()),
+                            REVI_NICKNAME_VALUE,
+                            REVI_INTRODUCE_VALUE,
+                            ISTP.name()
+                    ),
                     null
             );
             when(crewQueryService.findCrewById(anyLong())).thenReturn(CREW_INFO);
@@ -261,10 +265,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             CREW_KAKAO_LINK_VALUE,
                             List.of(HashtagType.ACTIVE.getText()),
                             1L,
-                            new SimpleMemberInfoDto(
+                            new SimpleMemberDto(
                                     1L,
                                     null,
-                                    REVI_NICKNAME_VALUE, ISTP.name()),
+                                    REVI_NICKNAME_VALUE,
+                                    REVI_INTRODUCE_VALUE,
+                                    ISTP.name()
+                            ),
                             true
                     )
             );
@@ -509,10 +516,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_KAKAO_LINK_VALUE,
                     List.of(HashtagType.ACTIVE.getText()),
                     1L,
-                    new SimpleMemberInfoDto(
+                    new SimpleMemberDto(
                             1L,
                             null,
-                            REVI_NICKNAME_VALUE, ISTP.name()),
+                            REVI_NICKNAME_VALUE,
+                            REVI_INTRODUCE_VALUE,
+                            ISTP.name()
+                    ),
                     null
             );
             List<CrewDto> CREW_INFOS = List.of(CREW_INFO);
@@ -567,10 +577,13 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_KAKAO_LINK_VALUE,
                     List.of(HashtagType.ACTIVE.getText()),
                     1L,
-                    new SimpleMemberInfoDto(
+                    new SimpleMemberDto(
                             1L,
                             null,
-                            REVI_NICKNAME_VALUE, ISTP.name()),
+                            REVI_NICKNAME_VALUE,
+                            REVI_INTRODUCE_VALUE,
+                            ISTP.name()
+                    ),
                     null
             );
             List<CrewDto> CREW_INFOS = List.of(CREW_INFO);
@@ -610,14 +623,14 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW1_NAME_VALUE,
                     CREW1_IMAGE_LINK_VALUE,
                     true,
-                    new SimpleMemberInfoDto(1L, null, REVI_NICKNAME_VALUE, REVI_MBTI_VALUE)
+                    new SimpleMemberDto(1L, null, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE)
             );
             EnrolledCrewDto SERVICE_DTO2 = new EnrolledCrewDto(
                     2L,
                     CREW2_NAME_VALUE,
                     CREW2_IMAGE_LINK_VALUE,
                     false,
-                    new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
+                    new SimpleMemberDto(2L, null, ANDONG_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             );
             List<EnrolledCrewDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
             when(crewQueryService.fetchParticipantCrews(any())).thenReturn(SERVICE_DTOS);

@@ -25,6 +25,7 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_IMAGE_LINK_V
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_KAKAO_LINK_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
 
@@ -43,7 +44,7 @@ import revi1337.onsquad.crew_participant.application.CrewParticipantQueryService
 import revi1337.onsquad.crew_participant.application.dto.CrewRequestDto;
 import revi1337.onsquad.crew_participant.application.dto.CrewRequestWithCrewDto;
 import revi1337.onsquad.crew_participant.application.dto.CrewRequestWithMemberDto;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 @WebMvcTest(CrewParticipantController.class)
 class CrewParticipantControllerTest extends PresentationLayerTestSupport {
@@ -144,7 +145,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
             Long CREW_Id = 1L;
             List<CrewRequestWithMemberDto> SERVICE_DTOS = List.of(new CrewRequestWithMemberDto(
                     new CrewRequestDto(2L, LocalDateTime.now()),
-                    new SimpleMemberInfoDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
+                    new SimpleMemberDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             ));
             when(crewParticipantQueryService.fetchAllRequests(any(), anyLong(), any(Pageable.class)))
                     .thenReturn(SERVICE_DTOS);
@@ -208,7 +209,7 @@ class CrewParticipantControllerTest extends PresentationLayerTestSupport {
                             CREW_INTRODUCE_VALUE,
                             CREW_KAKAO_LINK_VALUE,
                             CREW_IMAGE_LINK_VALUE,
-                            new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
+                            new SimpleMemberDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
                     )
             ));
             when(crewParticipantQueryService.fetchAllCrewRequests(any())).thenReturn(SERVICE_DTOS);

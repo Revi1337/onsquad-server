@@ -22,6 +22,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static revi1337.onsquad.category.domain.vo.CategoryType.GAME;
 import static revi1337.onsquad.category.domain.vo.CategoryType.MOVIE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.SquadValueFixture.SQUAD_ADDRESS_DETAIL_VALUE;
@@ -40,7 +41,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.application.dto.SimpleSquadDto;
@@ -126,10 +127,11 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             SQUAD_KAKAO_LINK_VALUE,
                             SQUAD_DISCORD_LINK_VALUE,
                             List.of(GAME.getText(), MOVIE.getText()),
-                            new SimpleMemberInfoDto(
+                            new SimpleMemberDto(
                                     2L,
                                     null,
                                     ANDONG_NICKNAME_VALUE,
+                                    ANDONG_INTRODUCE_VALUE,
                                     ANDONG_MBTI_VALUE
                             )
                     )
@@ -173,10 +175,11 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                     SQUAD_KAKAO_LINK_VALUE,
                     SQUAD_DISCORD_LINK_VALUE,
                     List.of(GAME.getText(), MOVIE.getText()),
-                    new SimpleMemberInfoDto(
+                    new SimpleMemberDto(
                             2L,
                             null,
                             ANDONG_NICKNAME_VALUE,
+                            ANDONG_INTRODUCE_VALUE,
                             ANDONG_MBTI_VALUE
                     )
             ));
@@ -221,10 +224,11 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             20,
                             8,
                             List.of(GAME.getText(), MOVIE.getText()),
-                            new SimpleMemberInfoDto(
+                            new SimpleMemberDto(
                                     2L,
                                     null,
                                     ANDONG_NICKNAME_VALUE,
+                                    ANDONG_INTRODUCE_VALUE,
                                     ANDONG_MBTI_VALUE
                             )
                     )
