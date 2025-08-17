@@ -31,7 +31,7 @@ import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 
-@Import({CrewMemberQueryDslRepository.class, CrewMemberRepositoryImpl.class})
+@Import({CrewMemberQueryDslRepository.class, CrewMemberRepositoryImpl.class}) // TODO 테스트 분리 필요.
 class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired

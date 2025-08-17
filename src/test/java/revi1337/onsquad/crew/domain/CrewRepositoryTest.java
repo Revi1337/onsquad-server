@@ -7,6 +7,7 @@ import static revi1337.onsquad.common.fixture.CrewFixture.CREW;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_1;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_2;
 import static revi1337.onsquad.common.fixture.CrewFixture.CREW_3;
+import static revi1337.onsquad.common.fixture.CrewFixture.CREW_4;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_DETAIL;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME;
@@ -29,14 +30,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
+import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewMemberQueryDslRepository;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepositoryImpl;
-import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 import revi1337.onsquad.member.domain.MemberRepositoryImpl;
@@ -44,6 +47,7 @@ import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
 
+// TODO 테스트 분리 필요.
 @Import({
         CrewRepositoryImpl.class,
         MemberRepositoryImpl.class,
@@ -55,6 +59,9 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
 
     @Autowired
     private CrewRepository crewRepository;
+
+    @Autowired
+    private CrewQueryDslRepository crewQueryDslRepository;
 
     @Autowired
     private CrewMemberRepository crewMemberRepository;
@@ -154,7 +161,7 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
             crewMemberRepository.save(CrewMember.forGeneral(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberRepository.save(CrewMember.forGeneral(CREW2, ANDONG, NOW.plusMinutes(1)));
 
-            List<EnrolledCrewDomainDto> DTOS = crewMemberRepository.fetchEnrolledCrewsByMemberId(REVI.getId());
+            List<EnrolledCrewDomainDto> DTOS = crewQueryDslRepository.fetchEnrolledCrewsByMemberId(REVI.getId());
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);
@@ -183,6 +190,31 @@ class CrewRepositoryTest extends PersistenceLayerTestSupport {
                 assertThat(DTOS.get(2).owner().nickname()).isEqualTo(REVI_NICKNAME);
                 assertThat(DTOS.get(2).owner().mbti()).isSameAs(REVI_MBTI);
             });
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 개설한 크루 DTO 조회를 테스트한다.")
+    class FetchCrewsByMemberId {
+
+        @Test
+        @DisplayName("내가 개설한 크루 DTO 조회에 성공한다.")
+        void success() {
+            Member ANDONG = memberJpaRepository.save(ANDONG());
+            Member KWANGWON = memberJpaRepository.save(KWANGWON());
+            crewRepository.save(CREW_1(ANDONG));
+            crewRepository.save(CREW_2(ANDONG));
+            Crew CREW3 = crewRepository.save(CREW_3(KWANGWON));
+            Crew CREW4 = crewRepository.save(CREW_4(KWANGWON));
+            PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
+
+            Page<CrewDomainDto> DTOS = crewQueryDslRepository.fetchCrewsByMemberId(KWANGWON.getId(), PAGE_REQUEST);
+
+            assertThat(DTOS).hasSize(2);
+            assertThat(DTOS.getContent().get(0).getId()).isEqualTo(CREW4.getId());
+            assertThat(DTOS.getContent().get(0).getCrewOwner().id()).isEqualTo(KWANGWON.getId());
+            assertThat(DTOS.getContent().get(1).getId()).isEqualTo(CREW3.getId());
+            assertThat(DTOS.getContent().get(1).getCrewOwner().id()).isEqualTo(KWANGWON.getId());
         }
     }
 }

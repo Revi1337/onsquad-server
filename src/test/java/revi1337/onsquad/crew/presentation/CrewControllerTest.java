@@ -61,6 +61,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockMultipartFile;
@@ -71,10 +72,10 @@ import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
+import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
-import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 
@@ -267,7 +268,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             true
                     )
             );
-            when(crewQueryService.findCrewById(any(), anyLong())).thenReturn(CREW_INFO);
+            when(crewQueryService.findCrewById(anyLong(), anyLong())).thenReturn(CREW_INFO);
 
             mockMvc.perform(get("/api/crews/{crewId}", 1L)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -551,11 +552,58 @@ class CrewControllerTest extends PresentationLayerTestSupport {
     }
 
     @Nested
-    @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 들 조회를 테스트한다.")
-    class FetchAllJoinedCrews {
+    @DisplayName("내가 생성한 Crew 조회를 문서화한다.")
+    class FetchOwnedCrews {
 
         @Test
-        @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 들 조회에 성공한다.")
+        @DisplayName("내가 생성한 Crew 조회에 성공한다.")
+        void success() throws Exception {
+            CrewDto CREW_INFO = new CrewDto(
+                    1L,
+                    CREW_NAME_VALUE,
+                    CREW_INTRODUCE_VALUE,
+                    CREW_DETAIL_VALUE,
+                    CREW_IMAGE_LINK_VALUE,
+                    CREW_KAKAO_LINK_VALUE,
+                    List.of(HashtagType.ACTIVE.getText()),
+                    1L,
+                    new SimpleMemberInfoDto(
+                            1L,
+                            null,
+                            REVI_NICKNAME_VALUE, ISTP.name()),
+                    null
+            );
+            List<CrewDto> CREW_INFOS = List.of(CREW_INFO);
+            PageRequest PAGE_REQUEST = PageRequest.of(1, 1);
+            when(crewQueryService.fetchOwnedCrews(1L, PAGE_REQUEST)).thenReturn(CREW_INFOS);
+
+            mockMvc.perform(get("/api/crews/me/owned")
+                            .param("page", String.valueOf(PAGE_REQUEST.getPageNumber() + 1))
+                            .param("size", String.valueOf(PAGE_REQUEST.getPageSize()))
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andDo(document("crew/success/me-owned",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            queryParameters(
+                                    parameterWithName("page").description("페이지").optional(),
+                                    parameterWithName("size").description("페이지 당 사이즈").optional()
+                            ),
+                            responseBody()
+                    ));
+
+            verify(crewQueryService, times(1)).fetchOwnedCrews(1L, PAGE_REQUEST);
+        }
+    }
+
+    @Nested
+    @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 조회를 문서화한다.")
+    class FetchMyParticipants {
+
+        @Test
+        @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 조회를 문서화에 성공한다.")
         void success() throws Exception {
             EnrolledCrewDto SERVICE_DTO1 = new EnrolledCrewDto(
                     1L,
@@ -572,20 +620,20 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     new SimpleMemberInfoDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_MBTI_VALUE)
             );
             List<EnrolledCrewDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
-            when(crewQueryService.fetchMyParticipants(any())).thenReturn(SERVICE_DTOS);
+            when(crewQueryService.fetchParticipantCrews(any())).thenReturn(SERVICE_DTOS);
 
-            mockMvc.perform(get("/api/crews/me")
+            mockMvc.perform(get("/api/crews/me/participants")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
-                    .andDo(document("crew/success/me",
+                    .andDo(document("crew/success/me-participants",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             responseBody()
                     ));
 
-            verify(crewQueryService).fetchMyParticipants(any());
+            verify(crewQueryService, times(1)).fetchParticipantCrews(any());
         }
     }
 }
