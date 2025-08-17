@@ -25,7 +25,7 @@ import revi1337.onsquad.member.presentation.dto.request.MemberCreateRequest;
 import revi1337.onsquad.member.presentation.dto.request.MemberPasswordUpdateRequest;
 import revi1337.onsquad.member.presentation.dto.request.MemberUpdateRequest;
 import revi1337.onsquad.member.presentation.dto.response.DuplicateResponse;
-import revi1337.onsquad.member.presentation.dto.response.MemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.MemberResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -67,14 +67,14 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<RestResponse<MemberInfoResponse>> findMember(
+    public ResponseEntity<RestResponse<MemberResponse>> findMember(
             @Authenticate CurrentMember currentMember
     ) {
-        MemberInfoResponse memberInfoResponse = MemberInfoResponse.from(
+        MemberResponse memberResponse = MemberResponse.from(
                 memberQueryService.findMember(currentMember.id())
         );
 
-        return ResponseEntity.ok().body(RestResponse.success(memberInfoResponse));
+        return ResponseEntity.ok().body(RestResponse.success(memberResponse));
     }
 
     @PutMapping("/me")

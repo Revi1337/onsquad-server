@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.vo.Introduce;
 import revi1337.onsquad.member.domain.vo.Mbti;
 import revi1337.onsquad.member.domain.vo.Nickname;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
@@ -32,6 +33,7 @@ public class SquadCommentJdbcRepository {
                 "        squad_comment.crew_member_id, " +
                 "        member.id AS comment_creator_id, " +
                 "        member.nickname AS comment_creator_nickname, " +
+                "        member.introduce AS comment_creator_introduce, " +
                 "        member.mbti AS comment_creator_mbti, " +
                 "        ROW_NUMBER() OVER (PARTITION BY squad_comment.parent_id ORDER BY squad_comment.created_at DESC) AS rn "
                 +
@@ -65,6 +67,7 @@ public class SquadCommentJdbcRepository {
                     new SimpleMemberDomainDto(
                             rs.getLong("comment_creator_id"),
                             new Nickname(rs.getString("comment_creator_nickname")),
+                            new Introduce(rs.getString("comment_creator_introduce")),
                             mbti
                     )
             );

@@ -1,14 +1,14 @@
 package revi1337.onsquad.crew.application.dto;
 
 import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 public record EnrolledCrewDto(
         Long id,
         String name,
         String imageUrl,
         boolean isOwner,
-        SimpleMemberInfoDto owner
+        SimpleMemberDto owner
 ) {
     public static EnrolledCrewDto from(EnrolledCrewDomainDto crewDomainDto) {
         return new EnrolledCrewDto(
@@ -16,7 +16,7 @@ public record EnrolledCrewDto(
                 crewDomainDto.name().getValue(),
                 crewDomainDto.imageUrl(),
                 crewDomainDto.isOwner(),
-                SimpleMemberInfoDto.from(crewDomainDto.owner())
+                SimpleMemberDto.from(crewDomainDto.owner())
         );
     }
 }

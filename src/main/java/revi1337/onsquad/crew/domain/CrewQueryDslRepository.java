@@ -59,6 +59,7 @@ public class CrewQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ))
@@ -96,6 +97,7 @@ public class CrewQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ))
@@ -127,6 +129,7 @@ public class CrewQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 crewCreator.id,
                                 crewCreator.nickname,
+                                crewCreator.introduce,
                                 crewCreator.mbti
                         )
                 ))
@@ -159,6 +162,7 @@ public class CrewQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ))
@@ -188,6 +192,7 @@ public class CrewQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 crewCreator.id,
                                 crewCreator.nickname,
+                                crewCreator.introduce,
                                 crewCreator.mbti
                         )
                 ))
@@ -223,6 +228,7 @@ public class CrewQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ))

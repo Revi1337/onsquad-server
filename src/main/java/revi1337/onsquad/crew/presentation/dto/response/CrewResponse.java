@@ -3,7 +3,7 @@ package revi1337.onsquad.crew.presentation.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import revi1337.onsquad.crew.application.dto.CrewDto;
-import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberResponse;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CrewResponse(
@@ -15,7 +15,7 @@ public record CrewResponse(
         String kakaoLink,
         Long memberCount,
         List<String> hashtags,
-        SimpleMemberInfoResponse owner
+        SimpleMemberResponse owner
 ) {
     public static CrewResponse from(CrewDto crewDto) {
         return new CrewResponse(
@@ -27,7 +27,7 @@ public record CrewResponse(
                 crewDto.kakaoLink(),
                 crewDto.memberCnt(),
                 crewDto.hashtagTypes(),
-                SimpleMemberInfoResponse.from(crewDto.owner())
+                SimpleMemberResponse.from(crewDto.owner())
         );
     }
 }

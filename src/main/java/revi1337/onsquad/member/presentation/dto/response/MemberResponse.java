@@ -2,7 +2,7 @@ package revi1337.onsquad.member.presentation.dto.response;
 
 import revi1337.onsquad.member.application.dto.MemberInfoDto;
 
-public record MemberInfoResponse(
+public record MemberResponse(
         Long id,
         String email,
         String nickname,
@@ -14,8 +14,8 @@ public record MemberInfoResponse(
         String address,
         String addressDetail
 ) {
-    public static MemberInfoResponse from(MemberInfoDto memberInfoDto) {
-        return new MemberInfoResponse(
+    public static MemberResponse from(MemberInfoDto memberInfoDto) {
+        return new MemberResponse(
                 memberInfoDto.id(),
                 memberInfoDto.email(),
                 memberInfoDto.nickname(),

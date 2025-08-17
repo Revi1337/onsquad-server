@@ -38,6 +38,7 @@ public class CrewParticipantQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ),
@@ -59,6 +60,7 @@ public class CrewParticipantQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         ),
                         new QCrewRequestDomainDto(

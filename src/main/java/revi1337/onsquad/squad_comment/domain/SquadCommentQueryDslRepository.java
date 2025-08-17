@@ -33,6 +33,7 @@ public class SquadCommentQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         )
                 ))
@@ -60,6 +61,7 @@ public class SquadCommentQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         )
                 ))
@@ -92,6 +94,7 @@ public class SquadCommentQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         )
                 ))

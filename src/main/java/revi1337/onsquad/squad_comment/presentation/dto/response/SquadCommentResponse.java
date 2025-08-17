@@ -3,7 +3,7 @@ package revi1337.onsquad.squad_comment.presentation.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import java.util.List;
-import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,7 +14,7 @@ public record SquadCommentResponse(
         boolean deleted,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        SimpleMemberInfoResponse writer,
+        SimpleMemberResponse writer,
         List<SquadCommentResponse> replies
 ) {
     public static SquadCommentResponse from(SquadCommentDto dto) {
@@ -25,7 +25,7 @@ public record SquadCommentResponse(
                 dto.deleted(),
                 dto.createdAt(),
                 dto.updatedAt(),
-                dto.writer() != null ? SimpleMemberInfoResponse.from(dto.writer()) : null,
+                dto.writer() != null ? SimpleMemberResponse.from(dto.writer()) : null,
                 dto.replies().stream()
                         .map(SquadCommentResponse::from)
                         .toList()

@@ -71,6 +71,7 @@ public class SquadMemberQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         )));
@@ -94,6 +95,7 @@ public class SquadMemberQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         CREW_CREATOR.id,
                                         CREW_CREATOR.nickname,
+                                        CREW_CREATOR.introduce,
                                         CREW_CREATOR.mbti
                                 )
                         )));
@@ -118,6 +120,7 @@ public class SquadMemberQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         )
                 ))
@@ -150,6 +153,7 @@ public class SquadMemberQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         SQUAD_CREATOR.id,
                                         SQUAD_CREATOR.nickname,
+                                        SQUAD_CREATOR.introduce,
                                         SQUAD_CREATOR.mbti
                                 ),
                                 list(new QSquadMemberDomainDto(
@@ -157,6 +161,7 @@ public class SquadMemberQueryDslRepository {
                                         new QSimpleMemberDomainDto(
                                                 member.id,
                                                 member.nickname,
+                                                member.introduce,
                                                 member.mbti
                                         )
                                 ))
@@ -195,6 +200,7 @@ public class SquadMemberQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         SQUAD_CREATOR.id,
                                         SQUAD_CREATOR.nickname,
+                                        SQUAD_CREATOR.introduce,
                                         SQUAD_CREATOR.mbti
                                 ),
                                 list(new QSquadMemberDomainDto(
@@ -202,6 +208,7 @@ public class SquadMemberQueryDslRepository {
                                         new QSimpleMemberDomainDto(
                                                 member.id,
                                                 member.nickname,
+                                                member.introduce,
                                                 member.mbti
                                         )
                                 ))

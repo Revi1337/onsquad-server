@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_comment.domain.dto;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.squad_comment.domain.SquadComment;
 
@@ -10,7 +10,7 @@ public record SimpleSquadCommentDto(
         String content,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        SimpleMemberInfoDto memberInfo
+        SimpleMemberDto memberInfo
 ) {
     public static SimpleSquadCommentDto from(SquadComment squadComment, Member member) {
         return new SimpleSquadCommentDto(
@@ -18,7 +18,7 @@ public record SimpleSquadCommentDto(
                 squadComment.getContent(),
                 squadComment.getCreatedAt(),
                 squadComment.getUpdatedAt(),
-                SimpleMemberInfoDto.from(member)
+                SimpleMemberDto.from(member)
         );
     }
 }

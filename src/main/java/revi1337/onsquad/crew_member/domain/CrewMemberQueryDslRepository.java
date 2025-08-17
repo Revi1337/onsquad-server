@@ -27,6 +27,7 @@ public class CrewMemberQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         ),
                         crewMember.requestAt

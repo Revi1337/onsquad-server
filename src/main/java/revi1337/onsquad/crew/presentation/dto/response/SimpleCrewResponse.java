@@ -2,7 +2,7 @@ package revi1337.onsquad.crew.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import revi1337.onsquad.crew.application.dto.SimpleCrewDto;
-import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberResponse;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SimpleCrewResponse(
@@ -11,7 +11,7 @@ public record SimpleCrewResponse(
         String introduce,
         String kakaoLink,
         String imageUrl,
-        SimpleMemberInfoResponse owner
+        SimpleMemberResponse owner
 ) {
     public static SimpleCrewResponse from(SimpleCrewDto simpleCrewDto) {
         return new SimpleCrewResponse(
@@ -20,7 +20,7 @@ public record SimpleCrewResponse(
                 simpleCrewDto.introduce(),
                 simpleCrewDto.kakaoLink(),
                 simpleCrewDto.imageUrl(),
-                SimpleMemberInfoResponse.from(simpleCrewDto.owner())
+                SimpleMemberResponse.from(simpleCrewDto.owner())
         );
     }
 }

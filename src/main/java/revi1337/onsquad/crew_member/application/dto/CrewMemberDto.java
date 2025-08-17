@@ -2,16 +2,16 @@ package revi1337.onsquad.crew_member.application.dto;
 
 import java.time.LocalDateTime;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 public record CrewMemberDto(
         LocalDateTime participantAt,
-        SimpleMemberInfoDto member
+        SimpleMemberDto member
 ) {
     public static CrewMemberDto from(CrewMemberDomainDto crewMemberDomainDto) {
         return new CrewMemberDto(
                 crewMemberDomainDto.participantAt(),
-                SimpleMemberInfoDto.from(crewMemberDomainDto.memberInfo())
+                SimpleMemberDto.from(crewMemberDomainDto.memberInfo())
         );
     }
 }

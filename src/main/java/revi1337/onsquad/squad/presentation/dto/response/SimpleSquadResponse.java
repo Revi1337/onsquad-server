@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad.presentation.dto.response;
 
 import java.util.List;
-import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.application.dto.SimpleSquadDto;
 
 public record SimpleSquadResponse(
@@ -10,7 +10,7 @@ public record SimpleSquadResponse(
         int capacity,
         int remain,
         List<String> categories,
-        SimpleMemberInfoResponse leader
+        SimpleMemberResponse leader
 ) {
     public static SimpleSquadResponse from(SimpleSquadDto squadDto) {
         return new SimpleSquadResponse(
@@ -19,7 +19,7 @@ public record SimpleSquadResponse(
                 squadDto.capacity(),
                 squadDto.remain(),
                 squadDto.categories(),
-                SimpleMemberInfoResponse.from(squadDto.leader())
+                SimpleMemberResponse.from(squadDto.leader())
         );
     }
 }

@@ -3,7 +3,7 @@ package revi1337.onsquad.squad_participant.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.squad_participant.domain.dto.SquadParticipantDomainDto;
 
 public record SquadParticipantDto(
@@ -12,7 +12,7 @@ public record SquadParticipantDto(
         int capacity,
         int remain,
         List<String> categories,
-        SimpleMemberInfoDto squadOwner,
+        SimpleMemberDto squadOwner,
         RequestParticipantDto request
 ) {
     public static SquadParticipantDto from(SquadParticipantDomainDto squadParticipantDomainDto) {
@@ -24,7 +24,7 @@ public record SquadParticipantDto(
                 squadParticipantDomainDto.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberInfoDto.from(squadParticipantDomainDto.squadOwner()),
+                SimpleMemberDto.from(squadParticipantDomainDto.squadOwner()),
                 RequestParticipantDto.from(squadParticipantDomainDto.request())
         );
     }

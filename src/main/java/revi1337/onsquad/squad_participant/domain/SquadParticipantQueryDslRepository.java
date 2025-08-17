@@ -64,6 +64,7 @@ public class SquadParticipantQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 ),
                                 list(new QMySquadRequestDomainDto_SquadWithParticipant(
@@ -74,6 +75,7 @@ public class SquadParticipantQueryDslRepository {
                                         new QSimpleMemberDomainDto(
                                                 SQUAD_CREATOR.id,
                                                 SQUAD_CREATOR.nickname,
+                                                SQUAD_CREATOR.introduce,
                                                 SQUAD_CREATOR.mbti
                                         ),
                                         new QMySquadRequestDomainDto_SquadWithParticipant_RequestParticipantDomainDto(
@@ -95,6 +97,7 @@ public class SquadParticipantQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         )
                 ))
@@ -142,6 +145,7 @@ public class SquadParticipantQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         SQUAD_CREATOR.id,
                                         SQUAD_CREATOR.nickname,
+                                        SQUAD_CREATOR.introduce,
                                         SQUAD_CREATOR.mbti
                                 ),
                                 new QSquadParticipantDomainDto_RequestParticipantDomainDto(
@@ -167,6 +171,7 @@ public class SquadParticipantQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         CREW_CREATOR.id,
                                         CREW_CREATOR.nickname,
+                                        CREW_CREATOR.introduce,
                                         CREW_CREATOR.mbti
                                 )
                         ))

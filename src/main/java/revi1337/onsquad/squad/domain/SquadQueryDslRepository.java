@@ -64,6 +64,7 @@ public class SquadQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ))
@@ -114,6 +115,7 @@ public class SquadQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ))
@@ -153,6 +155,7 @@ public class SquadQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         )))
@@ -219,6 +222,7 @@ public class SquadQueryDslRepository {
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
+                                member.introduce,
                                 member.mbti
                         )
                 ))
@@ -261,6 +265,7 @@ public class SquadQueryDslRepository {
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
+                                        member.introduce,
                                         member.mbti
                                 )
                         ))

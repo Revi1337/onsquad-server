@@ -3,7 +3,7 @@ package revi1337.onsquad.crew.application.dto;
 import java.util.List;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
+import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 public record CrewDto(
         Long id,
@@ -14,7 +14,7 @@ public record CrewDto(
         String kakaoLink,
         List<String> hashtagTypes,
         Long memberCnt,
-        SimpleMemberInfoDto owner,
+        SimpleMemberDto owner,
         Boolean alreadyJoin
 ) {
     public static CrewDto from(CrewDomainDto crewDomainDto) {
@@ -29,7 +29,7 @@ public record CrewDto(
                         .map(HashtagType::getText)
                         .toList(),
                 crewDomainDto.getMemberCnt(),
-                SimpleMemberInfoDto.from(crewDomainDto.getCrewOwner()),
+                SimpleMemberDto.from(crewDomainDto.getCrewOwner()),
                 null
         );
     }

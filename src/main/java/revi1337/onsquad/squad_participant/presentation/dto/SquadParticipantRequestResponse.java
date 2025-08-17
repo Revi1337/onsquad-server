@@ -1,14 +1,14 @@
 package revi1337.onsquad.squad_participant.presentation.dto;
 
 import java.util.List;
-import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad_participant.application.dto.SquadParticipantRequestDto;
 
 public record SquadParticipantRequestResponse(
         Long crewId,
         String crewName,
         String imageUrl,
-        SimpleMemberInfoResponse crewOwner,
+        SimpleMemberResponse crewOwner,
         List<SquadParticipantResponse> squads
 ) {
     public static SquadParticipantRequestResponse from(SquadParticipantRequestDto squadParticipantRequestDto) {
@@ -16,7 +16,7 @@ public record SquadParticipantRequestResponse(
                 squadParticipantRequestDto.crewId(),
                 squadParticipantRequestDto.crewName(),
                 squadParticipantRequestDto.imageUrl(),
-                SimpleMemberInfoResponse.from(squadParticipantRequestDto.crewOwner()),
+                SimpleMemberResponse.from(squadParticipantRequestDto.crewOwner()),
                 squadParticipantRequestDto.squads().stream()
                         .map(SquadParticipantResponse::from)
                         .toList()

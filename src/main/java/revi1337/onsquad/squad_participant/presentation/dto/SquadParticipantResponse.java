@@ -2,7 +2,7 @@ package revi1337.onsquad.squad_participant.presentation.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
+import revi1337.onsquad.member.presentation.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad_participant.application.dto.SquadParticipantDto;
 
 public record SquadParticipantResponse(
@@ -11,7 +11,7 @@ public record SquadParticipantResponse(
         int capacity,
         int remain,
         List<String> categories,
-        SimpleMemberInfoResponse owner,
+        SimpleMemberResponse owner,
         RequestParticipantResponse request
 ) {
     public static SquadParticipantResponse from(SquadParticipantDto squadParticipantDto) {
@@ -21,7 +21,7 @@ public record SquadParticipantResponse(
                 squadParticipantDto.capacity(),
                 squadParticipantDto.remain(),
                 squadParticipantDto.categories(),
-                SimpleMemberInfoResponse.from(squadParticipantDto.squadOwner()),
+                SimpleMemberResponse.from(squadParticipantDto.squadOwner()),
                 RequestParticipantResponse.from(squadParticipantDto.request())
         );
     }
