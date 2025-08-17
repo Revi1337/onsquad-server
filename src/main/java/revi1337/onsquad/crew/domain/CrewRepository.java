@@ -2,10 +2,12 @@ package revi1337.onsquad.crew.domain;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
+import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 
@@ -24,6 +26,10 @@ public interface CrewRepository {
     Optional<CrewDomainDto> findCrewById(Long id);
 
     Page<CrewDomainDto> fetchCrewsByName(String name, Pageable pageable);
+
+    Page<CrewDomainDto> fetchOwnedByMemberId(Long memberId, Pageable pageable);
+
+    List<EnrolledCrewDomainDto> fetchParticipantsByMemberId(Long memberId);
 
     default CrewDomainDto getCrewById(Long id) {
         return findCrewById(id)

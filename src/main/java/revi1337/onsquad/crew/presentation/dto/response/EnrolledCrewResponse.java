@@ -1,6 +1,6 @@
-package revi1337.onsquad.crew_member.presentation.dto.response;
+package revi1337.onsquad.crew.presentation.dto.response;
 
-import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
+import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.member.presentation.dto.response.SimpleMemberInfoResponse;
 
 public record EnrolledCrewResponse(

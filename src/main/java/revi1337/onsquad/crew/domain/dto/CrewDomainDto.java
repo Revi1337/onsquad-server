@@ -3,6 +3,7 @@ package revi1337.onsquad.crew.domain.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import revi1337.onsquad.crew.domain.vo.Detail;
@@ -38,6 +39,10 @@ public class CrewDomainDto {
         this.hashtagTypes = hashtagTypes;
         this.memberCnt = memberCnt;
         this.crewOwner = crewOwner;
+    }
+
+    public void addHashtagTypes(List<HashtagType> hashtagTypes) {
+        this.hashtagTypes.addAll(hashtagTypes);
     }
 
     @QueryProjection

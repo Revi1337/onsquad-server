@@ -1,6 +1,6 @@
-package revi1337.onsquad.crew_member.application.dto;
+package revi1337.onsquad.crew.application.dto;
 
-import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
+import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.member.application.dto.SimpleMemberInfoDto;
 
 public record EnrolledCrewDto(

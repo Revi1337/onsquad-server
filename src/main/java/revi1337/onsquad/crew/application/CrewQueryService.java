@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.application.dto.CrewDto;
+import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew_member.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
 
 @Transactional(readOnly = true)
@@ -42,8 +42,14 @@ public class CrewQueryService {
                 .toList();
     }
 
-    public List<EnrolledCrewDto> fetchMyParticipants(Long memberId) {
-        return crewMemberRepository.fetchEnrolledCrewsByMemberId(memberId).stream()
+    public List<CrewDto> fetchOwnedCrews(Long memberId, Pageable pageable) {
+        return crewRepository.fetchOwnedByMemberId(memberId, pageable).stream()
+                .map(CrewDto::from)
+                .toList();
+    }
+
+    public List<EnrolledCrewDto> fetchParticipantCrews(Long memberId) {
+        return crewRepository.fetchParticipantsByMemberId(memberId).stream()
                 .map(EnrolledCrewDto::from)
                 .toList();
     }

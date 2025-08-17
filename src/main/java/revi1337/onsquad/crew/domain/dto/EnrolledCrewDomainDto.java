@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.domain.dto;
+package revi1337.onsquad.crew.domain.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import revi1337.onsquad.crew.domain.vo.Name;

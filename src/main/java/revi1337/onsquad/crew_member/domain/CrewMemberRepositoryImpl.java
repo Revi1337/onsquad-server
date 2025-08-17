@@ -1,13 +1,11 @@
 package revi1337.onsquad.crew_member.domain;
 
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.EnrolledCrewDomainDto;
 
 @RequiredArgsConstructor
 @Repository
@@ -49,11 +47,6 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     @Override
     public boolean existsParticipantCrewMember(Long memberId) {
         return crewMemberJpaRepository.existsParticipantCrewMember(memberId);
-    }
-
-    @Override
-    public List<EnrolledCrewDomainDto> fetchEnrolledCrewsByMemberId(Long memberId) {
-        return crewMemberQueryDslRepository.fetchEnrolledCrewsByMemberId(memberId);
     }
 
     @Override

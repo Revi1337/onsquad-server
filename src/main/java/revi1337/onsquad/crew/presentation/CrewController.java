@@ -31,7 +31,7 @@ import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
 import revi1337.onsquad.crew.presentation.dto.response.CrewResponse;
 import revi1337.onsquad.crew.presentation.dto.response.CrewWithParticipantStateResponse;
 import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
-import revi1337.onsquad.crew_member.presentation.dto.response.EnrolledCrewResponse;
+import revi1337.onsquad.crew.presentation.dto.response.EnrolledCrewResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -133,15 +133,27 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.success(crewResponses));
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me/owned")
+    public ResponseEntity<RestResponse<List<CrewResponse>>> fetchOwnedCrews(
+            @PageableDefault Pageable pageable,
+            @Authenticate CurrentMember currentMember
+    ) {
+        List<CrewResponse> ownCrewResponses = crewQueryService.fetchOwnedCrews(currentMember.id(), pageable).stream()
+                .map(CrewResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(RestResponse.success(ownCrewResponses));
+    }
+
+    @GetMapping("/me/participants")
     public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchMyParticipants(
             @Authenticate CurrentMember currentMember
     ) {
-        List<EnrolledCrewResponse> ownedCrewResponses = crewQueryService
-                .fetchMyParticipants(currentMember.id()).stream()
+        List<EnrolledCrewResponse> participantCrewResponses = crewQueryService
+                .fetchParticipantCrews(currentMember.id()).stream()
                 .map(EnrolledCrewResponse::from)
                 .toList();
 
-        return ResponseEntity.ok().body(RestResponse.success(ownedCrewResponses));
+        return ResponseEntity.ok().body(RestResponse.success(participantCrewResponses));
     }
 }
