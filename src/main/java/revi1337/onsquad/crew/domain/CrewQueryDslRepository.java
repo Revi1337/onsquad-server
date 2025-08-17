@@ -31,12 +31,41 @@ import revi1337.onsquad.hashtag.domain.vo.HashtagType;
 import revi1337.onsquad.member.domain.QMember;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
-// TODO 공통 메서드 분리 필요.
 @RequiredArgsConstructor
 @Repository
 public class CrewQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    public Optional<CrewDomainDto> findCrewById(Long id) { // TODO 성능 문제 있을거임. 고쳐야 함.
+        Map<Long, CrewDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
+                .from(crew)
+                .innerJoin(crew.member, member).on(crew.id.eq(id))
+                .leftJoin(crew.hashtags, crewHashtag)
+                .leftJoin(crewHashtag.hashtag, hashtag)
+                .transform(groupBy(crew.id)
+                        .as(new QCrewDomainDto(
+                                crew.id,
+                                crew.name,
+                                crew.introduce,
+                                crew.detail,
+                                crew.imageUrl,
+                                crew.kakaoLink,
+                                list(hashtag.hashtagType),
+                                select(crewMember.count())
+                                        .from(crewMember)
+                                        .where(crewMember.crew.id.eq(crew.id)),
+                                new QSimpleMemberDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.introduce,
+                                        member.mbti
+                                )
+                        ))
+                );
+
+        return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
+    }
 
     public Page<CrewDomainDto> fetchCrewsByName(String name, Pageable pageable) {
         List<CrewDomainDto> transformedCrewInfos = jpaQueryFactory
@@ -138,37 +167,6 @@ public class CrewQueryDslRepository {
                 .leftJoin(crew.crewMembers, crewMember).on(crewMember.member.id.eq(memberId))
                 .orderBy(crewMember.requestAt.desc())
                 .fetch();
-    }
-
-    @Deprecated
-    public Optional<CrewDomainDto> findCrewById(Long id) {
-        Map<Long, CrewDomainDto> crewInfoDomainDtoMap = jpaQueryFactory
-                .from(crew)
-                .innerJoin(crew.member, member).on(crew.id.eq(id))
-                .leftJoin(crew.hashtags, crewHashtag)
-                .leftJoin(crewHashtag.hashtag, hashtag)
-                .transform(groupBy(crew.id)
-                        .as(new QCrewDomainDto(
-                                crew.id,
-                                crew.name,
-                                crew.introduce,
-                                crew.detail,
-                                crew.imageUrl,
-                                crew.kakaoLink,
-                                list(hashtag.hashtagType),
-                                select(crewMember.count())
-                                        .from(crewMember)
-                                        .where(crewMember.crew.id.eq(crew.id)),
-                                new QSimpleMemberDomainDto(
-                                        member.id,
-                                        member.nickname,
-                                        member.introduce,
-                                        member.mbti
-                                )
-                        ))
-                );
-
-        return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
     }
 
     /**

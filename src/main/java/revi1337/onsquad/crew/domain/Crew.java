@@ -4,6 +4,7 @@ import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -21,6 +22,7 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.vo.Detail;
 import revi1337.onsquad.crew.domain.vo.Introduce;
@@ -62,10 +64,12 @@ public class Crew extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @OnDelete(action = CASCADE)
     @BatchSize(size = HASHTAG_BATCH_SIZE)
     @OneToMany(mappedBy = "crew")
     private final List<CrewHashtag> hashtags = new ArrayList<>();
 
+    @OnDelete(action = CASCADE)
     @OneToMany(mappedBy = "crew", cascade = PERSIST)
     private final List<CrewMember> crewMembers = new ArrayList<>();
 
