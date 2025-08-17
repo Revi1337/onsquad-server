@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,5 +84,16 @@ public class SquadController {
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(squadResponses));
+    }
+
+    @DeleteMapping("/{crewId}/squads/{squadId}")
+    public ResponseEntity<RestResponse<String>> deleteSquad(
+            @PathVariable Long crewId,
+            @PathVariable Long squadId,
+            @Authenticate CurrentMember currentMember
+    ) {
+        squadCommandService.deleteSquad(currentMember.id(), crewId, squadId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 }

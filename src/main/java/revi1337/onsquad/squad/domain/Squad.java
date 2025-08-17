@@ -33,6 +33,7 @@ import revi1337.onsquad.squad.domain.vo.Content;
 import revi1337.onsquad.squad.domain.vo.Title;
 import revi1337.onsquad.squad.error.exception.SquadDomainException;
 import revi1337.onsquad.squad_category.domain.SquadCategory;
+import revi1337.onsquad.squad_comment.domain.SquadComment;
 import revi1337.onsquad.squad_member.domain.SquadMember;
 
 @Getter
@@ -83,6 +84,10 @@ public class Squad extends BaseEntity {
     @OnDelete(action = CASCADE)
     @OneToMany(mappedBy = "squad", cascade = {PERSIST, MERGE})
     private final List<SquadMember> members = new ArrayList<>();
+
+    @OnDelete(action = CASCADE)
+    @OneToMany(mappedBy = "squad")
+    private final List<SquadComment> comments = new ArrayList<>();
 
     public static Squad create(SquadMetadata metadata, CrewMember crewMember, Crew crew) {
         Squad squad = metadata.toEntity();

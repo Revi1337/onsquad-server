@@ -26,6 +26,8 @@ public interface SquadRepository {
 
     Page<SquadWithLeaderStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable);
 
+    void deleteById(Long id);
+
     default Squad getById(Long id) {
         return findById(id)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(NOTFOUND));

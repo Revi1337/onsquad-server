@@ -56,4 +56,11 @@ public abstract class SquadBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class CantDelete extends SquadBusinessException {
+
+        public CantDelete(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

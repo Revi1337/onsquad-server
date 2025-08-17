@@ -50,4 +50,9 @@ public class SquadRepositoryImpl implements SquadRepository {
     public Page<SquadWithLeaderStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
         return squadQueryDslRepository.fetchAllWithOwnerState(memberId, crewId, pageable);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        squadJpaRepository.deleteById(id);
+    }
 }
