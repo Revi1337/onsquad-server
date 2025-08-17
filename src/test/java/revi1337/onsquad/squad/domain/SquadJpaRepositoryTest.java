@@ -8,8 +8,6 @@ import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
 import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
 import static revi1337.onsquad.common.fixture.SquadMemberFixture.GENERAL_SQUAD_MEMBER;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,9 +35,6 @@ class SquadJpaRepositoryTest extends PersistenceLayerTestSupport {
     @Autowired
     private SquadMemberJpaRepository squadMemberJpaRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private SquadJpaRepository squadJpaRepository;
 
@@ -53,12 +48,26 @@ class SquadJpaRepositoryTest extends PersistenceLayerTestSupport {
         Member ANDONG = memberJpaRepository.save(ANDONG());
         CrewMember CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
         squadMemberJpaRepository.save(GENERAL_SQUAD_MEMBER(SQUAD, CREW_MEMBER));
-        entityManager.flush();
-        entityManager.clear();
+        clearPersistenceContext();
 
         Optional<Squad> SQUAD_AND_MEMBERS = squadJpaRepository.findByIdWithMembers(SQUAD.getId());
 
         assertThat(SQUAD_AND_MEMBERS).isPresent();
         assertThat(SQUAD_AND_MEMBERS.get().getMembers()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("스쿼드 삭제에 성공한다.")
+    void deleteById() {
+        Member REVI = memberJpaRepository.save(REVI());
+        Crew CREW = crewJpaRepository.save(CREW(REVI));
+        CrewMember OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
+        Squad SQUAD = squadJpaRepository.save(SQUAD(OWNER, CREW));
+        clearPersistenceContext();
+
+        squadJpaRepository.deleteById(SQUAD.getId());
+        clearPersistenceContext();
+
+        assertThat(squadJpaRepository.findById(SQUAD.getId())).isEmpty();
     }
 }

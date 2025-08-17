@@ -3,11 +3,13 @@ package revi1337.onsquad.squad.presentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -64,7 +66,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
     class NewSquad {
 
         @Test
-        @DisplayName("스쿼드 생성에 성공한다.")
+        @DisplayName("스쿼드 생성 문서화에 성공한다.")
         void success() throws Exception {
             SquadCreateRequest CREATE_REQUEST = new SquadCreateRequest(
                     SQUAD_TITLE_VALUE,
@@ -108,7 +110,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
     class FetchSquad {
 
         @Test
-        @DisplayName("스쿼드 조회에 성공한다.")
+        @DisplayName("스쿼드 조회 문서화에 성공한다.")
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
@@ -160,7 +162,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
     class FetchSquads {
 
         @Test
-        @DisplayName("스쿼드들 조회에 성공한다.")
+        @DisplayName("스쿼드들 조회를 문서화에 성공한다.")
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
@@ -213,7 +215,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
     class FetchSquadsWithOwnerState {
 
         @Test
-        @DisplayName("스쿼드 관리를 문서화한다.")
+        @DisplayName("스쿼드 관리를 문서화에 성공한다.")
         void success() throws Exception {
             Long CREW_ID = 1L;
             List<SquadWithLeaderStateDto> SERVICE_DTOS = List.of(new SquadWithLeaderStateDto(
@@ -250,6 +252,35 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             queryParameters(
                                     parameterWithName("page").description("페이지").optional(),
                                     parameterWithName("size").description("페이지 당 사이즈").optional()
+                            ),
+                            responseBody()
+                    ));
+        }
+    }
+
+    @Nested
+    @DisplayName("스쿼드 삭제를 문서화한다.")
+    class DeleteSquad {
+
+        @Test
+        @DisplayName("스쿼드 삭제 문서화에 성공한다.")
+        void success() throws Exception {
+            Long MEMBER_ID = 1L;
+            Long CREW_ID = 1L;
+            Long SQUAD_ID = 1L;
+            doNothing().when(squadCommandService).deleteSquad(MEMBER_ID, CREW_ID, SQUAD_ID);
+
+            mockMvc.perform(delete("/api/crews/{crewId}/squads/{squadId}", CREW_ID, SQUAD_ID)
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(204))
+                    .andDo(document("squad/success/delete",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            pathParameters(
+                                    parameterWithName("crewId").description("Crew 아이디"),
+                                    parameterWithName("squadId").description("Squad 아이디")
                             ),
                             responseBody()
                     ));
