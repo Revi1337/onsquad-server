@@ -35,6 +35,7 @@ import revi1337.onsquad.squad.error.exception.SquadDomainException;
 import revi1337.onsquad.squad_category.domain.SquadCategory;
 import revi1337.onsquad.squad_comment.domain.SquadComment;
 import revi1337.onsquad.squad_member.domain.SquadMember;
+import revi1337.onsquad.squad_participant.domain.SquadParticipant;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -88,6 +89,10 @@ public class Squad extends BaseEntity {
     @OnDelete(action = CASCADE)
     @OneToMany(mappedBy = "squad")
     private final List<SquadComment> comments = new ArrayList<>();
+
+    @OnDelete(action = CASCADE)
+    @OneToMany(mappedBy = "squad")
+    private final List<SquadParticipant> participants = new ArrayList<>();
 
     public static Squad create(SquadMetadata metadata, CrewMember crewMember, Crew crew) {
         Squad squad = metadata.toEntity();

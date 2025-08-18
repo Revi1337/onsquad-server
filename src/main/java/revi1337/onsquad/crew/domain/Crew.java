@@ -29,6 +29,7 @@ import revi1337.onsquad.crew.domain.vo.Introduce;
 import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtag;
 import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.crew_participant.domain.CrewParticipant;
 import revi1337.onsquad.member.domain.Member;
 
 @Getter
@@ -72,6 +73,10 @@ public class Crew extends BaseEntity {
     @OnDelete(action = CASCADE)
     @OneToMany(mappedBy = "crew", cascade = PERSIST)
     private final List<CrewMember> crewMembers = new ArrayList<>();
+
+    @OnDelete(action = CASCADE)
+    @OneToMany(mappedBy = "crew")
+    private final List<CrewParticipant> participants = new ArrayList<>();
 
     public static Crew create(Member owner, String name, String introduce, String detail, String kakaoLink, String imageUrl) {
         Crew crew = new Crew(name, introduce, detail, kakaoLink, imageUrl);
