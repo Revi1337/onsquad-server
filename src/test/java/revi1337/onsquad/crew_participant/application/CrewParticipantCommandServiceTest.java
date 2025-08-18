@@ -95,7 +95,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> crewParticipantCommandService.request(REVI.getId(), CREW.getId()))
-                    .isExactlyInstanceOf(CrewBusinessException.OwnerCantParticipant.class);
+                    .isExactlyInstanceOf(CrewBusinessException.AlreadyJoin.class);
         }
 
         @Test
@@ -126,7 +126,9 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             crewParticipantCommandService.acceptRequest(REVI.getId(), CREW.getId(), PARTICIPANT.getId());
+            clearPersistenceContext();
 
+            assertThat(crewJpaRepository.findById(CREW.getId()).get().countMembers()).isEqualTo(2L);
             assertThat(crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isPresent();
             assertThat(crewParticipantRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isEmpty();
         }

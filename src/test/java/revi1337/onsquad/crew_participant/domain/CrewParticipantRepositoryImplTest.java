@@ -85,6 +85,45 @@ class CrewParticipantRepositoryImplTest {
         }
     }
 
+    @Nested
+    @DisplayName("findWithCrewById & getWithCrewById 위임을 테스트한다.")
+    class FindWithCrewAndGetWithCrewById {
+
+        @Test
+        @DisplayName("findWithCrewById 위임에 성공한다.")
+        void findWithCrewById() {
+            Long participantId = 1L;
+            CrewParticipant crewParticipant = mock(CrewParticipant.class);
+            when(crewParticipantJpaRepository.findWithCrewById(participantId)).thenReturn(Optional.of(crewParticipant));
+
+            crewParticipantRepository.findWithCrewById(participantId);
+
+            verify(crewParticipantJpaRepository).findWithCrewById(participantId);
+        }
+
+        @Test
+        @DisplayName("getWithCrewById 위임에 성공한다.")
+        void getById() {
+            Long participantId = 1L;
+            CrewParticipant crewParticipant = mock(CrewParticipant.class);
+            when(crewParticipantJpaRepository.findWithCrewById(participantId)).thenReturn(Optional.of(crewParticipant));
+
+            crewParticipantRepository.getWithCrewById(participantId);
+
+            verify(crewParticipantJpaRepository).findWithCrewById(participantId);
+        }
+
+        @Test
+        @DisplayName("getById 를 호출했을 때, findById 의 결과가 없으면 실패한다.")
+        void getByIdFail() {
+            Long participantId = 1L;
+            when(crewParticipantJpaRepository.findWithCrewById(participantId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> crewParticipantRepository.getWithCrewById(participantId))
+                    .isExactlyInstanceOf(CrewParticipantBusinessException.NeverRequested.class);
+        }
+    }
+
     @Test
     @DisplayName("deleteById 위임에 성공한다.")
     void deleteById() {
