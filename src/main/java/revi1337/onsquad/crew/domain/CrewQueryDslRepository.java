@@ -2,7 +2,6 @@ package revi1337.onsquad.crew.domain;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.jpa.JPAExpressions.select;
 import static revi1337.onsquad.crew.domain.QCrew.crew;
 import static revi1337.onsquad.crew_hashtag.domain.QCrewHashtag.crewHashtag;
 import static revi1337.onsquad.crew_member.domain.QCrewMember.crewMember;
@@ -52,9 +51,7 @@ public class CrewQueryDslRepository {
                                 crew.imageUrl,
                                 crew.kakaoLink,
                                 list(hashtag.hashtagType),
-                                select(crewMember.count())
-                                        .from(crewMember)
-                                        .where(crewMember.crew.id.eq(crew.id)),
+                                crew.currentSize,
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
@@ -82,9 +79,7 @@ public class CrewQueryDslRepository {
                                 crew.introduce,
                                 crew.imageUrl,
                                 crew.kakaoLink,
-                                select(crewMember.count())
-                                        .from(crewMember)
-                                        .where(crewMember.crew.id.eq(crew.id)),
+                                crew.currentSize,
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
@@ -120,9 +115,7 @@ public class CrewQueryDslRepository {
                                 crew.introduce,
                                 crew.imageUrl,
                                 crew.kakaoLink,
-                                select(crewMember.count())
-                                        .from(crewMember)
-                                        .where(crewMember.crew.id.eq(crew.id)),
+                                crew.currentSize,
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,
@@ -220,9 +213,7 @@ public class CrewQueryDslRepository {
                                 crew.imageUrl,
                                 crew.kakaoLink,
                                 list(hashtag.hashtagType),
-                                select(crewMember.count())
-                                        .from(crewMember)
-                                        .where(crewMember.crew.id.eq(crew.id)),
+                                crew.currentSize,
                                 new QSimpleMemberDomainDto(
                                         member.id,
                                         member.nickname,

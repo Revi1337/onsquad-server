@@ -18,6 +18,8 @@ public interface CrewParticipantRepository {
 
     Optional<CrewParticipant> findById(Long id);
 
+    Optional<CrewParticipant> findWithCrewById(Long id);
+
     void deleteById(Long id);
 
     Optional<CrewParticipant> findByCrewIdAndMemberId(Long crewId, Long memberId);
@@ -28,6 +30,11 @@ public interface CrewParticipantRepository {
 
     default CrewParticipant getById(Long id) {
         return findById(id)
+                .orElseThrow(() -> new CrewParticipantBusinessException.NeverRequested(NEVER_REQUESTED));
+    }
+
+    default CrewParticipant getWithCrewById(Long id) {
+        return findWithCrewById(id)
                 .orElseThrow(() -> new CrewParticipantBusinessException.NeverRequested(NEVER_REQUESTED));
     }
 

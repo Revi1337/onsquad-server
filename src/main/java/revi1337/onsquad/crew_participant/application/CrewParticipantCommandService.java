@@ -1,7 +1,6 @@
 package revi1337.onsquad.crew_participant.application;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_JOIN;
-import static revi1337.onsquad.crew.error.CrewErrorCode.OWNER_CANT_PARTICIPANT;
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
 import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.INVALID_REFERENCE;
 
@@ -36,39 +35,24 @@ public class CrewParticipantCommandService {
     @Throttling(name = "throttle-crew-join", key = "'crew:' + #crewId + ':member:' + #memberId", during = 5)
     public void request(Long memberId, Long crewId) {
         Crew crew = crewRepository.getById(crewId);
-        Optional<CrewMember> optionalCrewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId);
-        if (optionalCrewMember.isPresent()) {
-            CrewMember crewMember = optionalCrewMember.get();
-            if (crewMember.isOwner()) {
-                throw new CrewBusinessException.OwnerCantParticipant(OWNER_CANT_PARTICIPANT);
-            }
-            throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId);
-        }
+        checkAlreadyJoin(memberId, crewId);
 
-        Member member = memberRepository.getReferenceById(memberId);
-        LocalDateTime now = LocalDateTime.now();
-        crewParticipantRepository.findByCrewIdAndMemberId(crew.getId(), member.getId()).ifPresentOrElse(
-                participant -> {
-                    participant.updateRequestAt(now);
-                    crewParticipantRepository.saveAndFlush(participant);
-                },
-                () -> crewParticipantRepository.save(new CrewParticipant(crew, member, now))
-        );
+        Optional<CrewParticipant> crewParticipant = crewParticipantRepository.findByCrewIdAndMemberId(crewId, memberId);
+        if (crewParticipant.isEmpty()) {
+            Member member = memberRepository.getReferenceById(memberId);
+            crewParticipantRepository.save(new CrewParticipant(crew, member, LocalDateTime.now()));
+        }
     }
 
     public void acceptRequest(Long memberId, Long crewId, Long requestId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         checkMemberIsCrewOwner(crewMember);
-
-        CrewParticipant crewParticipant = crewParticipantRepository.getById(requestId);
+        CrewParticipant crewParticipant = crewParticipantRepository.getWithCrewById(requestId);
         checkCrewReference(crewId, crewParticipant);
+        checkAlreadyJoin(crewParticipant.getRequestMemberId(), crewId);
 
-        if (crewMemberRepository.existsByMemberIdAndCrewId(crewParticipant.getRequestMemberId(), crewId)) {
-            throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId);
-        }
-
-        CrewMember newCrewMember = CrewMember.forGeneral(crewParticipant.getCrew(), crewParticipant.getMember());
-        crewMemberRepository.save(newCrewMember); // TODO DB 크루 총 인원 수 Field 가 추가된다면, 수정 필요.
+        Crew crew = crewParticipant.getCrew();
+        crew.addCrewMember(CrewMember.forGeneral(crew, crewParticipant.getMember()));
         crewParticipantRepository.deleteById(crewParticipant.getId());
     }
 
@@ -85,6 +69,12 @@ public class CrewParticipantCommandService {
     public void cancelMyRequest(Long memberId, Long crewId) {
         CrewParticipant crewParticipant = crewParticipantRepository.getByCrewIdAndMemberId(crewId, memberId);
         crewParticipantRepository.deleteById(crewParticipant.getId());
+    }
+
+    private void checkAlreadyJoin(Long memberId, Long crewId) {
+        if (crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId)) {
+            throw new CrewBusinessException.AlreadyJoin(ALREADY_JOIN, crewId);
+        }
     }
 
     private void checkMemberIsCrewOwner(CrewMember crewMember) {

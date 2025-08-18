@@ -21,7 +21,7 @@ public class CrewStatisticQueryDslRepository {
     /**
      * select 절 서브쿼리만으로도 쿼리가 가능합니다. from 절은 생략 불가하기 떄문에 데이터가 가장 적을거라고 예상되는 Table 을 Dummy Table 로 사용합니다.
      */
-    public CrewStatisticDomainDto getStatisticById(Long crewId) {
+    public CrewStatisticDomainDto getStatisticById(Long crewId) { // TODO Count 쿼리 분리 필요.
         return jpaQueryFactory
                 .select(new QCrewStatisticDomainDto(
                         select(crewParticipant.id.count())

@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew.domain;
 
+import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -57,6 +58,8 @@ public class Crew extends BaseEntity {
     @Embedded
     private Detail detail;
 
+    private long currentSize;
+
     private String kakaoLink;
 
     private String imageUrl;
@@ -71,7 +74,7 @@ public class Crew extends BaseEntity {
     private final List<CrewHashtag> hashtags = new ArrayList<>();
 
     @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "crew", cascade = PERSIST)
+    @OneToMany(mappedBy = "crew", cascade = {PERSIST, MERGE})
     private final List<CrewMember> crewMembers = new ArrayList<>();
 
     @OnDelete(action = CASCADE)
@@ -99,9 +102,14 @@ public class Crew extends BaseEntity {
 
     public void addCrewMember(CrewMember... crewMembers) {
         for (CrewMember crewMember : crewMembers) {
+            increaseSize();
             crewMember.addCrew(this);
             this.crewMembers.add(crewMember);
         }
+    }
+
+    private void increaseSize() {
+        ++this.currentSize;
     }
 
     public void update(String name, String introduce, String detail, String kakaoLink) {
@@ -135,8 +143,8 @@ public class Crew extends BaseEntity {
         return imageUrl == null || imageUrl.isEmpty();
     }
 
-    public int countMembers() {
-        return crewMembers.size();
+    public long countMembers() {
+        return currentSize;
     }
 
     public void registerOwner(Member owner) {
