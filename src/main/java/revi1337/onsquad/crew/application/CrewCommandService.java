@@ -41,7 +41,7 @@ public class CrewCommandService {
         Member member = memberRepository.getById(memberId);
         checkCrewNameIsDuplicate(dto.name());
 
-        Crew crew = Crew.create(member, dto.name(), dto.introduce(), dto.detail(), imageUrl, dto.kakaoLink());
+        Crew crew = Crew.create(member, dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink(), imageUrl);
         Crew persistedCrew = crewRepository.save(crew);
         crewHashtagRepository.batchInsert(persistedCrew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
         return persistedCrew.getId();
