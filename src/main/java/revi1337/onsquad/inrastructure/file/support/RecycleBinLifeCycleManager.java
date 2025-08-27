@@ -36,12 +36,14 @@ public class RecycleBinLifeCycleManager {
     }
 
     @EventListener(ContextClosedEvent.class)
-    public void storeRecycleBin() {
-        try {
-            log.info(WRITING_LOG);
-            Files.write(Paths.get(RECYCLE_BIN_BACKUP_PATH), RecycleBin.flush(), UTF_8);
-        } catch (IOException e) {
-            log.error(WRITING_ERROR_LOG, e);
+    public void storeRecycleBin(ContextClosedEvent event) {
+        if (event.getApplicationContext().getParent() == null) {
+            try {
+                log.info(WRITING_LOG);
+                Files.write(Paths.get(RECYCLE_BIN_BACKUP_PATH), RecycleBin.flush(), UTF_8);
+            } catch (IOException e) {
+                log.error(WRITING_ERROR_LOG, e);
+            }
         }
     }
 }

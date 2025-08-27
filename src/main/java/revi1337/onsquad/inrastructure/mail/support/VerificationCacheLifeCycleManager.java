@@ -53,11 +53,13 @@ public class VerificationCacheLifeCycleManager {
     }
 
     @EventListener(ContextClosedEvent.class)
-    public void backup() {
-        Optional<File> optionalFile = getBackupFileIfExists();
-        VerificationSnapshots verificationSnapshots = repository.collectAvailableSnapshots();
+    public void backup(ContextClosedEvent event) {
+        if (event.getApplicationContext().getParent() == null) {
+            Optional<File> optionalFile = getBackupFileIfExists();
+            VerificationSnapshots verificationSnapshots = repository.collectAvailableSnapshots();
 
-        optionalFile.ifPresent(backupFile -> backupVerificationCodeSnapshots(backupFile, verificationSnapshots));
+            optionalFile.ifPresent(backupFile -> backupVerificationCodeSnapshots(backupFile, verificationSnapshots));
+        }
     }
 
     private Optional<File> getBackupFileIfExists() {
