@@ -1,6 +1,7 @@
 package revi1337.onsquad.crew_participant.application;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_JOIN;
+import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.LESS_THEN_MANAGER;
 import static revi1337.onsquad.crew_member.error.CrewMemberErrorCode.NOT_OWNER;
 import static revi1337.onsquad.crew_participant.error.CrewParticipantErrorCode.INVALID_REFERENCE;
 
@@ -45,23 +46,19 @@ public class CrewParticipantCommandService {
     }
 
     public void acceptRequest(Long memberId, Long crewId, Long requestId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        checkMemberIsCrewOwner(crewMember);
-        CrewParticipant crewParticipant = crewParticipantRepository.getWithCrewById(requestId);
-        checkCrewReference(crewId, crewParticipant);
+        Crew crew = crewRepository.getByIdForUpdate(crewId);
+        checkMemberIsGreaterOrEqualThanManager(crewId, memberId);
+        CrewParticipant crewParticipant = crewParticipantRepository.getById(requestId);
         checkAlreadyJoin(crewParticipant.getRequestMemberId(), crewId);
+        checkCrewReference(crewId, crewParticipant);
 
-        Crew crew = crewParticipant.getCrew();
         crew.addCrewMember(CrewMember.forGeneral(crew, crewParticipant.getMember()));
         crewParticipantRepository.deleteById(crewParticipant.getId());
     }
 
     public void rejectRequest(Long memberId, Long crewId, Long requestId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        checkMemberIsCrewOwner(crewMember);
-
-        CrewParticipant crewParticipant = crewParticipantRepository.getById(requestId);
-        checkCrewReference(crewId, crewParticipant);
+        checkMemberIsCrewOwner(crewId, memberId);
+        checkCrewReference(crewId, crewParticipantRepository.getById(requestId));
 
         crewParticipantRepository.deleteById(requestId);
     }
@@ -77,7 +74,15 @@ public class CrewParticipantCommandService {
         }
     }
 
-    private void checkMemberIsCrewOwner(CrewMember crewMember) {
+    private void checkMemberIsGreaterOrEqualThanManager(Long crewId, Long memberId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        if (!(crewMember.isOwner() || crewMember.isManager())) {
+            throw new CrewMemberBusinessException.LessThenManager(LESS_THEN_MANAGER);
+        }
+    }
+
+    private void checkMemberIsCrewOwner(Long crewId, Long memberId) {
+        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
         if (crewMember.isNotOwner()) {
             throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
         }

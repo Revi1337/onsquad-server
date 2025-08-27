@@ -15,10 +15,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
@@ -34,8 +34,8 @@ import revi1337.onsquad.member.domain.Member;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "crewmember_uidx_crew_id_member_id", columnNames = {"crew_id", "member_id"})
+@Table(indexes = {
+        @Index(name = "crewmember_participate_at_idx", columnList = "participate_at")
 })
 @AttributeOverrides({
         @AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))

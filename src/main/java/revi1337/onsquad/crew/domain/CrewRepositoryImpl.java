@@ -38,6 +38,11 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
+    public Optional<Crew> findByIdForUpdate(Long id) {
+        return crewJpaRepository.findByIdForUpdate(id);
+    }
+
+    @Override
     public boolean existsByName(Name name) {
         return crewJpaRepository.existsByName(name);
     }

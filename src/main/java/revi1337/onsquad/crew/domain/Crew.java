@@ -36,11 +36,9 @@ import revi1337.onsquad.member.domain.Member;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(name = "name", columnNames = "name")
-        }
-)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name = "name", columnNames = "name")
+})
 public class Crew extends BaseEntity {
 
     private static final int HASHTAG_BATCH_SIZE = 20;
@@ -109,7 +107,7 @@ public class Crew extends BaseEntity {
     }
 
     private void increaseSize() {
-        ++this.currentSize;
+        this.currentSize = this.currentSize + 1;
     }
 
     public void update(String name, String introduce, String detail, String kakaoLink) {

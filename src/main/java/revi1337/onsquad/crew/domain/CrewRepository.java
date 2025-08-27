@@ -21,6 +21,8 @@ public interface CrewRepository {
 
     Optional<Crew> findById(Long id);
 
+    Optional<Crew> findByIdForUpdate(Long id);
+
     boolean existsByName(Name name);
 
     Optional<CrewDomainDto> findCrewById(Long id);
@@ -38,6 +40,11 @@ public interface CrewRepository {
 
     default Crew getById(Long id) {
         return findById(id)
+                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
+    }
+
+    default Crew getByIdForUpdate(Long id) {
+        return findByIdForUpdate(id)
                 .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
     }
 }
