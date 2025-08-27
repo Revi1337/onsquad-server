@@ -28,6 +28,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -46,6 +48,9 @@ class VerificationCacheLifeCycleManagerMethodTest {
 
     @Autowired
     private VerificationCacheLifeCycleManager lifeCycleManager;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private Map<String, String> store = (Map<String, String>) ReflectionTestUtils
             .getField(VerificationCodeExpiringMapRepository.class, "VERIFICATION_STORE");
@@ -77,7 +82,7 @@ class VerificationCacheLifeCycleManagerMethodTest {
         objectMapper.writerWithDefaultPrettyPrinter().writeValue(backupFile.toFile(), "");
         initializeVerificationSnapshotsInRepository();
 
-        lifeCycleManager.backup();
+        lifeCycleManager.backup(new ContextClosedEvent(applicationContext));
 
         VerificationSnapshots verificationSnapshots = objectMapper.readValue(backupFile.toFile(), VerificationSnapshots.class);
         assertThat(verificationSnapshots.size()).isEqualTo(7);

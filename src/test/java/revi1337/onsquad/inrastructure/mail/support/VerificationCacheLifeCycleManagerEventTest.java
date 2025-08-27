@@ -1,5 +1,6 @@
 package revi1337.onsquad.inrastructure.mail.support;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,10 +48,10 @@ class VerificationCacheLifeCycleManagerEventTest {
     @Test
     @DisplayName("스프링이 죽을 때, backup 가 실행되면 성공한다.")
     void success2() {
-        doNothing().when(lifeCycleManager).backup();
+        doNothing().when(lifeCycleManager).backup(any(ContextClosedEvent.class));
 
         eventPublisher.publishEvent(new ContextClosedEvent(applicationContext));
 
-        verify(lifeCycleManager, times(1)).backup();
+        verify(lifeCycleManager, times(1)).backup(any(ContextClosedEvent.class));
     }
 }
