@@ -146,7 +146,7 @@ class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {
 
             assertThatThrownBy(() -> crewParticipantCommandService
                     .acceptRequest(ANDONG.getId(), CREW.getId(), PARTICIPANT.getId()))
-                    .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
+                    .isExactlyInstanceOf(CrewMemberBusinessException.LessThenManager.class);
         }
 
         @Test

@@ -27,16 +27,24 @@ public class MemberValueFixture {
     public static final String REVI_NICKNAME_VALUE = "revi1337";
     public static final String ANDONG_NICKNAME_VALUE = "andong";
     public static final String KWANGWON_NICKNAME_VALUE = "kwon";
+    public static final String DUMMY_NICKNAME_VALUE_1 = "dummy-1";
+    public static final String DUMMY_NICKNAME_VALUE_2 = "dummy-2";
+    public static final String DUMMY_NICKNAME_VALUE_3 = "dummy-3";
+    public static final String DUMMY_NICKNAME_VALUE_4 = "dummy-4";
+    public static final String DUMMY_NICKNAME_VALUE_5 = "dummy-5";
+    public static final String DUMMY_NICKNAME_VALUE_6 = "dummy-6";
 
     public static final String ADDRESS_VALUE = "공백";
     public static final String REVI_ADDRESS_VALUE = "REVI 주소";
     public static final String ANDONG_ADDRESS_VALUE = "ANDONG 주소";
     public static final String KWANGWON_ADDRESS_VALUE = "KWANGWON 주소";
+    public static final String DUMMY_ADDRESS_VALUE = "더미 주소";
 
     public static final String ADDRESS_DETAIL_VALUE = "공백";
     public static final String REVI_ADDRESS_DETAIL_VALUE = "REVI 상세 주소";
     public static final String ANDONG_ADDRESS_DETAIL_VALUE = "ANDONG 상세 주소";
     public static final String KWANGWON_ADDRESS_DETAIL_VALUE = "KWANGWON 상세 주소";
+    public static final String DUMMY_ADDRESS_DETAIL_VALUE = "더미 상세 주소";
 
     public static final String PASSWORD_VALUE = "12345!@asa";
     public static final String REVI_PASSWORD_VALUE = "12345!@asa";
@@ -53,6 +61,7 @@ public class MemberValueFixture {
     public static final String REVI_INTRODUCE_VALUE = "Hello World REVI";
     public static final String ANDONG_INTRODUCE_VALUE = "Hello World ANDONG";
     public static final String KWANGWON_INTRODUCE_VALUE = "Hello World KWANGWON";
+    public static final String DUMMY_INTRODUCE_VALUE = "Hello World DUMMY";
 
     public static final String PROFILE_IMAGE_LINK = "https://d3jao8gvkosd1k.cloudfront.net/onsquad/default/member-default.svg";
     public static final String CHANGED_PROFILE_IMAGE_LINK = "https://changeed_img.com";
@@ -65,6 +74,7 @@ public class MemberValueFixture {
     public static final String REVI_KAKAO_LINK = "https://revi.kakao.com";
     public static final String ANDONG_KAKAO_LINK = "https://andong.kakao.com";
     public static final String KWANGWON_KAKAO_LINK = "https://kwangwon.kakao.com";
+    public static final String DUMMY_KAKAO_LINK = "https://dummy.kakao.com";
 
     public static final String REVI_MBTI_VALUE = Mbti.ISTP.name();
     public static final String ANDONG_MBTI_VALUE = Mbti.ISFP.name();
@@ -73,6 +83,7 @@ public class MemberValueFixture {
     public static final String REVI_USER_TYPE_VALUE = UserType.GENERAL.getText();
     public static final String ANDONG_USER_TYPE_VALUE = UserType.GENERAL.getText();
     public static final String KWANGWON_USER_TYPE_VALUE = UserType.GENERAL.getText();
+    public static final String DUMMY_USER_TYPE_VALUE = UserType.GENERAL.getText();
 
     public static final String VALID_AUTHENTICATION_CODE = "VALID_CODE";
     public static final String INVALID_AUTHENTICATION_CODE = "INVALID_CODE";

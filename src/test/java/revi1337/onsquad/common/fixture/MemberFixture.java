@@ -8,6 +8,22 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_INTRODUC
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_KAKAO_LINK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_PROFILE_IMAGE_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_ADDRESS_DETAIL_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_ADDRESS_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VALUE_1;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VALUE_2;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VALUE_3;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VALUE_4;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VALUE_5;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VALUE_6;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_INTRODUCE_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_KAKAO_LINK;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_NICKNAME_VALUE_1;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_NICKNAME_VALUE_2;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_NICKNAME_VALUE_3;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_NICKNAME_VALUE_4;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_NICKNAME_VALUE_5;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_NICKNAME_VALUE_6;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.EMAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ENCRYPTED_PASSWORD_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.KAKAO_LINK;
@@ -20,6 +36,7 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.KWANGWON_KAKAO_
 import static revi1337.onsquad.common.fixture.MemberValueFixture.KWANGWON_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.KWANGWON_PROFILE_IMAGE_LINK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.NICKNAME_VALUE;
+import static revi1337.onsquad.common.fixture.MemberValueFixture.PROFILE_IMAGE_LINK;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_DETAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_ADDRESS_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
@@ -87,6 +104,84 @@ public class MemberFixture {
                 .image(KWANGWON_PROFILE_IMAGE_LINK)
                 .kakaoLink(KWANGWON_KAKAO_LINK)
                 .mbti(Mbti.ENFJ)
+                .build();
+    }
+
+    public static Member DUMMY_USER_1() {
+        return Member.builder()
+                .email(new Email(DUMMY_EMAIL_VALUE_1))
+                .nickname(new Nickname(DUMMY_NICKNAME_VALUE_1))
+                .introduce(new Introduce(DUMMY_INTRODUCE_VALUE))
+                .address(new Address(DUMMY_ADDRESS_VALUE, DUMMY_ADDRESS_DETAIL_VALUE))
+                .password(Password.encrypted(ENCRYPTED_PASSWORD_VALUE))
+                .image(PROFILE_IMAGE_LINK)
+                .kakaoLink(DUMMY_KAKAO_LINK)
+                .mbti(Mbti.ISFP)
+                .build();
+    }
+
+    public static Member DUMMY_USER_2() {
+        return Member.builder()
+                .email(new Email(DUMMY_EMAIL_VALUE_2))
+                .nickname(new Nickname(DUMMY_NICKNAME_VALUE_2))
+                .introduce(new Introduce(DUMMY_INTRODUCE_VALUE))
+                .address(new Address(DUMMY_ADDRESS_VALUE, DUMMY_ADDRESS_DETAIL_VALUE))
+                .password(Password.encrypted(ENCRYPTED_PASSWORD_VALUE))
+                .image(PROFILE_IMAGE_LINK)
+                .kakaoLink(DUMMY_KAKAO_LINK)
+                .mbti(Mbti.ISFP)
+                .build();
+    }
+
+    public static Member DUMMY_USER_3() {
+        return Member.builder()
+                .email(new Email(DUMMY_EMAIL_VALUE_3))
+                .nickname(new Nickname(DUMMY_NICKNAME_VALUE_3))
+                .introduce(new Introduce(DUMMY_INTRODUCE_VALUE))
+                .address(new Address(DUMMY_ADDRESS_VALUE, DUMMY_ADDRESS_DETAIL_VALUE))
+                .password(Password.encrypted(ENCRYPTED_PASSWORD_VALUE))
+                .image(PROFILE_IMAGE_LINK)
+                .kakaoLink(DUMMY_KAKAO_LINK)
+                .mbti(Mbti.ISFP)
+                .build();
+    }
+
+    public static Member DUMMY_USER_4() {
+        return Member.builder()
+                .email(new Email(DUMMY_EMAIL_VALUE_4))
+                .nickname(new Nickname(DUMMY_NICKNAME_VALUE_4))
+                .introduce(new Introduce(DUMMY_INTRODUCE_VALUE))
+                .address(new Address(DUMMY_ADDRESS_VALUE, DUMMY_ADDRESS_DETAIL_VALUE))
+                .password(Password.encrypted(ENCRYPTED_PASSWORD_VALUE))
+                .image(PROFILE_IMAGE_LINK)
+                .kakaoLink(DUMMY_KAKAO_LINK)
+                .mbti(Mbti.ISFP)
+                .build();
+    }
+
+    public static Member DUMMY_USER_5() {
+        return Member.builder()
+                .email(new Email(DUMMY_EMAIL_VALUE_5))
+                .nickname(new Nickname(DUMMY_NICKNAME_VALUE_5))
+                .introduce(new Introduce(DUMMY_INTRODUCE_VALUE))
+                .address(new Address(DUMMY_ADDRESS_VALUE, DUMMY_ADDRESS_DETAIL_VALUE))
+                .password(Password.encrypted(ENCRYPTED_PASSWORD_VALUE))
+                .image(PROFILE_IMAGE_LINK)
+                .kakaoLink(DUMMY_KAKAO_LINK)
+                .mbti(Mbti.ISFP)
+                .build();
+    }
+
+    public static Member DUMMY_USER_6() {
+        return Member.builder()
+                .email(new Email(DUMMY_EMAIL_VALUE_6))
+                .nickname(new Nickname(DUMMY_NICKNAME_VALUE_6))
+                .introduce(new Introduce(DUMMY_INTRODUCE_VALUE))
+                .address(new Address(DUMMY_ADDRESS_VALUE, DUMMY_ADDRESS_DETAIL_VALUE))
+                .password(Password.encrypted(ENCRYPTED_PASSWORD_VALUE))
+                .image(PROFILE_IMAGE_LINK)
+                .kakaoLink(DUMMY_KAKAO_LINK)
+                .mbti(Mbti.ISFP)
                 .build();
     }
 
