@@ -14,7 +14,7 @@ spring:
     defer-datasource-initialization: true
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         default_batch_fetch_size: 100
 
   data:
@@ -160,13 +160,21 @@ onsquad:
 logging:
   level:
     org:
+      #      springframework.jdbc: DEBUG
+      #      hibernate.SQL: DEBUG
+      #      hibernate.orm.jdbc.bind: TRACE
+      #
+      #      springframework.transaction.interceptor: TRACE
+      #      springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+      #      springframework.orm.jpa.JpaTransactionManager: DEBUG
+
       springframework.jdbc: DEBUG
       hibernate.SQL: DEBUG
-      hibernate.orm.jdbc.bind: TRACE
+      hibernate.orm.jdbc.bind: INFO
 
-      springframework.transaction.interceptor: TRACE
-      springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
-      springframework.orm.jpa.JpaTransactionManager: DEBUG
+      springframework.transaction.interceptor: INFO
+      springframework.jdbc.datasource.DataSourceTransactionManager: INFO
+      springframework.orm.jpa.JpaTransactionManager: INFO
 
     revi1337:
       onsquad:
