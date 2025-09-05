@@ -2,20 +2,30 @@ package revi1337.onsquad.common.aspect;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RequestCacheHandlerExecutionChain implements RequestCacheHandler {
+
+    private static final String NAVIGATE_NEXT_HANDLER_LOG_FORMAT = "[{} 에서 예외 발생, Cause : {}] 다음 RequestCacheHandler 를 적용합니다.";
+    private static final String MESSAGE_NO_CACHE_APPLICABLE_MSG = "[모든 RequestCacheHandler 들을 사용할 수 없습니다.]";
 
     private final List<RequestCacheHandler> requestCacheHandlers = new ArrayList<>();
 
     @Override
     public Boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
-        return requestCacheHandlers.stream()
-                .map(handler -> handler.isFirstRequest(key, value, timeout, unit))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("[모든 캐싱 후보군을 사용할 수 없습니다.]"));
+        for (RequestCacheHandler requestCacheHandler : requestCacheHandlers) {
+            try {
+                Boolean firstRequest = requestCacheHandler.isFirstRequest(key, value, timeout, unit);
+                if (firstRequest != null) {
+                    return firstRequest;
+                }
+            } catch (RuntimeException exception) {
+                log.debug(NAVIGATE_NEXT_HANDLER_LOG_FORMAT, requestCacheHandler.getClass().getSimpleName(), exception.getCause().getClass().getSimpleName());
+            }
+        }
+        throw new IllegalArgumentException(MESSAGE_NO_CACHE_APPLICABLE_MSG);
     }
 
     public void addBefore(RequestCacheHandler requestCacheHandler, Class<? extends RequestCacheHandler> clazz) {
