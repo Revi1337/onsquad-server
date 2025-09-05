@@ -33,20 +33,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.inrastructure.file.application.FileStorageManager;
 import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
@@ -63,18 +56,13 @@ import revi1337.onsquad.member.domain.vo.Password;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.member.error.exception.MemberBusinessException.WrongPassword;
 
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@RecordApplicationEvents
-@Transactional
-@Import({ApplicationLayerConfiguration.class})
-@Sql({"/h2-truncate.sql"})
 class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
     @SpyBean
     private MemberRepository memberRepository;
 
-    @MockBean(name = "repositoryChain")
-    private VerificationCodeRepository repositoryChain;
+    @MockBean(name = "redisCodeRepository")
+    private VerificationCodeRepository redisCodeRepository;
 
     @MockBean(name = "memberS3StorageManager")
     private FileStorageManager fileStorageManager;
@@ -95,7 +83,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         @Test
         @DisplayName("메일 인증이 되어있지 않으면 회원가입에 실패한다.")
         void newMemberTest1() {
-            when(repositoryChain.isMarkedVerificationStatusWith(any(), any())).thenReturn(false);
+            when(redisCodeRepository.isMarkedVerificationStatusWith(any(), any())).thenReturn(false);
             MemberCreateDto memberCreateDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
@@ -113,7 +101,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         @DisplayName("Nickname 이 사용중이면 실패한다.")
         void newMemberTest2() {
             memberRepository.save(REVI());
-            when(repositoryChain.isMarkedVerificationStatusWith(any(), any())).thenReturn(true);
+            when(redisCodeRepository.isMarkedVerificationStatusWith(any(), any())).thenReturn(true);
             MemberCreateDto memberCreateDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
@@ -131,7 +119,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         @DisplayName("Email 이 사용중이면 실패한다.")
         void newMemberTest3() {
             memberRepository.save(REVI());
-            when(repositoryChain.isMarkedVerificationStatusWith(any(), any())).thenReturn(true);
+            when(redisCodeRepository.isMarkedVerificationStatusWith(any(), any())).thenReturn(true);
             MemberCreateDto memberCreateDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     ANDONG_PASSWORD_VALUE,

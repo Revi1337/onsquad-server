@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.auth.application.token.model.JsonWebToken;
 import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.auth.error.exception.AuthTokenException;
-import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 
-class TokenReissueServiceTest extends ApplicationLayerTestSupport {
+class TokenReissueServiceTest extends ApplicationLayerWithTestContainerSupport {
 
     @Autowired
     private MemberJpaRepository memberJpaRepository;

@@ -18,11 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import revi1337.onsquad.auth.application.oauth.model.KakaoUserProfile;
 import revi1337.onsquad.auth.application.token.model.JsonWebToken;
-import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
 import revi1337.onsquad.member.domain.Member;
 import revi1337.onsquad.member.domain.MemberJpaRepository;
 
-class OAuth2LoginServiceTest extends ApplicationLayerTestSupport {
+class OAuth2LoginServiceTest extends ApplicationLayerWithTestContainerSupport {
 
     @SpyBean
     private MemberJpaRepository memberJpaRepository;

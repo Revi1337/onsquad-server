@@ -4,57 +4,152 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_EMAIL_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_USER_TYPE;
 
+import java.time.Duration;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.auth.application.token.model.AccessToken;
 import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.auth.repository.token.ExpiringMapTokenRepository;
+import revi1337.onsquad.auth.repository.token.RedisHashTokenRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 
-class JsonWebTokenManagerTest extends ApplicationLayerTestSupport {
+class JsonWebTokenManagerTest {
 
-    @Autowired
-    private ExpiringMapTokenRepository tokenRepository;
+    @Nested
+    @DisplayName("Redis를 사용한 JsonWebTokenManagerTest")
+    class RedisJsonWebTokenManagerTest extends ApplicationLayerWithTestContainerSupport {
 
-    @Autowired
-    private JsonWebTokenManager jsonWebTokenManager;
+        private final RedisHashTokenRepository redisHashTokenRepository;
+        private final JsonWebTokenManager jsonWebTokenManager;
 
-    @BeforeEach
-    void setUp() {
-        tokenRepository.deleteAll();
+        @Autowired
+        private RedisJsonWebTokenManagerTest(
+                RedisHashTokenRepository redisHashTokenRepository,
+                JsonWebTokenProvider jsonWebTokenProvider,
+                RedisRefreshTokenManager refreshTokenManager
+        ) {
+            this.redisHashTokenRepository = redisHashTokenRepository;
+            this.jsonWebTokenManager = new JsonWebTokenManager(jsonWebTokenProvider, refreshTokenManager);
+        }
+
+        @BeforeEach
+        void setUp() {
+            redisHashTokenRepository.deleteAll();
+        }
+
+        @Test
+        @DisplayName("AccessToken 생성에 성공한다.")
+        void generateAccessToken() {
+            MemberSummary SUMMARY = new MemberSummary(1L, REVI_EMAIL_VALUE, null, REVI_USER_TYPE);
+
+            AccessToken ACCESS_TOKEN = jsonWebTokenManager.generateAccessToken(SUMMARY);
+
+            assertThat(ACCESS_TOKEN).isNotNull();
+        }
+
+        @Test
+        @DisplayName("RefreshToken 생성에 성공한다.")
+        void generateRefreshToken() {
+            Long MEMBER_ID = 1L;
+
+            RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+
+            assertThat(REFRESH_TOKEN).isNotNull();
+        }
+
+        @Test
+        @DisplayName("RefreshToken 저장에 성공한다.")
+        void storeRefreshTokenFor() {
+            Long MEMBER_ID = 1L;
+            RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+
+            jsonWebTokenManager.storeRefreshTokenFor(MEMBER_ID, REFRESH_TOKEN);
+
+            assertThat(redisHashTokenRepository.findBy(MEMBER_ID)).isPresent();
+        }
+
+        @Test
+        @DisplayName("RefreshToken 조회에 성공한다.")
+        void findRefreshTokenBy() {
+            Long MEMBER_ID = 1L;
+            RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+            redisHashTokenRepository.save(REFRESH_TOKEN, MEMBER_ID, Duration.ofSeconds(5));
+
+            Optional<RefreshToken> FIND_TOKEN = jsonWebTokenManager.findRefreshTokenBy(MEMBER_ID);
+
+            assertThat(FIND_TOKEN).isPresent();
+        }
     }
 
-    @Test
-    @DisplayName("AccessToken 생성에 성공한다.")
-    void GenerateAccessToken() {
-        MemberSummary SUMMARY = new MemberSummary(1L, REVI_EMAIL_VALUE, null, REVI_USER_TYPE);
+    @Nested
+    @DisplayName("ExpiringMap을 사용한 JsonWebTokenManagerTest")
+    class ExpiringMapJsonWebTokenManagerTest extends ApplicationLayerTestSupport {
 
-        AccessToken ACCESS_TOKEN = jsonWebTokenManager.generateAccessToken(SUMMARY);
+        private final ExpiringMapTokenRepository expiringMapTokenRepository;
+        private final JsonWebTokenManager jsonWebTokenManager;
 
-        assertThat(ACCESS_TOKEN).isNotNull();
-    }
+        @Autowired
+        private ExpiringMapJsonWebTokenManagerTest(
+                ExpiringMapTokenRepository expiringMapTokenRepository,
+                JsonWebTokenProvider jsonWebTokenProvider,
+                ExpiringMapRefreshTokenManager refreshTokenManager
+        ) {
+            this.expiringMapTokenRepository = expiringMapTokenRepository;
+            this.jsonWebTokenManager = new JsonWebTokenManager(jsonWebTokenProvider, refreshTokenManager);
+        }
 
-    @Test
-    @DisplayName("RefreshToken 생성에 성공한다.")
-    void GenerateRefreshToken() {
-        Long MEMBER_ID = 1L;
+        @BeforeEach
+        void setUp() {
+            expiringMapTokenRepository.deleteAll();
+        }
 
-        RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+        @Test
+        @DisplayName("AccessToken 생성에 성공한다.")
+        void generateAccessToken() {
+            MemberSummary SUMMARY = new MemberSummary(1L, REVI_EMAIL_VALUE, null, REVI_USER_TYPE);
 
-        assertThat(REFRESH_TOKEN).isNotNull();
-    }
+            AccessToken ACCESS_TOKEN = jsonWebTokenManager.generateAccessToken(SUMMARY);
 
-    @Test
-    @DisplayName("RefreshToken 저장에 성공한다.")
-    void StoreRefreshTokenFor() {
-        Long MEMBER_ID = 1L;
-        RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+            assertThat(ACCESS_TOKEN).isNotNull();
+        }
 
-        jsonWebTokenManager.storeRefreshTokenFor(MEMBER_ID, REFRESH_TOKEN);
+        @Test
+        @DisplayName("RefreshToken 생성에 성공한다.")
+        void generateRefreshToken() {
+            Long MEMBER_ID = 1L;
 
-        assertThat(tokenRepository.findBy(MEMBER_ID)).isPresent();
+            RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+
+            assertThat(REFRESH_TOKEN).isNotNull();
+        }
+
+        @Test
+        @DisplayName("RefreshToken 저장에 성공한다.")
+        void storeRefreshTokenFor() {
+            Long MEMBER_ID = 1L;
+            RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+
+            jsonWebTokenManager.storeRefreshTokenFor(MEMBER_ID, REFRESH_TOKEN);
+
+            assertThat(expiringMapTokenRepository.findBy(MEMBER_ID)).isPresent();
+        }
+
+        @Test
+        @DisplayName("RefreshToken 조회에 성공한다.")
+        void findRefreshTokenBy() {
+            Long MEMBER_ID = 1L;
+            RefreshToken REFRESH_TOKEN = jsonWebTokenManager.generateRefreshToken(MEMBER_ID);
+            expiringMapTokenRepository.save(REFRESH_TOKEN, MEMBER_ID, Duration.ofSeconds(5));
+
+            Optional<RefreshToken> FIND_TOKEN = jsonWebTokenManager.findRefreshTokenBy(MEMBER_ID);
+
+            assertThat(FIND_TOKEN).isPresent();
+        }
     }
 }
