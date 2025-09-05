@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.domain.Category;
 import revi1337.onsquad.category.domain.CategoryJpaRepository;
 import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.common.aspect.RedisCacheAspect;
+import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.inrastructure.file.support.RecycleBinLifeCycleManager;
 import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleManager;
@@ -33,6 +35,12 @@ public abstract class ApplicationLayerTestSupport {
 
     @MockBean
     protected VerificationCacheLifeCycleManager verificationCacheLifeCycleManager;
+
+    @MockBean
+    protected ThrottlingAspect throttlingAspect;
+
+    @MockBean
+    protected RedisCacheAspect redisCacheAspect;
 
     @PersistenceContext
     protected EntityManager entityManager;

@@ -28,22 +28,6 @@ public abstract class TestContainerSupport {
         aws.start();
     }
 
-    static class IntegrationTestInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-        @Override
-        public void initialize(ConfigurableApplicationContext applicationContext) {
-            Map<String, String> properties = new HashMap<>();
-            String redisHost = redis.getHost();
-            Integer redisPort = redis.getFirstMappedPort();
-            properties.put("spring.data.redis.host", redisHost);
-            properties.put("spring.data.redis.port", redisPort.toString());
-            properties.put("s3.endpoint", "http://" + aws.getHost() + ":" + aws.getMappedPort(4566));
-            TestPropertyValues.of(properties).applyTo(applicationContext);
-
-            createTestBucket();
-        }
-    }
-
     private static RedisContainer setUpRedisContainer() {
         return new RedisContainer(RedisContainer.DEFAULT_IMAGE_NAME.withTag("7.0.8-alpine"))
                 .withCreateContainerCmdModifier(cmd -> cmd.withName("onsquad-test-redis"));
@@ -65,12 +49,32 @@ public abstract class TestContainerSupport {
 
     private static void createTestBucket() {
         try {
-            ExecResult execResult = aws.execInContainer("awslocal", "s3api", "create-bucket", "--bucket", "onsquad",
-                    "--create-bucket-configuration", "LocationConstraint=ap-northeast-2");
+            ExecResult execResult = aws.execInContainer(
+                    "awslocal", "s3api", "create-bucket",
+                    "--bucket", "onsquad",
+                    "--create-bucket-configuration",
+                    "LocationConstraint=ap-northeast-2"
+            );
             logger.info("Success Initializing Test Bucket");
             logger.info(execResult.getStdout());
         } catch (Exception e) {
             logger.error("Error while Initializing Test Bucket", e);
+        }
+    }
+
+    static class IntegrationTestInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+        @Override
+        public void initialize(ConfigurableApplicationContext applicationContext) {
+            Map<String, String> properties = new HashMap<>();
+            String redisHost = redis.getHost();
+            Integer redisPort = redis.getFirstMappedPort();
+            properties.put("spring.data.redis.host", redisHost);
+            properties.put("spring.data.redis.port", redisPort.toString());
+            properties.put("s3.endpoint", "http://" + aws.getHost() + ":" + aws.getMappedPort(4566));
+            TestPropertyValues.of(properties).applyTo(applicationContext);
+
+            createTestBucket();
         }
     }
 }

@@ -78,9 +78,6 @@ server:
 
 onsquad:
   frontend-base-url: http://localhost:3000
-  use-custom-redis-aspect: false
-  use-redis-cache-manager: false
-
   token:
     access-token-attributes:
       token-attributes:

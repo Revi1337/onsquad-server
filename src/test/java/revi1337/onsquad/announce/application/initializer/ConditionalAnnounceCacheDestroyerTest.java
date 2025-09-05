@@ -11,16 +11,11 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.TestContainerSupport;
 
 @ActiveProfiles("local")
 @ImportAutoConfiguration(RedisAutoConfiguration.class)
-@TestPropertySource(properties = {
-        "onsquad.use-custom-redis-aspect=true",
-        "onsquad.use-redis-cache-manager=true",
-})
 @ContextConfiguration(classes = ConditionalAnnounceCacheDestroyer.class)
 @ExtendWith(SpringExtension.class)
 class ConditionalAnnounceCacheDestroyerTest extends TestContainerSupport {
