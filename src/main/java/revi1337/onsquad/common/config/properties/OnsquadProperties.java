@@ -15,15 +15,8 @@ public class OnsquadProperties {
 
     private final String frontendBaseUrl;
 
-    private final boolean useCustomRedisAspect;
-
-    private final boolean useRedisCacheManager;
-
-    public OnsquadProperties(String applicationName, String frontendBaseUrl, boolean useCustomRedisAspect,
-                             boolean useRedisCacheManager) {
+    public OnsquadProperties(String applicationName, String frontendBaseUrl) {
         this.applicationName = applicationName;
         this.frontendBaseUrl = frontendBaseUrl;
-        this.useCustomRedisAspect = useCustomRedisAspect;
-        this.useRedisCacheManager = useRedisCacheManager;
     }
 }

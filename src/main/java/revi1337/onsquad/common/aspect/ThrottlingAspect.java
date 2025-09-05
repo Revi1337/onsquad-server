@@ -27,8 +27,7 @@ public class ThrottlingAspect {
     @Before("@annotation(throttling)")
     public void checkInitialRequest(JoinPoint joinPoint, Throttling throttling) {
         String redisKey = generateRedisKey(joinPoint, throttling);
-        boolean firstRequest = requestCacheHandler
-                .isFirstRequest(redisKey, LocalDateTime.now().toString(), throttling.during(), throttling.unit());
+        boolean firstRequest = requestCacheHandler.isFirstRequest(redisKey, LocalDateTime.now().toString(), throttling.during(), throttling.unit());
         if (!firstRequest) {
             throw new CommonBusinessException.RequestConflict(
                     CommonErrorCode.REQUEST_CONFLICT, getCycleAsDuration(throttling)

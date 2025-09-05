@@ -3,12 +3,14 @@ package revi1337.onsquad.common.aspect;
 import java.util.concurrent.TimeUnit;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
+import org.springframework.stereotype.Component;
 
 /**
  * DefaultRequestCacheHandler For RequestCacheHandlerExecutionChain
  *
  * @see RequestCacheHandlerExecutionChain
  */
+@Component
 public final class ExpiringMapRequestCacheHandler implements RequestCacheHandler {
 
     private static final int MAX_CACHE_SIZE = 10_000;

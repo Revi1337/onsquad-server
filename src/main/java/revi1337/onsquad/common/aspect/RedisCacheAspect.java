@@ -15,12 +15,13 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
-@Deprecated
 @RequiredArgsConstructor
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @Aspect
+@Component
 public class RedisCacheAspect {
 
     private final StringRedisTemplate stringRedisTemplate;
