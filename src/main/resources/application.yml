@@ -4,8 +4,23 @@ spring:
   profiles:
     default: local
 
+  sql:
+    init:
+      mode: always
+      platform: h2
+      data-locations: classpath:db/${spring.sql.init.platform}/*-${spring.sql.init.platform}.sql
+
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/onsquad;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
   jpa:
+    defer-datasource-initialization: true
     open-in-view: false
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -17,10 +32,32 @@ spring:
         one-indexed-parameters: true
         default-page-size: 10
         max-page-size: 100
-
     redis:
       repositories:
         enabled: false
+      timeout: 25000
+      sentinel:
+        master: mymaster
+        nodes: 127.0.0.1:5001, 127.0.0.1:5002, 127.0.0.1:5003
+
+  mail:
+    code-seed: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    verification-code-backup-path: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    host: ccccccccccc
+    port: 123
+    username: dummy-user-name
+    password: dummy-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+      auth-code-expiration-millis: 300000
 
   servlet:
     multipart:
@@ -29,6 +66,9 @@ spring:
       resolve-lazily: true
 
 server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
   error:
     whitelabel:
       enabled: false
@@ -37,3 +77,111 @@ server:
     include-stacktrace: never
     include-binding-errors: never
   port: 8080
+
+management:
+  server:
+    port: 9097
+  endpoint:
+    health:
+      show-components: always
+  info:
+    java.enabled: true
+    env.enabled: true
+    os.enabled: true
+  endpoints:
+    web:
+      base-path: /metadata
+      exposure:
+        include: metrics, info, http-exchanges, prometheus, health
+
+logging:
+  level:
+    org:
+      springframework.jdbc: DEBUG
+      hibernate.SQL: DEBUG
+      hibernate.orm.jdbc.bind: DEBUG
+      springframework.transaction.interceptor: TRACE
+      springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+      springframework.orm.jpa.JpaTransactionManager: DEBUG
+    revi1337:
+      onsquad:
+        DEBUG
+
+onsquad:
+  frontend-base-url: frontend-base-url
+
+  token:
+    backup-path: token-backup-path
+    access-token-attributes:
+      token-attributes:
+        expired: 365d
+        secret-key: secret-key
+    refresh-token-attributes:
+      token-attributes:
+        expired: 365d
+        secret-key: secret-key
+
+  oauth2:
+    clients:
+      kakao:
+        client-name: ${spring.application.name}
+        client-id: kakao-client-id
+        client-secret: kakao-client-secret
+
+        issuer-uri: https://kauth.kakao.com
+        authorization-uri: https://kauth.kakao.com/oauth/authorize
+        response_type: code
+        redirect-uri: /api/login/oauth2/code/kakao
+
+        token-uri: https://kauth.kakao.com/oauth/token
+        grant-type: authorization_code
+
+        account-uri: https://kapi.kakao.com/v2/user/me
+        user-info-uri: https://kapi.kakao.com/v1/oidc/userinfo
+
+      google:
+        client-name: ${spring.application.name}
+        client-id: google-client-id
+        client-secret: google-client-secret
+
+        issuer-uri: https://accounts.google.com
+        authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+        response_type: code
+        redirect-uri: /api/login/oauth2/code/google
+
+        token-uri: https://oauth2.googleapis.com/token
+        grant-type: authorization_code
+
+        account-uri: https://www.googleapis.com/oauth2/v1/userinfo
+        scope:
+          - email: https://www.googleapis.com/auth/userinfo.email
+          - profile: https://www.googleapis.com/auth/userinfo.profile
+
+  aws:
+    cloud-front:
+      base-domain: cloudfront-base-domain
+      region: region
+      distribution-id: distribution-id
+    s3:
+      access-key: s3-access-key
+      secret-key: s3-secret-key
+      bucket: dummy-bucket
+      region: ap-northeast-2
+      directory:
+        root: root-dir
+        directories:
+          crew-directory: crew-dir
+          squad-directory: squad-dir
+          member-directory: member-dir
+
+  api:
+    crew-top-members:
+      during: 7d
+      rank-limit: 5
+      schedule:
+        expression:
+          0 0 0 * * 1
+    clean-recycle-bin:
+      schedule:
+        expression:
+          0 0 0 * * *
