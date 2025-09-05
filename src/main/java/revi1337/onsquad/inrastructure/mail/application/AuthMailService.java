@@ -22,14 +22,14 @@ public class AuthMailService {
     private static final Duration JOINING_TIMEOUT = Duration.ofMinutes(5);
 
     private final EmailSender emailSender;
-    private final VerificationCodeRepository repositoryChain;
+    private final VerificationCodeRepository redisCodeRepository;
     private final VerificationCodeGenerator verificationCodeGenerator;
 
     @Async("sending-verification-code-executor")
     public void sendVerificationCode(String email) {
         try {
             String authCode = verificationCodeGenerator.generate();
-            long expireMilli = repositoryChain.saveVerificationCode(email, authCode, VERIFICATION_CODE_TIMEOUT);
+            long expireMilli = redisCodeRepository.saveVerificationCode(email, authCode, VERIFICATION_CODE_TIMEOUT);
 
             emailSender.sendEmail(MAIL_SUBJECT, new VerificationCode(authCode, expireMilli), email);
             log.info(SEND_VERIFICATION_CODE_SUCCESS_LOG_FORMAT, email, authCode);
@@ -39,8 +39,8 @@ public class AuthMailService {
     }
 
     public boolean validateVerificationCode(String email, String authCode) {
-        if (repositoryChain.isValidVerificationCode(email, authCode)) {
-            boolean mark = repositoryChain.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
+        if (redisCodeRepository.isValidVerificationCode(email, authCode)) {
+            boolean mark = redisCodeRepository.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
             log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());
             return mark;
         }

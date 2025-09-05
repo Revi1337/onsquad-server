@@ -23,13 +23,12 @@ public class TokenReissueService {
 
     private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
     private final JsonWebTokenManager jsonWebTokenManager;
-    private final RefreshTokenManager expiringMapRefreshTokenManager;
     private final MemberRepository memberRepository;
 
     public JsonWebToken reissue(RefreshToken refreshToken) {
         ClaimsParser claimsParser = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
         Long memberId = claimsParser.parseIdentity();
-        Optional<RefreshToken> optionalRefreshToken = expiringMapRefreshTokenManager.findTokenBy(memberId);
+        Optional<RefreshToken> optionalRefreshToken = jsonWebTokenManager.findRefreshTokenBy(memberId);
         if (optionalRefreshToken.isEmpty() || !optionalRefreshToken.get().equals(refreshToken)) {
             throw new AuthTokenException.NotFoundRefresh(NOT_FOUND_REFRESH);
         }
@@ -41,7 +40,7 @@ public class TokenReissueService {
         Member member = memberRepository.getById(memberId);
         AccessToken accessToken = jsonWebTokenManager.generateAccessToken(MemberSummary.from(member));
         RefreshToken refreshToken = jsonWebTokenManager.generateRefreshToken(memberId);
-        expiringMapRefreshTokenManager.saveTokenFor(memberId, refreshToken);
+        jsonWebTokenManager.storeRefreshTokenFor(memberId, refreshToken);
         log.info(REISSUE_LOG_FORMAT, member.getId(), member.getEmail().getValue());
 
         return JsonWebToken.create(accessToken, refreshToken);

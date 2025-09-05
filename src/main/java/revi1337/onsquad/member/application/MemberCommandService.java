@@ -33,7 +33,7 @@ public class MemberCommandService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final VerificationCodeRepository repositoryChain;
+    private final VerificationCodeRepository redisCodeRepository;
 
     public void newMember(MemberCreateDto dto) {
         ensureRequirements(dto);
@@ -73,7 +73,7 @@ public class MemberCommandService {
     }
 
     private void ensureRequirements(MemberCreateDto dto) {
-        if (!repositoryChain.isMarkedVerificationStatusWith(dto.email(), VerificationStatus.SUCCESS)) {
+        if (!redisCodeRepository.isMarkedVerificationStatusWith(dto.email(), VerificationStatus.SUCCESS)) {
             throw new MemberBusinessException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
         }
         if (memberRepository.existsByNickname(new Nickname(dto.nickname()))) {

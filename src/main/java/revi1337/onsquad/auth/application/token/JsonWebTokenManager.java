@@ -2,18 +2,19 @@ package revi1337.onsquad.auth.application.token;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.application.token.model.AccessToken;
 import revi1337.onsquad.auth.application.token.model.RefreshToken;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 
 @RequiredArgsConstructor
-@Service
+@Component
 public class JsonWebTokenManager {
 
     private final JsonWebTokenProvider jsonWebTokenProvider;
-    private final RefreshTokenManager expiringMapRefreshTokenManager;
+    private final RefreshTokenManager redisRefreshTokenManager;
 
     public AccessToken generateAccessToken(MemberSummary summary) {
         return jsonWebTokenProvider.generateAccessToken(
@@ -36,6 +37,10 @@ public class JsonWebTokenManager {
     }
 
     public void storeRefreshTokenFor(Long memberId, RefreshToken refreshToken) {
-        expiringMapRefreshTokenManager.saveTokenFor(memberId, refreshToken);
+        redisRefreshTokenManager.saveTokenFor(memberId, refreshToken);
+    }
+
+    public Optional<RefreshToken> findRefreshTokenBy(Long memberId) {
+        return redisRefreshTokenManager.findTokenBy(memberId);
     }
 }
