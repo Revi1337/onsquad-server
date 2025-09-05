@@ -13,6 +13,7 @@ src/main/resources/static/index.html
 performance
 local-monitor
 backup
+redis/nodes/*/data
 .java-version
 
 # User-specific stuff
