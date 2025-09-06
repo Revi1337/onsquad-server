@@ -8,7 +8,7 @@
 
 if [ "$1" == "+failover-end" ]; then
     echo '+failover-end EventListener Invoked'
-    curl -s 192.168.45.214:8080/test > /dev/null 2>&1
+    curl -s 192.168.45.214:8080/failover > /dev/null 2>&1
     exit 0
 fi
 
