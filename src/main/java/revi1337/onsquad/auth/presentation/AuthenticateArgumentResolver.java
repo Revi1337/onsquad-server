@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.support;
+package revi1337.onsquad.auth.presentation;
 
 import static revi1337.onsquad.auth.error.TokenErrorCode.EMPTY_TOKEN;
 import static revi1337.onsquad.auth.error.TokenErrorCode.INVALID_TOKEN_FORMAT;

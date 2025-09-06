@@ -17,35 +17,35 @@ import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
 
-@Deprecated
 @RequiredArgsConstructor
 @Component
 public class RedisHashTokenRepository implements TokenRepository {
 
+    private static final String PREFIX = "user:";
     private static final String TOKEN_KEY = "value";
     private static final String OWNER_KEY = "memberId";
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate fastStringRedisTemplate;
 
     @Override
     public void save(RefreshToken refreshToken, Long memberId, Duration expired) {
-        String cacheIdentifier = "user:" + memberId;
-        String cacheName = String.format(CacheFormat.COMPLEX, CacheConst.REFRESH_TOKEN, cacheIdentifier);
-        stringRedisTemplate.execute((RedisCallback<Object>) (operations) -> {
+        String cacheName = getKey(PREFIX + memberId);
+        fastStringRedisTemplate.execute((RedisCallback<Object>) (operations) -> {
             operations.multi();
-            stringRedisTemplate.opsForHash().put(cacheName, OWNER_KEY, String.valueOf(memberId));
-            stringRedisTemplate.opsForHash().put(cacheName, TOKEN_KEY, refreshToken.value());
-            stringRedisTemplate.expire(cacheName, expired);
+            fastStringRedisTemplate.opsForHash().put(cacheName, OWNER_KEY, String.valueOf(memberId));
+            fastStringRedisTemplate.opsForHash().put(cacheName, TOKEN_KEY, refreshToken.value());
+            fastStringRedisTemplate.expire(cacheName, expired);
             operations.exec();
+
             return null;
         });
     }
 
     @Override
     public Optional<RefreshToken> findBy(Long memberId) {
-        String cacheIdentifier = "user:" + memberId;
-        String cacheName = String.format(CacheFormat.COMPLEX, CacheConst.REFRESH_TOKEN, cacheIdentifier);
-        HashOperations<String, Object, Object> hashOperations = stringRedisTemplate.opsForHash();
+        String cacheName = getKey(PREFIX + memberId);
+        HashOperations<String, Object, Object> hashOperations = fastStringRedisTemplate.opsForHash();
+
         return Optional.ofNullable(hashOperations.get(cacheName, TOKEN_KEY))
                 .map(String::valueOf)
                 .map(RefreshToken::new);
@@ -53,26 +53,34 @@ public class RedisHashTokenRepository implements TokenRepository {
 
     @Override
     public void deleteBy(Long memberId) {
-        String cacheIdentifier = "user:" + memberId;
-        String cacheName = String.format(CacheFormat.COMPLEX, CacheConst.REFRESH_TOKEN, cacheIdentifier);
-        stringRedisTemplate.delete(cacheName);
+        String cacheName = getKey(PREFIX + memberId);
+        fastStringRedisTemplate.delete(cacheName);
     }
 
     @Override
     public void deleteAll() {
-        String pattern = String.format(CacheFormat.COMPLEX, CacheConst.REFRESH_TOKEN, Sign.ASTERISK);
-        Cursor<byte[]> cursor = stringRedisTemplate.getConnectionFactory()
+        String pattern = getKey(Sign.ASTERISK);
+        try (Cursor<byte[]> scanCursor = getRedisCursor(pattern)) {
+            List<String> keys = new ArrayList<>();
+            while (scanCursor.hasNext()) {
+                keys.add(new String(scanCursor.next(), StandardCharsets.UTF_8));
+            }
+            if (!keys.isEmpty()) {
+                fastStringRedisTemplate.delete(keys);
+            }
+        }
+    }
+
+    private Cursor<byte[]> getRedisCursor(String pattern) {
+        return fastStringRedisTemplate.getConnectionFactory()
                 .getConnection()
                 .scan(ScanOptions.scanOptions()
                         .match(pattern)
-                        .build());
+                        .build()
+                );
+    }
 
-        List<String> keys = new ArrayList<>();
-        while (cursor.hasNext()) {
-            keys.add(new String(cursor.next(), StandardCharsets.UTF_8));
-        }
-        if (!keys.isEmpty()) {
-            stringRedisTemplate.delete(keys);
-        }
+    private String getKey(String identifier) {
+        return String.format(CacheFormat.COMPLEX, CacheConst.REFRESH_TOKEN, identifier);
     }
 }

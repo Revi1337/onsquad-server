@@ -14,7 +14,7 @@ import revi1337.onsquad.member.application.dto.MemberSummary;
 public class JsonWebTokenManager {
 
     private final JsonWebTokenProvider jsonWebTokenProvider;
-    private final RefreshTokenManager redisRefreshTokenManager;
+    private final RefreshTokenManager defaultRefreshTokenManager;
 
     public AccessToken generateAccessToken(MemberSummary summary) {
         return jsonWebTokenProvider.generateAccessToken(
@@ -37,10 +37,10 @@ public class JsonWebTokenManager {
     }
 
     public void storeRefreshTokenFor(Long memberId, RefreshToken refreshToken) {
-        redisRefreshTokenManager.saveTokenFor(memberId, refreshToken);
+        defaultRefreshTokenManager.saveTokenFor(memberId, refreshToken);
     }
 
     public Optional<RefreshToken> findRefreshTokenBy(Long memberId) {
-        return redisRefreshTokenManager.findTokenBy(memberId);
+        return defaultRefreshTokenManager.findTokenBy(memberId);
     }
 }
