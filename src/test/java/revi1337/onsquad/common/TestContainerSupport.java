@@ -16,9 +16,9 @@ import org.testcontainers.utility.DockerImageName;
 @ContextConfiguration(initializers = TestContainerSupport.IntegrationTestInitializer.class)
 public abstract class TestContainerSupport {
 
-    static Logger logger = LoggerFactory.getLogger(TestContainerSupport.class);
-    static RedisContainer redis;
-    static LocalStackContainer aws;
+    private static Logger logger = LoggerFactory.getLogger(TestContainerSupport.class);
+    public static RedisContainer redis;
+    public static LocalStackContainer aws;
 
     static {
         redis = setUpRedisContainer();
