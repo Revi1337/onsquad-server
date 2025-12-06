@@ -3,13 +3,11 @@ package revi1337.onsquad.infrastructure.redis;
 import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +21,12 @@ import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
 @Configuration
 public class RedisCacheManagerConfig {
+
+    private final ObjectMapper collectionObjectMapper;
+
+    public RedisCacheManagerConfig(@Qualifier("collectionObjectMapper") ObjectMapper collectionObjectMapper) {
+        this.collectionObjectMapper = collectionObjectMapper;
+    }
 
     @Bean
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
@@ -52,23 +56,9 @@ public class RedisCacheManagerConfig {
     }
 
     private RedisCacheConfiguration defaultConfigurationWithDefaultTyping() {
-        ObjectMapper collectionObjectMapper = buildCollectionObjectMapper();
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(
-                collectionObjectMapper);
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(collectionObjectMapper);
 
         return defaultConfigurationWithoutDefaultTyping()
                 .serializeValuesWith(fromSerializer(serializer));
-    }
-
-    private ObjectMapper buildCollectionObjectMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .activateDefaultTyping(
-                        BasicPolymorphicTypeValidator.builder()
-                                .allowIfBaseType(Object.class)
-                                .build(),
-                        DefaultTyping.NON_FINAL
-                );
     }
 }
