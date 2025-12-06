@@ -1,20 +1,16 @@
 package revi1337.onsquad.token.infrastructure.repository;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
+import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 import revi1337.onsquad.token.domain.repository.TokenRepository;
 
@@ -60,25 +56,7 @@ public class RedisHashTokenRepository implements TokenRepository {
 
     @Override
     public void deleteAll() {
-        String pattern = getKey(Sign.ASTERISK);
-        try (Cursor<byte[]> scanCursor = getRedisCursor(pattern)) {
-            List<String> keys = new ArrayList<>();
-            while (scanCursor.hasNext()) {
-                keys.add(new String(scanCursor.next(), StandardCharsets.UTF_8));
-            }
-            if (!keys.isEmpty()) {
-                fastStringRedisTemplate.delete(keys);
-            }
-        }
-    }
-
-    private Cursor<byte[]> getRedisCursor(String pattern) {
-        return fastStringRedisTemplate.getConnectionFactory()
-                .getConnection()
-                .scan(ScanOptions.scanOptions()
-                        .match(pattern)
-                        .build()
-                );
+        RedisCacheCleaner.cleanup(fastStringRedisTemplate, getKey(Sign.ASTERISK));
     }
 
     private String getKey(String identifier) {

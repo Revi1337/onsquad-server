@@ -11,7 +11,7 @@ public class RedisSafeExecutor {
         try {
             return supplier.get();
         } catch (RedisConnectionFailureException e) {
-            throw new IllegalStateException("Redis 연결 실패", e);
+            throw new IllegalStateException(RedisHealthLoggingIndicator.REDIS_HEALTH_CHECK_ERROR_LOG, e);
         }
     }
 
@@ -19,7 +19,7 @@ public class RedisSafeExecutor {
         try {
             runnable.run();
         } catch (RedisConnectionFailureException e) {
-            throw new IllegalStateException("Redis 연결 실패", e);
+            throw new IllegalStateException(RedisHealthLoggingIndicator.REDIS_HEALTH_CHECK_ERROR_LOG, e);
         }
     }
 
@@ -27,7 +27,7 @@ public class RedisSafeExecutor {
         try {
             return function.apply(input);
         } catch (RedisConnectionFailureException e) {
-            throw new IllegalStateException("Redis 연결 실패", e);
+            throw new IllegalStateException(RedisHealthLoggingIndicator.REDIS_HEALTH_CHECK_ERROR_LOG, e);
         }
     }
 
@@ -35,7 +35,7 @@ public class RedisSafeExecutor {
         try {
             consumer.accept(input);
         } catch (RedisConnectionFailureException e) {
-            throw new IllegalStateException("Redis 연결 실패", e);
+            throw new IllegalStateException(RedisHealthLoggingIndicator.REDIS_HEALTH_CHECK_ERROR_LOG, e);
         }
     }
 }

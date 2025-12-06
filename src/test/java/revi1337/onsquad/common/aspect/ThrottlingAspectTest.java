@@ -14,6 +14,7 @@ import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
 import revi1337.onsquad.common.error.CommonBusinessException;
 import revi1337.onsquad.infrastructure.expiringmap.ExpiringMapRequestCacheHandler;
+import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
 import revi1337.onsquad.infrastructure.redis.RedisRequestCacheHandler;
 
 class ThrottlingAspectTest {
@@ -81,10 +82,7 @@ class ThrottlingAspectTest {
             aspectJProxyFactory.setProxyTargetClass(true);
             aspectJProxyFactory.addAspect(throttlingAspect);
             this.testService = aspectJProxyFactory.getProxy();
-            stringRedisTemplate.getConnectionFactory()
-                    .getConnection()
-                    .serverCommands()
-                    .flushAll();
+            RedisCacheCleaner.cleanAll(stringRedisTemplate);
         }
 
         @Test
@@ -133,10 +131,7 @@ class ThrottlingAspectTest {
             aspectJProxyFactory.setProxyTargetClass(true);
             aspectJProxyFactory.addAspect(throttlingAspect);
             this.testService = aspectJProxyFactory.getProxy();
-            stringRedisTemplate.getConnectionFactory()
-                    .getConnection()
-                    .serverCommands()
-                    .flushAll();
+            RedisCacheCleaner.cleanAll(stringRedisTemplate);
         }
 
         @Test

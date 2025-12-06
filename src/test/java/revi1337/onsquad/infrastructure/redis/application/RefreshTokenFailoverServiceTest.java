@@ -17,6 +17,7 @@ import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator;
 import revi1337.onsquad.infrastructure.aws.s3.support.RecycleBinLifeCycleManager;
+import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
 import revi1337.onsquad.infrastructure.redis.RefreshTokenFailoverService;
 import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 import revi1337.onsquad.token.infrastructure.repository.ExpiringMapTokenRepository;
@@ -43,10 +44,7 @@ class RefreshTokenFailoverServiceTest extends TestContainerSupport {
     @BeforeEach
     void setUp() {
         expiringMapTokenRepository.deleteAll();
-        stringRedisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        RedisCacheCleaner.cleanAll(stringRedisTemplate);
     }
 
     @Test

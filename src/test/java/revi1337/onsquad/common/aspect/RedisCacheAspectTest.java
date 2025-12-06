@@ -24,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.TestContainerSupport;
 import revi1337.onsquad.common.config.TestObjectMapperConfiguration;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
+import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
 
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
 @ContextConfiguration(classes = {RedisCacheAspect.class, TestObjectMapperConfiguration.class})
@@ -52,10 +53,7 @@ class RedisCacheAspectTest extends TestContainerSupport {
 
     @AfterEach
     void tearDown() {
-        stringRedisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        RedisCacheCleaner.cleanAll(stringRedisTemplate);
     }
 
     @Nested

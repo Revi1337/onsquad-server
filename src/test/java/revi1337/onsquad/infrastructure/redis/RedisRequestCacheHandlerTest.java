@@ -28,10 +28,7 @@ class RedisRequestCacheHandlerTest extends TestContainerSupport {
 
     @BeforeEach
     void setUp() {
-        stringRedisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        RedisCacheCleaner.cleanAll(stringRedisTemplate);
     }
 
     @Test

@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.TestContainerSupport;
+import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
 import revi1337.onsquad.member.domain.model.VerificationStatus;
 
 @ExtendWith(SpringExtension.class)
@@ -34,10 +35,7 @@ class VerificationCodeRedisRepositoryTest extends TestContainerSupport {
 
     @BeforeEach
     void setUp() {
-        redisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        RedisCacheCleaner.cleanAll(redisTemplate);
     }
 
     @Nested
