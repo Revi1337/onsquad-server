@@ -1,0 +1,85 @@
+networks:
+  redis-net:
+    name: redis-net
+  mysql-net:
+    name: mysql-net
+  monitor-net:
+    name: monitor-net
+
+services:
+  mysql:
+    extends:
+      file: ./mysql/docker-compose.yml
+      service: mysql
+
+  redis-master:
+    extends:
+      file: ./redis/docker-compose.yml
+      service: redis-master
+    env_file:
+      - .env
+
+  redis-slave-1:
+    extends:
+      file: ./redis/docker-compose.yml
+      service: redis-slave-1
+    env_file:
+      - .env
+
+  redis-slave-2:
+    extends:
+      file: ./redis/docker-compose.yml
+      service: redis-slave-2
+    env_file:
+      - .env
+
+  sentinel-1:
+    extends:
+      file: ./redis/docker-compose.yml
+      service: sentinel-1
+    env_file:
+      - .env
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  sentinel-2:
+    extends:
+      file: ./redis/docker-compose.yml
+      service: sentinel-2
+    env_file:
+      - .env
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  sentinel-3:
+    extends:
+      file: ./redis/docker-compose.yml
+      service: sentinel-3
+    env_file:
+      - .env
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  mysql-exporter:
+    extends:
+      file: monitor/docker-compose.yml
+      service: mysql-exporter
+
+  prometheus:
+    extends:
+      file: monitor/docker-compose.yml
+      service: prometheus
+
+  grafana:
+    extends:
+      file: monitor/docker-compose.yml
+      service: grafana
+    depends_on:
+      - mysql-exporter
+      - prometheus

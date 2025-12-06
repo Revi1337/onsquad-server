@@ -1,0 +1,27 @@
+networks:
+  mysql-net:
+    name: mysql-net
+
+services:
+  mysql:
+    container_name: onsquad-mysql
+    image: mysql:8-oracle
+    ports:
+      - "3306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: onsquad
+      MYSQL_USER: revi1337
+      MYSQL_PASSWORD: 1337
+      MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - ./data:/var/lib/mysql
+    networks:
+      - mysql-net
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    restart: always

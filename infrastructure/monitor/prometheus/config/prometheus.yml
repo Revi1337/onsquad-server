@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 5s
+  scrape_timeout: 2s
+  evaluation_interval: 2m
+  external_labels:
+    monitor: onsquad-performance-monitor
+  query_log_file: query-log.log
+
+scrape_configs:
+  - job_name: onsquad
+    metrics_path: /metadata/prometheus
+    static_configs:
+      - targets:
+          - host.docker.internal:9097
+
+  - job_name: onsquad-mysql
+    metrics_path: /metrics
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - onsquad-mysql-exporter:9104
+
+  - job_name: prometheus
+    metrics_path: /prometheus/metrics
+    static_configs:
+      - targets:
+          - localhost:9090

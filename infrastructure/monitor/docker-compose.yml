@@ -1,0 +1,60 @@
+networks:
+  mysql-net:
+    name: mysql-net
+  redis-net:
+    name: redis-net
+  monitor-net:
+    name: monitor-net
+
+services:
+  mysql-exporter:
+    image: prom/mysqld-exporter
+    container_name: onsquad-mysql-exporter
+    ports:
+      - "9104:9104"
+    command:
+      - "--mysqld.address=onsquad-mysql:3306"
+      - "--mysqld.username=exporter:password"
+    restart: always
+    networks:
+      - mysql-net
+      - monitor-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: onsquad-prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - "--storage.tsdb.path=/prometheus"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.external-url=http://localhost:9090/prometheus/"
+      - "--web.route-prefix=/prometheus"
+    volumes:
+      - ./prometheus/config:/etc/prometheus
+      - ./prometheus/prometheus-volume:/prometheus
+    restart: always
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: onsquad-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: "default-user"
+      GF_SECURITY_ADMIN_PASSWORD: "default-password"
+      GF_SERVER_ROOT_URL: "http://localhost:3000/grafana"
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    restart: always
+    networks:
+      - monitor-net
+      - redis-net
+    depends_on:
+      - mysql-exporter
+      - prometheus

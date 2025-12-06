@@ -1,0 +1,101 @@
+networks:
+  redis-net:
+    name: redis-net
+
+services:
+  redis-master:
+    image: redis:latest
+    container_name: redis-master
+    command: [ "sh", "-c", "chmod +x /usr/local/etc/init.sh && /usr/local/etc/init.sh ${HOST_IP}" ]
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./nodes/master/init:/usr/local/etc
+      - ./nodes/master/data:/data
+    env_file:
+      - .env
+    networks:
+      - redis-net
+
+  redis-slave-1:
+    image: redis:latest
+    container_name: redis-slave1
+    command: [ "sh", "-c", "chmod +x /usr/local/etc/init.sh && /usr/local/etc/init.sh ${HOST_IP}" ]
+    ports:
+      - "6380:6379"
+    links:
+      - redis-master
+    volumes:
+      - ./nodes/slave-1/init:/usr/local/etc
+      - ./nodes/slave-1/data:/data
+    env_file:
+      - .env
+    networks:
+      - redis-net
+
+  redis-slave-2:
+    image: redis:latest
+    container_name: redis-slave2
+    command: [ "sh", "-c", "chmod +x /usr/local/etc/init.sh && /usr/local/etc/init.sh ${HOST_IP}" ]
+    ports:
+      - "6381:6379"
+    links:
+      - redis-master
+    volumes:
+      - ./nodes/slave-2/init:/usr/local/etc
+      - ./nodes/slave-2/data:/data
+    env_file:
+      - .env
+    networks:
+      - redis-net
+
+  sentinel-1:
+    image: redis:latest
+    container_name: sentinel1
+    command: [ "sh", "-c", "chmod +x /usr/local/etc/init.sh && /usr/local/etc/init.sh ${HOST_IP}" ]
+    ports:
+      - "5001:26379"
+    volumes:
+      - ./sentinels/sentinel-1/init:/usr/local/etc
+    env_file:
+      - .env
+    networks:
+      - redis-net
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  sentinel-2:
+    image: redis:latest
+    container_name: sentinel2
+    command: [ "sh", "-c", "chmod +x /usr/local/etc/init.sh && /usr/local/etc/init.sh ${HOST_IP}" ]
+    ports:
+      - "5002:26379"
+    volumes:
+      - ./sentinels/sentinel-2/init:/usr/local/etc
+    env_file:
+      - .env
+    networks:
+      - redis-net
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  sentinel-3:
+    image: redis:latest
+    container_name: sentinel3
+    command: [ "sh", "-c", "chmod +x /usr/local/etc/init.sh && /usr/local/etc/init.sh ${HOST_IP}" ]
+    ports:
+      - "5003:26379"
+    volumes:
+      - ./sentinels/sentinel-3/init:/usr/local/etc
+    env_file:
+      - .env
+    networks:
+      - redis-net
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
