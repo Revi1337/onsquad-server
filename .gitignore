@@ -6,6 +6,13 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # Exclude
+infrastructure/monitor/grafana
+infrastructure/monitor/prometheus/config/prometheus-dev.yml
+infrastructure/monitor/prometheus/config/query-log.log
+infrastructure/monitor/prometheus/prometheus-volume
+infrastructure/mysql/data
+infrastructure/redis/*/*/data
+
 src/main/resources/application-*.yml
 src/main/generated
 docker-compose-*.yml
@@ -13,8 +20,8 @@ src/main/resources/static/index.html
 performance
 local-monitor
 backup
-redis/nodes/*/data
 .java-version
+request/*.http
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -225,5 +232,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-request/*.http
