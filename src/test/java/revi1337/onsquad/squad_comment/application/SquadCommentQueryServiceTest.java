@@ -12,17 +12,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
-import revi1337.onsquad.squad_comment.domain.SquadComment;
-import revi1337.onsquad.squad_comment.domain.SquadCommentRepository;
+import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
+import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 
 class SquadCommentQueryServiceTest extends ApplicationLayerTestSupport {
 

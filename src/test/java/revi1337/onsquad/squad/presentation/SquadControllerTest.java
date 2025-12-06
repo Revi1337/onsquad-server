@@ -22,8 +22,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static revi1337.onsquad.category.domain.vo.CategoryType.GAME;
-import static revi1337.onsquad.category.domain.vo.CategoryType.MOVIE;
+import static revi1337.onsquad.category.domain.entity.vo.CategoryType.GAME;
+import static revi1337.onsquad.category.domain.entity.vo.CategoryType.MOVIE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.ANDONG_NICKNAME_VALUE;

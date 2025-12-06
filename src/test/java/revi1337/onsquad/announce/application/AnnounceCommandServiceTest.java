@@ -32,22 +32,22 @@ import org.springframework.cache.CacheManager;
 import org.springframework.test.context.event.ApplicationEvents;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
-import revi1337.onsquad.announce.application.event.AnnounceCreateEvent;
-import revi1337.onsquad.announce.application.event.AnnounceFixedEvent;
-import revi1337.onsquad.announce.application.event.AnnounceUpdateEvent;
-import revi1337.onsquad.announce.domain.Announce;
-import revi1337.onsquad.announce.domain.AnnounceCacheRepository;
-import revi1337.onsquad.announce.domain.AnnounceJpaRepository;
-import revi1337.onsquad.announce.domain.AnnounceRepository;
+import revi1337.onsquad.announce.domain.entity.Announce;
+import revi1337.onsquad.announce.domain.event.AnnounceCreateEvent;
+import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
+import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
+import revi1337.onsquad.announce.domain.repository.AnnounceCacheRepository;
+import revi1337.onsquad.announce.domain.repository.AnnounceJpaRepository;
+import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberRepository;
 
 class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
 

@@ -2,7 +2,7 @@ package revi1337.onsquad.crew.application.dto;
 
 import java.util.List;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 public record CrewDto(
@@ -17,6 +17,7 @@ public record CrewDto(
         SimpleMemberDto owner,
         Boolean alreadyJoin
 ) {
+
     public static CrewDto from(CrewDomainDto crewDomainDto) {
         return new CrewDto(
                 crewDomainDto.getId(),

@@ -21,15 +21,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.backup.crew.application.initializer.LocalCrewTopMemberInitializer;
 import revi1337.onsquad.backup.crew.application.initializer.NonLocalCrewTopMemberInitializer;
-import revi1337.onsquad.backup.crew.config.property.CrewTopMemberProperty;
-import revi1337.onsquad.backup.crew.domain.CrewTopMemberRepository;
+import revi1337.onsquad.backup.crew.domain.repository.CrewTopMemberRepository;
 
 class CrewTopMemberConfigurationTest {
 
     @Nested
     @ActiveProfiles("local")
     @TestPropertySource(properties = "spring.sql.init.mode=always")
-    @ContextConfiguration(classes = {TestConfig.class, CrewTopMemberConfiguration.class})
+    @ContextConfiguration(classes = {TestConfig.class, LocalCrewTopMemberInitializer.class})
     @ExtendWith(SpringExtension.class)
     class LocalBeanTest {
 
@@ -65,7 +64,7 @@ class CrewTopMemberConfigurationTest {
 
     @Nested
     @ActiveProfiles("dev")
-    @ContextConfiguration(classes = {TestConfig.class, CrewTopMemberConfiguration.class})
+    @ContextConfiguration(classes = {TestConfig.class, NonLocalCrewTopMemberInitializer.class})
     @ExtendWith(SpringExtension.class)
     class NonLocalBeanTest {
 
@@ -109,8 +108,8 @@ class CrewTopMemberConfigurationTest {
         }
 
         @Bean
-        public CrewTopMemberProperty crewTopMemberProperty() {
-            return mock(CrewTopMemberProperty.class);
+        public CrewTopMemberProperties crewTopMemberProperty() {
+            return mock(CrewTopMemberProperties.class);
         }
     }
 }

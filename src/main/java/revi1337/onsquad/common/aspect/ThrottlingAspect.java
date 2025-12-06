@@ -11,23 +11,26 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
+import revi1337.onsquad.common.error.CommonBusinessException;
 import revi1337.onsquad.common.error.CommonErrorCode;
-import revi1337.onsquad.common.error.exception.CommonBusinessException;
 
 @RequiredArgsConstructor
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @Aspect
+@Component
 public class ThrottlingAspect {
 
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
-    private final RequestCacheHandler requestCacheHandler;
+    private final RequestCacheHandler requestCacheHandlerComposite;
 
     @Before("@annotation(throttling)")
     public void checkInitialRequest(JoinPoint joinPoint, Throttling throttling) {
         String redisKey = generateRedisKey(joinPoint, throttling);
-        boolean firstRequest = requestCacheHandler.isFirstRequest(redisKey, LocalDateTime.now().toString(), throttling.during(), throttling.unit());
+        boolean firstRequest = requestCacheHandlerComposite
+                .isFirstRequest(redisKey, LocalDateTime.now().toString(), throttling.during(), throttling.unit());
         if (!firstRequest) {
             throw new CommonBusinessException.RequestConflict(
                     CommonErrorCode.REQUEST_CONFLICT, getCycleAsDuration(throttling)

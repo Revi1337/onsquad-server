@@ -8,10 +8,10 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.category.presentation.deserializer.CategoryTypeDeserializer;
 import revi1337.onsquad.category.presentation.serializer.CategoryTypeSerializer;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.hashtag.presentation.deserializer.HashtagTypeDeserializer;
 import revi1337.onsquad.hashtag.presentation.serializer.HashtagTypeSerializer;
 

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 
 @Sql({"/h2-hashtag.sql"})
 class DefaultHashtagServiceTest extends ApplicationLayerTestSupport {

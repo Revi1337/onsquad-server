@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 
 public record SquadCreateRequest(
@@ -17,6 +17,7 @@ public record SquadCreateRequest(
         String kakaoLink,
         String discordLink
 ) {
+
     public SquadCreateDto toDto() {
         return new SquadCreateDto(title, content, capacity, address, addressDetail, categories, kakaoLink, discordLink);
     }

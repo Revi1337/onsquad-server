@@ -1,7 +1,7 @@
 package revi1337.onsquad.member.application.dto;
 
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.vo.UserType;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.entity.vo.UserType;
 
 public record MemberSummary(
         Long id,
@@ -9,6 +9,7 @@ public record MemberSummary(
         String password,
         UserType userType
 ) {
+
     public MemberSummary(Long id, String email, String password, UserType userType) {
         this.id = id;
         this.email = email;

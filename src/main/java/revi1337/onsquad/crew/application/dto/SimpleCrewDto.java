@@ -11,6 +11,7 @@ public record SimpleCrewDto(
         String imageUrl,
         SimpleMemberDto owner
 ) {
+
     public static SimpleCrewDto from(SimpleCrewDomainDto simpleCrewDomainDto) {
         return new SimpleCrewDto(
                 simpleCrewDomainDto.id(),

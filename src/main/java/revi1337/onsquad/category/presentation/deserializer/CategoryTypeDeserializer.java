@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.category.util.CategoryTypeUtil;
 
 public class CategoryTypeDeserializer extends StdDeserializer<CategoryType> {

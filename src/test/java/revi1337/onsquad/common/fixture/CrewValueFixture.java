@@ -1,8 +1,8 @@
 package revi1337.onsquad.common.fixture;
 
-import revi1337.onsquad.crew.domain.vo.Detail;
-import revi1337.onsquad.crew.domain.vo.Introduce;
-import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew.domain.entity.vo.Detail;
+import revi1337.onsquad.crew.domain.entity.vo.Introduce;
+import revi1337.onsquad.crew.domain.entity.vo.Name;
 
 public class CrewValueFixture {
 

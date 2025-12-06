@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
-import revi1337.onsquad.announce.application.event.AnnounceCreateEvent;
-import revi1337.onsquad.announce.application.event.AnnounceDeleteEvent;
-import revi1337.onsquad.announce.application.event.AnnounceFixedEvent;
-import revi1337.onsquad.announce.application.event.AnnounceUpdateEvent;
-import revi1337.onsquad.announce.domain.Announce;
-import revi1337.onsquad.announce.domain.AnnounceRepository;
+import revi1337.onsquad.announce.domain.entity.Announce;
+import revi1337.onsquad.announce.domain.event.AnnounceCreateEvent;
+import revi1337.onsquad.announce.domain.event.AnnounceDeleteEvent;
+import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
+import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
+import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 @Transactional

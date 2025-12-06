@@ -18,19 +18,19 @@ import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.common.aspect.ExpiringMapRequestCacheHandler;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
-import revi1337.onsquad.common.error.exception.CommonBusinessException;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
+import revi1337.onsquad.common.error.CommonBusinessException;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.crew_participant.domain.CrewParticipant;
-import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
+import revi1337.onsquad.crew_participant.domain.entity.CrewParticipant;
+import revi1337.onsquad.crew_participant.domain.repository.CrewParticipantRepository;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
+import revi1337.onsquad.infrastructure.expiringmap.ExpiringMapRequestCacheHandler;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 @MockBean(ThrottlingAspect.class)
 class CrewParticipantCommandServiceTest extends ApplicationLayerTestSupport {

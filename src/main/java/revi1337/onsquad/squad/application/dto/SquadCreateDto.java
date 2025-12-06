@@ -1,8 +1,8 @@
 package revi1337.onsquad.squad.application.dto;
 
 import java.util.List;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.domain.Squad.SquadMetadata;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.squad.domain.entity.Squad.SquadMetadata;
 
 public record SquadCreateDto(
         String title,
@@ -14,6 +14,7 @@ public record SquadCreateDto(
         String kakaoLink,
         String discordLink
 ) {
+
     public SquadMetadata toEntityMetadata() {
         return new SquadMetadata(title, content, capacity, address, addressDetail, kakaoLink, discordLink);
     }

@@ -9,6 +9,7 @@ public record SquadMemberDto(
         LocalDateTime participantAt,
         SimpleMemberDto member
 ) {
+
     public static SquadMemberDto from(SquadMemberDomainDto squadMemberDomainDto) {
         return new SquadMemberDto(
                 null,

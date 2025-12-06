@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.dto.AnnounceWithFixAndModifyStateDto;
 import revi1337.onsquad.announce.application.dto.AnnouncesWithWriteStateDto;
-import revi1337.onsquad.announce.domain.AnnounceRepository;
 import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

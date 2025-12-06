@@ -14,9 +14,9 @@ import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITL
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE_5;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.announce.domain.Announce;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew_member.domain.CrewMember;
+import revi1337.onsquad.announce.domain.entity.Announce;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
 public class AnnounceFixture {
 

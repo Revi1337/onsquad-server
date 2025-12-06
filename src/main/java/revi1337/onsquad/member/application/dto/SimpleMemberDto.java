@@ -1,6 +1,6 @@
 package revi1337.onsquad.member.application.dto;
 
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 
 public record SimpleMemberDto(
@@ -10,6 +10,7 @@ public record SimpleMemberDto(
         String introduce,
         String mbti
 ) {
+
     public static SimpleMemberDto from(Member member) {
         return new SimpleMemberDto(
                 member.getId(),

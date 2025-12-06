@@ -5,9 +5,10 @@ import static revi1337.onsquad.common.fixture.SquadFixture.SQUAD;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.category.domain.Category;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.squad.domain.Squad;
+import revi1337.onsquad.category.domain.entity.Category;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 
 class SquadCategoryTest {
 

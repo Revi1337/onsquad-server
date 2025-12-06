@@ -13,14 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadJpaRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
+import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJdbcRepository;
 
 @Import(SquadCategoryJdbcRepository.class)
 class SquadCategoryJdbcRepositoryTest extends PersistenceLayerTestSupport {

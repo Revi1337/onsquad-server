@@ -1,6 +1,6 @@
 package revi1337.onsquad.member.application.dto;
 
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.member.domain.entity.Member;
 
 public record MemberInfoDto(
         Long id,
@@ -14,6 +14,7 @@ public record MemberInfoDto(
         String address,
         String addressDetail
 ) {
+
     public static MemberInfoDto from(Member member) {
         return new MemberInfoDto(
                 member.getId(),

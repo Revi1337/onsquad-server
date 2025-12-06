@@ -9,16 +9,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad.application.dto.SquadDto;
 import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
 import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
-import revi1337.onsquad.squad.domain.SquadRepository;
 import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
-import revi1337.onsquad.squad_member.domain.SquadMember;
-import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
+import revi1337.onsquad.squad.domain.repository.SquadRepository;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

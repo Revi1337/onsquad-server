@@ -4,10 +4,10 @@ import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
-import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 public record MySquadRequestDomainDto(
         Long id,
@@ -16,6 +16,7 @@ public record MySquadRequestDomainDto(
         SimpleMemberDomainDto owner,
         List<SquadWithParticipant> squads
 ) {
+
     @QueryProjection
     public MySquadRequestDomainDto(
             Long id,
@@ -40,6 +41,7 @@ public record MySquadRequestDomainDto(
             SimpleMemberDomainDto owner,
             RequestParticipantDomainDto request
     ) {
+
         @QueryProjection
         public SquadWithParticipant(
                 Long id,
@@ -75,6 +77,7 @@ public record MySquadRequestDomainDto(
                 Long id,
                 LocalDateTime requestAt
         ) {
+
             @QueryProjection
             public RequestParticipantDomainDto(
                     Long id,

@@ -3,10 +3,10 @@ package revi1337.onsquad.squad_member.domain.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import java.util.ArrayList;
 import java.util.List;
-import revi1337.onsquad.category.domain.vo.CategoryType;
-import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
-import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 public record EnrolledSquadDomainDto(
         Long id,
@@ -15,6 +15,7 @@ public record EnrolledSquadDomainDto(
         SimpleMemberDomainDto owner,
         List<SimpleSquadInfoDomainDto> squads
 ) {
+
     @QueryProjection
     public EnrolledSquadDomainDto(Long crewId, Name crewName, String imageUrl, SimpleMemberDomainDto crewOwner) {
         this(crewId, crewName, imageUrl, crewOwner, new ArrayList<>());
@@ -30,6 +31,7 @@ public record EnrolledSquadDomainDto(
             List<CategoryType> categories,
             SimpleMemberDomainDto squadOwner
     ) {
+
         @QueryProjection
         public SimpleSquadInfoDomainDto(Long crewId, Long id, Title title, int capacity, int remain, Boolean isLeader,
                                         List<CategoryType> categories, SimpleMemberDomainDto squadOwner) {

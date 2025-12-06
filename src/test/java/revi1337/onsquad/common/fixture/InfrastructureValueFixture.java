@@ -13,11 +13,11 @@ import java.time.Instant;
 import java.util.List;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
-import revi1337.onsquad.inrastructure.mail.application.VerificationCode;
-import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
-import revi1337.onsquad.inrastructure.mail.support.VerificationSnapshot;
-import revi1337.onsquad.inrastructure.mail.support.VerificationSnapshots;
-import revi1337.onsquad.inrastructure.mail.support.VerificationState;
+import revi1337.onsquad.member.domain.model.VerificationCode;
+import revi1337.onsquad.member.domain.model.VerificationSnapshot;
+import revi1337.onsquad.member.domain.model.VerificationSnapshots;
+import revi1337.onsquad.member.domain.model.VerificationState;
+import revi1337.onsquad.member.domain.model.VerificationStatus;
 
 public abstract class InfrastructureValueFixture {
 

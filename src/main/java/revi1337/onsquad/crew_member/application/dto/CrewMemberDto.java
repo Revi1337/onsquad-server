@@ -8,6 +8,7 @@ public record CrewMemberDto(
         LocalDateTime participantAt,
         SimpleMemberDto member
 ) {
+
     public static CrewMemberDto from(CrewMemberDomainDto crewMemberDomainDto) {
         return new CrewMemberDto(
                 crewMemberDomainDto.participantAt(),

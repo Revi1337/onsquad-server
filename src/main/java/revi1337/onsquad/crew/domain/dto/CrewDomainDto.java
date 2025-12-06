@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import revi1337.onsquad.crew.domain.vo.Detail;
-import revi1337.onsquad.crew.domain.vo.Introduce;
-import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.crew.domain.entity.vo.Detail;
+import revi1337.onsquad.crew.domain.entity.vo.Introduce;
+import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 
 @Getter

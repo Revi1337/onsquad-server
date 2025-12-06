@@ -21,14 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.backup.crew.application.dto.Top5CrewMemberDto;
-import revi1337.onsquad.backup.crew.domain.CrewTopMemberJpaRepository;
+import revi1337.onsquad.backup.crew.domain.repository.CrewTopMemberJpaRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 @Import(CrewTopMemberServiceTest.TestCrewTopMemberInitializer.class)
 class CrewTopMemberServiceTest extends ApplicationLayerTestSupport {

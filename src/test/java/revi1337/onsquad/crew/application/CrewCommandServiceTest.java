@@ -36,18 +36,18 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.application.file.FileStorageManager;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
-import revi1337.onsquad.crew.application.event.CrewImageDeleteEvent;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.event.CrewImageDeleteEvent;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
-import revi1337.onsquad.inrastructure.file.application.FileStorageManager;
-import revi1337.onsquad.inrastructure.file.application.event.FileDeleteEvent;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
+import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 @Sql({"/h2-hashtag.sql"})
 class CrewCommandServiceTest extends ApplicationLayerTestSupport {
@@ -69,6 +69,26 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private CrewCommandService crewCommandService;
+
+//    @Test
+//    void success() {
+//        List<String> list = Arrays.stream(HashtagType.values()).map(hashtagType -> hashtagType.getText()).toList();
+//        System.out.println("list = " + list);
+//        Member REVI = memberJpaRepository.save(REVI());
+//        CrewCreateDto CREATE_DTO = new CrewCreateDto(
+//                CREW_NAME_VALUE,
+//                CREW_INTRODUCE_VALUE,
+//                CREW_DETAIL_VALUE,
+//                List.of(HashtagType.ACTIVE, HashtagType.CREATIVE, HashtagType.FOODIE, HashtagType.IMPULSIVE, HashtagType.PASSIONATE, HashtagType.WINE,
+//                        HashtagType.HOME_BODY_FEMALE, HashtagType.FREE_SPIRITED, HashtagType.CAFE_LOVER),
+//                CREW_KAKAO_LINK_VALUE
+//        );
+//
+//        System.out.println("========================= start =========================");
+//        Long CREW_ID = crewCommandService.newCrew2(REVI.getId(), CREATE_DTO, CREW_IMAGE_LINK_VALUE);
+//
+//        assertThat(crewJpaRepository.findById(CREW_ID)).isPresent();
+//    }
 
     @Nested
     @DisplayName("Crew 생성을 테스트한다.")

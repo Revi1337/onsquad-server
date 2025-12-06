@@ -1,13 +1,13 @@
 package revi1337.onsquad.common.fixture;
 
 import java.util.UUID;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Introduce;
-import revi1337.onsquad.member.domain.vo.Mbti;
-import revi1337.onsquad.member.domain.vo.Nickname;
-import revi1337.onsquad.member.domain.vo.Password;
-import revi1337.onsquad.member.domain.vo.UserType;
+import revi1337.onsquad.member.domain.entity.vo.Address;
+import revi1337.onsquad.member.domain.entity.vo.Email;
+import revi1337.onsquad.member.domain.entity.vo.Introduce;
+import revi1337.onsquad.member.domain.entity.vo.Mbti;
+import revi1337.onsquad.member.domain.entity.vo.Nickname;
+import revi1337.onsquad.member.domain.entity.vo.Password;
+import revi1337.onsquad.member.domain.entity.vo.UserType;
 
 public class MemberValueFixture {
 

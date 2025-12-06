@@ -7,14 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.squad_member.domain.SquadMember;
-import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 import revi1337.onsquad.squad_participant.application.dto.SimpleSquadParticipantDto;
 import revi1337.onsquad.squad_participant.application.dto.SquadParticipantRequestDto;
-import revi1337.onsquad.squad_participant.domain.SquadParticipantRepository;
+import revi1337.onsquad.squad_participant.domain.repository.SquadParticipantRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

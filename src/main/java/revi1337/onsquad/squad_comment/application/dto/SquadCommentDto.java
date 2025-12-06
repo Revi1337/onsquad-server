@@ -15,6 +15,7 @@ public record SquadCommentDto(
         SimpleMemberDto writer,
         List<SquadCommentDto> replies
 ) {
+
     public static SquadCommentDto from(SquadCommentDomainDto squadCommentDomainDto) {
         return new SquadCommentDto(
                 squadCommentDomainDto.parentId(),

@@ -14,8 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.backup.crew.config.property.CrewTopMemberProperty;
-import revi1337.onsquad.backup.crew.domain.CrewTopMemberRepository;
+import revi1337.onsquad.backup.crew.application.CrewTopMemberRefreshScheduler;
+import revi1337.onsquad.backup.crew.config.CrewTopMemberProperties;
+import revi1337.onsquad.backup.crew.domain.repository.CrewTopMemberRepository;
 
 @ContextConfiguration(classes = {CrewTopMemberRefreshScheduler.class})
 @ExtendWith(SpringExtension.class)
@@ -25,7 +26,7 @@ class CrewTopMemberRefreshSchedulerTest {
     private CrewTopMemberRepository crewTopMemberRepository;
 
     @MockBean
-    private CrewTopMemberProperty crewTopMemberProperty;
+    private CrewTopMemberProperties crewTopMemberProperties;
 
     @Autowired
     private CrewTopMemberRefreshScheduler refreshScheduler;
@@ -33,8 +34,8 @@ class CrewTopMemberRefreshSchedulerTest {
     @Test
     @DisplayName("CrewTopMember 스케줄러를 테스트한다.")
     void success() {
-        when(crewTopMemberProperty.during()).thenReturn(Duration.ofDays(7));
-        when(crewTopMemberProperty.rankLimit()).thenReturn(5);
+        when(crewTopMemberProperties.during()).thenReturn(Duration.ofDays(7));
+        when(crewTopMemberProperties.rankLimit()).thenReturn(5);
 
         refreshScheduler.refreshTopMembersInCrew();
 

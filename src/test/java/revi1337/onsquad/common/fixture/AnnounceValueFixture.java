@@ -1,6 +1,6 @@
 package revi1337.onsquad.common.fixture;
 
-import revi1337.onsquad.announce.domain.vo.Title;
+import revi1337.onsquad.announce.domain.entity.vo.Title;
 
 public class AnnounceValueFixture {
 

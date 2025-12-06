@@ -8,7 +8,7 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.backup.crew.domain.CrewTopMember;
+import revi1337.onsquad.backup.crew.domain.entity.CrewTopMember;
 
 public class CrewTopMemberFixture {
 

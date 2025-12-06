@@ -5,16 +5,16 @@ import static revi1337.onsquad.squad.error.SquadErrorCode.UNSUFFICIENT_AUTHORITY
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.domain.Category;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.category.domain.entity.Category;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
-import revi1337.onsquad.squad_category.domain.SquadCategoryJdbcRepository;
-import revi1337.onsquad.squad_member.domain.SquadMember;
-import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
+import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJdbcRepository;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 
 @Transactional
 @RequiredArgsConstructor

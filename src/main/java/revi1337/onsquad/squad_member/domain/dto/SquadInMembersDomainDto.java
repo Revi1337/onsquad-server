@@ -4,9 +4,9 @@ import com.querydsl.core.annotations.QueryProjection;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
-import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 @Getter
 public class SquadInMembersDomainDto {

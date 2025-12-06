@@ -2,7 +2,7 @@ package revi1337.onsquad.member.presentation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import revi1337.onsquad.member.domain.vo.Mbti;
+import revi1337.onsquad.member.domain.entity.vo.Mbti;
 
 public class ConstraintMbtiValidator implements ConstraintValidator<MbtiValidator, String> {
 

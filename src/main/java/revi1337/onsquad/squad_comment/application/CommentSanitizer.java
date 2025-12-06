@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 
 @Component
-public class CommentSanitizer {
+public class CommentSanitizer { // TODO 전략패턴으로 뺄 수 있을듯?
 
     public List<SquadCommentDomainDto> sanitizeIteratively(List<SquadCommentDomainDto> comments) {
         List<SquadCommentDomainDto> results = new ArrayList<>();

@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.application.dto.CrewDto;
 import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
-import revi1337.onsquad.crew.domain.CrewRepository;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
-import revi1337.onsquad.crew.domain.vo.Name;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.crew.domain.repository.CrewRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

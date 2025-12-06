@@ -1,7 +1,7 @@
 package revi1337.onsquad.backup.crew.domain.dto;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.backup.crew.domain.CrewTopMember;
+import revi1337.onsquad.backup.crew.domain.entity.CrewTopMember;
 
 public record Top5CrewMemberDomainDto(
         Long crewId,
@@ -12,6 +12,7 @@ public record Top5CrewMemberDomainDto(
         String mbti,
         LocalDateTime participateAt
 ) {
+
     public static Top5CrewMemberDomainDto from(CrewTopMember crewTopMember) {
         return new Top5CrewMemberDomainDto(
                 crewTopMember.getCrewId(),

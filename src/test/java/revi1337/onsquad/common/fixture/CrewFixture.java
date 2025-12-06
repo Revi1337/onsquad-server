@@ -4,8 +4,8 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_DETAIL_VALUE
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_INTRODUCE_VALUE;
 import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
 
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.member.domain.entity.Member;
 
 public class CrewFixture {
 

@@ -12,6 +12,7 @@ public record MemberUpdateRequest(
         @NotEmpty String address,
         @NotEmpty String addressDetail
 ) {
+
     public MemberUpdateDto toDto() {
         return new MemberUpdateDto(nickname, introduce, mbti.toUpperCase(), kakaoLink, address, addressDetail);
     }

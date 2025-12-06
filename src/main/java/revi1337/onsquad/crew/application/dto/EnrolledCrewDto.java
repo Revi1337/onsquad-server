@@ -10,6 +10,7 @@ public record EnrolledCrewDto(
         boolean isOwner,
         SimpleMemberDto owner
 ) {
+
     public static EnrolledCrewDto from(EnrolledCrewDomainDto crewDomainDto) {
         return new EnrolledCrewDto(
                 crewDomainDto.id(),

@@ -2,6 +2,7 @@ package revi1337.onsquad.common.aspect;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
-import revi1337.onsquad.common.error.exception.CommonBusinessException;
+import revi1337.onsquad.common.error.CommonBusinessException;
+import revi1337.onsquad.infrastructure.expiringmap.ExpiringMapRequestCacheHandler;
+import revi1337.onsquad.infrastructure.redis.RedisRequestCacheHandler;
 
 class ThrottlingAspectTest {
 
@@ -114,9 +117,13 @@ class ThrottlingAspectTest {
         private TestService testService;
 
         @Autowired
-        public ChainThrottlingAspectTest(RequestCacheHandlerExecutionChain requestCacheHandler, StringRedisTemplate stringRedisTemplate) {
+        public ChainThrottlingAspectTest(
+                ExpiringMapRequestCacheHandler expiringMapRequestCacheHandler,
+                RedisRequestCacheHandler redisRequestCacheHandler,
+                StringRedisTemplate stringRedisTemplate
+        ) {
             this.stringRedisTemplate = stringRedisTemplate;
-            this.throttlingAspect = new ThrottlingAspect(requestCacheHandler);
+            this.throttlingAspect = new ThrottlingAspect(new RequestCacheHandlerComposite(List.of(redisRequestCacheHandler, expiringMapRequestCacheHandler)));
         }
 
         @BeforeEach

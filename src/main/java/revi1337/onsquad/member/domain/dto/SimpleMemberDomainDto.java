@@ -1,10 +1,10 @@
 package revi1337.onsquad.member.domain.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Introduce;
-import revi1337.onsquad.member.domain.vo.Mbti;
-import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.entity.vo.Email;
+import revi1337.onsquad.member.domain.entity.vo.Introduce;
+import revi1337.onsquad.member.domain.entity.vo.Mbti;
+import revi1337.onsquad.member.domain.entity.vo.Nickname;
 
 public record SimpleMemberDomainDto(
         Long id,

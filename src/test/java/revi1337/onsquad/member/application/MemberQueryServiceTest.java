@@ -18,10 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.fixture.MemberFixture;
 import revi1337.onsquad.member.application.dto.MemberInfoDto;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.member.domain.vo.Mbti;
-import revi1337.onsquad.member.domain.vo.UserType;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.entity.vo.Mbti;
+import revi1337.onsquad.member.domain.entity.vo.UserType;
+import revi1337.onsquad.member.domain.repository.MemberRepository;
 
 class MemberQueryServiceTest extends ApplicationLayerTestSupport {
 

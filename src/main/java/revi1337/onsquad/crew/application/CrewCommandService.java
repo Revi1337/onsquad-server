@@ -10,20 +10,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
-import revi1337.onsquad.crew.application.event.CrewImageDeleteEvent;
-import revi1337.onsquad.crew.application.event.CrewImageUpdateEvent;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.crew.domain.vo.Name;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.crew.domain.event.CrewImageDeleteEvent;
+import revi1337.onsquad.crew.domain.event.CrewImageUpdateEvent;
+import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
-import revi1337.onsquad.crew_hashtag.domain.CrewHashtagRepository;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.hashtag.domain.Hashtag;
-import revi1337.onsquad.inrastructure.file.application.event.FileDeleteEvent;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.squad.domain.SquadJpaRepository;
+import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.hashtag.domain.entity.Hashtag;
+import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberRepository;
+import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 
 @RequiredArgsConstructor
 @Service

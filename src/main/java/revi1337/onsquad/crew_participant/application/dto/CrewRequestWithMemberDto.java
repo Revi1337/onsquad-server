@@ -7,6 +7,7 @@ public record CrewRequestWithMemberDto(
         CrewRequestDto request,
         SimpleMemberDto member
 ) {
+
     public static CrewRequestWithMemberDto from(CrewRequestWithMemberDomainDto crewRequestWithMemberDomainDto) {
         return new CrewRequestWithMemberDto(
                 CrewRequestDto.from(crewRequestWithMemberDomainDto.request()),

@@ -18,7 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.hashtag.application.HashtagService;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 
 @WebMvcTest(HashtagController.class)
 class HashtagControllerTest extends PresentationLayerTestSupport {

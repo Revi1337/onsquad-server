@@ -10,13 +10,13 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
-import revi1337.onsquad.squad_comment.domain.SquadComment;
-import revi1337.onsquad.squad_comment.domain.SquadCommentRepository;
+import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
+import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
 
 @Transactional

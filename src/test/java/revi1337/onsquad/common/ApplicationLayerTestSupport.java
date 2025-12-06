@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.domain.Category;
-import revi1337.onsquad.category.domain.CategoryJpaRepository;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.Category;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.category.domain.repository.CategoryJpaRepository;
 import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
-import revi1337.onsquad.inrastructure.file.support.RecycleBinLifeCycleManager;
-import revi1337.onsquad.inrastructure.mail.support.VerificationCacheLifeCycleManager;
+import revi1337.onsquad.infrastructure.aws.s3.support.RecycleBinLifeCycleManager;
+import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

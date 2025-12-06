@@ -12,17 +12,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.inrastructure.mail.application.VerificationStatus;
-import revi1337.onsquad.inrastructure.mail.repository.VerificationCodeRepository;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
-import revi1337.onsquad.member.application.event.MemberImageDeleteEvent;
-import revi1337.onsquad.member.application.event.MemberImageUpdateEvent;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
-import revi1337.onsquad.member.domain.vo.Email;
-import revi1337.onsquad.member.domain.vo.Nickname;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.entity.vo.Email;
+import revi1337.onsquad.member.domain.entity.vo.Nickname;
+import revi1337.onsquad.member.domain.event.MemberImageDeleteEvent;
+import revi1337.onsquad.member.domain.event.MemberImageUpdateEvent;
+import revi1337.onsquad.member.domain.model.VerificationStatus;
+import revi1337.onsquad.member.domain.repository.MemberRepository;
+import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
 @Slf4j

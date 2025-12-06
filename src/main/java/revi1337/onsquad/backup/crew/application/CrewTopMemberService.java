@@ -6,8 +6,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.backup.crew.application.dto.Top5CrewMemberDto;
-import revi1337.onsquad.backup.crew.domain.CrewTopMemberCacheRepository;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.backup.crew.domain.repository.CrewTopMemberCacheRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 @RequiredArgsConstructor

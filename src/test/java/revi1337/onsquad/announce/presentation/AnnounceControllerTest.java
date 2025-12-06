@@ -28,7 +28,7 @@ import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_CONT
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE;
 import static revi1337.onsquad.common.fixture.AnnounceValueFixture.ANNOUNCE_TITLE_VALUE_1;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
-import static revi1337.onsquad.crew_member.domain.vo.CrewRole.OWNER;
+import static revi1337.onsquad.crew_member.domain.entity.vo.CrewRole.OWNER;
 
 import java.time.LocalDateTime;
 import java.util.List;

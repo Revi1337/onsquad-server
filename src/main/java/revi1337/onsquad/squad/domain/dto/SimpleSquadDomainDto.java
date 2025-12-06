@@ -3,9 +3,9 @@ package revi1337.onsquad.squad.domain.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import java.util.ArrayList;
 import java.util.List;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
-import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 public record SimpleSquadDomainDto(
         Long id,
@@ -15,6 +15,7 @@ public record SimpleSquadDomainDto(
         List<CategoryType> categories,
         SimpleMemberDomainDto leader
 ) {
+
     @QueryProjection
     public SimpleSquadDomainDto(Long id, Title title, int capacity, int remain, SimpleMemberDomainDto owner) {
         this(id, title, capacity, remain, new ArrayList<>(), owner);

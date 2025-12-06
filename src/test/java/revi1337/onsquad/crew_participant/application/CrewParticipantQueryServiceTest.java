@@ -23,15 +23,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.crew_participant.application.dto.CrewRequestWithCrewDto;
 import revi1337.onsquad.crew_participant.application.dto.CrewRequestWithMemberDto;
-import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
+import revi1337.onsquad.crew_participant.domain.repository.CrewParticipantRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 class CrewParticipantQueryServiceTest extends ApplicationLayerTestSupport {
 

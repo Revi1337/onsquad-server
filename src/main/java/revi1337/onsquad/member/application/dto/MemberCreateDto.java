@@ -1,6 +1,6 @@
 package revi1337.onsquad.member.application.dto;
 
-import revi1337.onsquad.member.domain.Member;
+import revi1337.onsquad.member.domain.entity.Member;
 
 public record MemberCreateDto(
         String email,
@@ -10,6 +10,7 @@ public record MemberCreateDto(
         String address,
         String addressDetail
 ) {
+
     public Member toEntity() {
         return Member.general(email, password, nickname, address, addressDetail);
     }

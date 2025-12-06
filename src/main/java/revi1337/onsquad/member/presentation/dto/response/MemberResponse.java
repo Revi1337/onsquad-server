@@ -14,6 +14,7 @@ public record MemberResponse(
         String address,
         String addressDetail
 ) {
+
     public static MemberResponse from(MemberInfoDto memberInfoDto) {
         return new MemberResponse(
                 memberInfoDto.id(),

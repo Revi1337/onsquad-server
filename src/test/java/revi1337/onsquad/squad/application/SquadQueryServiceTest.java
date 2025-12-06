@@ -23,23 +23,23 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import revi1337.onsquad.category.domain.Category;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.Category;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.application.dto.SquadDto;
 import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
 import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadRepository;
-import revi1337.onsquad.squad_category.domain.SquadCategoryJdbcRepository;
-import revi1337.onsquad.squad_member.domain.SquadMemberJpaRepository;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.repository.SquadRepository;
+import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJdbcRepository;
+import revi1337.onsquad.squad_member.domain.repository.SquadMemberJpaRepository;
 
 class SquadQueryServiceTest extends ApplicationLayerTestSupport {
 

@@ -52,9 +52,9 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.RequestFixture.JSON_MULTIPART;
 import static revi1337.onsquad.common.fixture.RequestFixture.PNG_MULTIPART;
-import static revi1337.onsquad.hashtag.domain.vo.HashtagType.ACTIVE;
-import static revi1337.onsquad.hashtag.domain.vo.HashtagType.FOODIE;
-import static revi1337.onsquad.member.domain.vo.Mbti.ISTP;
+import static revi1337.onsquad.hashtag.domain.entity.vo.HashtagType.ACTIVE;
+import static revi1337.onsquad.hashtag.domain.entity.vo.HashtagType.FOODIE;
+import static revi1337.onsquad.member.domain.entity.vo.Mbti.ISTP;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +77,7 @@ import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 @WebMvcTest(CrewController.class)

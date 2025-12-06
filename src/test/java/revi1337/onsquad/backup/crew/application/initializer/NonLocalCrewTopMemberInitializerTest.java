@@ -27,12 +27,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.backup.crew.application.initializer.LocalCrewTopMemberInitializerTest.TestConfig;
-import revi1337.onsquad.backup.crew.config.CrewTopMemberConfiguration;
-import revi1337.onsquad.backup.crew.config.property.CrewTopMemberProperty;
-import revi1337.onsquad.backup.crew.domain.CrewTopMemberRepository;
+import revi1337.onsquad.backup.crew.config.CrewTopMemberProperties;
+import revi1337.onsquad.backup.crew.domain.repository.CrewTopMemberRepository;
 
 @ActiveProfiles("dev")
-@ContextConfiguration(classes = {TestConfig.class, CrewTopMemberConfiguration.class})
+@ContextConfiguration(classes = {TestConfig.class, CrewTopMemberInitializerSelector.class})
 @ExtendWith(SpringExtension.class)
 class NonLocalCrewTopMemberInitializerTest {
 
@@ -46,15 +45,15 @@ class NonLocalCrewTopMemberInitializerTest {
     private CrewTopMemberRepository crewTopMemberRepository;
 
     @MockBean
-    private CrewTopMemberProperty crewTopMemberProperty;
+    private CrewTopMemberProperties crewTopMemberProperties;
 
     @Test
     @DisplayName("dev 환경의 CrewTopMemberInitializer 를 검증한다.")
     void success() {
-        when(crewTopMemberProperty.during()).thenReturn(Duration.ofDays(7));
-        when(crewTopMemberProperty.rankLimit()).thenReturn(5);
-        ApplicationReadyEvent applicationReadyEvent = new ApplicationReadyEvent(
-                new SpringApplication(), new String[]{}, applicationContext, Duration.ofMinutes(1));
+        when(crewTopMemberProperties.during()).thenReturn(Duration.ofDays(7));
+        when(crewTopMemberProperties.rankLimit()).thenReturn(5);
+        ApplicationReadyEvent applicationReadyEvent =
+                new ApplicationReadyEvent(new SpringApplication(), new String[]{}, applicationContext, Duration.ofMinutes(1));
 
         applicationEventPublisher.publishEvent(applicationReadyEvent);
 
@@ -77,8 +76,8 @@ class NonLocalCrewTopMemberInitializerTest {
         }
 
         @Bean
-        public CrewTopMemberProperty crewTopMemberProperty() {
-            return mock(CrewTopMemberProperty.class);
+        public CrewTopMemberProperties crewTopMemberProperty() {
+            return mock(CrewTopMemberProperties.class);
         }
     }
 }

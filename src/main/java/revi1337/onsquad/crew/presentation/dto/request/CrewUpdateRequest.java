@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 
 public record CrewUpdateRequest(
         @NotEmpty String name,
@@ -13,6 +13,7 @@ public record CrewUpdateRequest(
         @NotNull List<HashtagType> hashtags,
         String kakaoLink
 ) {
+
     public CrewUpdateDto toDto() {
         return new CrewUpdateDto(name, introduce, detail, hashtags, kakaoLink);
     }

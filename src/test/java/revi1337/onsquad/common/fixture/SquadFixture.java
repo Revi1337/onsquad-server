@@ -29,10 +29,10 @@ import static revi1337.onsquad.common.fixture.SquadValueFixture.SQUAD_TITLE_VALU
 import static revi1337.onsquad.common.fixture.SquadValueFixture.SQUAD_TITLE_VALUE_2;
 import static revi1337.onsquad.common.fixture.SquadValueFixture.SQUAD_TITLE_VALUE_3;
 
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.Squad.SquadMetadata;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.entity.Squad.SquadMetadata;
 
 public class SquadFixture {
 

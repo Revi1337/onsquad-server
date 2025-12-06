@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
-import revi1337.onsquad.squad_comment.domain.SquadCommentRepository;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

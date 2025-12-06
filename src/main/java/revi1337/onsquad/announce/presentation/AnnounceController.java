@@ -21,8 +21,8 @@ import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
 import revi1337.onsquad.announce.presentation.dto.request.AnnounceUpdateRequest;
 import revi1337.onsquad.announce.presentation.dto.response.AnnounceWithFixAndModifyStateResponse;
 import revi1337.onsquad.announce.presentation.dto.response.AnnouncesWithWriteStateResponse;
-import revi1337.onsquad.auth.application.CurrentMember;
-import revi1337.onsquad.auth.config.Authenticate;
+import revi1337.onsquad.auth.support.Authenticate;
+import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 
 @RequiredArgsConstructor

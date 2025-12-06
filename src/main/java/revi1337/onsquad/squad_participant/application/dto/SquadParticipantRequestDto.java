@@ -11,6 +11,7 @@ public record SquadParticipantRequestDto(
         SimpleMemberDto crewOwner,
         List<SquadParticipantDto> squads
 ) {
+
     public static SquadParticipantRequestDto from(SquadParticipantRequest squadParticipantRequest) {
         return new SquadParticipantRequestDto(
                 squadParticipantRequest.crewId(),

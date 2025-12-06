@@ -23,6 +23,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import revi1337.onsquad.backup.crew.domain.repository.CrewTopMemberCacheRepository;
+import revi1337.onsquad.backup.crew.domain.repository.CrewTopMemberJpaRepository;
 import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
 
 @DataJpaTest(showSql = false)

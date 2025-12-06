@@ -20,11 +20,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import revi1337.onsquad.auth.application.token.ClaimsParser;
-import revi1337.onsquad.auth.application.token.JsonWebTokenEvaluator;
 import revi1337.onsquad.common.config.TestObjectMapperConfiguration;
 import revi1337.onsquad.common.config.WebMvcConfig;
-import revi1337.onsquad.member.domain.vo.UserType;
+import revi1337.onsquad.member.domain.entity.vo.UserType;
+import revi1337.onsquad.token.application.ClaimsParser;
+import revi1337.onsquad.token.application.JsonWebTokenEvaluator;
 
 @Import({WebMvcConfig.class, TestObjectMapperConfiguration.class})
 @WebMvcTest

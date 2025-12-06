@@ -17,9 +17,10 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.transaction.TestTransaction;
-import revi1337.onsquad.announce.application.event.AnnounceFixedEvent;
-import revi1337.onsquad.announce.domain.AnnounceQueryDslRepository;
+import revi1337.onsquad.announce.application.listener.AnnounceFixedEventListener;
 import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
+import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
+import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.constant.CacheConst;
 
@@ -88,5 +89,4 @@ class AnnounceFixedEventListenerTest extends ApplicationLayerTestSupport {
         verify(cache).evict(String.format("crew:%d", DUMMY_CREW_ID));
         verify(cache).put(eq(String.format("crew:%d", DUMMY_CREW_ID)), any());
     }
-
 }

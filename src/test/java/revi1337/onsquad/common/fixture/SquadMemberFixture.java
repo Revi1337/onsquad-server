@@ -1,9 +1,9 @@
 package revi1337.onsquad.common.fixture;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad_member.domain.SquadMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 public class SquadMemberFixture {
 

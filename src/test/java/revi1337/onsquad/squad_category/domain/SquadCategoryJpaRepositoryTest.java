@@ -1,9 +1,9 @@
 package revi1337.onsquad.squad_category.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static revi1337.onsquad.category.domain.vo.CategoryType.BADMINTON;
-import static revi1337.onsquad.category.domain.vo.CategoryType.GAME;
-import static revi1337.onsquad.category.domain.vo.CategoryType.TENNIS;
+import static revi1337.onsquad.category.domain.entity.vo.CategoryType.BADMINTON;
+import static revi1337.onsquad.category.domain.entity.vo.CategoryType.GAME;
+import static revi1337.onsquad.category.domain.entity.vo.CategoryType.TENNIS;
 import static revi1337.onsquad.common.fixture.CategoryFixture.BADMINTON_CATEGORY;
 import static revi1337.onsquad.common.fixture.CategoryFixture.CATEGORIES_1;
 import static revi1337.onsquad.common.fixture.CategoryFixture.CATEGORIES_2;
@@ -21,16 +21,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberJpaRepository;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberJpaRepository;
-import revi1337.onsquad.squad.domain.Squad;
-import revi1337.onsquad.squad.domain.SquadJpaRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
+import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
+import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
+import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJdbcRepository;
+import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJpaRepository;
 
 @Import({SquadCategoryJdbcRepository.class})
 class SquadCategoryJpaRepositoryTest extends PersistenceLayerTestSupport {

@@ -9,6 +9,7 @@ public record SimpleSquadParticipantDto(
         LocalDateTime requestAt,
         SimpleMemberDto member
 ) {
+
     public static SimpleSquadParticipantDto from(SimpleSquadParticipantDomainDto simpleSquadParticipantDomainDto) {
         return new SimpleSquadParticipantDto(
                 simpleSquadParticipantDomainDto.id(),

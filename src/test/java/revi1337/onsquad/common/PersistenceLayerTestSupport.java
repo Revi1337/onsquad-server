@@ -11,9 +11,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
-import revi1337.onsquad.category.domain.Category;
-import revi1337.onsquad.category.domain.CategoryJpaRepository;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.Category;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.category.domain.repository.CategoryJpaRepository;
 import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
 
 @TestInstance(Lifecycle.PER_CLASS)

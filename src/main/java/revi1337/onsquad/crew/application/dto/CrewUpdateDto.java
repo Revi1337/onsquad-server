@@ -1,7 +1,7 @@
 package revi1337.onsquad.crew.application.dto;
 
 import java.util.List;
-import revi1337.onsquad.hashtag.domain.vo.HashtagType;
+import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 
 public record CrewUpdateDto(
         String name,
@@ -10,4 +10,5 @@ public record CrewUpdateDto(
         List<HashtagType> hashtags,
         String kakaoLink
 ) {
+
 }

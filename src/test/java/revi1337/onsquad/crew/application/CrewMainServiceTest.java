@@ -13,8 +13,8 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_NAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG;
 import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI;
-import static revi1337.onsquad.hashtag.domain.vo.HashtagType.ACTIVE;
-import static revi1337.onsquad.hashtag.domain.vo.HashtagType.ESCAPE;
+import static revi1337.onsquad.hashtag.domain.entity.vo.HashtagType.ACTIVE;
+import static revi1337.onsquad.hashtag.domain.entity.vo.HashtagType.ESCAPE;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,18 +23,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
-import revi1337.onsquad.announce.domain.Announce;
-import revi1337.onsquad.announce.domain.AnnounceRepository;
+import revi1337.onsquad.announce.domain.entity.Announce;
+import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.application.dto.CrewMainDto;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
-import revi1337.onsquad.crew_hashtag.domain.CrewHashtagRepository;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.hashtag.domain.Hashtag;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewRepository;
+import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.hashtag.domain.entity.Hashtag;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberRepository;
 
 // TODO 크루 메인 페이지는 추후 테스트 해야함. (미완성. Crew Top Member & CrewMember 가 필요.)
 @Sql({"/h2-hashtag.sql"})

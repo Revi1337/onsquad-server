@@ -11,6 +11,7 @@ public record SimpleMemberResponse(
         String introduce,
         String mbti
 ) {
+
     public static SimpleMemberResponse from(SimpleMemberDto simpleMemberDto) {
         return new SimpleMemberResponse(
                 simpleMemberDto.id(),

@@ -5,10 +5,10 @@ import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.CANNOT_LE
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
-import revi1337.onsquad.squad_member.domain.SquadMember;
-import revi1337.onsquad.squad_member.domain.SquadMemberRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 
 @Transactional
@@ -23,8 +23,7 @@ public class SquadMemberCommandService {
 
     public void leaveSquad(Long memberId, Long crewId, Long squadId) {
         CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        SquadMember squadMember = squadMemberRepository
-                .getWithSquadBySquadIdAndCrewMemberId(squadId, crewMember.getId());
+        SquadMember squadMember = squadMemberRepository.getWithSquadBySquadIdAndCrewMemberId(squadId, crewMember.getId());
         if (squadMember.isLeader() && squadMemberRepository.countBySquadId(squadId) >= LEADER_LIMIT_THRESHOLD) {
             throw new SquadMemberBusinessException.CannotLeaveLeader(CANNOT_LEAVE_LEADER);
         }

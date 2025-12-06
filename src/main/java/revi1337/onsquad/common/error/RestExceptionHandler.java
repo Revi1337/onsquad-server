@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.common.error.exception.CommonBusinessException;
 
 @RestControllerAdvice
 public class RestExceptionHandler {

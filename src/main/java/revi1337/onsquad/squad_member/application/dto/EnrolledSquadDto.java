@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_member.application.dto;
 
 import java.util.List;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
 import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto.SimpleSquadInfoDomainDto;
@@ -13,6 +13,7 @@ public record EnrolledSquadDto(
         SimpleMemberDto owner,
         List<SimpleSquadInfoDto> squads
 ) {
+
     public static EnrolledSquadDto from(EnrolledSquadDomainDto squadDomainDto) {
         return new EnrolledSquadDto(
                 squadDomainDto.id(),
@@ -34,6 +35,7 @@ public record EnrolledSquadDto(
             List<String> categories,
             SimpleMemberDto leader
     ) {
+
         public static SimpleSquadInfoDto from(SimpleSquadInfoDomainDto simpleSquadInfoDomainDto) {
             return new SimpleSquadInfoDto(
                     simpleSquadInfoDomainDto.id(),

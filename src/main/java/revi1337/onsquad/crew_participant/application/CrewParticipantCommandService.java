@@ -11,17 +11,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.aspect.Throttling;
-import revi1337.onsquad.crew.domain.Crew;
-import revi1337.onsquad.crew.domain.CrewRepository;
+import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
-import revi1337.onsquad.crew_member.domain.CrewMember;
-import revi1337.onsquad.crew_member.domain.CrewMemberRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.crew_participant.domain.CrewParticipant;
-import revi1337.onsquad.crew_participant.domain.CrewParticipantRepository;
+import revi1337.onsquad.crew_participant.domain.entity.CrewParticipant;
+import revi1337.onsquad.crew_participant.domain.repository.CrewParticipantRepository;
 import revi1337.onsquad.crew_participant.error.exception.CrewParticipantBusinessException;
-import revi1337.onsquad.member.domain.Member;
-import revi1337.onsquad.member.domain.MemberRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberRepository;
 
 @RequiredArgsConstructor
 @Transactional

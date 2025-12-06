@@ -3,11 +3,11 @@ package revi1337.onsquad.squad.domain.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import java.util.ArrayList;
 import java.util.List;
-import revi1337.onsquad.category.domain.vo.CategoryType;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
-import revi1337.onsquad.member.domain.vo.Address;
-import revi1337.onsquad.squad.domain.vo.Content;
-import revi1337.onsquad.squad.domain.vo.Title;
+import revi1337.onsquad.member.domain.entity.vo.Address;
+import revi1337.onsquad.squad.domain.entity.vo.Content;
+import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 public record SquadDomainDto(
         Long id,
@@ -21,6 +21,7 @@ public record SquadDomainDto(
         List<CategoryType> categories,
         SimpleMemberDomainDto leader
 ) {
+
     @QueryProjection
     public SquadDomainDto(Long id, Title title, Content content, int capacity, int remain, Address address,
                           String kakaoLink, String discordLink, SimpleMemberDomainDto owner) {

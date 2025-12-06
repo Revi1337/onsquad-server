@@ -10,6 +10,7 @@ public record CrewAndSquadDto(
         SimpleMemberDto crewOwner,
         SquadDto squadInfo
 ) {
+
     public static CrewAndSquadDto from(CrewAndSquadDomainDto crewAndSquadDomainDto) {
         return new CrewAndSquadDto(
                 crewAndSquadDomainDto.crewId(),

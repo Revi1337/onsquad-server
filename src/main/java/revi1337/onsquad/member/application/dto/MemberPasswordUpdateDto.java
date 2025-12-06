@@ -5,4 +5,5 @@ public record MemberPasswordUpdateDto(
         String newPassword,
         String newPasswordConfirm
 ) {
+
 }
