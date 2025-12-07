@@ -26,7 +26,7 @@ import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.application.dto.CrewMemberDto;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -89,7 +89,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
             LocalDateTime NOW = LocalDateTime.now();
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, NOW));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, NOW));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
             assertThatThrownBy(() -> crewMemberService.fetchCrewMembers(KWANGWON.getId(), CREW.getId(), PAGE_REQUEST))

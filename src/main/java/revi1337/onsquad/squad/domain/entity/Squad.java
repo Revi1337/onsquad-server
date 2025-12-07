@@ -35,6 +35,7 @@ import revi1337.onsquad.squad.error.exception.SquadDomainException;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
 import revi1337.onsquad.squad_participant.domain.entity.SquadParticipant;
 
 @Getter
@@ -98,7 +99,7 @@ public class Squad extends BaseEntity {
         Squad squad = metadata.toEntity();
         squad.registerOwner(crewMember);
         squad.registerCrew(crew);
-        squad.addMembers(SquadMember.forLeader(crewMember, LocalDateTime.now()));
+        squad.addMembers(SquadMemberFactory.leader(crewMember, LocalDateTime.now()));
         return squad;
     }
 

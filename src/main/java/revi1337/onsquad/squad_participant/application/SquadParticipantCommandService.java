@@ -14,6 +14,7 @@ import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad.error.SquadErrorCode;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 import revi1337.onsquad.squad_participant.domain.entity.SquadParticipant;
@@ -60,7 +61,7 @@ public class SquadParticipantCommandService {
 
         Squad squad = participant.getSquad();
         CrewMember acceptMember = participant.getCrewMember();
-        squad.addMembers(SquadMember.forGeneral(squad, acceptMember, LocalDateTime.now()));
+        squad.addMembers(SquadMemberFactory.general(squad, acceptMember, LocalDateTime.now()));
         squadRepository.saveAndFlush(squad);
         squadParticipantRepository.deleteById(requestId);
     }

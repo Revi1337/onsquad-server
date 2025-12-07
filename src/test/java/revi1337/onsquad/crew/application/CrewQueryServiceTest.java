@@ -39,7 +39,7 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -159,9 +159,9 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW2 = crewJpaRepository.save(CREW_2(KWANGWON));
             Crew CREW3 = crewJpaRepository.save(CREW_3(REVI));
             LocalDateTime NOW = LocalDateTime.now();
-            crewMemberJpaRepository.save(CrewMember.forGeneral(CREW1, REVI, NOW));
-            crewMemberJpaRepository.save(CrewMember.forGeneral(CREW2, REVI, NOW.plusMinutes(1)));
-            crewMemberJpaRepository.save(CrewMember.forGeneral(CREW2, ANDONG, NOW.plusMinutes(1)));
+            crewMemberJpaRepository.save(CrewMemberFactory.general(CREW1, REVI, NOW));
+            crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, REVI, NOW.plusMinutes(1)));
+            crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, ANDONG, NOW.plusMinutes(1)));
 
             List<EnrolledCrewDto> DTOS = crewQueryService.fetchParticipantCrews(REVI.getId());
 

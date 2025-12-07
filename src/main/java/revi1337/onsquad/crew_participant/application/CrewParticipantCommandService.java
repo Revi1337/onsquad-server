@@ -15,6 +15,7 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.crew_participant.domain.entity.CrewParticipant;
@@ -52,7 +53,7 @@ public class CrewParticipantCommandService {
         checkAlreadyJoin(crewParticipant.getRequestMemberId(), crewId);
         checkCrewReference(crewId, crewParticipant);
 
-        crew.addCrewMember(CrewMember.forGeneral(crew, crewParticipant.getMember()));
+        crew.addCrewMember(CrewMemberFactory.general(crew, crewParticipant.getMember()));
         crewParticipantRepository.deleteById(crewParticipant.getId());
     }
 

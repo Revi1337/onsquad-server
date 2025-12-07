@@ -28,6 +28,7 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
@@ -58,7 +59,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
 
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now()));
 
             assertThat(crewMemberRepository.findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId())).isPresent();
         }
@@ -74,7 +75,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now()));
 
             Optional<CrewMember> CREW_MEMBER = crewMemberRepository
                     .findByCrewIdAndMemberId(CREW.getId(), ANDONG.getId());
@@ -105,7 +106,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now()));
 
             Optional<CrewMember> CREW_MEMBER = crewMemberRepository.findWithCrewByCrewIdAndMemberId(CREW.getId(), ANDONG.getId());
 
@@ -135,7 +136,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now()));
 
             Boolean exists = crewMemberRepository.existsByMemberIdAndCrewId(ANDONG.getId(), CREW.getId());
 
@@ -165,7 +166,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
             Member ANDONG = memberJpaRepository.save(ANDONG());
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now()));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now()));
 
             crewMemberRepository.deleteAllByCrewId(CREW.getId());
 
@@ -185,12 +186,11 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             Member ANDONG = memberJpaRepository.save(ANDONG());
             Member KWANGWON = memberJpaRepository.save(KWANGWON());
             LocalDateTime NOW = LocalDateTime.now();
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, ANDONG, NOW));
-            crewMemberRepository.save(CrewMember.forGeneral(CREW, KWANGWON, NOW.plusMinutes(1)));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, NOW));
+            crewMemberRepository.save(CrewMemberFactory.general(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            Page<CrewMemberDomainDto> DTOS = crewMemberRepository
-                    .findManagedCrewMembersByCrewId(CREW.getId(), PAGE_REQUEST);
+            Page<CrewMemberDomainDto> DTOS = crewMemberRepository.findManagedCrewMembersByCrewId(CREW.getId(), PAGE_REQUEST);
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);

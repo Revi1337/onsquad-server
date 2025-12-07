@@ -34,12 +34,8 @@ import revi1337.onsquad.member.domain.entity.Member;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(indexes = {
-        @Index(name = "crewmember_participate_at_idx", columnList = "participate_at")
-})
-@AttributeOverrides({
-        @AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))
-})
+@Table(indexes = {@Index(name = "idx_crewmember_participate_at", columnList = "participate_at")})
+@AttributeOverrides({@AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))})
 public class CrewMember extends RequestEntity {
 
     @Id
@@ -59,51 +55,15 @@ public class CrewMember extends RequestEntity {
     @Column(nullable = false)
     private CrewRole role = GENERAL;
 
-    private CrewMember(Member member, CrewRole role, LocalDateTime participantAt) {
+    CrewMember(Member member, CrewRole role, LocalDateTime participantAt) {
         this(null, member, role, participantAt);
     }
 
-    private CrewMember(Crew crew, Member member, CrewRole role, LocalDateTime participantAt) { // TODO forGeneral, forManager, forOwner 팩토리로 뺄 수 있을듯? 도메인 침범
+    CrewMember(Crew crew, Member member, CrewRole role, LocalDateTime participantAt) {
         super(participantAt);
         this.crew = crew;
         this.member = member;
         this.role = role == null ? GENERAL : role;
-    }
-
-    public static CrewMember forGeneral(Crew crew, Member member, LocalDateTime participantAt) {
-        CrewMember crewMember = forGeneral(member, participantAt);
-        crewMember.addCrew(crew);
-        return crewMember;
-    }
-
-    public static CrewMember forGeneral(Crew crew, Member member) {
-        CrewMember crewMember = forGeneral(member, LocalDateTime.now());
-        crewMember.addCrew(crew);
-        return crewMember;
-    }
-
-    public static CrewMember forManager(Crew crew, Member member, LocalDateTime participantAt) {
-        CrewMember crewMember = new CrewMember(crew, member, MANAGER, participantAt);
-        crewMember.addCrew(crew);
-        return crewMember;
-    }
-
-    public static CrewMember forOwner(Crew crew, Member member, LocalDateTime participantAt) {
-        CrewMember crewMember = forOwner(member, participantAt);
-        crewMember.addCrew(crew);
-        return crewMember;
-    }
-
-    public static CrewMember forGeneral(Member member, LocalDateTime participantAt) {
-        return new CrewMember(member, GENERAL, participantAt);
-    }
-
-    public static CrewMember forManager(Member member, LocalDateTime participantAt) {
-        return new CrewMember(member, MANAGER, participantAt);
-    }
-
-    public static CrewMember forOwner(Member member, LocalDateTime participantAt) {
-        return new CrewMember(member, OWNER, participantAt);
     }
 
     public void addCrew(Crew crew) {

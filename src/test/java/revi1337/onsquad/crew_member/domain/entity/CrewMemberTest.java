@@ -19,7 +19,7 @@ class CrewMemberTest {
         Crew CREW = CREW(REVI());
         Member ANDONG = ANDONG();
 
-        CrewMember CREW_MEMBER = CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now());
 
         assertThat(CREW_MEMBER.isGeneral()).isTrue();
         assertThat(CREW_MEMBER.getCrew()).isEqualTo(CREW);
@@ -31,7 +31,7 @@ class CrewMemberTest {
         Crew CREW = CREW(REVI());
         Member ANDONG = ANDONG();
 
-        CrewMember CREW_MEMBER = CrewMember.forOwner(CREW, ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.owner(CREW, ANDONG, LocalDateTime.now());
 
         assertThat(CREW_MEMBER.isOwner()).isTrue();
         assertThat(CREW_MEMBER.getCrew()).isEqualTo(CREW);
@@ -41,7 +41,7 @@ class CrewMemberTest {
     @DisplayName("CrewMember 의 Crew 등록에 성공한다. (1)")
     void success3() {
         Member ANDONG = ANDONG();
-        CrewMember CREW_MEMBER = CrewMember.forGeneral(ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.general(ANDONG, LocalDateTime.now());
         Crew CREW = CREW(REVI());
 
         CREW_MEMBER.addCrew(CREW);
@@ -54,7 +54,7 @@ class CrewMemberTest {
     @DisplayName("CrewMember 의 Crew 등록에 성공한다. (2)")
     void success4() {
         Member ANDONG = ANDONG();
-        CrewMember CREW_MEMBER = CrewMember.forOwner(ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.owner(ANDONG, LocalDateTime.now());
         Crew CREW = CREW(REVI());
 
         CREW_MEMBER.addCrew(CREW);
@@ -67,7 +67,7 @@ class CrewMemberTest {
     @DisplayName("Crew 의 OWNER 확인에 성공한다.")
     void success5() {
         Member ANDONG = ANDONG();
-        CrewMember CREW_MEMBER = CrewMember.forOwner(ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.owner(ANDONG, LocalDateTime.now());
         Crew CREW = CREW(REVI());
 
         CREW_MEMBER.addCrew(CREW);
@@ -80,7 +80,7 @@ class CrewMemberTest {
     @DisplayName("Crew 의 GENERAL 확인에 성공한다.")
     void success6() {
         Member ANDONG = ANDONG();
-        CrewMember CREW_MEMBER = CrewMember.forGeneral(ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.general(ANDONG, LocalDateTime.now());
         Crew CREW = CREW(REVI());
 
         CREW_MEMBER.addCrew(CREW);
@@ -94,7 +94,7 @@ class CrewMemberTest {
     void success7() {
         Crew CREW = CREW(REVI());
         Member ANDONG = ANDONG();
-        CrewMember CREW_MEMBER = CrewMember.forGeneral(CREW, ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now());
 
         CREW_MEMBER.releaseCrew();
 
@@ -106,7 +106,7 @@ class CrewMemberTest {
     void success8() {
         Crew CREW = CREW(REVI());
         Member ANDONG = ANDONG();
-        CrewMember CREW_MEMBER = CrewMember.forOwner(CREW, ANDONG, LocalDateTime.now());
+        CrewMember CREW_MEMBER = CrewMemberFactory.owner(CREW, ANDONG, LocalDateTime.now());
 
         CREW_MEMBER.releaseCrew();
 
