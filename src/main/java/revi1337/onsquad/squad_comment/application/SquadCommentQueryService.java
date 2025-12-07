@@ -32,7 +32,7 @@ public class SquadCommentQueryService {
         List<SquadCommentDomainDto> replies = commentRepository.fetchAllChildrenByParentIdIn(parentIds, childSize);
         List<SquadCommentDomainDto> comments = commentCombinator.combine(parents, replies);
 
-        return commentSanitizer.sanitizeUsingStack(comments).stream()
+        return commentSanitizer.sanitize(comments).stream()
                 .map(SquadCommentDto::from)
                 .toList();
     }
