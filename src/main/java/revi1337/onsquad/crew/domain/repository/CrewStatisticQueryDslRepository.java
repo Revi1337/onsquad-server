@@ -3,7 +3,7 @@ package revi1337.onsquad.crew.domain.repository;
 import static com.querydsl.jpa.JPAExpressions.select;
 import static revi1337.onsquad.crew_hashtag.domain.entity.QCrewHashtag.crewHashtag;
 import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
-import static revi1337.onsquad.crew_participant.domain.entity.QCrewParticipant.crewParticipant;
+import static revi1337.onsquad.crew_request.domain.entity.QCrewRequest.crewRequest;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,9 +24,9 @@ public class CrewStatisticQueryDslRepository {
     public CrewStatisticDomainDto getStatisticById(Long crewId) { // TODO Count 쿼리 분리 필요.
         return jpaQueryFactory
                 .select(new QCrewStatisticDomainDto(
-                        select(crewParticipant.id.count())
-                                .from(crewParticipant)
-                                .where(crewParticipant.crew.id.eq(crewId)),
+                        select(crewRequest.id.count())
+                                .from(crewRequest)
+                                .where(crewRequest.crew.id.eq(crewId)),
                         select(squad.id.count())
                                 .from(squad)
                                 .where(squad.crew.id.eq(crewId)),
