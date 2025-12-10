@@ -49,7 +49,7 @@ class SquadMemberJpaRepositoryTest extends PersistenceLayerTestSupport {
             Squad SQUAD = squadJpaRepository.save(SQUAD(CREW_OWNER, CREW1));
 
             assertThat(squadMemberJpaRepository
-                    .findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_OWNER.getId()))
+                    .findBySquadIdAndMemberId(SQUAD.getId(), CREW_OWNER.getId()))
                     .isPresent();
         }
 
@@ -59,7 +59,7 @@ class SquadMemberJpaRepositoryTest extends PersistenceLayerTestSupport {
             Long SQUAD_ID = 1L;
             Long CREW_MEMBER_ID = 2L;
 
-            assertThat(squadMemberJpaRepository.findBySquadIdAndCrewMemberId(SQUAD_ID, CREW_MEMBER_ID))
+            assertThat(squadMemberJpaRepository.findBySquadIdAndMemberId(SQUAD_ID, CREW_MEMBER_ID))
                     .isEmpty();
         }
     }

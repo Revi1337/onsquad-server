@@ -30,7 +30,7 @@ public class SquadCommentJdbcRepository {
                 "        squad_comment.deleted, " +
                 "        squad_comment.created_at, " +
                 "        squad_comment.updated_at, " +
-                "        squad_comment.crew_member_id, " +
+                "        squad_comment.member_id, " +
                 "        member.id AS comment_creator_id, " +
                 "        member.nickname AS comment_creator_nickname, " +
                 "        member.introduce AS comment_creator_introduce, " +
@@ -38,8 +38,7 @@ public class SquadCommentJdbcRepository {
                 "        ROW_NUMBER() OVER (PARTITION BY squad_comment.parent_id ORDER BY squad_comment.created_at DESC) AS rn "
                 +
                 "    FROM squad_comment " +
-                "    INNER JOIN crew_member ON squad_comment.crew_member_id = crew_member.id " +
-                "    INNER JOIN member ON crew_member.member_id = member.id " +
+                "    INNER JOIN member ON squad_comment.member_id = member.id " +
                 "    WHERE squad_comment.parent_id IN (:parentIds) " +
                 ") AS subquery " +
                 " WHERE subquery.rn <= (:childLimit)" +

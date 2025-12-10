@@ -15,7 +15,6 @@ import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 public class SquadRequestRepositoryImpl implements SquadRequestRepository {
 
     private final SquadRequestJpaRepository squadRequestJpaRepository;
-    private final SquadRequestJdbcRepository squadRequestJdbcRepository;
     private final SquadRequestQueryDslRepository squadRequestQueryDslRepository;
 
     @Override
@@ -39,8 +38,8 @@ public class SquadRequestRepositoryImpl implements SquadRequestRepository {
     }
 
     @Override
-    public Optional<SquadRequest> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
-        return squadRequestJpaRepository.findBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    public Optional<SquadRequest> findBySquadIdAndMemberId(Long squadId, Long memberId) {
+        return squadRequestJpaRepository.findBySquadIdAndMemberId(squadId, memberId);
     }
 
     @Override
@@ -54,12 +53,12 @@ public class SquadRequestRepositoryImpl implements SquadRequestRepository {
     }
 
     @Override
-    public void deleteBySquadIdCrewMemberId(Long squadId, Long crewMemberId) {
-        squadRequestJpaRepository.deleteBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    public void deleteBySquadIdMemberId(Long squadId, Long memberId) {
+        squadRequestJpaRepository.deleteBySquadIdAndMemberId(squadId, memberId);
     }
 
     @Override
-    public void deleteById(Long crewParticipantId) {
-        squadRequestJpaRepository.deleteById(crewParticipantId);
+    public void deleteById(Long id) {
+        squadRequestJpaRepository.deleteById(id);
     }
 }

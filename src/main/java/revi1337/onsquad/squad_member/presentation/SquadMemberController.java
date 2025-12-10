@@ -36,27 +36,25 @@ public class SquadMemberController {
         return ResponseEntity.ok().body(RestResponse.success(enrolledSquadResponses));
     }
 
-    @GetMapping("/crews/{crewId}/squads/{squadId}/members")
+    @GetMapping("/squads/{squadId}/members")
     public ResponseEntity<RestResponse<List<SquadMemberResponse>>> fetchMembers(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
         List<SquadMemberResponse> results = squadMemberQueryService
-                .fetchAllBySquadId(currentMember.id(), crewId, squadId).stream()
+                .fetchAllBySquadId(currentMember.id(), squadId).stream()
                 .map(SquadMemberResponse::from)
                 .toList();
 
         return ResponseEntity.ok().body(RestResponse.success(results));
     }
 
-    @DeleteMapping("/crews/{crewId}/squads/{squadId}/me")
+    @DeleteMapping("/squads/{squadId}/me")
     public ResponseEntity<RestResponse<String>> leaveSquad(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
-        squadMemberCommandService.leaveSquad(currentMember.id(), crewId, squadId);
+        squadMemberCommandService.leaveSquad(currentMember.id(), squadId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

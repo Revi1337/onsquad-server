@@ -81,7 +81,7 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
             commandService.request(ANDONG.getId(), CREW.getId(), SQUAD.getId());
 
             // then
-            assertThat(squadRequestJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
+            assertThat(squadRequestJpaRepository.findBySquadIdAndMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
                     .isPresent();
         }
 
@@ -105,7 +105,7 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
 
             // then
             assertThat(squadRequestJpaRepository
-                    .findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()).get().getRequestAt())
+                    .findBySquadIdAndMemberId(SQUAD.getId(), CREW_MEMBER.getId()).get().getRequestAt())
                     .isNotEqualTo(NOW);
         }
 
@@ -255,7 +255,7 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
             commandService.rejectRequest(REVI.getId(), CREW.getId(), SQUAD.getId(), REQUEST.getId());
 
             // then
-            assertThat(squadRequestJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
+            assertThat(squadRequestJpaRepository.findBySquadIdAndMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
                     .isEmpty();
         }
 
@@ -325,7 +325,7 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
             // when
             commandService.cancelMyRequest(ANDONG.getId(), CREW.getId(), SQUAD.getId());
 
-            assertThat(squadRequestJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
+            assertThat(squadRequestJpaRepository.findBySquadIdAndMemberId(SQUAD.getId(), CREW_MEMBER.getId()))
                     .isEmpty();
         }
     }

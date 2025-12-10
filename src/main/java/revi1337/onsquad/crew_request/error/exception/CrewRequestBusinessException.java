@@ -15,9 +15,9 @@ public abstract class CrewRequestBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class NeverRequested extends CrewRequestBusinessException {
+    public static class NotFound extends CrewRequestBusinessException {
 
-        public NeverRequested(ErrorCode errorCode) {
+        public NotFound(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
@@ -29,9 +29,9 @@ public abstract class CrewRequestBusinessException extends RuntimeException {
         }
     }
 
-    public static class CantSeeRequest extends CrewRequestBusinessException {
+    public static class MismatchReference extends CrewRequestBusinessException {
 
-        public CantSeeRequest(ErrorCode errorCode) {
+        public MismatchReference(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

@@ -1,7 +1,5 @@
 package revi1337.onsquad.crew_request.domain.repository;
 
-import static revi1337.onsquad.crew_request.error.CrewRequestErrorCode.NEVER_REQUESTED;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -9,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithCrewDomainDto;
 import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithMemberDomainDto;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
-import revi1337.onsquad.crew_request.error.exception.CrewRequestBusinessException;
 
 public interface CrewRequestRepository {
 
@@ -19,9 +16,9 @@ public interface CrewRequestRepository {
 
     Optional<CrewRequest> findById(Long id);
 
-    Optional<CrewRequest> findWithCrewById(Long id);
-
     void deleteById(Long id);
+
+    void deleteByCrewIdAndMemberId(Long crewId, Long memberId);
 
     Optional<CrewRequest> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
@@ -29,18 +26,4 @@ public interface CrewRequestRepository {
 
     Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable);
 
-    default CrewRequest getById(Long id) {
-        return findById(id)
-                .orElseThrow(() -> new CrewRequestBusinessException.NeverRequested(NEVER_REQUESTED));
-    }
-
-    default CrewRequest getWithCrewById(Long id) {
-        return findWithCrewById(id)
-                .orElseThrow(() -> new CrewRequestBusinessException.NeverRequested(NEVER_REQUESTED));
-    }
-
-    default CrewRequest getByCrewIdAndMemberId(Long crewId, Long memberId) {
-        return findByCrewIdAndMemberId(crewId, memberId)
-                .orElseThrow(() -> new CrewRequestBusinessException.NeverRequested(NEVER_REQUESTED));
-    }
 }

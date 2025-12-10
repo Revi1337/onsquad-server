@@ -19,7 +19,7 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentDomainException;
 
@@ -47,8 +47,8 @@ public class SquadComment extends BaseEntity {
     private Squad squad;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "crew_member_id", nullable = false)
-    private CrewMember crewMember;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
@@ -57,24 +57,25 @@ public class SquadComment extends BaseEntity {
     @OneToMany(mappedBy = "parent")
     private final List<SquadComment> replies = new ArrayList<>();
 
-    private SquadComment(String content, Squad squad, CrewMember crewMember) {
-        this(content, squad, crewMember, null);
+    private SquadComment(String content, Squad squad, Member member) {
+        this(content, squad, member, null);
     }
 
-    private SquadComment(String content, Squad squad, CrewMember crewMember, SquadComment parent) {
+    private SquadComment(String content, Squad squad, Member member, SquadComment parent) {
         validate(content);
         this.content = content;
         this.squad = squad;
-        this.crewMember = crewMember;
+        this.member = member;
         this.parent = parent;
     }
 
-    public static SquadComment create(String content, Squad squad, CrewMember crewMember) {
-        return new SquadComment(content, squad, crewMember);
+    public static SquadComment create(String content, Squad squad, Member member) {
+        return new SquadComment(content, squad, member);
     }
 
-    public static SquadComment createReply(SquadComment parent, String content, Squad squad, CrewMember crewMember) {
-        return new SquadComment(content, squad, crewMember, parent);
+    public static SquadComment createReply(SquadComment parent, String content, Squad squad, Member member) {
+        return new SquadComment(content, squad, member, parent);
+
     }
 
     public void update(String content) {
@@ -96,16 +97,16 @@ public class SquadComment extends BaseEntity {
         return parent == null;
     }
 
-    public boolean matchWriterId(Long crewMemberId) {
-        return crewMember.hasSameId(crewMemberId);
+    public boolean matchWriterId(Long memberId) {
+        return member.matchId(memberId);
     }
 
-    public boolean misMatchWriterId(Long crewMemberId) {
-        return !matchWriterId(crewMemberId);
+    public boolean mismatchWriterId(Long memberId) {
+        return !matchWriterId(memberId);
     }
 
-    public boolean isNotBelongTo(Long squadId) {
-        return !squad.hasSameId(squadId);
+    public boolean mismatchSquadId(Long squadId) {
+        return !squad.matchId(squadId);
     }
 
     private void validate(String content) {

@@ -30,6 +30,7 @@ import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
+import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException.MismatchWriterId;
 import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException.NotFound;
 
 class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
@@ -293,7 +294,7 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> squadCommentCommandService.update(GENERAL.getId(), CREW.getId(), SQUAD.getId(), REPLY.getId(), content))
-                    .isExactlyInstanceOf(SquadCommentBusinessException.NonMatchWriterId.class);
+                    .isExactlyInstanceOf(MismatchWriterId.class);
         }
     }
 
@@ -371,7 +372,7 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> squadCommentCommandService.delete(ANDONG.getId(), CREW1.getId(), SQUAD1.getId(), PARENT1.getId()))
-                    .isExactlyInstanceOf(SquadCommentBusinessException.NonMatchWriterId.class);
+                    .isExactlyInstanceOf(MismatchWriterId.class);
         }
     }
 }

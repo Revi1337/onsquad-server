@@ -28,65 +28,60 @@ public class SquadRequestController {
     private final SquadRequestCommandService squadRequestCommandService;
     private final SquadRequestQueryService squadRequestQueryService;
 
-    @PostMapping("/crews/{crewId}/squads/{squadId}/requests")
+    @PostMapping("/squads/{squadId}/requests")
     public ResponseEntity<RestResponse<String>> request(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
-        squadRequestCommandService.request(currentMember.id(), crewId, squadId);
+        squadRequestCommandService.request(currentMember.id(), squadId);
 
         return ResponseEntity.ok(RestResponse.created());
     }
 
-    @PatchMapping("/crews/{crewId}/squads/{squadId}/requests/{requestId}")
+    @PatchMapping("/squads/{squadId}/requests/{requestId}")
     public ResponseEntity<RestResponse<String>> acceptRequest(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PathVariable Long requestId,
             @Authenticate CurrentMember currentMember
     ) {
-        squadRequestCommandService.acceptRequest(currentMember.id(), crewId, squadId, requestId);
+        squadRequestCommandService.acceptRequest(currentMember.id(), squadId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/{requestId}")
+    @DeleteMapping("/squads/{squadId}/requests/{requestId}")
     public ResponseEntity<RestResponse<String>> rejectRequest(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PathVariable Long requestId,
             @Authenticate CurrentMember currentMember
     ) {
-        squadRequestCommandService.rejectRequest(currentMember.id(), crewId, squadId, requestId);
+        squadRequestCommandService.rejectRequest(currentMember.id(), squadId, requestId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @DeleteMapping("/crews/{crewId}/squads/{squadId}/requests/me")
+    @DeleteMapping("/squads/{squadId}/requests/me")
     public ResponseEntity<RestResponse<String>> cancelMyRequest(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
-        squadRequestCommandService.cancelMyRequest(currentMember.id(), crewId, squadId);
+        squadRequestCommandService.cancelMyRequest(currentMember.id(), squadId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @GetMapping("/crews/{crewId}/squads/{squadId}/requests")
+    @GetMapping("/squads/{squadId}/requests")
     public ResponseEntity<RestResponse<List<SquadRequestResponse>>> fetchAllRequests(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadRequestResponse> squadRequestRespons = squadRequestQueryService
-                .fetchAllRequests(currentMember.id(), crewId, squadId, pageable).stream()
+        List<SquadRequestResponse> squadRequestResponses = squadRequestQueryService
+                .fetchAllRequests(currentMember.id(), squadId, pageable).stream()
                 .map(SquadRequestResponse::from)
                 .toList();
 
-        return ResponseEntity.ok().body(RestResponse.success(squadRequestRespons));
+        return ResponseEntity.ok().body(RestResponse.success(squadRequestResponses));
     }
 
     @GetMapping("/squad-requests/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이지가 나뉠 가능성이 매우 큼

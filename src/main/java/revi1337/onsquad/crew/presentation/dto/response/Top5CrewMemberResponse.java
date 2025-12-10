@@ -1,7 +1,7 @@
-package revi1337.onsquad.backup.crew.presentation.dto;
+package revi1337.onsquad.crew.presentation.dto.response;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.backup.crew.application.dto.Top5CrewMemberDto;
+import revi1337.onsquad.crew.application.dto.top.Top5CrewMemberDto;
 
 public record Top5CrewMemberResponse(
         Long crewId,
@@ -12,6 +12,7 @@ public record Top5CrewMemberResponse(
         String mbti,
         LocalDateTime participateAt
 ) {
+
     public static Top5CrewMemberResponse from(Top5CrewMemberDto top5CrewMemberDto) {
         return new Top5CrewMemberResponse(
                 top5CrewMemberDto.crewId(),

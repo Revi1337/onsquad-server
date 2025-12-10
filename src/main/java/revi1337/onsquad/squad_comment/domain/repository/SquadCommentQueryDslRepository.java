@@ -1,6 +1,5 @@
 package revi1337.onsquad.squad_comment.domain.repository;
 
-import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 import static revi1337.onsquad.squad_comment.domain.entity.QSquadComment.squadComment;
 
@@ -38,12 +37,7 @@ public class SquadCommentQueryDslRepository {
                         )
                 ))
                 .from(squadComment)
-                .innerJoin(squadComment.crewMember, crewMember)
-                .on(
-                        squadComment.squad.id.eq(squadId),
-                        squadComment.parent.isNull()
-                )
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squadComment.member, member).on(squadComment.squad.id.eq(squadId), squadComment.parent.isNull())
                 .orderBy(squadComment.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -66,12 +60,7 @@ public class SquadCommentQueryDslRepository {
                         )
                 ))
                 .from(squadComment)
-                .innerJoin(squadComment.crewMember, crewMember)
-                .on(
-                        squadComment.squad.id.eq(squadId),
-                        squadComment.parent.id.eq(parentId)
-                )
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squadComment.member, member).on(squadComment.squad.id.eq(squadId), squadComment.parent.id.eq(parentId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(squadComment.createdAt.desc())
@@ -81,7 +70,7 @@ public class SquadCommentQueryDslRepository {
     /**
      * 모든 댓글(부모, 자식)들을 모두 가져온다.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public List<SquadCommentDomainDto> findAllWithMemberBySquadId(Long squadId) {
         return jpaQueryFactory
                 .select(new QSquadCommentDomainDto(
@@ -99,8 +88,7 @@ public class SquadCommentQueryDslRepository {
                         )
                 ))
                 .from(squadComment)
-                .innerJoin(squadComment.crewMember, crewMember).on(squadComment.squad.id.eq(squadId))
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squadComment.member, member).on(squadComment.squad.id.eq(squadId))
                 .leftJoin(squadComment.parent)
                 .orderBy(
                         squadComment.parent.id.asc().nullsFirst(),

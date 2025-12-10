@@ -39,13 +39,14 @@ import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
 import revi1337.onsquad.announce.domain.repository.AnnounceCacheRepository;
 import revi1337.onsquad.announce.domain.repository.AnnounceJpaRepository;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
-import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
+import revi1337.onsquad.announce.error.exception.AnnounceBusinessException.MismatchReference;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException.InsufficientAuthority;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 
@@ -113,7 +114,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> announceCommandService.newAnnounce(ANDONG.getId(), CREW.getId(), DTO))
-                    .isExactlyInstanceOf(CrewMemberBusinessException.LessThenManager.class);
+                    .isExactlyInstanceOf(InsufficientAuthority.class);
             assertThat(events.stream(AnnounceCreateEvent.class)).hasSize(0);
         }
     }
@@ -177,7 +178,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
 
             assertThatThrownBy(() -> announceCommandService
                     .updateAnnounce(ANDONG.getId(), CREW.getId(), ANNOUNCE.getId(), DTO))
-                    .isExactlyInstanceOf(CrewMemberBusinessException.LessThenManager.class);
+                    .isExactlyInstanceOf(InsufficientAuthority.class);
         }
 
         @Test
@@ -194,7 +195,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
 
             assertThatThrownBy(() -> announceCommandService
                     .updateAnnounce(ANDONG.getId(), CREW.getId(), ANNOUNCE.getId(), DTO))
-                    .isExactlyInstanceOf(AnnounceBusinessException.InvalidReference.class);
+                    .isExactlyInstanceOf(MismatchReference.class);
         }
     }
 
@@ -248,7 +249,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
 
             assertThatThrownBy(() -> announceCommandService
                     .deleteAnnounce(ANDONG.getId(), CREW.getId(), ANNOUNCE.getId()))
-                    .isExactlyInstanceOf(CrewMemberBusinessException.LessThenManager.class);
+                    .isExactlyInstanceOf(InsufficientAuthority.class);
         }
 
         @Test
@@ -264,7 +265,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
 
             assertThatThrownBy(() -> announceCommandService
                     .deleteAnnounce(ANDONG.getId(), CREW.getId(), ANNOUNCE.getId()))
-                    .isExactlyInstanceOf(AnnounceBusinessException.InvalidReference.class);
+                    .isExactlyInstanceOf(MismatchReference.class);
         }
     }
 

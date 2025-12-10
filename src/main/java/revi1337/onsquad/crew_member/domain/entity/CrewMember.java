@@ -19,6 +19,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
@@ -34,7 +35,10 @@ import revi1337.onsquad.member.domain.entity.Member;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(indexes = {@Index(name = "idx_crewmember_participate_at", columnList = "participate_at")})
+@Table(
+        uniqueConstraints = @UniqueConstraint(name = "uk_crewmember_squad_member", columnNames = {"crew_id", "member_id"}),
+        indexes = {@Index(name = "idx_crewmember_participate_at", columnList = "participate_at")}
+)
 @AttributeOverrides({@AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))})
 public class CrewMember extends RequestEntity {
 
@@ -72,22 +76,6 @@ public class CrewMember extends RequestEntity {
 
     public void releaseCrew() {
         this.crew = null;
-    }
-
-    public boolean doesNotMatchMemberId(Long memberId) {
-        return !matchMemberId(memberId);
-    }
-
-    public boolean matchMemberId(Long memberId) {
-        return member.getId().equals(memberId);
-    }
-
-    public boolean hasSameId(Long crewMemberId) {
-        return id.equals(crewMemberId);
-    }
-
-    public boolean isOwnerOfSquad(Long squadId) {
-        return id.equals(squadId);
     }
 
     public boolean isNotOwner() {

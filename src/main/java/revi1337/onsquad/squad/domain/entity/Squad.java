@@ -4,6 +4,7 @@ import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.NOT_ENOUGH_LEFT;
@@ -20,14 +21,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Address;
 import revi1337.onsquad.squad.domain.entity.vo.Content;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
@@ -39,7 +39,7 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Squad extends BaseEntity {
 
@@ -71,8 +71,8 @@ public class Squad extends BaseEntity {
     private String discordLink;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "crew_member_id", nullable = false)
-    private CrewMember crewMember;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
@@ -95,11 +95,11 @@ public class Squad extends BaseEntity {
     @OneToMany(mappedBy = "squad")
     private final List<SquadRequest> participants = new ArrayList<>();
 
-    public static Squad create(SquadMetadata metadata, CrewMember crewMember, Crew crew) {
+    public static Squad create(SquadMetadata metadata, Member member, Crew crew) {
         Squad squad = metadata.toEntity();
-        squad.registerOwner(crewMember);
+        squad.registerMember(member);
         squad.registerCrew(crew);
-        squad.addMembers(SquadMemberFactory.leader(crewMember, LocalDateTime.now()));
+        squad.addMembers(SquadMemberFactory.leader(member, LocalDateTime.now()));
         return squad;
     }
 
@@ -126,8 +126,8 @@ public class Squad extends BaseEntity {
         }
     }
 
-    public void registerOwner(CrewMember crewMember) {
-        this.crewMember = crewMember;
+    public void registerMember(Member member) {
+        this.member = member;
     }
 
     public void registerCrew(Crew crew) {
@@ -148,38 +148,20 @@ public class Squad extends BaseEntity {
         this.remain -= 1;
     }
 
-    public boolean misMatchCrewId(Long crewId) {
-        return !matchCrewId(crewId);
+    public boolean matchId(Long squadId) {
+        return id.equals(squadId);
     }
 
     public boolean matchCrewId(Long crewId) {
         return getCrewId().equals(crewId);
     }
 
-    public boolean hasSameId(Long squadId) {
-        return id.equals(squadId);
+    public boolean mismatchCrewId(Long crewId) {
+        return !matchCrewId(crewId);
     }
 
-    public boolean doesNotMatchOwner(Long crewMemberId) {
-        return !matchOwner(crewMemberId);
-    }
-
-    public boolean matchOwner(Long crewMemberId) {
-        return crewMember.hasSameId(crewMemberId);
-    }
-
-    /**
-     * Squad 에 속한 SquadMember 의 실제 memberId 를 비교하여, Squad 의 특정 Member 가 있는지 확인한다.
-     * <p>
-     * 매우 주의해야 할 것은 Squad 조회 시, SquadMember 들을 같이 fetch 해오지 않으면, 반복문을 도는 과정에서 프록시 객체 초기화로 인해 size(this.members) 수 만큼 조회 쿼리가 나간다.
-     */
-    public boolean existsMember(Long crewMemberId) {
-        for (SquadMember squadMember : this.members) {
-            if (squadMember.isSameCrewMemberId(crewMemberId)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean mismatchMemberId(Long memberId) {
+        return !member.getId().equals(memberId);
     }
 
     @Override
@@ -202,8 +184,8 @@ public class Squad extends BaseEntity {
         return crew.getId();
     }
 
-    public CrewMember getOwner() {
-        return crewMember;
+    public Member getOwner() {
+        return member;
     }
 
     private void validateCapacity(int value) {

@@ -30,9 +30,7 @@ import revi1337.onsquad.member.domain.entity.vo.UserType;
 @DynamicUpdate
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "member_uidx_email", columnNames = "email")
-})
+@Table(uniqueConstraints = {@UniqueConstraint(name = "uk_member_email", columnNames = "email")})
 @Entity
 public class Member extends BaseEntity {
 
@@ -127,6 +125,10 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = this.password.update(password);
+    }
+
+    public boolean matchId(Long memberId) {
+        return id.equals(memberId);
     }
 
     public boolean hasNotDefaultImage() {

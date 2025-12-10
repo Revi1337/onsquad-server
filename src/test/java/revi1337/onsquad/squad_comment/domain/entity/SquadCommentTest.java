@@ -82,7 +82,7 @@ class SquadCommentTest {
         CrewMember crewMember = defaultInstance(CrewMember.class, 1L);
         SquadComment comment = SquadComment.create("parent", null, crewMember);
 
-        boolean mismatch = comment.misMatchWriterId(100L);
+        boolean mismatch = comment.mismatchWriterId(100L);
 
         assertThat(mismatch).isTrue();
     }
@@ -93,7 +93,7 @@ class SquadCommentTest {
         CrewMember crewMember = defaultInstance(CrewMember.class, 1L);
         SquadComment comment = SquadComment.create("parent", null, crewMember);
 
-        boolean mismatch = comment.misMatchWriterId(crewMember.getId());
+        boolean mismatch = comment.mismatchWriterId(crewMember.getId());
 
         assertThat(mismatch).isFalse();
     }
@@ -104,7 +104,7 @@ class SquadCommentTest {
         Squad squad = defaultInstance(Squad.class, 1L);
         SquadComment comment = SquadComment.create("parent", squad, null);
 
-        boolean mismatch = comment.isNotBelongTo(100L);
+        boolean mismatch = comment.mismatchSquadId(100L);
 
         assertThat(mismatch).isTrue();
     }
@@ -115,7 +115,7 @@ class SquadCommentTest {
         Squad squad = defaultInstance(Squad.class, 1L);
         SquadComment comment = SquadComment.create("parent", squad, null);
 
-        boolean mismatch = comment.isNotBelongTo(squad.getId());
+        boolean mismatch = comment.mismatchSquadId(squad.getId());
 
         assertThat(mismatch).isFalse();
     }

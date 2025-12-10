@@ -19,7 +19,7 @@ public enum MemberErrorCode implements ErrorCode {
     NON_AUTHENTICATE_EMAIL(401, "M008", "이메일 인증이 되어있지 않습니다."),
 
     WRONG_PASSWORD(401, "M009", "비밀번호가 일치하지 않습니다."),
-    NOTFOUND(404, "M010", "사용자를 찾을 수 없습니다.");
+    NOT_FOUND(404, "M010", "사용자를 찾을 수 없습니다.");
 
     private final int status;
     private final String code;

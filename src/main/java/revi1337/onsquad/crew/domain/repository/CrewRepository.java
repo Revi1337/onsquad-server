@@ -1,7 +1,5 @@
 package revi1337.onsquad.crew.domain.repository;
 
-import static revi1337.onsquad.crew.error.CrewErrorCode.NOTFOUND_CREW;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -10,13 +8,14 @@ import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
-import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 
 public interface CrewRepository {
 
     Crew save(Crew crew);
 
     Crew saveAndFlush(Crew crew);
+
+    Crew getReferenceById(Long id);
 
     void deleteById(Long id);
 
@@ -34,18 +33,4 @@ public interface CrewRepository {
 
     List<EnrolledCrewDomainDto> fetchParticipantsByMemberId(Long memberId);
 
-    default CrewDomainDto getCrewById(Long id) {
-        return findCrewById(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
-    }
-
-    default Crew getById(Long id) {
-        return findById(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
-    }
-
-    default Crew getByIdForUpdate(Long id) {
-        return findByIdForUpdate(id)
-                .orElseThrow(() -> new CrewBusinessException.NotFoundById(NOTFOUND_CREW, id));
-    }
 }

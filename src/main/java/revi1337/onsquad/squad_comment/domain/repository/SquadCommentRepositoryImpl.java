@@ -28,21 +28,6 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
-    public Optional<SquadComment> findByIdAndSquadId(Long id, Long squadId) {
-        return squadCommentJpaRepository.findByIdAndSquadId(id, squadId);
-    }
-
-    @Override
-    public Optional<SquadComment> findWithSquadByIdAndSquadId(Long id, Long squadId) {
-        return squadCommentJpaRepository.findWithSquadByIdAndSquadId(id, squadId);
-    }
-
-    @Override
-    public Optional<SquadComment> findByIdAndSquadIdAndCrewId(Long id, Long squadId, Long crewId) {
-        return squadCommentJpaRepository.findByIdAndSquadIdAndCrewId(id, squadId, crewId);
-    }
-
-    @Override
     public List<SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return squadCommentQueryDslRepository.fetchAllParentsBySquadId(squadId, pageable);
     }
@@ -55,10 +40,5 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     @Override
     public List<SquadCommentDomainDto> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
         return squadCommentQueryDslRepository.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
-    }
-
-    @Override
-    public List<SquadCommentDomainDto> findAllWithMemberBySquadId(Long squadId) {
-        return squadCommentQueryDslRepository.findAllWithMemberBySquadId(squadId);
     }
 }

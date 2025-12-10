@@ -3,9 +3,9 @@ package revi1337.onsquad.crew.application.dto;
 import java.util.List;
 import revi1337.onsquad.announce.application.dto.AnnounceDto;
 import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
-import revi1337.onsquad.backup.crew.application.dto.Top5CrewMemberDto;
-import revi1337.onsquad.backup.crew.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew.application.dto.top.Top5CrewMemberDto;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
+import revi1337.onsquad.crew.domain.entity.CrewTopMember;
 import revi1337.onsquad.squad.application.dto.SquadDto;
 import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 

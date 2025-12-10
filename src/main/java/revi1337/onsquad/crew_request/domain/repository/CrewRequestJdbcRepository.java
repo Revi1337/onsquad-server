@@ -34,12 +34,11 @@ public class CrewRequestJdbcRepository {
 
         int influenced = namedParameterJdbcTemplate.update(sql, mapSqlParameterSource, generatedKeyHolder);
 
-        return new CrewRequest(
-                generatedKeyHolder.getKey() == null ? null : generatedKeyHolder.getKey().longValue(),
-                prepareCrew(crewId),
-                prepareMember(memberId),
-                now
-        );
+        CrewRequest crewRequest = CrewRequest.of(prepareCrew(crewId), prepareMember(memberId), now);
+        Field field = ReflectionUtils.findField(crewRequest.getClass(), "id");
+        ReflectionUtils.makeAccessible(field);
+        ReflectionUtils.setField(field, crewRequest, generatedKeyHolder.getKey() == null ? null : generatedKeyHolder.getKey().longValue());
+        return crewRequest;
     }
 
     private Member prepareMember(Long memberId) {

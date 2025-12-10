@@ -16,8 +16,9 @@ public interface CrewRequestJpaRepository extends JpaRepository<CrewRequest, Lon
     @EntityGraph(attributePaths = "crew")
     Optional<CrewRequest> findWithCrewById(Long id);
 
+    @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete CrewRequest where id = :id")
+    @Query("delete CrewRequest cp where cp.id = :id")
     void deleteById(Long id);
 
     @Transactional

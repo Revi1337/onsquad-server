@@ -15,9 +15,9 @@ public abstract class SquadRequestBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class NeverRequested extends SquadRequestBusinessException {
+    public static class NotFound extends SquadRequestBusinessException {
 
-        public NeverRequested(ErrorCode errorCode) {
+        public NotFound(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

@@ -37,7 +37,7 @@ import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
+import revi1337.onsquad.squad.error.exception.SquadBusinessException.InsufficientAuthority;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJpaRepository;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentJpaRepository;
@@ -102,7 +102,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
             assertThat(squadRepository.findById(SQUAD_ID)).isPresent();
             assertThat(squadCategoryJpaRepository.findAllBySquadId(SQUAD_ID)).hasSize(2);
             assertThat(squadMemberJpaRepository
-                    .findBySquadIdAndCrewMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
+                    .findBySquadIdAndMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
                     .isPresent();
         }
 
@@ -131,7 +131,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
             assertThat(squadRepository.findById(SQUAD_ID)).isPresent();
             assertThat(squadCategoryJpaRepository.findAllBySquadId(SQUAD_ID)).hasSize(3);
             assertThat(squadMemberJpaRepository
-                    .findBySquadIdAndCrewMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
+                    .findBySquadIdAndMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
                     .isPresent();
         }
 
@@ -160,7 +160,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
             assertThat(squadRepository.findById(SQUAD_ID)).isPresent();
             assertThat(squadCategoryJpaRepository.findAllBySquadId(SQUAD_ID)).hasSize(0);
             assertThat(squadMemberJpaRepository
-                    .findBySquadIdAndCrewMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
+                    .findBySquadIdAndMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
                     .isPresent();
         }
 
@@ -189,7 +189,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
             assertThat(squadRepository.findById(SQUAD_ID)).isPresent();
             assertThat(squadCategoryJpaRepository.findAllBySquadId(SQUAD_ID)).hasSize(0);
             assertThat(squadMemberJpaRepository
-                    .findBySquadIdAndCrewMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
+                    .findBySquadIdAndMemberId(SQUAD_ID, GENERAL_CREW_MEMBER.getId()))
                     .isPresent();
         }
     }
@@ -241,7 +241,7 @@ class SquadCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> squadCommandService.deleteSquad(KWANGWON.getId(), CREW.getId(), SQUAD.getId()))
-                    .isExactlyInstanceOf(SquadBusinessException.CantDelete.class);
+                    .isExactlyInstanceOf(InsufficientAuthority.class);
         }
     }
 }

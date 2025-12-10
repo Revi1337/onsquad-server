@@ -1,7 +1,7 @@
-package revi1337.onsquad.backup.crew.domain.dto;
+package revi1337.onsquad.crew.domain.dto.top;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.backup.crew.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew.domain.entity.CrewTopMember;
 
 public record Top5CrewMemberDomainDto(
         Long crewId,

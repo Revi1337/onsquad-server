@@ -68,7 +68,7 @@ class SquadMemberCommandServiceTest extends ApplicationLayerTestSupport {
             entityManager.flush();
 
             // then
-            assertThat(squadMemberJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER1.getId()))
+            assertThat(squadMemberJpaRepository.findBySquadIdAndMemberId(SQUAD.getId(), CREW_MEMBER1.getId()))
                     .isEmpty();
         }
 
@@ -87,7 +87,7 @@ class SquadMemberCommandServiceTest extends ApplicationLayerTestSupport {
             entityManager.flush();
 
             // then
-            assertThat(squadMemberJpaRepository.findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_OWNER.getId()))
+            assertThat(squadMemberJpaRepository.findBySquadIdAndMemberId(SQUAD.getId(), CREW_OWNER.getId()))
                     .isEmpty();
         }
 

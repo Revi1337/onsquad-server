@@ -25,14 +25,14 @@ import revi1337.onsquad.squad_comment.presentation.dto.request.CommentCreateRequ
 import revi1337.onsquad.squad_comment.presentation.dto.response.SquadCommentResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/crews")
+@RequestMapping("/api")
 @RestController
 public class SquadCommentController {
 
     private final SquadCommentCommandService squadCommentCommandService;
     private final SquadCommentQueryService squadCommentQueryService;
 
-    @PostMapping("/{crewId}/squads/{squadId}/comments")
+    @PostMapping("/crews/{crewId}/squads/{squadId}/comments")
     public ResponseEntity<RestResponse<String>> add(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
@@ -44,7 +44,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @PostMapping("/{crewId}/squads/{squadId}/replies/{parentId}")
+    @PostMapping("/crews/{crewId}/squads/{squadId}/replies/{parentId}")
     public ResponseEntity<RestResponse<String>> addReply(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
@@ -57,7 +57,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @GetMapping("/{crewId}/squads/{squadId}/comments")
+    @GetMapping("/crews/{crewId}/squads/{squadId}/comments")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchInitialComments(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
@@ -73,7 +73,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
     }
 
-    @GetMapping("/{crewId}/squads/{squadId}/replies/{parentId}")
+    @GetMapping("/crews/{crewId}/squads/{squadId}/replies/{parentId}")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchMoreChildren(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
@@ -88,21 +88,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.success(childComments));
     }
 
-    @Deprecated
-    @GetMapping("/{crewId}/squads/{squadId}/comments/all")
-    public ResponseEntity<RestResponse<List<SquadCommentResponse>>> findAllComments(
-            @PathVariable Long crewId,
-            @PathVariable Long squadId,
-            @Authenticate CurrentMember currentMember
-    ) {
-        List<SquadCommentResponse> commentsResponses = squadCommentQueryService.findAllComments(currentMember.id(), crewId, squadId).stream()
-                .map(SquadCommentResponse::from)
-                .toList();
-
-        return ResponseEntity.ok().body(RestResponse.success(commentsResponses));
-    }
-
-    @PatchMapping("/{crewId}/squads/{squadId}/comments/{commentId}")
+    @PatchMapping("/crews/{crewId}/squads/{squadId}/comments/{commentId}")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> updateComment(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
@@ -115,7 +101,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @DeleteMapping("/{crewId}/squads/{squadId}/comments/{commentId}")
+    @DeleteMapping("/crews/{crewId}/squads/{squadId}/comments/{commentId}")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> deleteComment(
             @PathVariable Long crewId,
             @PathVariable Long squadId,

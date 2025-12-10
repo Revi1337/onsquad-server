@@ -5,7 +5,6 @@ import static com.querydsl.core.group.GroupBy.list;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static revi1337.onsquad.category.domain.entity.QCategory.category;
-import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
 import static revi1337.onsquad.squad_category.domain.entity.QSquadCategory.squadCategory;
@@ -46,8 +45,7 @@ public class SquadQueryDslRepository {
     public Optional<SquadDomainDto> fetchById(Long id) {
         return Optional.ofNullable(jpaQueryFactory
                 .from(squad)
-                .innerJoin(squad.crewMember, crewMember).on(squad.id.eq(id))
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squad.member, member)
                 .leftJoin(squad.categories, squadCategory)
                 .leftJoin(squadCategory.category, category)
                 .transform(groupBy(squad.id)
@@ -96,8 +94,7 @@ public class SquadQueryDslRepository {
 
         Map<Long, SquadDomainDto> groupResults = jpaQueryFactory
                 .from(squad)
-                .innerJoin(squad.crewMember, crewMember)
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squad.member, member)
                 .leftJoin(squad.categories, squadCategory)
                 .leftJoin(squadCategory.category, category)
                 .where(squad.id.in(squadIds))
@@ -160,8 +157,7 @@ public class SquadQueryDslRepository {
                                 )
                         )))
                 .from(squad)
-                .innerJoin(squad.crewMember, crewMember).on(squad.crew.id.eq(crewId))
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squad.member, member)
                 .orderBy(squad.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -227,8 +223,7 @@ public class SquadQueryDslRepository {
                         )
                 ))
                 .from(squad)
-                .innerJoin(squad.crewMember, crewMember).on(squad.id.eq(id))
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squad.member, member)
                 .fetchOne());
     }
 
@@ -243,8 +238,7 @@ public class SquadQueryDslRepository {
     public Page<SquadDomainDto> fetchAllByCrewIdV2(Long crewId, CategoryType categoryType, Pageable pageable) {
         List<SquadDomainDto> transformedResults = jpaQueryFactory
                 .from(squad)
-                .innerJoin(squad.crewMember, crewMember).on(squad.crew.id.eq(crewId))
-                .innerJoin(crewMember.member, member)
+                .innerJoin(squad.member, member)
                 .leftJoin(squad.categories, squadCategory)
                 .leftJoin(squadCategory.category, category)
                 .where(categoryEq(categoryType))

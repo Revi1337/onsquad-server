@@ -25,9 +25,11 @@ import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException.InsufficientAuthority;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
 import revi1337.onsquad.crew_request.error.exception.CrewRequestBusinessException;
+import revi1337.onsquad.crew_request.error.exception.CrewRequestBusinessException.NotFound;
 import revi1337.onsquad.infrastructure.expiringmap.ExpiringMapRequestCacheHandler;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
@@ -146,7 +148,7 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
 
             assertThatThrownBy(() -> crewRequestCommandService
                     .acceptRequest(ANDONG.getId(), CREW.getId(), PARTICIPANT.getId()))
-                    .isExactlyInstanceOf(CrewMemberBusinessException.LessThenManager.class);
+                    .isExactlyInstanceOf(InsufficientAuthority.class);
         }
 
         @Test
@@ -259,7 +261,7 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
             Member ANDONG = memberJpaRepository.save(ANDONG());
 
             assertThatThrownBy(() -> crewRequestCommandService.cancelMyRequest(ANDONG.getId(), CREW.getId()))
-                    .isExactlyInstanceOf(CrewRequestBusinessException.NeverRequested.class);
+                    .isExactlyInstanceOf(NotFound.class);
         }
     }
 }

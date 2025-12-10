@@ -15,9 +15,9 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class NotInSquad extends SquadMemberBusinessException {
+    public static class NotParticipant extends SquadMemberBusinessException {
 
-        public NotInSquad(ErrorCode errorCode) {
+        public NotParticipant(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
@@ -32,6 +32,13 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
     public static class CannotLeaveLeader extends SquadMemberBusinessException {
 
         public CannotLeaveLeader(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
+    public static class AlreadyParticipant extends SquadMemberBusinessException {
+
+        public AlreadyParticipant(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

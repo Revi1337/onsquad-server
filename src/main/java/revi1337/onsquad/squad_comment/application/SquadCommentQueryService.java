@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
 import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
@@ -22,7 +24,7 @@ public class SquadCommentQueryService {
     private final CommentSanitizer commentSanitizer;
 
     public List<SquadCommentDto> fetchInitialComments(Long memberId, Long crewId, Long squadId, Pageable pageable, int childSize) {
-        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        validateMemberInCrew(memberId, crewId);
         List<SquadCommentDomainDto> parents = commentRepository.fetchAllParentsBySquadId(squadId, pageable);
         if (parents.isEmpty()) {
             return new ArrayList<>();
@@ -38,20 +40,15 @@ public class SquadCommentQueryService {
     }
 
     public List<SquadCommentDto> fetchMoreChildren(Long memberId, Long crewId, Long squadId, Long parentId, Pageable pageable) {
-        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-
+        validateMemberInCrew(memberId, crewId);
         return commentRepository.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable).stream()
                 .map(SquadCommentDto::from)
                 .toList();
     }
 
-    @Deprecated
-    public List<SquadCommentDto> findAllComments(Long memberId, Long crewId, Long squadId) {
-        crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        List<SquadCommentDomainDto> comments = commentRepository.findAllWithMemberBySquadId(squadId);
-
-        return commentCombinator.makeHierarchy(comments).stream()
-                .map(SquadCommentDto::from)
-                .toList();
+    private void validateMemberInCrew(Long memberId, Long crewId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
+        if (crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).isEmpty()) {
+            throw new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT);
+        }
     }
 }

@@ -32,8 +32,8 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     }
 
     @Override
-    public Optional<Announce> findByIdAndCrewId(Long id, Long crewId) {
-        return announceJpaRepository.findByIdAndCrewId(id, crewId);
+    public Optional<Announce> findById(Long id) {
+        return announceJpaRepository.findById(id);
     }
 
     @Override

@@ -22,31 +22,10 @@ public abstract class SquadBusinessException extends RuntimeException {
         }
     }
 
-    public static class AlreadyRequest extends SquadBusinessException {
-
-        public AlreadyRequest(ErrorCode errorCode, String squadName) {
-            super(errorCode, String.format(errorCode.getDescription(), squadName));
-        }
-    }
-
     public static class AlreadyParticipant extends SquadBusinessException {
 
-        public AlreadyParticipant(ErrorCode errorCode, String squadName) {
-            super(errorCode, String.format(errorCode.getDescription(), squadName));
-        }
-    }
-
-    public static class NotInSquad extends SquadBusinessException {
-
-        public NotInSquad(ErrorCode errorCode) {
-            super(errorCode, errorCode.getDescription());
-        }
-    }
-
-    public static class OwnerCantParticipant extends SquadBusinessException {
-
-        public OwnerCantParticipant(ErrorCode errorCode) {
-            super(errorCode, errorCode.getDescription());
+        public AlreadyParticipant(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 
@@ -57,9 +36,9 @@ public abstract class SquadBusinessException extends RuntimeException {
         }
     }
 
-    public static class CantDelete extends SquadBusinessException {
+    public static class InsufficientAuthority extends SquadBusinessException {
 
-        public CantDelete(ErrorCode errorCode) {
+        public InsufficientAuthority(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

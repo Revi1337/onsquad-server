@@ -1,7 +1,6 @@
 package revi1337.onsquad.crew.application;
 
 import static revi1337.onsquad.crew.error.CrewErrorCode.ALREADY_EXISTS;
-import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_PUBLISHER;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,15 +18,19 @@ import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
+import revi1337.onsquad.member.error.MemberErrorCode;
+import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 
 @RequiredArgsConstructor
 @Service
-public class CrewCommandService {
+public class CrewCommandService { // TODO ApplicationService 와 DomainService 로 나눌 수 있을듯? 일단 그건 나중에
 
     private final MemberRepository memberRepository;
     private final CrewRepository crewRepository;
@@ -37,22 +40,20 @@ public class CrewCommandService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public Long newCrew(Long memberId, CrewCreateDto dto, String imageUrl) {
-        Member member = memberRepository.getById(memberId);
-        checkCrewNameIsDuplicate(dto.name());
-
-        Crew crew = Crew.create(member, dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink(), imageUrl);
-        Crew persistedCrew = crewRepository.save(crew);
-        crewHashtagRepository.batchInsert(persistedCrew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
-        return persistedCrew.getId();
+    public void newCrew(Long memberId, CrewCreateDto dto, String imageUrl) {
+        Member member = validateMemberExistsAndGet(memberId);
+        validateCrewNameIsDuplicate(dto.name());
+        Crew crew = crewRepository.save(Crew.create(member, dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink(), imageUrl));
+        crewHashtagRepository.batchInsert(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
     }
 
     @Transactional
     public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto) {
-        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId); // crew까지 같이 가져올까 말까.. 걍 내비둘까..
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(CrewMemberErrorCode.NOT_OWNER);
+        }
         Crew crew = crewMember.getCrew();
-        checkMemberIsCrewOwner(crew.getId(), crewMember);
-
         crew.update(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
         crewHashtagRepository.deleteByCrewId(crew.getId());
         crewHashtagRepository.batchInsert(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
@@ -60,43 +61,51 @@ public class CrewCommandService {
 
     @Transactional
     public void deleteCrew(Long memberId, Long crewId) {
-        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId); // crew까지 같이 가져올까 말까.. 걍 내비둘까..
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(CrewMemberErrorCode.NOT_OWNER);
+        }
         Crew crew = crewMember.getCrew();
-        checkMemberIsCrewOwner(crewId, crewMember);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
         }
-
         squadJpaRepository.deleteByCrewId(crewId);
         crewRepository.deleteById(crewId);
     }
 
     public void updateCrewImage(Long memberId, Long crewId, MultipartFile file) {
-        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId); // crew까지 같이 가져올까 말까.. 걍 내비둘까..
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(CrewMemberErrorCode.NOT_OWNER);
+        }
         Crew crew = crewMember.getCrew();
-        checkMemberIsCrewOwner(crewId, crewMember);
-
         eventPublisher.publishEvent(new CrewImageUpdateEvent(crew, file));
     }
 
     public void deleteCrewImage(Long memberId, Long crewId) {
-        CrewMember crewMember = crewMemberRepository.getWithCrewByCrewIdAndMemberId(crewId, memberId);
+        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId); // crew까지 같이 가져올까 말까.. 걍 내비둘까..
+        if (crewMember.isNotOwner()) {
+            throw new CrewMemberBusinessException.NotOwner(CrewMemberErrorCode.NOT_OWNER);
+        }
         Crew crew = crewMember.getCrew();
-        checkMemberIsCrewOwner(crewId, crewMember);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new CrewImageDeleteEvent(crew));
         }
     }
 
-    private void checkCrewNameIsDuplicate(String crewName) {
+    private Member validateMemberExistsAndGet(Long memberId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOT_FOUND));
+    }
+
+    private void validateCrewNameIsDuplicate(String crewName) {
         if (crewRepository.existsByName(new Name(crewName))) {
             throw new CrewBusinessException.AlreadyExists(ALREADY_EXISTS, crewName);
         }
     }
 
-    private void checkMemberIsCrewOwner(Long crewId, CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
-            throw new CrewBusinessException.InvalidPublisher(INVALID_PUBLISHER, crewId);
-        }
+    private CrewMember validateMemberInCrewAndGet(Long memberId, Long crewId) {
+        return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 }

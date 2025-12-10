@@ -33,13 +33,13 @@ public class CrewRequestRepositoryImpl implements CrewRequestRepository {
     }
 
     @Override
-    public Optional<CrewRequest> findWithCrewById(Long id) {
-        return crewRequestJpaRepository.findWithCrewById(id);
+    public void deleteById(Long id) {
+        crewRequestJpaRepository.deleteById(id);
     }
 
     @Override
-    public void deleteById(Long id) {
-        crewRequestJpaRepository.deleteById(id);
+    public void deleteByCrewIdAndMemberId(Long crewId, Long memberId) {
+        crewRequestJpaRepository.deleteByCrewIdAndMemberId(crewId, memberId);
     }
 
     @Override

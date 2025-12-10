@@ -29,9 +29,16 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
         }
     }
 
-    public static class LessThenManager extends CrewMemberBusinessException {
+    public static class InsufficientAuthority extends CrewMemberBusinessException {
 
-        public LessThenManager(ErrorCode errorCode) {
+        public InsufficientAuthority(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
+    public static class AlreadyParticipant extends CrewMemberBusinessException {
+
+        public AlreadyParticipant(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

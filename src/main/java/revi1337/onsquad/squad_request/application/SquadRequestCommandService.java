@@ -1,21 +1,17 @@
 package revi1337.onsquad.squad_request.application;
 
-import static revi1337.onsquad.squad.error.SquadErrorCode.ALREADY_JOIN;
-import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.NOT_LEADER;
-
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
-import revi1337.onsquad.squad.error.SquadErrorCode;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
+import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
@@ -25,68 +21,66 @@ import revi1337.onsquad.squad_request.error.exception.SquadRequestBusinessExcept
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class SquadRequestCommandService {
+public class SquadRequestCommandService { // TODO ApplicationService 와 DomainService 로 나눌 수 있을듯? 일단 그건 나중에
 
-    private final SquadRequestRepository squadRequestRepository;
+    private final MemberRepository memberRepository;
     private final SquadRepository squadRepository;
-    private final CrewMemberRepository crewMemberRepository;
     private final SquadMemberRepository squadMemberRepository;
+    private final SquadRequestRepository squadRequestRepository;
 
-    public void request(Long memberId, Long crewId, Long squadId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        Squad squad = squadRepository.getByIdWithMembers(squadId);
-        if (squad.misMatchCrewId(crewId)) {
-            throw new SquadBusinessException.MismatchReference(SquadErrorCode.MISMATCH_REFERENCE);
+    public void request(Long memberId, Long squadId) {
+        validateMemberNotInSquad(memberId, squadId);
+        if (squadRequestRepository.findBySquadIdAndMemberId(squadId, memberId).isEmpty()) {
+            Squad squadRef = squadRepository.getReferenceById(squadId);
+            Member memberRef = memberRepository.getReferenceById(memberId);
+            squadRequestRepository.save(SquadRequest.of(squadRef, memberRef, LocalDateTime.now()));
         }
-        if (squad.existsMember(crewMember.getId())) {
-            throw new SquadBusinessException.AlreadyParticipant(ALREADY_JOIN, squad.getTitle().getValue());
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        squadRequestRepository.findBySquadIdAndCrewMemberId(squadId, crewMember.getId()).ifPresentOrElse(
-                squadParticipant -> {
-                    squadParticipant.updateRequestAt(now);
-                    squadRequestRepository.saveAndFlush(squadParticipant);
-                },
-                () -> squadRequestRepository.save(SquadRequest.of(squad, crewMember, now))
-        );
     }
 
-    public void acceptRequest(Long memberId, Long crewId, Long squadId, Long requestId) {
-        checkMemberIsSquadLeader(memberId, crewId, squadId);
-        SquadRequest participant = squadRequestRepository.getByIdWithSquad(requestId);
-        if (participant.isNotMatchSquadId(squadId)) {
-            throw new SquadRequestBusinessException.MismatchReference(SquadRequestErrorCode.MISMATCH_REFERENCE);
-        }
-
-        Squad squad = participant.getSquad();
-        CrewMember acceptMember = participant.getCrewMember();
-        squad.addMembers(SquadMemberFactory.general(squad, acceptMember, LocalDateTime.now()));
-        squadRepository.saveAndFlush(squad);
-        squadRequestRepository.deleteById(requestId);
-    }
-
-    public void rejectRequest(Long memberId, Long crewId, Long squadId, Long requestId) {
-        checkMemberIsSquadLeader(memberId, crewId, squadId);
-        SquadRequest participant = squadRequestRepository.getById(requestId);
-        if (participant.isNotMatchSquadId(squadId)) {
-            throw new SquadRequestBusinessException.MismatchReference(SquadRequestErrorCode.MISMATCH_REFERENCE);
-        }
-        squadRequestRepository.deleteById(requestId);
-    }
-
-    public void cancelMyRequest(Long memberId, Long crewId, Long squadId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        SquadRequest participant = squadRequestRepository
-                .getBySquadIdAndCrewMemberId(squadId, crewMember.getId());
-        squadRequestRepository.deleteById(participant.getId());
-    }
-
-    private void checkMemberIsSquadLeader(Long memberId, Long crewId, Long squadId) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
-        SquadMember squadMember = squadMemberRepository.getBySquadIdAndCrewMemberId(squadId, crewMember.getId());
+    public void acceptRequest(Long memberId, Long squadId, Long requestId) {
+        SquadMember squadMember = validateMemberInSquadAndGet(memberId, squadId);
         if (squadMember.isNotLeader()) {
-            throw new SquadMemberBusinessException.NotLeader(NOT_LEADER);
+            throw new SquadMemberBusinessException.NotLeader(SquadMemberErrorCode.NOT_LEADER);
         }
+        SquadRequest request = squadRequestRepository.findByIdWithSquad(requestId)
+                .orElseThrow(() -> new SquadRequestBusinessException.NotFound(SquadRequestErrorCode.NOT_FOUND));
+        if (request.mismatchSquadId(squadId)) {
+            throw new SquadRequestBusinessException.MismatchReference(SquadRequestErrorCode.MISMATCH_SQUAD_REFERENCE);
+        }
+        Squad squad = request.getSquad();
+        squad.addMembers(SquadMemberFactory.general(request.getMember(), LocalDateTime.now()));
+        squadRequestRepository.deleteById(requestId);
+    }
+
+    public void rejectRequest(Long memberId, Long squadId, Long requestId) {
+        SquadMember squadMember = validateMemberInSquadAndGet(memberId, squadId);
+        if (squadMember.isNotLeader()) {
+            throw new SquadMemberBusinessException.NotLeader(SquadMemberErrorCode.NOT_LEADER);
+        }
+        SquadRequest request = validateSquadRequestExistsAndGet(requestId);
+        if (request.mismatchSquadId(squadId)) {
+            throw new SquadRequestBusinessException.MismatchReference(SquadRequestErrorCode.MISMATCH_SQUAD_REFERENCE);
+        }
+        squadRequestRepository.deleteById(requestId);
+    }
+
+    public void cancelMyRequest(Long memberId, Long squadId) {
+        squadRequestRepository.deleteBySquadIdMemberId(squadId, memberId);
+    }
+
+    private void validateMemberNotInSquad(Long memberId, Long squadId) {  // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
+        if (squadMemberRepository.findBySquadIdAndMemberId(squadId, memberId).isPresent()) {
+            throw new SquadMemberBusinessException.AlreadyParticipant(SquadMemberErrorCode.ALREADY_JOIN);
+        }
+    }
+
+    private SquadMember validateMemberInSquadAndGet(Long memberId, Long squadId) {
+        return squadMemberRepository.findBySquadIdAndMemberId(squadId, memberId)
+                .orElseThrow(() -> new SquadMemberBusinessException.NotParticipant(SquadMemberErrorCode.NOT_PARTICIPANT));
+    }
+
+    private SquadRequest validateSquadRequestExistsAndGet(Long requestId) {
+        return squadRequestRepository.findById(requestId)
+                .orElseThrow(() -> new SquadRequestBusinessException.NotFound(SquadRequestErrorCode.NOT_FOUND));
     }
 }

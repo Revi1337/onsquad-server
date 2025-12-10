@@ -62,7 +62,7 @@ class SquadRequestJpaRepositoryTest extends PersistenceLayerTestSupport {
 
     @Test
     @DisplayName("findBySquadIdAndCrewMemberId 를 검증한다.")
-    void findBySquadIdAndCrewMemberId() {
+    void findBySquadIdAndMemberId() {
         Member REVI = memberJpaRepository.save(REVI());
         Crew CREW = crewJpaRepository.save(CREW(REVI));
         CrewMember CREW_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
@@ -73,7 +73,7 @@ class SquadRequestJpaRepositoryTest extends PersistenceLayerTestSupport {
         clearPersistenceContext();
 
         Optional<SquadRequest> PARTICIPANT = squadRequestJpaRepository
-                .findBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId());
+                .findBySquadIdAndMemberId(SQUAD.getId(), CREW_MEMBER.getId());
 
         assertThat(PARTICIPANT).isPresent();
         assertThat(PARTICIPANT.get().getSquad()).isInstanceOf(HibernateProxy.class);
@@ -91,14 +91,14 @@ class SquadRequestJpaRepositoryTest extends PersistenceLayerTestSupport {
         squadRequestJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER));
 
         int influenced = squadRequestJpaRepository
-                .deleteBySquadIdAndCrewMemberId(SQUAD.getId(), CREW_MEMBER.getId());
+                .deleteBySquadIdAndMemberId(SQUAD.getId(), CREW_MEMBER.getId());
 
         assertThat(influenced).isEqualTo(1);
     }
 
     @Test
     @DisplayName("deleteById 를 검증한다.")
-    void deleteBySquadIdAndCrewMemberId() {
+    void deleteBySquadIdAndMemberId() {
         Member REVI = memberJpaRepository.save(REVI());
         Crew CREW = crewJpaRepository.save(CREW(REVI));
         CrewMember CREW_OWNER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();

@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import revi1337.onsquad.common.domain.RequestEntity;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_member.domain.entity.vo.JoinStatus;
 import revi1337.onsquad.squad_member.domain.entity.vo.SquadRole;
@@ -35,7 +35,7 @@ import revi1337.onsquad.squad_member.domain.entity.vo.SquadRole;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(name = "uk_squadmember_squad_crewmember", columnNames = {"squad_id", "crew_member_id"})})
+@Table(uniqueConstraints = {@UniqueConstraint(name = "uk_squadmember_squad_member", columnNames = {"squad_id", "member_id"})})
 @AttributeOverrides({@AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))})
 public class SquadMember extends RequestEntity {
 
@@ -48,8 +48,8 @@ public class SquadMember extends RequestEntity {
     private Squad squad;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "crew_member_id", nullable = false)
-    private CrewMember crewMember;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @ColumnDefault("'GENERAL'")
     @Enumerated(STRING)
@@ -67,8 +67,8 @@ public class SquadMember extends RequestEntity {
         this.status = status == null ? PENDING : status;
     }
 
-    void addOwner(CrewMember crewMember) {
-        this.crewMember = crewMember;
+    void addOwner(Member member) {
+        this.member = member;
     }
 
     public void addSquad(Squad squad) {
@@ -89,19 +89,11 @@ public class SquadMember extends RequestEntity {
     }
 
     private void releaseOwner() {
-        this.crewMember = null;
+        this.member = null;
     }
 
     private void releaseSquad() {
         this.squad = null;
-    }
-
-    public boolean matchCrewMemberId(Long crewMemberId) {
-        return crewMember.getId().equals(crewMemberId);
-    }
-
-    public boolean doesNotMatchCrewMemberId(Long crewMemberId) {
-        return !matchCrewMemberId(crewMemberId);
     }
 
     public boolean isNotLeader() {
@@ -128,7 +120,7 @@ public class SquadMember extends RequestEntity {
         return Objects.hashCode(id);
     }
 
-    public boolean isSameCrewMemberId(Long crewMemberId) {
-        return crewMember.getId().equals(crewMemberId);
+    public boolean matchMemberId(Long memberId) {
+        return member.getId().equals(memberId);
     }
 }

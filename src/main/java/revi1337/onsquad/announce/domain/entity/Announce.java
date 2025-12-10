@@ -71,15 +71,19 @@ public class Announce extends BaseEntity {
         this.fixedAt = null;
     }
 
-    public boolean isNotMatchWriterId(Long crewMemberId) {
-        return !isMatchWriterId(crewMemberId);
+    public boolean mismatchCrewId(Long crewId) {
+        return !crew.matchId(crewId);
     }
 
-    public boolean isMatchWriterId(Long crewMemberId) {
+    public boolean mismatchMemberId(Long crewMemberId) {
+        return !matchMemberId(crewMemberId);
+    }
+
+    public boolean matchMemberId(Long crewMemberId) {
         return crewMember.getId().equals(crewMemberId);
     }
 
-    public boolean isNotFixed() {
+    public boolean isUnfixed() {
         return !isFixed();
     }
 

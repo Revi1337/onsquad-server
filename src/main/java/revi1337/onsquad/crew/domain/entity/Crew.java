@@ -130,6 +130,10 @@ public class Crew extends BaseEntity {
         }
     }
 
+    public boolean matchId(Long id) {
+        return this.id.equals(id);
+    }
+
     public boolean isCreatedBy(Long memberId) {
         return member.getId().equals(memberId);
     }

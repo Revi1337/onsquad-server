@@ -15,10 +15,10 @@ public abstract class CrewBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class NotFoundById extends CrewBusinessException {
+    public static class NotFound extends CrewBusinessException {
 
-        public NotFoundById(ErrorCode errorCode, Long crewId) {
-            super(errorCode, String.format(errorCode.getDescription(), crewId));
+        public NotFound(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 
@@ -40,13 +40,6 @@ public abstract class CrewBusinessException extends RuntimeException {
 
         public InvalidPublisher(ErrorCode errorCode, Number crewId) {
             super(errorCode, String.format(errorCode.getDescription(), crewId));
-        }
-    }
-
-    public static class OwnerCantParticipant extends CrewBusinessException {
-
-        public OwnerCantParticipant(ErrorCode errorCode) {
-            super(errorCode, errorCode.getDescription());
         }
     }
 }

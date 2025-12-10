@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
+import revi1337.onsquad.member.error.MemberErrorCode;
+import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.token.domain.model.AccessToken;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
 import revi1337.onsquad.token.domain.model.RefreshToken;
@@ -37,12 +39,17 @@ public class TokenReissueService {
     }
 
     private JsonWebToken generateAndStoreNewTokenPair(Long memberId) {
-        Member member = memberRepository.getById(memberId);
+        Member member = validateMemberExistsAndGet(memberId);
         AccessToken accessToken = jsonWebTokenManager.generateAccessToken(MemberSummary.from(member));
         RefreshToken refreshToken = jsonWebTokenManager.generateRefreshToken(memberId);
         jsonWebTokenManager.storeRefreshTokenFor(memberId, refreshToken);
         log.info(REISSUE_LOG_FORMAT, member.getId(), member.getEmail().getValue());
 
         return JsonWebToken.create(accessToken, refreshToken);
+    }
+
+    private Member validateMemberExistsAndGet(Long memberId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOT_FOUND));
     }
 }

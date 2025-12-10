@@ -1,26 +1,27 @@
 package revi1337.onsquad.category.domain.entity;
 
+import static jakarta.persistence.EnumType.STRING;
+import static lombok.AccessLevel.PROTECTED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import java.util.List;
 import java.util.Objects;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Category {
 
     @Id
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = STRING)
     @Column(nullable = false)
     private CategoryType categoryType;
 

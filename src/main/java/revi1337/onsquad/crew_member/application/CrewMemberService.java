@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.dto.CrewMemberDto;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 @Transactional(readOnly = true)
@@ -20,12 +21,17 @@ public class CrewMemberService {
     private final CrewMemberRepository crewMemberRepository;
 
     public Page<CrewMemberDto> fetchCrewMembers(Long memberId, Long crewId, Pageable pageable) {
-        CrewMember crewMember = crewMemberRepository.getByCrewIdAndMemberId(crewId, memberId);
+        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId);
         if (crewMember.isNotOwner()) {
             throw new CrewMemberBusinessException.NotOwner(NOT_OWNER);
         }
 
         return crewMemberRepository.findManagedCrewMembersByCrewId(crewId, pageable)
                 .map(CrewMemberDto::from);
+    }
+
+    private CrewMember validateMemberInCrewAndGet(Long memberId, Long crewId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
+        return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 }

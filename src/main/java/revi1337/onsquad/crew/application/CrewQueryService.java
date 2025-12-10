@@ -11,7 +11,12 @@ import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
+import revi1337.onsquad.crew.error.CrewErrorCode;
+import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
+import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -26,14 +31,17 @@ public class CrewQueryService {
     }
 
     public CrewDto findCrewById(Long crewId) {
-        return CrewDto.from(crewRepository.getCrewById(crewId));
+        CrewDomainDto crewInfo = crewRepository.findCrewById(crewId)
+                .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
+        return CrewDto.from(crewInfo);
     }
 
     public CrewWithParticipantStateDto findCrewById(Long memberId, Long crewId) {
-        Boolean alreadyJoin = crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId);
-        CrewDomainDto crewInfo = crewRepository.getCrewById(crewId);
-
-        return CrewWithParticipantStateDto.from(alreadyJoin, crewInfo);
+        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId);
+        boolean alreadyParticipants = crewMember != null;
+        CrewDomainDto crewInfo = crewRepository.findCrewById(crewId)
+                .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
+        return CrewWithParticipantStateDto.from(alreadyParticipants, crewInfo);
     }
 
     public List<CrewDto> fetchCrewsByName(String crewName, Pageable pageable) {
@@ -52,5 +60,10 @@ public class CrewQueryService {
         return crewRepository.fetchParticipantsByMemberId(memberId).stream()
                 .map(EnrolledCrewDto::from)
                 .toList();
+    }
+
+    private CrewMember validateMemberInCrewAndGet(Long memberId, Long crewId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
+        return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 }

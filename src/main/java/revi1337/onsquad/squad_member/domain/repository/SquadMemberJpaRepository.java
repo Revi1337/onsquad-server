@@ -7,10 +7,10 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 public interface SquadMemberJpaRepository extends JpaRepository<SquadMember, Long> {
 
-    Optional<SquadMember> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
+    Optional<SquadMember> findBySquadIdAndMemberId(Long squadId, Long memberId);
 
-    @Query("select sm from SquadMember sm inner join fetch sm.squad s where sm.squad.id = :squadId and sm.crewMember.id = :crewMemberId")
-    Optional<SquadMember> findWithSquadBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId);
+    @Query("select sm from SquadMember sm inner join fetch sm.squad s where sm.squad.id = :squadId and sm.member.id = :memberId")
+    Optional<SquadMember> findWithSquadBySquadIdAndMemberId(Long squadId, Long memberId);
 
     int countBySquadId(Long squadId);
 

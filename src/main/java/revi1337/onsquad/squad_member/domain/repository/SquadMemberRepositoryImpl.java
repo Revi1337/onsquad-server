@@ -41,13 +41,8 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public Optional<SquadMember> findBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
-        return squadMemberJpaRepository.findBySquadIdAndCrewMemberId(squadId, crewMemberId);
-    }
-
-    @Override
-    public Optional<SquadMember> findWithSquadBySquadIdAndCrewMemberId(Long squadId, Long crewMemberId) {
-        return squadMemberJpaRepository.findWithSquadBySquadIdAndCrewMemberId(squadId, crewMemberId);
+    public Optional<SquadMember> findBySquadIdAndMemberId(Long squadId, Long memberId) {
+        return squadMemberJpaRepository.findBySquadIdAndMemberId(squadId, memberId);
     }
 
     @Override

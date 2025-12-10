@@ -8,20 +8,9 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 import revi1337.onsquad.member.error.exception.MemberDomainException;
-import revi1337.onsquad.member.error.exception.MemberException;
 
 @RestControllerAdvice
 public class MemberExceptionHandler {
-
-    @ExceptionHandler(MemberException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleMemberException(
-            MemberException exception
-    ) {
-        ErrorCode errorCode = exception.getErrorCode();
-        ProblemDetail problemDetail = ProblemDetail.of(errorCode);
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
-    }
 
     @ExceptionHandler(MemberDomainException.class)
     public ResponseEntity<RestResponse<ProblemDetail>> handleMemberDomainException(

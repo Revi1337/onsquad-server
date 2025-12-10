@@ -29,7 +29,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.announce.domain.entity.Announce;
-import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
+import revi1337.onsquad.announce.error.exception.AnnounceBusinessException.NotFound;
 import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
@@ -85,7 +85,7 @@ class AnnounceCacheRepositoryTest {
         Long DUMMY_ANNOUNCE_ID = 4L;
 
         assertThatThrownBy(() -> announceCacheRepository.fetchCacheByCrewIdAndId(CREW.getId(), DUMMY_ANNOUNCE_ID))
-                .isExactlyInstanceOf(AnnounceBusinessException.NotFoundById.class);
+                .isExactlyInstanceOf(NotFound.class);
     }
 
     @Test

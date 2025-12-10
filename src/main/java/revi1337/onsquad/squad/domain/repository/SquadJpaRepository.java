@@ -8,6 +8,8 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 
 public interface SquadJpaRepository extends JpaRepository<Squad, Long> {
 
+    boolean existsByIdAndCrew_id(Long id, Long crewId);
+
     @Query("select s from Squad s left join fetch s.members where s.id = :id")
     Optional<Squad> findByIdWithMembers(Long id);
 

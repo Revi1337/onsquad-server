@@ -29,6 +29,11 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
+    public Crew getReferenceById(Long id) {
+        return crewJpaRepository.getReferenceById(id);
+    }
+
+    @Override
     public void deleteById(Long id) {
         crewJpaRepository.deleteById(id);
     }

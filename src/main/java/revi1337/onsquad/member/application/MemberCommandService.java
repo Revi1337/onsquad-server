@@ -1,12 +1,6 @@
 package revi1337.onsquad.member.application;
 
-import static revi1337.onsquad.member.error.MemberErrorCode.DUPLICATE_EMAIL;
-import static revi1337.onsquad.member.error.MemberErrorCode.DUPLICATE_NICKNAME;
-import static revi1337.onsquad.member.error.MemberErrorCode.NON_AUTHENTICATE_EMAIL;
-import static revi1337.onsquad.member.error.MemberErrorCode.WRONG_PASSWORD;
-
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,9 +17,9 @@ import revi1337.onsquad.member.domain.event.MemberImageUpdateEvent;
 import revi1337.onsquad.member.domain.model.VerificationStatus;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
+import revi1337.onsquad.member.error.MemberErrorCode;
 import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MemberCommandService {
@@ -44,43 +38,46 @@ public class MemberCommandService {
 
     @Transactional
     public void updateMember(Long memberId, MemberUpdateDto dto) {
-        Member member = memberRepository.getById(memberId);
+        Member member = validateMemberExistsAndGet(memberId);
         member.updateProfile(dto.toMemberBase());
-        memberRepository.saveAndFlush(member);
     }
 
     @Transactional
     public void updatePassword(Long memberId, MemberPasswordUpdateDto dto) {
-        Member member = memberRepository.getById(memberId);
+        Member member = validateMemberExistsAndGet(memberId);
         if (!passwordEncoder.matches(dto.currentPassword(), member.getPassword().getValue())) {
-            throw new MemberBusinessException.WrongPassword(WRONG_PASSWORD);
+            throw new MemberBusinessException.WrongPassword(MemberErrorCode.WRONG_PASSWORD);
         }
 
         member.updatePassword(passwordEncoder.encode(dto.newPassword()));
-        memberRepository.saveAndFlush(member);
     }
 
     public void updateImage(Long memberId, MultipartFile file) {
-        Member member = memberRepository.getById(memberId);
+        Member member = validateMemberExistsAndGet(memberId);
         applicationEventPublisher.publishEvent(new MemberImageUpdateEvent(member, file));
     }
 
     public void deleteImage(Long memberId) {
-        Member member = memberRepository.getById(memberId);
+        Member member = validateMemberExistsAndGet(memberId);
         if (member.hasNotDefaultImage()) {
             applicationEventPublisher.publishEvent(new MemberImageDeleteEvent(member));
         }
     }
 
-    private void ensureRequirements(MemberCreateDto dto) {
+    private void ensureRequirements(MemberCreateDto dto) { // TODO ApplicationService 와 DomainService 로 나눌 수 있을듯? 일단 그건 나중에
         if (!redisCodeRepository.isMarkedVerificationStatusWith(dto.email(), VerificationStatus.SUCCESS)) {
-            throw new MemberBusinessException.NonAuthenticateEmail(NON_AUTHENTICATE_EMAIL);
+            throw new MemberBusinessException.NonAuthenticateEmail(MemberErrorCode.NON_AUTHENTICATE_EMAIL);
         }
         if (memberRepository.existsByNickname(new Nickname(dto.nickname()))) {
-            throw new MemberBusinessException.DuplicateNickname(DUPLICATE_NICKNAME);
+            throw new MemberBusinessException.DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
         }
         if (memberRepository.existsByEmail(new Email(dto.email()))) {
-            throw new MemberBusinessException.DuplicateEmail(DUPLICATE_EMAIL);
+            throw new MemberBusinessException.DuplicateEmail(MemberErrorCode.DUPLICATE_EMAIL);
         }
+    }
+
+    private Member validateMemberExistsAndGet(Long memberId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOT_FOUND));
     }
 }

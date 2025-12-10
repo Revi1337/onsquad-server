@@ -26,9 +26,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import revi1337.onsquad.backup.crew.application.CrewTopMemberService;
-import revi1337.onsquad.backup.crew.application.dto.Top5CrewMemberDto;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
+import revi1337.onsquad.crew.application.CrewTopMemberService;
+import revi1337.onsquad.crew.application.dto.top.Top5CrewMemberDto;
+import revi1337.onsquad.crew.presentation.CrewTopMemberController;
 
 @WebMvcTest(CrewTopMemberController.class)
 class CrewTopMemberControllerTest extends PresentationLayerTestSupport {

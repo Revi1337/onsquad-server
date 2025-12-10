@@ -18,6 +18,11 @@ public class SquadRepositoryImpl implements SquadRepository {
     private final SquadQueryDslRepository squadQueryDslRepository;
 
     @Override
+    public Squad getReferenceById(Long id) {
+        return squadJpaRepository.getReferenceById(id);
+    }
+
+    @Override
     public Squad save(Squad squad) {
         return squadJpaRepository.save(squad);
     }
@@ -28,13 +33,13 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Optional<Squad> findById(Long id) {
-        return squadJpaRepository.findById(id);
+    public boolean existsByIdAndCrewId(Long id, Long crewId) {
+        return squadJpaRepository.existsByIdAndCrew_id(id, crewId);
     }
 
     @Override
-    public Optional<Squad> findByIdWithMembers(Long id) {
-        return squadJpaRepository.findByIdWithMembers(id);
+    public Optional<Squad> findById(Long id) {
+        return squadJpaRepository.findById(id);
     }
 
     @Override

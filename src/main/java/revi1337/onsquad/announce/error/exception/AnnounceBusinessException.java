@@ -15,16 +15,23 @@ public abstract class AnnounceBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class NotFoundById extends AnnounceBusinessException {
+    public static class NotFound extends AnnounceBusinessException {
 
-        public NotFoundById(ErrorCode errorCode, Long announceId) {
-            super(errorCode, String.format(errorCode.getDescription(), announceId));
+        public NotFound(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 
-    public static class InvalidReference extends AnnounceBusinessException {
+    public static class MismatchReference extends AnnounceBusinessException {
 
-        public InvalidReference(ErrorCode errorCode) {
+        public MismatchReference(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
+    public static class InsufficientAuthority extends AnnounceBusinessException {
+
+        public InsufficientAuthority(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
