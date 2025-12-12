@@ -12,8 +12,6 @@ import revi1337.onsquad.crew.domain.event.CrewImageDeleteEvent;
 import revi1337.onsquad.crew.domain.event.CrewImageUpdateEvent;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
-import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.application.MemberAccessPolicy;
@@ -27,7 +25,6 @@ public class CrewCommandService { // TODO 의존성이 너무 큼. Event 로 분
     private final MemberAccessPolicy memberAccessPolicy;
     private final CrewRepository crewRepository;
     private final CrewAccessPolicy crewAccessPolicy;
-    private final CrewMemberAccessPolicy crewMemberAccessPolicy;
     private final CrewHashtagRepository crewHashtagRepository;
     private final SquadJpaRepository squadJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -42,9 +39,8 @@ public class CrewCommandService { // TODO 의존성이 너무 큼. Event 로 분
 
     @Transactional
     public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        crewAccessPolicy.ensureCrewUpdatable(crewMember);
-        Crew crew = crewMember.getCrew();
+        Crew crew = crewAccessPolicy.ensureCrewExistsAndGet(crewId);
+        crewAccessPolicy.ensureCrewUpdatable(crew, memberId);
         crew.update(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
         crewHashtagRepository.deleteByCrewId(crew.getId());
         crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
@@ -52,9 +48,8 @@ public class CrewCommandService { // TODO 의존성이 너무 큼. Event 로 분
 
     @Transactional
     public void deleteCrew(Long memberId, Long crewId) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        crewAccessPolicy.ensureCrewDeletable(crewMember);
-        Crew crew = crewMember.getCrew();
+        Crew crew = crewAccessPolicy.ensureCrewExistsAndGet(crewId);
+        crewAccessPolicy.ensureCrewDeletable(crew, memberId);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
         }
@@ -63,16 +58,14 @@ public class CrewCommandService { // TODO 의존성이 너무 큼. Event 로 분
     }
 
     public void updateCrewImage(Long memberId, Long crewId, MultipartFile file) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        crewAccessPolicy.ensureCrewImageUpdatable(crewMember);
-        Crew crew = crewMember.getCrew();
+        Crew crew = crewAccessPolicy.ensureCrewExistsAndGet(crewId);
+        crewAccessPolicy.ensureCrewImageUpdatable(crew, memberId);
         eventPublisher.publishEvent(new CrewImageUpdateEvent(crew, file));
     }
 
     public void deleteCrewImage(Long memberId, Long crewId) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        crewAccessPolicy.ensureCrewImageDeletable(crewMember);
-        Crew crew = crewMember.getCrew();
+        Crew crew = crewAccessPolicy.ensureCrewExistsAndGet(crewId);
+        crewAccessPolicy.ensureCrewImageDeletable(crew, memberId);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new CrewImageDeleteEvent(crew));
         }

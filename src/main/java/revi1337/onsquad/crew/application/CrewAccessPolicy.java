@@ -2,22 +2,13 @@ package revi1337.onsquad.crew.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
-/**
- * In the Crew domain, the creator of a Crew is always its Owner. Therefore, authorization checks are performed through <b>CrewMember</b>, rather than by
- * directly inspecting the <b>Crew</b> entity.
- *
- * <ul>
- *     <li><b>Crew.member</b> is always equal to the <b>CrewMember</b> with the <b>OWNER</b> role.</li>
- *     <li>All authorization checks must rely on the CrewMember, since role and permission
- *         information exists only within CrewMember, not in Crew itself.</li>
- * </ul>
- */
 @RequiredArgsConstructor
 @Component
 public class CrewAccessPolicy {
@@ -30,26 +21,31 @@ public class CrewAccessPolicy {
         }
     }
 
-    public void ensureCrewUpdatable(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
+    public Crew ensureCrewExistsAndGet(Long crewId) {
+        return crewRepository.findById(crewId)
+                .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
+    }
+
+    public void ensureCrewUpdatable(Crew crew, Long memberId) {
+        if (crew.mismatchMemberId(memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
     }
 
-    public void ensureCrewDeletable(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
+    public void ensureCrewDeletable(Crew crew, Long memberId) {
+        if (crew.mismatchMemberId(memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
     }
 
-    public void ensureCrewImageUpdatable(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
+    public void ensureCrewImageUpdatable(Crew crew, Long memberId) {
+        if (crew.mismatchMemberId(memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_IMAGE_UPDATE_AUTHORITY);
         }
     }
 
-    public void ensureCrewImageDeletable(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
+    public void ensureCrewImageDeletable(Crew crew, Long memberId) {
+        if (crew.mismatchMemberId(memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_IMAGE_DELETE_AUTHORITY);
         }
     }
