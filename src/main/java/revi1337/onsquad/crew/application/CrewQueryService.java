@@ -9,14 +9,11 @@ import revi1337.onsquad.crew.application.dto.CrewDto;
 import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
 import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
 import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
-import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
-import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -24,10 +21,16 @@ import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 public class CrewQueryService {
 
     private final CrewRepository crewRepository;
-    private final CrewMemberRepository crewMemberRepository;
+    private final CrewMemberAccessPolicy crewMemberAccessPolicy;
+    private final CrewAccessPolicy crewAccessPolicy;
 
-    public boolean isDuplicateCrewName(String crewName) {
-        return crewRepository.existsByName(new Name(crewName));
+    public boolean isDuplicateCrewName(String name) {
+        try {
+            crewAccessPolicy.ensureCrewNameIsDuplicate(name);
+            return true;
+        } catch (CrewBusinessException e) {
+            return false;
+        }
     }
 
     public CrewDto findCrewById(Long crewId) {
@@ -37,7 +40,7 @@ public class CrewQueryService {
     }
 
     public CrewWithParticipantStateDto findCrewById(Long memberId, Long crewId) {
-        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId);
+        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         boolean alreadyParticipants = crewMember != null;
         CrewDomainDto crewInfo = crewRepository.findCrewById(crewId)
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
@@ -60,10 +63,5 @@ public class CrewQueryService {
         return crewRepository.fetchParticipantsByMemberId(memberId).stream()
                 .map(EnrolledCrewDto::from)
                 .toList();
-    }
-
-    private CrewMember validateMemberInCrewAndGet(Long memberId, Long crewId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
-        return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
-                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 }

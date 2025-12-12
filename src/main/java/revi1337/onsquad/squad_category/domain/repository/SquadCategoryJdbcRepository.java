@@ -14,7 +14,7 @@ public class SquadCategoryJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public int batchInsert(Long squadId, List<Category> categories) {
+    public int insertBatch(Long squadId, List<Category> categories) {
         String sql = "INSERT INTO squad_category(squad_id, category_id) VALUES (?, ?)";
         int[][] influenced = jdbcTemplate.batchUpdate(
                 sql,

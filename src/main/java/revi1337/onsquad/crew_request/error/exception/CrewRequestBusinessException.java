@@ -22,16 +22,16 @@ public abstract class CrewRequestBusinessException extends RuntimeException {
         }
     }
 
-    public static class InvalidReference extends CrewRequestBusinessException {
+    public static class MismatchReference extends CrewRequestBusinessException {
 
-        public InvalidReference(ErrorCode errorCode) {
+        public MismatchReference(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
 
-    public static class MismatchReference extends CrewRequestBusinessException {
+    public static class InsufficientAuthority extends CrewRequestBusinessException {
 
-        public MismatchReference(ErrorCode errorCode) {
+        public InsufficientAuthority(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

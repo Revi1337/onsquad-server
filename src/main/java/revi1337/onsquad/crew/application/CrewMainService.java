@@ -17,10 +17,8 @@ import revi1337.onsquad.crew.domain.repository.CrewStatisticCacheRepository;
 import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberCacheRepository;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
-import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 
@@ -28,7 +26,8 @@ import revi1337.onsquad.squad.domain.repository.SquadRepository;
 @Service
 public class CrewMainService {
 
-    private final CrewMemberRepository crewMemberRepository;
+    private final CrewMemberAccessPolicy crewMemberAccessPolicy;
+    private final CrewAccessPolicy crewAccessPolicy;
     private final CrewTopMemberCacheRepository crewTopMemberCacheRepository;
     private final AnnounceCacheRepository announceCacheRepository;
     private final CrewRepository crewRepository;
@@ -36,7 +35,7 @@ public class CrewMainService {
     private final CrewStatisticCacheRepository crewStatisticRedisRepository;
 
     public CrewMainDto fetchMain(Long memberId, Long crewId, Pageable pageable) {
-        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId);
+        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         CrewDomainDto crewInfo = crewRepository.findCrewById(crewId)
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
 
@@ -49,16 +48,8 @@ public class CrewMainService {
 
     // TODO 캐시 정합성을 조금 더 올릴 방법을 생각해봐야 한다. 캐싱 된 이후에 추가된 인원 수, 추가된 신청 수, 추가된 스쿼드 수 를 파악(Redis)해 추가해주는 방향을 생각해야한다.
     public CrewStatisticDto calculateStatistic(Long memberId, Long crewId) {
-        CrewMember crewMember = validateMemberInCrewAndGet(memberId, crewId);
-        if (crewMember.isNotOwner()) {
-            throw new CrewMemberBusinessException.NotOwner(CrewMemberErrorCode.NOT_OWNER);
-        }
-
+        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
+        crewAccessPolicy.ensureReadStatisticAccessible(crewMember);
         return CrewStatisticDto.from(crewStatisticRedisRepository.getStatisticById(crewId));
-    }
-
-    private CrewMember validateMemberInCrewAndGet(Long memberId, Long crewId) { // TODO 리팩토링 싹다끝내면, 하위 private 메서드 모두 책임 분리 필요.
-        return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
-                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 }

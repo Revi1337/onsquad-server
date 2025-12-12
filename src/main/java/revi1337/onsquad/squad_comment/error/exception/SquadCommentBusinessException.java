@@ -42,4 +42,11 @@ public abstract class SquadCommentBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class InsufficientAuthority extends SquadCommentBusinessException {
+
+        public InsufficientAuthority(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

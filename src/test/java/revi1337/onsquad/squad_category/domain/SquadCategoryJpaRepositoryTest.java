@@ -66,8 +66,8 @@ class SquadCategoryJpaRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember GENERAL_CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
         Squad SQUAD_1 = squadJpaRepository.save(SQUAD_1(GENERAL_CREW_MEMBER, CREW));
         Squad SQUAD_2 = squadJpaRepository.save(SQUAD_2(GENERAL_CREW_MEMBER, CREW));
-        squadCategoryJdbcRepository.batchInsert(SQUAD_1.getId(), CATEGORIES_1());
-        squadCategoryJdbcRepository.batchInsert(SQUAD_2.getId(), CATEGORIES_2());
+        squadCategoryJdbcRepository.insertBatch(SQUAD_1.getId(), CATEGORIES_1());
+        squadCategoryJdbcRepository.insertBatch(SQUAD_2.getId(), CATEGORIES_2());
 
         // when
         List<SquadCategory> CATEGORIES = squadCategoryJpaRepository.findAllBySquadId(SQUAD_1.getId());
@@ -89,8 +89,8 @@ class SquadCategoryJpaRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember GENERAL_CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
         Squad SQUAD_1 = squadJpaRepository.save(SQUAD_1(GENERAL_CREW_MEMBER, CREW));
         Squad SQUAD_2 = squadJpaRepository.save(SQUAD_2(GENERAL_CREW_MEMBER, CREW));
-        squadCategoryJdbcRepository.batchInsert(SQUAD_1.getId(), CATEGORIES_1());
-        squadCategoryJdbcRepository.batchInsert(SQUAD_2.getId(), CATEGORIES_2());
+        squadCategoryJdbcRepository.insertBatch(SQUAD_1.getId(), CATEGORIES_1());
+        squadCategoryJdbcRepository.insertBatch(SQUAD_2.getId(), CATEGORIES_2());
 
         // when
         List<CategoryType> CATEGORY_TYPES = squadCategoryJpaRepository.fetchAllBySquadId(SQUAD_1.getId());

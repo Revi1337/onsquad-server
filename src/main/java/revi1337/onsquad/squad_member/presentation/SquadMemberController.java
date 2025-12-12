@@ -16,6 +16,7 @@ import revi1337.onsquad.squad_member.application.SquadMemberQueryService;
 import revi1337.onsquad.squad_member.presentation.dto.response.EnrolledSquadResponse;
 import revi1337.onsquad.squad_member.presentation.dto.response.SquadMemberResponse;
 
+// TODO /crews/{crewId} 를 prefix 로 넣을까 고민 필요. 도메인 일관성을 위해 넣고싶은데 쿼리 한방더 필요할지도? crewId 없이도 리소스 식별이 가능한데.. 그럼 Squad 가 Crew 에 종속된 개념이란걸 URL 에 나타낼 수가 없고.. 하 짜증난다.
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController

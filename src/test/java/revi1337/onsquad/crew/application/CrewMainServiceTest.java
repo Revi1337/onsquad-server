@@ -68,7 +68,7 @@ class CrewMainServiceTest extends ApplicationLayerTestSupport {
         CREW.addCrewMember(CrewMemberFactory.general(CREW, ANDONG, LocalDateTime.now()));
         CREW.addCrewMember(CrewMemberFactory.general(CREW, KWANGWON, LocalDateTime.now()));
         crewRepository.save(CREW);
-        crewHashtagRepository.batchInsert(CREW.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
+        crewHashtagRepository.insertBatch(CREW.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
         Announce ANNOUNCE = ANNOUNCE(CREW, crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId()));
         announceRepository.save(ANNOUNCE);
 

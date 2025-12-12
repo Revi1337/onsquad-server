@@ -5,7 +5,7 @@ import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 
 public interface CrewHashtagRepository {
 
-    void batchInsert(Long crewId, List<Hashtag> hashtags);
+    void insertBatch(Long crewId, List<Hashtag> hashtags);
 
     void deleteByCrewId(Long crewId);
 

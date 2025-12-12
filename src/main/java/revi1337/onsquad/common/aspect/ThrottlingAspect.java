@@ -32,9 +32,7 @@ public class ThrottlingAspect {
         boolean firstRequest = requestCacheHandlerComposite
                 .isFirstRequest(redisKey, LocalDateTime.now().toString(), throttling.during(), throttling.unit());
         if (!firstRequest) {
-            throw new CommonBusinessException.RequestConflict(
-                    CommonErrorCode.REQUEST_CONFLICT, getCycleAsDuration(throttling)
-            );
+            throw new CommonBusinessException.ToManyRequest(CommonErrorCode.TO_MANY_REQUEST);
         }
     }
 

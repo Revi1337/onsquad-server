@@ -14,8 +14,13 @@ public enum CrewErrorCode implements ErrorCode {
     INVALID_NAME_LENGTH(400, "CR004", "크루명의 길이는 %d 자 이상 %d 자 입니다."),
     INVALID_HASHTAG(400, "CR005", "유효하지 않은 해시태그가 존재합니다."),
 
-    NOT_FOUND(404, "CR006", "크루를 찾을 수 없습니다."),
-    ALREADY_EXISTS(400, "CR007", "%s 크루가 이미 존재하여 크루를 개설할 수 없습니다.");
+    ALREADY_EXISTS(400, "CR006", "크루가 이미 존재하여 크루를 개설할 수 없습니다."),
+    NOT_FOUND(404, "CR007", "크루를 찾을 수 없습니다."),
+    INSUFFICIENT_UPDATE_AUTHORITY(403, "CR008", "크루 수정은 작성자만 가능합니다."),
+    INSUFFICIENT_DELETE_AUTHORITY(403, "CR009", "크루 삭제는 작성자만 가능합니다."),
+    INSUFFICIENT_IMAGE_UPDATE_AUTHORITY(403, "CR010", "크루 이미지 변경은 작성자만 가능합니다."),
+    INSUFFICIENT_IMAGE_DELETE_AUTHORITY(403, "CR011", "크루 이미지 삭제는 작성자만 가능합니다."),
+    INSUFFICIENT_READ_STATISTIC_AUTHORITY(403, "CR012", "크루 통계 정보 조회는 작성자만 가능합니다.");
 
     private final int status;
     private final String code;

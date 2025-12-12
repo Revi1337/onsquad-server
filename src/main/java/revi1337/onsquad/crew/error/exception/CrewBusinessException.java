@@ -24,22 +24,15 @@ public abstract class CrewBusinessException extends RuntimeException {
 
     public static class AlreadyExists extends CrewBusinessException {
 
-        public AlreadyExists(ErrorCode errorCode, String crewName) {
-            super(errorCode, String.format(errorCode.getDescription(), crewName));
+        public AlreadyExists(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 
-    public static class AlreadyJoin extends CrewBusinessException {
+    public static class InsufficientAuthority extends CrewBusinessException {
 
-        public AlreadyJoin(ErrorCode errorCode, Number crewId) {
-            super(errorCode, String.format(errorCode.getDescription(), crewId));
-        }
-    }
-
-    public static class InvalidPublisher extends CrewBusinessException {
-
-        public InvalidPublisher(ErrorCode errorCode, Number crewId) {
-            super(errorCode, String.format(errorCode.getDescription(), crewId));
+        public InsufficientAuthority(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 }

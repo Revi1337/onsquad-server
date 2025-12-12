@@ -241,7 +241,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long ANNOUNCE_ID = 1L;
             boolean fixState = true;
             doNothing().when(announceCommandService)
-                    .fixOrUnfixAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID), eq(fixState));
+                    .changeFixState(any(), eq(CREW_ID), eq(ANNOUNCE_ID), eq(fixState));
 
             mockMvc.perform(patch("/api/crews/{crewId}/announces/{announceId}/fix", CREW_ID, ANNOUNCE_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -270,7 +270,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long ANNOUNCE_ID = 1L;
             boolean fixState = false;
             doNothing().when(announceCommandService)
-                    .fixOrUnfixAnnounce(any(), eq(CREW_ID), eq(ANNOUNCE_ID), eq(fixState));
+                    .changeFixState(any(), eq(CREW_ID), eq(ANNOUNCE_ID), eq(fixState));
 
             mockMvc.perform(patch("/api/crews/{crewId}/announces/{announceId}/fix", CREW_ID, ANNOUNCE_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)

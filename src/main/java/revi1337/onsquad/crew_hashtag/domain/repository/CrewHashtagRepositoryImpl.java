@@ -13,7 +13,7 @@ public class CrewHashtagRepositoryImpl implements CrewHashtagRepository {
     private final CrewHashtagJpaRepository crewHashtagJpaRepository;
 
     @Override
-    public void batchInsert(Long crewId, List<Hashtag> hashtags) {
+    public void insertBatch(Long crewId, List<Hashtag> hashtags) {
         crewHashtagJdbcRepository.batchInsert(crewId, hashtags);
     }
 

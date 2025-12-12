@@ -50,7 +50,7 @@ class SquadCategoryJdbcRepositoryTest extends PersistenceLayerTestSupport {
         CrewMember GENERAL_CREW_MEMBER = crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
         Squad SQUAD = squadJpaRepository.save(SQUAD_1(GENERAL_CREW_MEMBER, CREW));
 
-        int influenced = squadCategoryJdbcRepository.batchInsert(SQUAD.getId(), ALL_WITH_SOME_CATEGORIES());
+        int influenced = squadCategoryJdbcRepository.insertBatch(SQUAD.getId(), ALL_WITH_SOME_CATEGORIES());
 
         assertThat(influenced).isEqualTo(2);
     }

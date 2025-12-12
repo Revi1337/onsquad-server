@@ -187,11 +187,11 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             CrewMember GENERAL_CREW_MEMBER_1 = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             CrewMember GENERAL_CREW_MEMBER_2 = crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON));
             Squad SQUAD_1 = squadRepository.save(SQUAD_1(GENERAL_CREW_MEMBER_1, CREW));
-            squadCategoryRepository.batchInsert(SQUAD_1.getId(), ALL_WITH_SOME_CATEGORIES());
+            squadCategoryRepository.insertBatch(SQUAD_1.getId(), ALL_WITH_SOME_CATEGORIES());
             Squad SQUAD_2 = squadRepository.save(SQUAD_2(GENERAL_CREW_MEMBER_1, CREW));
-            squadCategoryRepository.batchInsert(SQUAD_2.getId(), CATEGORIES_1());
+            squadCategoryRepository.insertBatch(SQUAD_2.getId(), CATEGORIES_1());
             Squad SQUAD_3 = squadRepository.save(SQUAD_3(GENERAL_CREW_MEMBER_2, CREW));
-            squadCategoryRepository.batchInsert(SQUAD_3.getId(), CATEGORIES_2());
+            squadCategoryRepository.insertBatch(SQUAD_3.getId(), CATEGORIES_2());
             CategoryCondition CONDITION = new CategoryCondition(CategoryType.BADMINTON);
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
             clearPersistenceContext();
@@ -257,7 +257,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             squadRepository.save(SQUAD_2(CREW1_GENERAL, CREW1));
             Squad CREW2_SQUAD1 = squadRepository.save(SQUAD_1(CREW2_OWNER, CREW2));
             Squad CREW2_SQUAD2 = squadRepository.save(SQUAD_2(CREW2_GENERAL, CREW2));
-            squadCategoryRepository.batchInsert(CREW2_SQUAD2.getId(), CATEGORIES_1());
+            squadCategoryRepository.insertBatch(CREW2_SQUAD2.getId(), CATEGORIES_1());
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
             clearPersistenceContext();
 

@@ -101,7 +101,7 @@ public class SquadComment extends BaseEntity {
         return member.matchId(memberId);
     }
 
-    public boolean mismatchWriterId(Long memberId) {
+    public boolean mismatchMemberId(Long memberId) {
         return !matchWriterId(memberId);
     }
 

@@ -28,4 +28,11 @@ public abstract class SquadRequestBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class InsufficientAuthority extends SquadRequestBusinessException {
+
+        public InsufficientAuthority(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

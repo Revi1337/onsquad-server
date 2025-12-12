@@ -1,7 +1,6 @@
 package revi1337.onsquad.common.error;
 
 import lombok.Getter;
-import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
 
 @Getter
 public abstract class CommonBusinessException extends RuntimeException {
@@ -15,10 +14,10 @@ public abstract class CommonBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class RequestConflict extends AnnounceBusinessException {
+    public static class ToManyRequest extends CommonBusinessException {
 
-        public RequestConflict(ErrorCode errorCode, String timeStr) {
-            super(errorCode, String.format(errorCode.getDescription(), timeStr));
+        public ToManyRequest(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 }

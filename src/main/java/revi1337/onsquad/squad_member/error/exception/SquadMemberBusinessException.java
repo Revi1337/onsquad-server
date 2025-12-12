@@ -22,13 +22,6 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
         }
     }
 
-    public static class NotLeader extends SquadMemberBusinessException {
-
-        public NotLeader(ErrorCode errorCode) {
-            super(errorCode, errorCode.getDescription());
-        }
-    }
-
     public static class CannotLeaveLeader extends SquadMemberBusinessException {
 
         public CannotLeaveLeader(ErrorCode errorCode) {
@@ -39,6 +32,13 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
     public static class AlreadyParticipant extends SquadMemberBusinessException {
 
         public AlreadyParticipant(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
+    public static class InsufficientAuthority extends SquadMemberBusinessException {
+
+        public InsufficientAuthority(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }

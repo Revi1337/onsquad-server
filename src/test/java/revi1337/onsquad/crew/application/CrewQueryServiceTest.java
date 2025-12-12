@@ -99,7 +99,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
         void success() {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewRepository.save(CREW_WITH_IMAGE(REVI, CREW_IMAGE_LINK_VALUE));
-            crewHashtagRepository.batchInsert(CREW.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
+            crewHashtagRepository.insertBatch(CREW.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
 
             CrewDto CREW_INFO = crewQueryService.findCrewById(CREW.getId());
 
@@ -131,9 +131,9 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW_2 = CREW_WITH_NAME_AND_IMAGE(REVI, CREW_NAME_VALUE + 2, CREW_IMAGE_LINK_VALUE + 2);
             Crew CREW_3 = CREW_WITH_NAME_AND_IMAGE(REVI, CREW_NAME_VALUE + 3, CREW_IMAGE_LINK_VALUE + 3);
             crewJpaRepository.saveAll(List.of(CREW_1, CREW_2, CREW_3));
-            crewHashtagRepository.batchInsert(CREW_1.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
-            crewHashtagRepository.batchInsert(CREW_2.getId(), Hashtag.fromHashtagTypes(List.of(FOODIE, MOVIE)));
-            crewHashtagRepository.batchInsert(CREW_3.getId(), Hashtag.fromHashtagTypes(List.of(IMPULSIVE)));
+            crewHashtagRepository.insertBatch(CREW_1.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
+            crewHashtagRepository.insertBatch(CREW_2.getId(), Hashtag.fromHashtagTypes(List.of(FOODIE, MOVIE)));
+            crewHashtagRepository.insertBatch(CREW_3.getId(), Hashtag.fromHashtagTypes(List.of(IMPULSIVE)));
 
             List<CrewDto> FIND_CREWS = crewQueryService.fetchCrewsByName(CREW_NAME_VALUE, PageRequest.of(0, 10));
 

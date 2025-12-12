@@ -282,7 +282,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             Announce ANNOUNCE = announceJpaRepository.save(ANNOUNCE(CREW, CREW_OWNER));
             clearPersistenceContext();
 
-            announceCommandService.fixOrUnfixAnnounce(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), true);
+            announceCommandService.changeFixState(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), true);
 
             assertThat(events.stream(AnnounceFixedEvent.class)).hasSize(1);
             assertThat(announceRepository.getByIdAndCrewId(ANNOUNCE.getId(), CREW.getId()).isFixed()).isTrue();
@@ -301,7 +301,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             CrewMember CREW_OWNER = crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId());
             clearPersistenceContext();
 
-            announceCommandService.fixOrUnfixAnnounce(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), true);
+            announceCommandService.changeFixState(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), true);
 
             assertThat(events.stream(AnnounceFixedEvent.class)).hasSize(1);
             assertThat(announceRepository.getByIdAndCrewId(ANNOUNCE.getId(), CREW.getId()).isFixed()).isTrue();
@@ -321,7 +321,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             CrewMember CREW_OWNER = crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId());
             clearPersistenceContext();
 
-            announceCommandService.fixOrUnfixAnnounce(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), true);
+            announceCommandService.changeFixState(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), true);
 
             assertThat(events.stream(AnnounceFixedEvent.class)).hasSize(0);
             verify(announceRepository, never()).saveAndFlush(any(Announce.class));
@@ -341,7 +341,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> announceCommandService
-                    .fixOrUnfixAnnounce(CREW_GENERAL.getId(), CREW.getId(), ANNOUNCE.getId(), true))
+                    .changeFixState(CREW_GENERAL.getId(), CREW.getId(), ANNOUNCE.getId(), true))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
 
@@ -356,7 +356,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> announceCommandService
-                    .fixOrUnfixAnnounce(CREW_MANAGER.getId(), CREW.getId(), ANNOUNCE.getId(), true))
+                    .changeFixState(CREW_MANAGER.getId(), CREW.getId(), ANNOUNCE.getId(), true))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
     }
@@ -374,7 +374,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             Announce ANNOUNCE = announceJpaRepository.save(FIXED_ANNOUNCE(CREW, CREW_OWNER));
             clearPersistenceContext();
 
-            announceCommandService.fixOrUnfixAnnounce(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), false);
+            announceCommandService.changeFixState(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), false);
 
             assertThat(events.stream(AnnounceFixedEvent.class)).hasSize(1);
             assertThat(announceRepository.getByIdAndCrewId(ANNOUNCE.getId(), CREW.getId()).isFixed()).isFalse();
@@ -393,7 +393,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             CrewMember CREW_OWNER = crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId());
             clearPersistenceContext();
 
-            announceCommandService.fixOrUnfixAnnounce(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), false);
+            announceCommandService.changeFixState(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), false);
 
             assertThat(events.stream(AnnounceFixedEvent.class)).hasSize(1);
             assertThat(announceRepository.getByIdAndCrewId(ANNOUNCE.getId(), CREW.getId()).isFixed()).isFalse();
@@ -412,7 +412,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             CrewMember CREW_OWNER = crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId());
             clearPersistenceContext();
 
-            announceCommandService.fixOrUnfixAnnounce(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), false);
+            announceCommandService.changeFixState(CREW_OWNER.getId(), CREW.getId(), ANNOUNCE.getId(), false);
 
             assertThat(events.stream(AnnounceFixedEvent.class)).hasSize(0);
             verify(announceRepository, never()).saveAndFlush(any(Announce.class));
@@ -432,7 +432,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> announceCommandService
-                    .fixOrUnfixAnnounce(CREW_GENERAL.getId(), CREW.getId(), ANNOUNCE.getId(), false))
+                    .changeFixState(CREW_GENERAL.getId(), CREW.getId(), ANNOUNCE.getId(), false))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
 
@@ -447,7 +447,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             assertThatThrownBy(() -> announceCommandService
-                    .fixOrUnfixAnnounce(CREW_MANAGER.getId(), CREW.getId(), ANNOUNCE.getId(), false))
+                    .changeFixState(CREW_MANAGER.getId(), CREW.getId(), ANNOUNCE.getId(), false))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
     }

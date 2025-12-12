@@ -82,7 +82,7 @@ class SquadCommentTest {
         CrewMember crewMember = defaultInstance(CrewMember.class, 1L);
         SquadComment comment = SquadComment.create("parent", null, crewMember);
 
-        boolean mismatch = comment.mismatchWriterId(100L);
+        boolean mismatch = comment.mismatchMemberId(100L);
 
         assertThat(mismatch).isTrue();
     }
@@ -93,7 +93,7 @@ class SquadCommentTest {
         CrewMember crewMember = defaultInstance(CrewMember.class, 1L);
         SquadComment comment = SquadComment.create("parent", null, crewMember);
 
-        boolean mismatch = comment.mismatchWriterId(crewMember.getId());
+        boolean mismatch = comment.mismatchMemberId(crewMember.getId());
 
         assertThat(mismatch).isFalse();
     }

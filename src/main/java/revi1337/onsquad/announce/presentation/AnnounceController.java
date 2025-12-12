@@ -89,7 +89,7 @@ public class AnnounceController {
             @RequestParam boolean state,
             @Authenticate CurrentMember currentMember
     ) {
-        announceCommandService.fixOrUnfixAnnounce(currentMember.id(), crewId, announceId, state);
+        announceCommandService.changeFixState(currentMember.id(), crewId, announceId, state);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
