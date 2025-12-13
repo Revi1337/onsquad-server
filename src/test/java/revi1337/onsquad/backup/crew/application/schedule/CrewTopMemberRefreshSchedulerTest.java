@@ -37,7 +37,7 @@ class CrewTopMemberRefreshSchedulerTest {
         when(crewTopMemberProperties.during()).thenReturn(Duration.ofDays(7));
         when(crewTopMemberProperties.rankLimit()).thenReturn(5);
 
-        refreshScheduler.refreshTopMembersInCrew();
+        refreshScheduler.refreshTopMembers();
 
         verify(crewTopMemberRepository).deleteAllInBatch();
         verify(crewTopMemberRepository).fetchAggregatedTopMembers(any(LocalDate.class), any(LocalDate.class), any());
