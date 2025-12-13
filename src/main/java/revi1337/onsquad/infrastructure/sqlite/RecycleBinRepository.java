@@ -1,0 +1,31 @@
+package revi1337.onsquad.infrastructure.sqlite;
+
+import java.util.List;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class RecycleBinRepository {
+
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    public RecycleBinRepository(@Qualifier("sqliteDataSource") DataSource dataSource) {
+        this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    public void save(String path) {
+        String sql = "INSERT INTO recycle_bin (path) VALUES (:path)";
+        SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
+                .addValue("path", path);
+        jdbcTemplate.update(sql, sqlParameterSource);
+    }
+
+    public List<String> findAll() {
+        String sql = "SELECT path FROM recycle_bin";
+        return jdbcTemplate.queryForList(sql, new MapSqlParameterSource(), String.class);
+    }
+}

@@ -17,10 +17,10 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontProperties;
-import revi1337.onsquad.infrastructure.aws.s3.support.RecycleBin;
+import revi1337.onsquad.infrastructure.recyclebin.RecycleBin;
 
 @ExtendWith(MockitoExtension.class)
-class S3RecycleBinCleaningSchedulerTest {
+class S3BatchDeletionSchedulerTest {
 
     private static MockedStatic<RecycleBin> mockedStatic;
 
@@ -41,7 +41,7 @@ class S3RecycleBinCleaningSchedulerTest {
     private S3StorageCleaner s3StorageCleaner;
 
     @InjectMocks
-    private S3RecycleBinCleaningScheduler scheduler;
+    private S3BatchDeletionScheduler scheduler;
 
     @Test
     @DisplayName("S3RecycleBinCleaningScheduler 의 RecycleBin 호출을 테스트한다.")
@@ -53,7 +53,7 @@ class S3RecycleBinCleaningSchedulerTest {
         when(cloudFrontProperties.baseDomain()).thenReturn(baseDomain);
         doNothing().when(s3StorageCleaner).deleteInBatch(anyList());
 
-        scheduler.cleanUpRecycleBin();
+        scheduler.deleteInBatch();
 
         mockedStatic.verify(RecycleBin::flush);
         verify(s3StorageCleaner).deleteInBatch(anyList());

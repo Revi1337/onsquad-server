@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.infrastructure.aws.s3.support.UUIDFilenameConverter;
+import revi1337.onsquad.common.application.file.UUIDFilenameConverter;
 
 class UUIDFilenameConverterTest {
 

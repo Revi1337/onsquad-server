@@ -68,7 +68,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew.application.CrewCommandExecutor;
+import revi1337.onsquad.crew.application.CrewCreationCoordinator;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewDto;
@@ -84,7 +84,7 @@ import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 class CrewControllerTest extends PresentationLayerTestSupport {
 
     @MockBean
-    private CrewCommandExecutor crewCommandExecutor;
+    private CrewCreationCoordinator crewCreationCoordinator;
 
     @MockBean
     private CrewQueryService crewQueryService;
@@ -136,7 +136,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 생성에 성공한다.")
         void success() throws Exception {
-            doNothing().when(crewCommandExecutor).newCrew(any(), any(CrewCreateDto.class), any(MultipartFile.class));
+            doNothing().when(crewCreationCoordinator).newCrew(any(), any(CrewCreateDto.class), any(MultipartFile.class));
             CrewCreateRequest CREATE_REQUEST = new CrewCreateRequest(
                     CREW_NAME_VALUE,
                     CREW_INTRODUCE_VALUE,
@@ -312,7 +312,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 업데이트에 성공한다.")
         void success() throws Exception {
-            doNothing().when(crewCommandExecutor).updateCrew(any(), anyLong(), any(CrewUpdateDto.class));
+            doNothing().when(crewCreationCoordinator).updateCrew(any(), anyLong(), any(CrewUpdateDto.class));
             CrewUpdateRequest UPDATE_REQUEST = new CrewUpdateRequest(
                     CHANGED_CREW_NAME_VALUE,
                     CHANGED_CREW_INTRODUCE_VALUE,
@@ -375,7 +375,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long MEMBER_ID = 1L;
             Long CREW_ID = 2L;
-            doNothing().when(crewCommandExecutor).deleteCrew(MEMBER_ID, CREW_ID);
+            doNothing().when(crewCreationCoordinator).deleteCrew(MEMBER_ID, CREW_ID);
 
             mockMvc.perform(delete("/api/crews/{crewId}", CREW_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -413,7 +413,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 이미지 업데이트에 성공한다.")
         void success() throws Exception {
-            doNothing().when(crewCommandExecutor).updateCrewImage(any(), anyLong(), any(MultipartFile.class));
+            doNothing().when(crewCreationCoordinator).updateCrewImage(any(), anyLong(), any(MultipartFile.class));
             MockMultipartFile FILE_PART = PNG_MULTIPART("file", "dummy.png");
 
             mockMvc.perform(multipart("/api/crews/{crewId}/image", 1L)
@@ -458,7 +458,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(crewCommandExecutor, never()).updateCrewImage(any(), anyLong(), any(MultipartFile.class));
+            verify(crewCreationCoordinator, never()).updateCrewImage(any(), anyLong(), any(MultipartFile.class));
         }
     }
 
@@ -469,7 +469,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 이미지 삭제에 성공한다.")
         void success() throws Exception {
-            doNothing().when(crewCommandExecutor).deleteCrewImage(any(), anyLong());
+            doNothing().when(crewCreationCoordinator).deleteCrewImage(any(), anyLong());
 
             mockMvc.perform(delete("/api/crews/{crewId}/image", 1L)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -483,7 +483,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(crewCommandExecutor).deleteCrewImage(any(), anyLong());
+            verify(crewCreationCoordinator).deleteCrewImage(any(), anyLong());
         }
 
         @Test
@@ -499,7 +499,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(crewCommandExecutor, times(0)).deleteCrewImage(any(), anyLong());
+            verify(crewCreationCoordinator, times(0)).deleteCrewImage(any(), anyLong());
         }
     }
 

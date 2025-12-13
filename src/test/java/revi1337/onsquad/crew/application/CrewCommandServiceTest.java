@@ -218,7 +218,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
             MockMultipartFile MULTIPART = PNG_MULTIPART(DEFAULT_MULTIPART_NAME, DEFAULT_ORIGINAL_FILENAME);
             when(crewS3StorageManager.upload(MULTIPART)).thenReturn(CHANGED_CREW_IMAGE_LINK_VALUE);
 
-            crewCommandService.updateCrewImage(REVI.getId(), CREW.getId(), MULTIPART);
+            crewCommandService.updateImage(REVI.getId(), CREW.getId(), MULTIPART);
 
             assertThat(CREW.hasImage()).isTrue();
             assertThat(CREW.getImageUrl()).isEqualTo(CHANGED_CREW_IMAGE_LINK_VALUE);
@@ -232,7 +232,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
             MockMultipartFile MULTIPART = PNG_MULTIPART(DEFAULT_MULTIPART_NAME, DEFAULT_ORIGINAL_FILENAME);
             when(crewS3StorageManager.upload(MULTIPART, CREW.getImageUrl())).thenReturn(CREW_IMAGE_LINK_VALUE);
 
-            crewCommandService.updateCrewImage(REVI.getId(), CREW.getId(), MULTIPART);
+            crewCommandService.updateImage(REVI.getId(), CREW.getId(), MULTIPART);
 
             assertThat(CREW.hasImage()).isTrue();
             assertThat(CREW.getImageUrl()).isEqualTo(CREW_IMAGE_LINK_VALUE);
@@ -247,7 +247,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
             crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             MockMultipartFile MULTIPART = PNG_MULTIPART(DEFAULT_MULTIPART_NAME, DEFAULT_ORIGINAL_FILENAME);
 
-            assertThatThrownBy(() -> crewCommandService.updateCrewImage(ANDONG.getId(), CREW.getId(), MULTIPART))
+            assertThatThrownBy(() -> crewCommandService.updateImage(ANDONG.getId(), CREW.getId(), MULTIPART))
                     .isExactlyInstanceOf(CrewBusinessException.InvalidPublisher.class);
         }
     }
@@ -262,7 +262,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW_WITH_IMAGE(REVI, CREW_IMAGE_LINK_VALUE));
 
-            crewCommandService.deleteCrewImage(REVI.getId(), CREW.getId());
+            crewCommandService.deleteImage(REVI.getId(), CREW.getId());
 
             assertThat(applicationEvents.stream(CrewImageDeleteEvent.class)).hasSize(1);
             assertThat(CREW.hasNotImage()).isTrue();
@@ -277,7 +277,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
             Member ANDONG = memberJpaRepository.save(ANDONG());
             crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
 
-            assertThatThrownBy(() -> crewCommandService.deleteCrewImage(ANDONG.getId(), CREW.getId()))
+            assertThatThrownBy(() -> crewCommandService.deleteImage(ANDONG.getId(), CREW.getId()))
                     .isExactlyInstanceOf(CrewBusinessException.InvalidPublisher.class);
         }
     }

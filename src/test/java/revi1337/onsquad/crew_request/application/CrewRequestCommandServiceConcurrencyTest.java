@@ -31,7 +31,7 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
-import revi1337.onsquad.infrastructure.aws.s3.support.RecycleBinLifeCycleManager;
+import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
 import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;

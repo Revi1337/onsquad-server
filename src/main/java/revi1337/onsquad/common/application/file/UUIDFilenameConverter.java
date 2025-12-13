@@ -1,7 +1,6 @@
-package revi1337.onsquad.infrastructure.aws.s3.support;
+package revi1337.onsquad.common.application.file;
 
 import java.util.UUID;
-import revi1337.onsquad.common.application.file.FilenameConvertStrategy;
 import revi1337.onsquad.common.constant.Sign;
 
 public class UUIDFilenameConverter implements FilenameConvertStrategy {

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import revi1337.onsquad.common.application.file.FileStorageManager;
+import revi1337.onsquad.common.application.file.UUIDFilenameConverter;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontProperties;
-import revi1337.onsquad.infrastructure.aws.s3.support.UUIDFilenameConverter;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @RequiredArgsConstructor

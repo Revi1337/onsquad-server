@@ -27,7 +27,7 @@ import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.fixture.MemberFixture;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator;
-import revi1337.onsquad.infrastructure.aws.s3.support.RecycleBinLifeCycleManager;
+import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
 import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
 import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 import revi1337.onsquad.member.domain.entity.Member;

@@ -1,4 +1,4 @@
-package revi1337.onsquad.infrastructure.aws.s3.support;
+package revi1337.onsquad.infrastructure.recyclebin;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import revi1337.onsquad.common.config.properties.SchedulingProperty;

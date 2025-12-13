@@ -131,6 +131,7 @@ onsquad:
       region: aws-global
       distribution-id: aaaaaaaaaaaaaa
     s3:
+      delete-batch-cron: 0 0 0 * * *
       access-key: access-key
       secret-key: secret-key
       bucket: onsquad
@@ -149,10 +150,6 @@ onsquad:
       schedule:
         expression:
           0 0 0 * * 1
-    clean-recycle-bin:
-      schedule:
-        expression:
-          0 0 0 * * *
 
 logging:
   level:

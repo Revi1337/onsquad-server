@@ -1,4 +1,4 @@
-package revi1337.onsquad.infrastructure.aws.s3.support;
+package revi1337.onsquad.infrastructure.recyclebin;
 
 import java.util.ArrayList;
 import java.util.List;

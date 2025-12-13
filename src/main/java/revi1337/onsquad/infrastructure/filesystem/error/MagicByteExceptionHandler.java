@@ -1,4 +1,4 @@
-package revi1337.onsquad.infrastructure.aws.s3.error;
+package revi1337.onsquad.infrastructure.filesystem.error;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,12 +7,13 @@ import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
 
+@Deprecated
 @RestControllerAdvice
-public class AttachmentExceptionHandler {
+public class MagicByteExceptionHandler {
 
-    @ExceptionHandler(AttachmentValidationException.class)
+    @ExceptionHandler(MagicByteValidationException.class)
     public ResponseEntity<RestResponse<ProblemDetail>> handleAttachmentValidationException(
-            AttachmentValidationException exception
+            MagicByteValidationException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());

@@ -1,8 +1,9 @@
 package revi1337.onsquad.infrastructure.aws.s3;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
@@ -16,14 +17,26 @@ public class S3StorageCleaner {
     private final S3Client s3Client;
     private final String bucketName;
 
+    @Async("s3DeletionExecutor")
     public void deleteInBatch(List<String> targetPaths) {
-        List<ObjectIdentifier> identifiers = targetPaths.stream()
+        List<List<ObjectIdentifier>> batches = partition(targetPaths);
+        batches.forEach(this::deleteBatch);
+    }
+
+    private List<List<ObjectIdentifier>> partition(List<String> targetPaths) {
+        List<List<ObjectIdentifier>> batches = new ArrayList<>();
+        for (int i = 0; i < targetPaths.size(); i += BATCH_SIZE) {
+            List<String> subLists = targetPaths.subList(i, Math.min(i + BATCH_SIZE, targetPaths.size()));
+            List<ObjectIdentifier> batch = createObjectIdentifiers(subLists);
+            batches.add(batch);
+        }
+        return batches;
+    }
+
+    private List<ObjectIdentifier> createObjectIdentifiers(List<String> path) {
+        return path.stream()
                 .map(this::createObjectIdentifier)
                 .toList();
-
-        IntStream.range(0, (identifiers.size() + BATCH_SIZE - 1) / BATCH_SIZE)
-                .mapToObj(sequence -> partitionByBatchSize(sequence, identifiers))
-                .forEach(this::deleteBatch);
     }
 
     private ObjectIdentifier createObjectIdentifier(String path) {
@@ -32,15 +45,11 @@ public class S3StorageCleaner {
                 .build();
     }
 
-    private List<ObjectIdentifier> partitionByBatchSize(int sequence, List<ObjectIdentifier> identifiers) {
-        return identifiers.subList(
-                sequence * BATCH_SIZE,
-                Math.min((sequence + 1) * BATCH_SIZE, identifiers.size())
-        );
-    }
-
     private void deleteBatch(List<ObjectIdentifier> batch) {
-        Delete delete = Delete.builder().objects(batch).build();
+        Delete delete = Delete.builder()
+                .objects(batch)
+                .build();
+
         DeleteObjectsRequest request = DeleteObjectsRequest.builder()
                 .bucket(bucketName)
                 .delete(delete)

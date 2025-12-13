@@ -19,7 +19,7 @@ import revi1337.onsquad.category.domain.repository.CategoryJpaRepository;
 import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
-import revi1337.onsquad.infrastructure.aws.s3.support.RecycleBinLifeCycleManager;
+import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
 import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 
 @TestInstance(Lifecycle.PER_CLASS)
