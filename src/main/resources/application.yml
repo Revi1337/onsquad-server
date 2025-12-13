@@ -16,6 +16,12 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
+  sqlite-datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:temp-data.db
+    username: admin
+    password: admin
+
   jpa:
     defer-datasource-initialization: true
     open-in-view: false
