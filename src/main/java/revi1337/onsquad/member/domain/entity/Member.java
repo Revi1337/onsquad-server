@@ -119,6 +119,10 @@ public class Member extends BaseEntity {
         this.profileImage = profileImage;
     }
 
+    public void deleteImage() {
+        this.profileImage = DEFAULT_IMAGE;
+    }
+
     public void changeDefaultImage() {
         this.profileImage = DEFAULT_IMAGE;
     }
@@ -133,6 +137,10 @@ public class Member extends BaseEntity {
 
     public boolean mismatchId(Long id) {
         return !matchId(id);
+    }
+
+    public boolean hasImage() {
+        return hasNotDefaultImage();
     }
 
     public boolean hasNotDefaultImage() {
