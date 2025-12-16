@@ -2,6 +2,7 @@ package revi1337.onsquad.squad_request.application;
 
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -12,6 +13,7 @@ import revi1337.onsquad.squad_member.application.SquadMemberAccessPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
+import revi1337.onsquad.squad_request.domain.event.RequestAdded;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
 
 @Transactional
@@ -24,13 +26,15 @@ public class SquadRequestCommandService {
     private final SquadMemberAccessPolicy squadMemberAccessPolicy;
     private final SquadRequestAccessPolicy squadRequestAccessPolicy;
     private final SquadRequestRepository squadRequestRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void request(Long memberId, Long squadId) {
         squadMemberAccessPolicy.ensureMemberNotInSquad(memberId, squadId);
         if (squadRequestAccessPolicy.isRequestAbsent(memberId, squadId)) {
             Squad squadRef = squadRepository.getReferenceById(squadId);
             Member memberRef = memberRepository.getReferenceById(memberId);
-            squadRequestRepository.save(SquadRequest.of(squadRef, memberRef, LocalDateTime.now()));
+            SquadRequest request = squadRequestRepository.save(SquadRequest.of(squadRef, memberRef, LocalDateTime.now()));
+            eventPublisher.publishEvent(new RequestAdded(squadId, memberId, request.getId()));
         }
     }
 

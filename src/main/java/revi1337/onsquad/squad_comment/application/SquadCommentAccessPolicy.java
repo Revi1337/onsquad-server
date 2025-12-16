@@ -24,8 +24,8 @@ public class SquadCommentAccessPolicy {
         }
     }
 
-    public void ensureCommentIsReply(SquadComment comment) {
-        if (comment.isParent()) {
+    public void ensureCommentIsParent(SquadComment comment) {
+        if (comment.isNotParent()) {
             throw new SquadCommentBusinessException.NotParent(SquadCommentErrorCode.NOT_PARENT);
         }
     }

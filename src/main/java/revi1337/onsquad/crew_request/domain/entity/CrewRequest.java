@@ -75,7 +75,7 @@ public class CrewRequest extends RequestEntity {
         return Objects.hashCode(getId());
     }
 
-    public Long getRequestMemberId() {
+    public Long getRequesterId() {
         return member.getId();
     }
 }
