@@ -16,7 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
 
@@ -48,9 +47,6 @@ public class NotificationEntity {
     @CreationTimestamp
     private LocalDateTime occurredAt;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     @Builder
     private NotificationEntity(Long receiverId, Long publisherId, NotificationTopic topic, NotificationDetail detail, String json, boolean read) {
         this.receiverId = receiverId;
@@ -59,13 +55,5 @@ public class NotificationEntity {
         this.detail = detail;
         this.json = json;
         this.read = read;
-    }
-
-    public void markAsRead() {
-        this.read = true;
-    }
-
-    public boolean matchReceiverId(Long receiverId) {
-        return this.receiverId.equals(receiverId);
     }
 }

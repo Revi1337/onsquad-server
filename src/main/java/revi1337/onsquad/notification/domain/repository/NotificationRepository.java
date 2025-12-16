@@ -14,7 +14,11 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
     List<NotificationEntity> findAllByReceiverIdAndIdAfter(Long receiverId, Long lastEventId);
 
     @Modifying
-    @Query("update NotificationEntity ne set ne.read = true where ne.receiverId = :receiverId")
-    void markAllAsReadByReceiverId(Long receiverId);
+    @Query("update NotificationEntity ne set ne.read = true where ne.receiverId = :receiverId and ne.read = false")
+    int markAllAsRead(Long receiverId);
+
+    @Modifying
+    @Query("update NotificationEntity ne set ne.read = true where ne.receiverId = :receiverId and ne.id = :id and ne.read = false")
+    int markAsRead(Long receiverId, Long id);
 
 }
