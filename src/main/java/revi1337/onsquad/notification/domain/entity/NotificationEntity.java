@@ -46,18 +46,19 @@ public class NotificationEntity {
     private boolean read;
 
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime occurredAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @Builder
-    private NotificationEntity(Long receiverId, Long publisherId, NotificationTopic topic, NotificationDetail detail, String json) {
+    private NotificationEntity(Long receiverId, Long publisherId, NotificationTopic topic, NotificationDetail detail, String json, boolean read) {
         this.receiverId = receiverId;
         this.publisherId = publisherId;
         this.topic = topic;
         this.detail = detail;
         this.json = json;
+        this.read = read;
     }
 
     public void markAsRead() {
