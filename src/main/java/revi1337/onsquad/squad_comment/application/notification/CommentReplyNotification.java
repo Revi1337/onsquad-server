@@ -4,7 +4,7 @@ import lombok.Getter;
 import revi1337.onsquad.notification.domain.AbstractNotification;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
-import revi1337.onsquad.squad_comment.application.notification.CommentNotificationFetchResult.CommentReplyAddedNotificationResult;
+import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentReplyAddedContext;
 
 @Getter
 public class CommentReplyNotification extends AbstractNotification {
@@ -12,16 +12,16 @@ public class CommentReplyNotification extends AbstractNotification {
     private static final String MESSAGE_FORMAT = "%s 님이 대댓글을 남겼습니다.";
     private final CommentReplyPayload payload;
 
-    public CommentReplyNotification(CommentReplyAddedNotificationResult notificationResult) {
-        super(notificationResult.replyCommentWriterId(), notificationResult.parentCommentWriterId(), NotificationTopic.USER, NotificationDetail.COMMENT_REPLY);
+    public CommentReplyNotification(CommentReplyAddedContext context) {
+        super(context.replyCommentWriterId(), context.parentCommentWriterId(), NotificationTopic.USER, NotificationDetail.COMMENT_REPLY);
         this.payload = new CommentReplyPayload(
-                notificationResult.crewId(),
-                notificationResult.crewName(),
-                notificationResult.squadId(),
-                notificationResult.squadTitle(),
-                notificationResult.parentCommentId(),
-                notificationResult.replyCommentId(),
-                String.format(MESSAGE_FORMAT, notificationResult.replyCommentWriterNickname())
+                context.crewId(),
+                context.crewName(),
+                context.squadId(),
+                context.squadTitle(),
+                context.parentCommentId(),
+                context.replyCommentId(),
+                String.format(MESSAGE_FORMAT, context.replyCommentWriterNickname())
         );
     }
 

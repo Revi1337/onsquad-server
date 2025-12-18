@@ -4,7 +4,7 @@ import lombok.Getter;
 import revi1337.onsquad.notification.domain.AbstractNotification;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
-import revi1337.onsquad.squad_request.application.notification.RequestNotificationFetchResult.RequestRejectedNotificationResult;
+import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestRejectedContext;
 
 @Getter
 public class RequestRejectNotification extends AbstractNotification {
@@ -12,13 +12,13 @@ public class RequestRejectNotification extends AbstractNotification {
     private static final String MESSAGE = "스쿼드 합류가 거절되었습니다.";
     private final RequestRejectPayload payload;
 
-    public RequestRejectNotification(RequestRejectedNotificationResult notificationResult) {
-        super(notificationResult.rejecterId(), notificationResult.requesterId(), NotificationTopic.USER, NotificationDetail.SQUAD_REJECT);
+    public RequestRejectNotification(RequestRejectedContext context) {
+        super(context.rejecterId(), context.requesterId(), NotificationTopic.USER, NotificationDetail.SQUAD_REJECT);
         this.payload = new RequestRejectPayload(
-                notificationResult.crewId(),
-                notificationResult.crewName(),
-                notificationResult.squadId(),
-                notificationResult.squadTitle(),
+                context.crewId(),
+                context.crewName(),
+                context.squadId(),
+                context.squadTitle(),
                 MESSAGE
         );
     }

@@ -12,21 +12,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.domain.entity.QMember;
-import revi1337.onsquad.squad_comment.application.notification.CommentNotificationFetchResult.CommentAddedNotificationResult;
-import revi1337.onsquad.squad_comment.application.notification.CommentNotificationFetchResult.CommentReplyAddedNotificationResult;
+import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentAddedContext;
+import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentReplyAddedContext;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class CommentNotificationFetcher {
+public class CommentContextReader {
 
     private final QMember writer = new QMember("writer");
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Optional<CommentAddedNotificationResult> fetchAddedInformation(Long writerId, Long commentId) {
+    public Optional<CommentAddedContext> readAddedContext(Long writerId, Long commentId) {
         return Optional.ofNullable(jpaQueryFactory
                 .select(Projections.constructor(
-                        CommentAddedNotificationResult.class,
+                        CommentAddedContext.class,
                         crew.id.as("crewId"),
                         crew.name.value.as("crewName"),
                         squad.id.as("squadId"),
@@ -45,10 +45,10 @@ public class CommentNotificationFetcher {
         );
     }
 
-    public Optional<CommentReplyAddedNotificationResult> fetchReplyAddedInformation(Long parentId, Long writerId, Long replyId) {
+    public Optional<CommentReplyAddedContext> readReplyAddedContext(Long parentId, Long writerId, Long replyId) {
         return Optional.ofNullable(jpaQueryFactory
                 .select(Projections.constructor(
-                        CommentReplyAddedNotificationResult.class,
+                        CommentReplyAddedContext.class,
                         crew.id.as("crewId"),
                         crew.name.value.as("crewName"),
                         squad.id.as("squadId"),

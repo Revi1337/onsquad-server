@@ -5,8 +5,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.notification.domain.Notification;
+import revi1337.onsquad.squad_comment.application.history.CommentHistory;
+import revi1337.onsquad.squad_comment.application.history.CommentReplyHistory;
+import revi1337.onsquad.squad_comment.application.notification.CommentContextReader;
 import revi1337.onsquad.squad_comment.application.notification.CommentNotification;
-import revi1337.onsquad.squad_comment.application.notification.CommentNotificationFetcher;
 import revi1337.onsquad.squad_comment.application.notification.CommentReplyNotification;
 import revi1337.onsquad.squad_comment.domain.event.CommentAdded;
 import revi1337.onsquad.squad_comment.domain.event.CommentReplyAdded;
@@ -15,28 +17,28 @@ import revi1337.onsquad.squad_comment.domain.event.CommentReplyAdded;
 @Component
 public class SquadCommentEventListener {
 
-    private final CommentNotificationFetcher commentNotificationRepository;
+    private final CommentContextReader commentNotificationRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @TransactionalEventListener
     public void onCommentAdded(CommentAdded added) {
-        commentNotificationRepository.fetchAddedInformation(added.writerId(), added.commentId())
-                .ifPresent(notificationResult -> {
-                    CommentNotification notification = new CommentNotification(notificationResult);
-                    sendIfPossible(notification);
+        commentNotificationRepository.readAddedContext(added.writerId(), added.commentId())
+                .ifPresent(context -> {
+                    eventPublisher.publishEvent(new CommentHistory(context));
+                    sendNotificationIfPossible(new CommentNotification(context));
                 });
     }
 
     @TransactionalEventListener
     public void onCommentReplyAdded(CommentReplyAdded replyAdded) {
-        commentNotificationRepository.fetchReplyAddedInformation(replyAdded.parentId(), replyAdded.writerId(), replyAdded.replyId())
-                .ifPresent(notificationResult -> {
-                    CommentReplyNotification notification = new CommentReplyNotification(notificationResult);
-                    sendIfPossible(notification);
+        commentNotificationRepository.readReplyAddedContext(replyAdded.parentId(), replyAdded.writerId(), replyAdded.replyId())
+                .ifPresent(context -> {
+                    eventPublisher.publishEvent(new CommentReplyHistory(context));
+                    sendNotificationIfPossible(new CommentReplyNotification(context));
                 });
     }
 
-    private void sendIfPossible(Notification notification) {
+    private void sendNotificationIfPossible(Notification notification) {
         if (notification.shouldSend()) {
             eventPublisher.publishEvent(notification);
         }

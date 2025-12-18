@@ -1,8 +1,8 @@
 package revi1337.onsquad.squad_request.application.notification;
 
-public class RequestNotificationFetchResult {
+public class RequestContext {
 
-    public record RequestAddedNotificationResult(
+    public record RequestAddedContext(
             Long crewId,
             String crewName,
             Long squadId,
@@ -16,24 +16,26 @@ public class RequestNotificationFetchResult {
 
     }
 
-    public record RequestAcceptedNotificationResult(
+    public record RequestAcceptedContext(
             Long crewId,
             String crewName,
             Long squadId,
             String squadTitle,
             Long accepterId,
-            Long requesterId
+            Long requesterId,
+            String requesterNickname
     ) {
 
     }
 
-    public record RequestRejectedNotificationResult(
+    public record RequestRejectedContext(
             Long crewId,
             String crewName,
             Long squadId,
             String squadTitle,
             Long rejecterId,
-            Long requesterId
+            Long requesterId,
+            String requesterNickname
     ) {
 
     }

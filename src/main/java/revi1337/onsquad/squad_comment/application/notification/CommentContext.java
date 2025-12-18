@@ -1,8 +1,8 @@
 package revi1337.onsquad.squad_comment.application.notification;
 
-public class CommentNotificationFetchResult {
+public class CommentContext {
 
-    public record CommentAddedNotificationResult(
+    public record CommentAddedContext(
             Long crewId,
             String crewName,
             Long squadId,
@@ -15,7 +15,7 @@ public class CommentNotificationFetchResult {
 
     }
 
-    public record CommentReplyAddedNotificationResult(
+    public record CommentReplyAddedContext(
             Long crewId,
             String crewName,
             Long squadId,

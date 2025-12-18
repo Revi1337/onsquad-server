@@ -12,22 +12,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.domain.entity.QMember;
-import revi1337.onsquad.squad_request.application.notification.RequestNotificationFetchResult.RequestAcceptedNotificationResult;
-import revi1337.onsquad.squad_request.application.notification.RequestNotificationFetchResult.RequestAddedNotificationResult;
-import revi1337.onsquad.squad_request.application.notification.RequestNotificationFetchResult.RequestRejectedNotificationResult;
+import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestAcceptedContext;
+import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestAddedContext;
+import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestRejectedContext;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Service("squadRequestNotificationFetcher")
-public class RequestNotificationFetcher {
+@Service("squadRequestContextReader")
+public class RequestContextReader {
 
     private final QMember requester = new QMember("requester");
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Optional<RequestAddedNotificationResult> fetchAddedInformation(Long squadId, Long requesterId, Long requestId) {
+    public Optional<RequestAddedContext> readAddedContext(Long squadId, Long requesterId, Long requestId) {
         return Optional.ofNullable(jpaQueryFactory
                 .select(Projections.constructor(
-                        RequestAddedNotificationResult.class,
+                        RequestAddedContext.class,
                         crew.id.as("crewId"),
                         crew.name.value.as("crewName"),
                         squad.id.as("squadId"),
@@ -47,16 +47,17 @@ public class RequestNotificationFetcher {
         );
     }
 
-    public Optional<RequestAcceptedNotificationResult> fetchAcceptedInformation(Long squadId, Long accepterId, Long requesterId) {
+    public Optional<RequestAcceptedContext> readAcceptedContext(Long squadId, Long accepterId, Long requesterId) {
         return Optional.ofNullable(jpaQueryFactory
                 .select(Projections.constructor(
-                        RequestAcceptedNotificationResult.class,
+                        RequestAcceptedContext.class,
                         crew.id.as("crewId"),
                         crew.name.value.as("crewName"),
                         squad.id.as("squadId"),
                         squad.title.value.as("squadTitle"),
                         Expressions.as(Expressions.constant(accepterId), "accepterId"),
-                        member.id.as("requesterId")
+                        requester.id.as("requesterId"),
+                        requester.nickname.value.as("requesterNickname")
                 ))
                 .from(squad)
                 .innerJoin(squad.member, member)
@@ -67,16 +68,17 @@ public class RequestNotificationFetcher {
         );
     }
 
-    public Optional<RequestRejectedNotificationResult> fetchRejectedInformation(Long squadId, Long rejecterId, Long requesterId) {
+    public Optional<RequestRejectedContext> readRejectedContext(Long squadId, Long rejecterId, Long requesterId) {
         return Optional.ofNullable(jpaQueryFactory
                 .select(Projections.constructor(
-                        RequestRejectedNotificationResult.class,
+                        RequestRejectedContext.class,
                         crew.id.as("crewId"),
                         crew.name.value.as("crewName"),
                         squad.id.as("squadId"),
                         squad.title.value.as("squadTitle"),
                         Expressions.as(Expressions.constant(rejecterId), "rejecterId"),
-                        member.id.as("requesterId")
+                        requester.id.as("requesterId"),
+                        requester.nickname.value.as("requesterNickname")
                 ))
                 .from(squad)
                 .innerJoin(squad.member, member)
