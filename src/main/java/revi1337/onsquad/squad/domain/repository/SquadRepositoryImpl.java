@@ -43,6 +43,11 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
+    public Optional<Squad> findWithCrewById(Long id) {
+        return squadJpaRepository.findWithCrewById(id);
+    }
+
+    @Override
     public Optional<SquadDomainDto> fetchById(Long id) {
         return squadQueryDslRepository.fetchById(id);
     }

@@ -24,10 +24,11 @@ public class SquadCommandService {
     private final SquadRepository squadRepository;
     private final SquadCategoryJdbcRepository squadCategoryJdbcRepository;
 
-    public void newSquad(Long memberId, Long crewId, SquadCreateDto dto) {
+    public Long newSquad(Long memberId, Long crewId, SquadCreateDto dto) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         Squad squad = squadRepository.save(Squad.create(dto.toEntityMetadata(), crewMember.getMember(), crewMember.getCrew()));
         squadCategoryJdbcRepository.insertBatch(squad.getId(), Category.fromCategoryTypes(dto.categories()));
+        return squad.getId();
     }
 
     public void deleteSquad(Long memberId, Long crewId, Long squadId) {

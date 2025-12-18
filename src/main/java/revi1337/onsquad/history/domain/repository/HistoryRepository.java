@@ -1,8 +1,14 @@
 package revi1337.onsquad.history.domain.repository;
 
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
 
 public interface HistoryRepository extends JpaRepository<HistoryEntity, Long> {
+
+    @Transactional(propagation = REQUIRES_NEW)
+    HistoryEntity save(HistoryEntity history);
 
 }

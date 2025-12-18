@@ -20,6 +20,8 @@ public interface SquadRepository {
 
     Optional<Squad> findById(Long id);
 
+    Optional<Squad> findWithCrewById(Long id);
+
     Optional<SquadDomainDto> fetchById(Long id);
 
     Page<SquadDomainDto> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable);

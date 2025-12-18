@@ -27,11 +27,12 @@ public class CrewCommandService { // TODO 의존성이 너무 많음.
     private final SquadJpaRepository squadJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public void newCrew(Long memberId, CrewCreateDto dto, String newImageUrl) {
+    public Long newCrew(Long memberId, CrewCreateDto dto, String newImageUrl) {
         Member member = memberAccessPolicy.ensureMemberExistsAndGet(memberId);
         crewAccessPolicy.ensureCrewNameIsDuplicate(dto.name());
         Crew crew = crewRepository.save(Crew.create(member, dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink(), newImageUrl));
         crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
+        return crew.getId();
     }
 
     public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto) {
