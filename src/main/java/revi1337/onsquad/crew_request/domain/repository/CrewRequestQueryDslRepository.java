@@ -12,12 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.dto.QSimpleCrewDomainDto;
-import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithCrewDomainDto;
-import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithMemberDomainDto;
-import revi1337.onsquad.crew_request.domain.dto.QCrewRequestDomainDto;
-import revi1337.onsquad.crew_request.domain.dto.QCrewRequestWithCrewDomainDto;
-import revi1337.onsquad.crew_request.domain.dto.QCrewRequestWithMemberDomainDto;
+import revi1337.onsquad.crew.domain.result.QSimpleCrewResult;
+import revi1337.onsquad.crew_request.domain.result.CrewRequestWithCrewResult;
+import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
+import revi1337.onsquad.crew_request.domain.result.QCrewRequestResult;
+import revi1337.onsquad.crew_request.domain.result.QCrewRequestWithCrewResult;
+import revi1337.onsquad.crew_request.domain.result.QCrewRequestWithMemberResult;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
 @RequiredArgsConstructor
@@ -26,10 +26,10 @@ public class CrewRequestQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<CrewRequestWithCrewDomainDto> fetchAllWithSimpleCrewByMemberId(Long memberId) {
+    public List<CrewRequestWithCrewResult> fetchAllWithSimpleCrewByMemberId(Long memberId) {
         return jpaQueryFactory
-                .select(new QCrewRequestWithCrewDomainDto(
-                        new QSimpleCrewDomainDto(
+                .select(new QCrewRequestWithCrewResult(
+                        new QSimpleCrewResult(
                                 crew.id,
                                 crew.name,
                                 crew.introduce,
@@ -42,7 +42,7 @@ public class CrewRequestQueryDslRepository {
                                         member.mbti
                                 )
                         ),
-                        new QCrewRequestDomainDto(
+                        new QCrewRequestResult(
                                 crewRequest.id,
                                 crewRequest.requestAt
                         )
@@ -54,16 +54,16 @@ public class CrewRequestQueryDslRepository {
                 .fetch();
     }
 
-    public Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable) {
-        List<CrewRequestWithMemberDomainDto> results = jpaQueryFactory
-                .select(new QCrewRequestWithMemberDomainDto(
+    public Page<CrewRequestWithMemberResult> fetchCrewRequests(Long crewId, Pageable pageable) {
+        List<CrewRequestWithMemberResult> results = jpaQueryFactory
+                .select(new QCrewRequestWithMemberResult(
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
                                 member.mbti
                         ),
-                        new QCrewRequestDomainDto(
+                        new QCrewRequestResult(
                                 crewRequest.id,
                                 crewRequest.requestAt
                         )

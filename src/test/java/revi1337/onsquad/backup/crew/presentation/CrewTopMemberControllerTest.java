@@ -28,7 +28,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew.application.CrewTopMemberService;
-import revi1337.onsquad.crew.application.dto.top.Top5CrewMemberDto;
+import revi1337.onsquad.crew.application.dto.response.Top5CrewMemberResponse;
 import revi1337.onsquad.crew.presentation.CrewTopMemberController;
 
 @WebMvcTest(CrewTopMemberController.class)
@@ -46,17 +46,17 @@ class CrewTopMemberControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long DUMMY_CREW_ID = 1L;
             LocalDateTime NOW = LocalDateTime.now();
-            Top5CrewMemberDto SERVICE_DTO1 = new Top5CrewMemberDto(
+            Top5CrewMemberResponse SERVICE_DTO1 = new Top5CrewMemberResponse(
                     CREW1_REVI_RANK1.getCrewId(), CREW1_REVI_RANK1.getRanks(), CREW1_REVI_RANK1.getContribute(),
                     CREW1_REVI_RANK1.getMemberId(), CREW1_REVI_RANK1.getNickname(), CREW1_REVI_RANK1.getMbti(),
                     NOW
             );
-            Top5CrewMemberDto SERVICE_DTO2 = new Top5CrewMemberDto(
+            Top5CrewMemberResponse SERVICE_DTO2 = new Top5CrewMemberResponse(
                     CREW1_ANDONG_RANK2.getCrewId(), CREW1_ANDONG_RANK2.getRanks(), CREW1_ANDONG_RANK2.getContribute(),
                     CREW1_ANDONG_RANK2.getMemberId(), CREW1_ANDONG_RANK2.getNickname(), CREW1_ANDONG_RANK2.getMbti(),
                     NOW.plusHours(1)
             );
-            List<Top5CrewMemberDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
+            List<Top5CrewMemberResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
             when(crewTopMemberService.findTop5CrewMembers(any(), eq(DUMMY_CREW_ID))).thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/members/top", DUMMY_CREW_ID)

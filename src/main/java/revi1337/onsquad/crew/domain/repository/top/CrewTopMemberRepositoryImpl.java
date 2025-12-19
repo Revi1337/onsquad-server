@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.dto.top.Top5CrewMemberDomainDto;
 import revi1337.onsquad.crew.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -15,7 +15,7 @@ public class CrewTopMemberRepositoryImpl implements CrewTopMemberRepository {
     private final CrewTopMemberJdbcRepository crewTopMemberJdbcRepository;
 
     @Override
-    public List<Top5CrewMemberDomainDto> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
+    public List<Top5CrewMemberResult> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
         return crewTopMemberJdbcRepository.fetchAggregatedTopMembers(from, to, rankLimit);
     }
 

@@ -5,14 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
+import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.squad.application.dto.SquadDto;
-import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
-import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
-import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
+import revi1337.onsquad.squad.application.dto.response.SquadResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
+import revi1337.onsquad.squad.domain.result.SquadResult;
 import revi1337.onsquad.squad.error.SquadErrorCode;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessPolicy;
@@ -28,32 +28,34 @@ public class SquadQueryService {
     private final SquadAccessPolicy squadAccessPolicy;
     private final SquadRepository squadRepository;
 
-    public SquadWithParticipantAndLeaderAndViewStateDto fetchSquad(Long memberId, Long crewId, Long squadId) {
+    public SquadWithParticipantAndLeaderAndViewStateResponse fetchSquad(Long memberId, Long crewId, Long squadId) {
         validateSquadBelongToCrew(squadId, crewId);
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         SquadMember squadMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
-        SquadDomainDto squad = squadRepository.fetchById(squadId)
+        SquadResult squad = squadRepository.fetchById(squadId)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND)); // TODO 여기 쿼리 이상할거임. 일단 나중에.
 
         boolean alreadyParticipant = squadMember != null;
         boolean isLeader = squadMember.isLeader();
         boolean canSeeMembers = crewMember.isOwner();
 
-        return SquadWithParticipantAndLeaderAndViewStateDto.from(alreadyParticipant, canSeeMembers, isLeader, squad);
+        return SquadWithParticipantAndLeaderAndViewStateResponse.from(alreadyParticipant, canSeeMembers, isLeader, squad);
     }
 
-    public List<SquadDto> fetchSquads(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
+    public List<SquadResponse> fetchSquads(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
         crewMemberAccessPolicy.ensureMemberInCrew(memberId, crewId);
+
         return squadRepository.fetchAllByCrewId(crewId, condition.categoryType(), pageable).stream()
-                .map(SquadDto::from)
+                .map(SquadResponse::from)
                 .toList();
     }
 
-    public List<SquadWithLeaderStateDto> fetchSquadsWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
+    public List<SquadWithLeaderStateResponse> fetchSquadsWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         squadAccessPolicy.ensureSquadListAccessible(crewMember);
+
         return squadRepository.fetchAllWithOwnerState(memberId, crewId, pageable).stream()
-                .map(SquadWithLeaderStateDto::from)
+                .map(SquadWithLeaderStateResponse::from)
                 .toList();
     }
 

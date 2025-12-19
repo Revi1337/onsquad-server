@@ -19,8 +19,8 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @Import(SquadCommentJdbcRepository.class)
 class SquadCommentJdbcRepositoryTest extends PersistenceLayerTestSupport {
@@ -61,7 +61,7 @@ class SquadCommentJdbcRepositoryTest extends PersistenceLayerTestSupport {
         int childSize = 2;
         clearPersistenceContext();
 
-        List<SquadCommentDomainDto> children = squadCommentJdbcRepository
+        List<SquadCommentResult> children = squadCommentJdbcRepository
                 .fetchAllChildrenByParentIdIn(List.of(PARENT1.getId(), PARENT2.getId()), childSize);
 
         assertThat(children).hasSize(4);

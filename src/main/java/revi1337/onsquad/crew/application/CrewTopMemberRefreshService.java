@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew.domain.dto.top.Top5CrewMemberDomainDto;
 import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepository;
+import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
 
 /**
  * Service responsible for aggregating and refreshing top-ranked members in each crew.
@@ -32,7 +32,7 @@ public class CrewTopMemberRefreshService {
             crewTopMemberRepository.deleteAllInBatch();
             crewTopMemberRepository.batchInsert(
                     crewTopMemberRepository.fetchAggregatedTopMembers(from, to, rankLimit).stream()
-                            .map(Top5CrewMemberDomainDto::toEntity)
+                            .map(Top5CrewMemberResult::toEntity)
                             .toList()
             );
             log.info("[Successfully Renew CrewTopMember In DataBase : {} ~ {}]", from, to);

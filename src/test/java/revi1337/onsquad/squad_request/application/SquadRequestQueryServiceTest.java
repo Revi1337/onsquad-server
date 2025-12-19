@@ -28,7 +28,7 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberJpaRepository;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
-import revi1337.onsquad.squad_request.application.dto.SquadRequestDto;
+import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestJpaRepository;
 
 class SquadRequestQueryServiceTest extends ApplicationLayerTestSupport {
@@ -73,7 +73,7 @@ class SquadRequestQueryServiceTest extends ApplicationLayerTestSupport {
             squadRequestJpaRepository.save(SQUAD_PARTICIPANT(SQUAD, CREW_MEMBER2));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
 
-            List<SquadRequestDto> RESULTS = squadRequestQueryService
+            List<SquadRequestResponse> RESULTS = squadRequestQueryService
                     .fetchAllRequests(REVI.getId(), CREW.getId(), SQUAD.getId(), PAGE_REQUEST);
 
             assertThat(RESULTS).hasSize(2);

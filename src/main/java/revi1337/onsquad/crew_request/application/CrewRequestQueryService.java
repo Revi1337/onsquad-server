@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_request.application.dto.CrewRequestWithCrewDto;
-import revi1337.onsquad.crew_request.application.dto.CrewRequestWithMemberDto;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
 
 @RequiredArgsConstructor
@@ -20,17 +20,18 @@ public class CrewRequestQueryService {
     private final CrewRequestAccessPolicy crewRequestAccessPolicy;
     private final CrewRequestRepository crewRequestRepository;
 
-    public List<CrewRequestWithMemberDto> fetchAllRequests(Long memberId, Long crewId, Pageable pageable) {
+    public List<CrewRequestWithMemberResponse> fetchAllRequests(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         crewRequestAccessPolicy.ensureRequestListAccessible(crewMember);
+
         return crewRequestRepository.fetchCrewRequests(crewId, pageable).stream()
-                .map(CrewRequestWithMemberDto::from)
+                .map(CrewRequestWithMemberResponse::from)
                 .toList();
     }
 
-    public List<CrewRequestWithCrewDto> fetchAllCrewRequests(Long memberId) {
+    public List<CrewRequestWithCrewResponse> fetchAllCrewRequests(Long memberId) {
         return crewRequestRepository.fetchAllWithSimpleCrewByMemberId(memberId).stream()
-                .map(CrewRequestWithCrewDto::from)
+                .map(CrewRequestWithCrewResponse::from)
                 .toList();
     }
 }

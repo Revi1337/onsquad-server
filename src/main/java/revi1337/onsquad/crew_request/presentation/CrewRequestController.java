@@ -17,8 +17,8 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
 import revi1337.onsquad.crew_request.application.CrewRequestQueryService;
-import revi1337.onsquad.crew_request.presentation.dto.response.CrewRequestWithCrewResponse;
-import revi1337.onsquad.crew_request.presentation.dto.response.CrewRequestWithMemberResponse;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -29,7 +29,7 @@ public class CrewRequestController {
     private final CrewRequestQueryService crewRequestQueryService;
 
     @PostMapping("/crews/{crewId}/requests")
-    public ResponseEntity<RestResponse<String>> request(
+    public ResponseEntity<RestResponse<Void>> request(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
@@ -39,7 +39,7 @@ public class CrewRequestController {
     }
 
     @PatchMapping("/crews/{crewId}/requests/{requestId}")
-    public ResponseEntity<RestResponse<String>> acceptRequest(
+    public ResponseEntity<RestResponse<Void>> acceptRequest(
             @PathVariable Long crewId,
             @PathVariable Long requestId,
             @Authenticate CurrentMember currentMember
@@ -50,7 +50,7 @@ public class CrewRequestController {
     }
 
     @DeleteMapping("/crews/{crewId}/requests/{requestId}")
-    public ResponseEntity<RestResponse<String>> rejectRequest(
+    public ResponseEntity<RestResponse<Void>> rejectRequest(
             @PathVariable Long crewId,
             @PathVariable Long requestId,
             @Authenticate CurrentMember currentMember
@@ -66,16 +66,13 @@ public class CrewRequestController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewRequestWithMemberResponse> requestResponses = crewRequestQueryService
-                .fetchAllRequests(currentMember.id(), crewId, pageable).stream()
-                .map(CrewRequestWithMemberResponse::from)
-                .toList();
+        List<CrewRequestWithMemberResponse> response = crewRequestQueryService.fetchAllRequests(currentMember.id(), crewId, pageable);
 
-        return ResponseEntity.ok().body(RestResponse.success(requestResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @DeleteMapping("/crews/{crewId}/requests/me")
-    public ResponseEntity<RestResponse<String>> cancelMyRequest(
+    public ResponseEntity<RestResponse<Void>> cancelMyRequest(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
@@ -88,11 +85,8 @@ public class CrewRequestController {
     public ResponseEntity<RestResponse<List<CrewRequestWithCrewResponse>>> fetchAllCrewRequests(
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewRequestWithCrewResponse> crewRequestWithCrewResponse = crewRequestQueryService
-                .fetchAllCrewRequests(currentMember.id()).stream()
-                .map(CrewRequestWithCrewResponse::from)
-                .toList();
+        List<CrewRequestWithCrewResponse> response = crewRequestQueryService.fetchAllCrewRequests(currentMember.id());
 
-        return ResponseEntity.ok().body(RestResponse.success(crewRequestWithCrewResponse));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 }

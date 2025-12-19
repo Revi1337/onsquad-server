@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.squad_request.domain.dto.SquadRequestDomainDto;
-import revi1337.onsquad.squad_request.domain.dto.SquadRequestWithSquadAndCrewDomainDto;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
+import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
+import revi1337.onsquad.squad_request.domain.result.SquadRequestWithSquadAndCrewResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -43,12 +43,12 @@ public class SquadRequestRepositoryImpl implements SquadRequestRepository {
     }
 
     @Override
-    public List<SquadRequestWithSquadAndCrewDomainDto> findSquadParticipantRequestsByMemberId(Long memberId) {
+    public List<SquadRequestWithSquadAndCrewResult> findSquadParticipantRequestsByMemberId(Long memberId) {
         return squadRequestQueryDslRepository.findSquadParticipantRequestsByMemberIdV2(memberId);
     }
 
     @Override
-    public Page<SquadRequestDomainDto> fetchAllBySquadId(Long squadId, Pageable pageable) {
+    public Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
         return squadRequestQueryDslRepository.fetchAllBySquadId(squadId, pageable);
     }
 

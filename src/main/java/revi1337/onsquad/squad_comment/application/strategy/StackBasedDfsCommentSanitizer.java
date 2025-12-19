@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.application.CommentMaskPolicy;
 import revi1337.onsquad.squad_comment.application.CommentSanitizeStrategy;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 /**
  * Implements the {@link CommentSanitizeStrategy} using a <b>stack-based iterative Depth-First Search (DFS)</b> algorithm.
@@ -29,23 +29,23 @@ public class StackBasedDfsCommentSanitizer implements CommentSanitizeStrategy {
     private final CommentMaskPolicy maskPolicy;
 
     @Override
-    public List<SquadCommentDomainDto> sanitize(List<SquadCommentDomainDto> comments) {
-        List<SquadCommentDomainDto> sanitized = new ArrayList<>();
-        Map<Long, SquadCommentDomainDto> lookupTable = new HashMap<>();
-        Deque<SquadCommentDomainDto> queue = new ArrayDeque<>();
+    public List<SquadCommentResult> sanitize(List<SquadCommentResult> comments) {
+        List<SquadCommentResult> sanitized = new ArrayList<>();
+        Map<Long, SquadCommentResult> lookupTable = new HashMap<>();
+        Deque<SquadCommentResult> queue = new ArrayDeque<>();
 
-        for (SquadCommentDomainDto parent : comments) {
-            SquadCommentDomainDto recreatedParent = maskPolicy.apply(parent);
+        for (SquadCommentResult parent : comments) {
+            SquadCommentResult recreatedParent = maskPolicy.apply(parent);
             lookupTable.put(recreatedParent.id(), recreatedParent);
             sanitized.add(recreatedParent);
             queue.add(parent);
         }
 
         while (!queue.isEmpty()) {
-            SquadCommentDomainDto current = queue.pop();
-            SquadCommentDomainDto recreatedCurrent = lookupTable.get(current.id());
-            for (SquadCommentDomainDto reply : current.replies()) {
-                SquadCommentDomainDto recreatedReply = maskPolicy.apply(reply);
+            SquadCommentResult current = queue.pop();
+            SquadCommentResult recreatedCurrent = lookupTable.get(current.id());
+            for (SquadCommentResult reply : current.replies()) {
+                SquadCommentResult recreatedReply = maskPolicy.apply(reply);
                 lookupTable.put(recreatedReply.id(), recreatedReply);
                 recreatedCurrent.addReply(recreatedReply);
                 queue.add(reply);

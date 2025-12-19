@@ -15,11 +15,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
-import revi1337.onsquad.announce.domain.dto.AnnounceWithModifyStateDomainDto;
-import revi1337.onsquad.announce.domain.dto.QAnnounceDomainDto;
-import revi1337.onsquad.announce.domain.dto.QAnnounceWithModifyStateDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.QSimpleCrewMemberDomainDto;
+import revi1337.onsquad.announce.domain.result.AnnounceResult;
+import revi1337.onsquad.announce.domain.result.AnnounceWithModifyStateResult;
+import revi1337.onsquad.announce.domain.result.QAnnounceResult;
+import revi1337.onsquad.announce.domain.result.QAnnounceWithModifyStateResult;
+import revi1337.onsquad.crew_member.domain.result.QSimpleCrewMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -29,16 +29,16 @@ public class AnnounceQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<AnnounceDomainDto> fetchAllByCrewId(Long crewId, Pageable pageable) {
-        List<AnnounceDomainDto> results = jpaQueryFactory
-                .select(new QAnnounceDomainDto(
+    public Page<AnnounceResult> fetchAllByCrewId(Long crewId, Pageable pageable) {
+        List<AnnounceResult> results = jpaQueryFactory
+                .select(new QAnnounceResult(
                         announce.id,
                         announce.title,
                         announce.content,
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
-                        new QSimpleCrewMemberDomainDto(
+                        new QSimpleCrewMemberResult(
                                 member.id,
                                 member.nickname,
                                 crewMember.role
@@ -64,16 +64,16 @@ public class AnnounceQueryDslRepository {
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
-    public List<AnnounceDomainDto> fetchAllInDefaultByCrewId(Long crewId) {
+    public List<AnnounceResult> fetchAllInDefaultByCrewId(Long crewId) {
         return jpaQueryFactory
-                .select(new QAnnounceDomainDto(
+                .select(new QAnnounceResult(
                         announce.id,
                         announce.title,
                         announce.content,
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
-                        new QSimpleCrewMemberDomainDto(
+                        new QSimpleCrewMemberResult(
                                 member.id,
                                 member.nickname,
                                 crewMember.role
@@ -92,22 +92,22 @@ public class AnnounceQueryDslRepository {
     }
 
     @Deprecated
-    public Optional<AnnounceWithModifyStateDomainDto> fetchByCrewIdAndIdAndMemberId(Long crewId, Long announceId,
-                                                                                    Long memberId) {
+    public Optional<AnnounceWithModifyStateResult> fetchByCrewIdAndIdAndMemberId(Long crewId, Long announceId,
+                                                                                 Long memberId) {
         return Optional.ofNullable(
                 jpaQueryFactory
-                        .select(new QAnnounceWithModifyStateDomainDto(
+                        .select(new QAnnounceWithModifyStateResult(
                                 member.id.when(memberId)
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                new QAnnounceDomainDto(
+                                new QAnnounceResult(
                                         announce.id,
                                         announce.title,
                                         announce.content,
                                         announce.createdAt,
                                         announce.fixed,
                                         announce.fixedAt,
-                                        new QSimpleCrewMemberDomainDto(
+                                        new QSimpleCrewMemberResult(
                                                 member.id,
                                                 member.nickname,
                                                 crewMember.role
@@ -124,16 +124,16 @@ public class AnnounceQueryDslRepository {
         );
     }
 
-    public Optional<AnnounceDomainDto> fetchByCrewIdAndId(Long crewId, Long announceId) {
+    public Optional<AnnounceResult> fetchByCrewIdAndId(Long crewId, Long announceId) {
         return Optional.ofNullable(jpaQueryFactory
-                .select(new QAnnounceDomainDto(
+                .select(new QAnnounceResult(
                         announce.id,
                         announce.title,
                         announce.content,
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
-                        new QSimpleCrewMemberDomainDto(
+                        new QSimpleCrewMemberResult(
                                 member.id,
                                 member.nickname,
                                 crewMember.role

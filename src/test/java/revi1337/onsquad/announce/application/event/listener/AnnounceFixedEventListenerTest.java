@@ -18,9 +18,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.transaction.TestTransaction;
 import revi1337.onsquad.announce.application.listener.AnnounceFixedEventListener;
-import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
 import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
 import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
+import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.constant.CacheConst;
 
@@ -65,7 +65,7 @@ class AnnounceFixedEventListenerTest extends ApplicationLayerTestSupport {
         Long DUMMY_CREW_ID = 1L;
         Long DUMMY_ANNOUNCE_ID = 2L;
         AnnounceFixedEvent EVENT = new AnnounceFixedEvent(DUMMY_CREW_ID, DUMMY_ANNOUNCE_ID);
-        AnnounceDomainDto ANNOUNCE = mock(AnnounceDomainDto.class);
+        AnnounceResult ANNOUNCE = mock(AnnounceResult.class);
         when(announceRepository.fetchByCrewIdAndId(DUMMY_CREW_ID, DUMMY_ANNOUNCE_ID))
                 .thenReturn(Optional.of(ANNOUNCE));
         when(announceRepository.fetchAllInDefaultByCrewId(DUMMY_CREW_ID))

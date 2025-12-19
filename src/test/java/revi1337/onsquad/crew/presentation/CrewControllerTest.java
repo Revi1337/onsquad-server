@@ -71,12 +71,12 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew.application.CrewCreationCoordinator;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
-import revi1337.onsquad.crew.application.dto.CrewDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
-import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
-import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
-import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
-import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
+import revi1337.onsquad.crew.application.dto.response.CrewResponse;
+import revi1337.onsquad.crew.application.dto.response.EnrolledCrewResponse;
+import revi1337.onsquad.crew.domain.result.CrewWithParticipantResult;
+import revi1337.onsquad.crew.presentation.request.CrewCreateRequest;
+import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
@@ -96,7 +96,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 이름 중복 체크에 성공한다.")
         void success() throws Exception {
-            when(crewQueryService.isDuplicateCrewName(anyString())).thenReturn(true);
+            when(crewQueryService.checkNameDuplicate(anyString())).thenReturn(true);
 
             mockMvc.perform(get("/api/crews/check")
                             .param("name", "크루 이름 1")
@@ -208,7 +208,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("토큰이 없는 경우에도 Crew 조회에 성공한다.")
         void success() throws Exception {
-            CrewDto CREW_INFO = new CrewDto(
+            CrewResponse CREW_INFO = new CrewResponse(
                     1L,
                     CREW_NAME_VALUE,
                     CREW_INTRODUCE_VALUE,
@@ -254,9 +254,9 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("토큰이 있는 경우에도 Crew 조회에 성공한다.")
         void success2() throws Exception {
-            CrewWithParticipantStateDto CREW_INFO = new CrewWithParticipantStateDto(
+            CrewWithParticipantResult CREW_INFO = new CrewWithParticipantResult(
                     true,
-                    new CrewDto(
+                    new CrewResponse(
                             1L,
                             CREW_NAME_VALUE,
                             CREW_INTRODUCE_VALUE,
@@ -510,7 +510,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("Crew 들 조회에 성공한다.")
         void success() throws Exception {
-            CrewDto CREW_INFO = new CrewDto(
+            CrewResponse CREW_INFO = new CrewResponse(
                     1L,
                     CREW_NAME_VALUE,
                     CREW_INTRODUCE_VALUE,
@@ -528,7 +528,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     ),
                     null
             );
-            List<CrewDto> CREW_INFOS = List.of(CREW_INFO);
+            List<CrewResponse> CREW_INFOS = List.of(CREW_INFO);
             when(crewQueryService.fetchCrewsByName(eq(CREW_NAME_VALUE), any(Pageable.class))).thenReturn(CREW_INFOS);
 
             mockMvc.perform(get("/api/crews")
@@ -571,7 +571,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("내가 생성한 Crew 조회에 성공한다.")
         void success() throws Exception {
-            CrewDto CREW_INFO = new CrewDto(
+            CrewResponse CREW_INFO = new CrewResponse(
                     1L,
                     CREW_NAME_VALUE,
                     CREW_INTRODUCE_VALUE,
@@ -589,7 +589,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     ),
                     null
             );
-            List<CrewDto> CREW_INFOS = List.of(CREW_INFO);
+            List<CrewResponse> CREW_INFOS = List.of(CREW_INFO);
             PageRequest PAGE_REQUEST = PageRequest.of(1, 1);
             when(crewQueryService.fetchOwnedCrews(1L, PAGE_REQUEST)).thenReturn(CREW_INFOS);
 
@@ -621,21 +621,21 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 조회를 문서화에 성공한다.")
         void success() throws Exception {
-            EnrolledCrewDto SERVICE_DTO1 = new EnrolledCrewDto(
+            EnrolledCrewResponse SERVICE_DTO1 = new EnrolledCrewResponse(
                     1L,
                     CREW1_NAME_VALUE,
                     CREW1_IMAGE_LINK_VALUE,
                     true,
                     new SimpleMemberDto(1L, null, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE)
             );
-            EnrolledCrewDto SERVICE_DTO2 = new EnrolledCrewDto(
+            EnrolledCrewResponse SERVICE_DTO2 = new EnrolledCrewResponse(
                     2L,
                     CREW2_NAME_VALUE,
                     CREW2_IMAGE_LINK_VALUE,
                     false,
                     new SimpleMemberDto(2L, null, ANDONG_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             );
-            List<EnrolledCrewDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
+            List<EnrolledCrewResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
             when(crewQueryService.fetchParticipantCrews(any())).thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/me/participants")

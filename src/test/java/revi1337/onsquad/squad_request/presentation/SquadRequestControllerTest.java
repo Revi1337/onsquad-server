@@ -36,7 +36,7 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 import revi1337.onsquad.squad_request.application.SquadRequestQueryService;
-import revi1337.onsquad.squad_request.application.dto.SquadRequestDto;
+import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
 
 @WebMvcTest(SquadRequestController.class)
 class SquadRequestControllerTest extends PresentationLayerTestSupport {
@@ -176,7 +176,7 @@ class SquadRequestControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            List<SquadRequestDto> SERVICE_DTOS = List.of(new SquadRequestDto(
+            List<SquadRequestResponse> SERVICE_DTOS = List.of(new SquadRequestResponse(
                     SQUAD_ID,
                     LocalDateTime.now(),
                     new SimpleMemberDto(

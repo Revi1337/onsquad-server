@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import revi1337.onsquad.crew.config.CrewTopMemberProperties;
-import revi1337.onsquad.crew.domain.dto.top.Top5CrewMemberDomainDto;
 import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepository;
+import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class NonLocalCrewTopMemberInitializer {
             crewTopMemberRepository.batchInsert(
                     crewTopMemberRepository.fetchAggregatedTopMembers(from, to, crewTopMemberProperties.rankLimit())
                             .stream()
-                            .map(Top5CrewMemberDomainDto::toEntity)
+                            .map(Top5CrewMemberResult::toEntity)
                             .toList()
             );
         }

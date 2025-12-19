@@ -13,7 +13,7 @@ import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.entity.vo.Introduce;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -21,7 +21,7 @@ public class SquadCommentJdbcRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<SquadCommentDomainDto> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childrenSize) {
+    public List<SquadCommentResult> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childrenSize) {
         String sql = "SELECT * FROM (" +
                 "    SELECT " +
                 "        squad_comment.parent_id, " +
@@ -51,12 +51,12 @@ public class SquadCommentJdbcRepository {
         return jdbcTemplate.query(sql, sqlParameterSource, crewCommentRowMapper());
     }
 
-    private RowMapper<SquadCommentDomainDto> crewCommentRowMapper() {
+    private RowMapper<SquadCommentResult> crewCommentRowMapper() {
         return (rs, rowNum) -> {
             String mbtiText = rs.getString("comment_creator_mbti");
             Mbti mbti = mbtiText != null ? Mbti.valueOf(mbtiText) : null;
 
-            return new SquadCommentDomainDto(
+            return new SquadCommentResult(
                     rs.getLong("parent_id"),
                     rs.getLong("id"),
                     rs.getString("content"),

@@ -2,21 +2,21 @@ package revi1337.onsquad.squad_comment.application.policy;
 
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.application.CommentMaskPolicy;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @Component
 public class DefaultCommentMaskPolicy implements CommentMaskPolicy {
 
     @Override
-    public SquadCommentDomainDto apply(SquadCommentDomainDto comment) {
+    public SquadCommentResult apply(SquadCommentResult comment) {
         if (comment.deleted()) {
             return mask(comment);
         }
         return unmask(comment);
     }
 
-    private SquadCommentDomainDto unmask(SquadCommentDomainDto c) {
-        return new SquadCommentDomainDto(
+    private SquadCommentResult unmask(SquadCommentResult c) {
+        return new SquadCommentResult(
                 c.parentId(),
                 c.id(),
                 c.content(),
@@ -27,8 +27,8 @@ public class DefaultCommentMaskPolicy implements CommentMaskPolicy {
         );
     }
 
-    private SquadCommentDomainDto mask(SquadCommentDomainDto c) {
-        return new SquadCommentDomainDto(
+    private SquadCommentResult mask(SquadCommentResult c) {
+        return new SquadCommentResult(
                 c.parentId(),
                 c.id(),
                 "",

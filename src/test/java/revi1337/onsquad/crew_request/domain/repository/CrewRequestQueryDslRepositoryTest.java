@@ -23,8 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
-import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithCrewDomainDto;
-import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithMemberDomainDto;
+import revi1337.onsquad.crew_request.domain.result.CrewRequestWithCrewResult;
+import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
@@ -60,7 +60,7 @@ class CrewRequestQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             crewRequestJpaRepository.save(CREW_PARTICIPANT(CREW2, ANDONG, NOW.plusHours(1)));
             crewRequestJpaRepository.save(CREW_PARTICIPANT(CREW3, ANDONG, NOW.plusHours(2)));
 
-            List<CrewRequestWithCrewDomainDto> REQUESTS = crewRequestQueryDslRepository
+            List<CrewRequestWithCrewResult> REQUESTS = crewRequestQueryDslRepository
                     .fetchAllWithSimpleCrewByMemberId(ANDONG.getId());
 
             assertAll(() -> {
@@ -96,10 +96,10 @@ class CrewRequestQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             crewRequestJpaRepository.save(CREW_PARTICIPANT(CREW, ANDONG, NOW.plusHours(1)));
             crewRequestJpaRepository.save(CREW_PARTICIPANT(CREW, KWANGWON, NOW.plusHours(2)));
 
-            Page<CrewRequestWithMemberDomainDto> REQUESTS = crewRequestQueryDslRepository
+            Page<CrewRequestWithMemberResult> REQUESTS = crewRequestQueryDslRepository
                     .fetchCrewRequests(CREW.getId(), PageRequest.of(0, 10));
 
-            List<CrewRequestWithMemberDomainDto> CONTENTS = REQUESTS.getContent();
+            List<CrewRequestWithMemberResult> CONTENTS = REQUESTS.getContent();
             assertAll(() -> {
                 assertThat(CONTENTS).hasSize(3);
                 assertThat(CONTENTS.get(0).memberInfo().id()).isEqualTo(KWANGWON.getId());

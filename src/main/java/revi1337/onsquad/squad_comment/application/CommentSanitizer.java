@@ -2,7 +2,7 @@ package revi1337.onsquad.squad_comment.application;
 
 import java.util.List;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @Component
 public class CommentSanitizer {
@@ -13,7 +13,7 @@ public class CommentSanitizer {
         this.sanitizeStrategy = stackBasedDfsCommentSanitizer;
     }
 
-    public List<SquadCommentDomainDto> sanitize(List<SquadCommentDomainDto> comments) {
+    public List<SquadCommentResult> sanitize(List<SquadCommentResult> comments) {
         return sanitizeStrategy.sanitize(comments);
     }
 }

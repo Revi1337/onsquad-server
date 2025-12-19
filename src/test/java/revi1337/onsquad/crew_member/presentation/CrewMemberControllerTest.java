@@ -36,7 +36,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
-import revi1337.onsquad.crew_member.application.dto.CrewMemberDto;
+import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 @WebMvcTest(CrewMemberController.class)
@@ -55,16 +55,16 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
             Long DUMMY_CREW_ID = 1L;
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
             LocalDateTime NOW = LocalDateTime.now();
-            CrewMemberDto SERVICE_DTO1 = new CrewMemberDto(
+            CrewMemberResponse SERVICE_DTO1 = new CrewMemberResponse(
                     NOW.plusDays(1),
                     new SimpleMemberDto(1L, null, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE)
             );
-            CrewMemberDto SERVICE_DTO2 = new CrewMemberDto(
+            CrewMemberResponse SERVICE_DTO2 = new CrewMemberResponse(
                     NOW,
                     new SimpleMemberDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             );
-            List<CrewMemberDto> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
-            Page<CrewMemberDto> PAGE_DTOS = new PageImpl<>(SERVICE_DTOS, PAGE_REQUEST, SERVICE_DTOS.size());
+            List<CrewMemberResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
+            Page<CrewMemberResponse> PAGE_DTOS = new PageImpl<>(SERVICE_DTOS, PAGE_REQUEST, SERVICE_DTOS.size());
             when(crewMemberService.fetchCrewMembers(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST))).thenReturn(PAGE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/manage/members", DUMMY_CREW_ID)

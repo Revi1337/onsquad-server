@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.application.CrewTopMemberService;
-import revi1337.onsquad.crew.application.dto.top.Top5CrewMemberDto;
+import revi1337.onsquad.crew.application.dto.response.Top5CrewMemberResponse;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberJpaRepository;
@@ -66,7 +66,7 @@ class CrewTopMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberJpaRepository.save(GENERAL_CREW_MEMBER(CREW, REVI));
 
             // when
-            List<Top5CrewMemberDto> TOP_MEMBERS = crewTopMemberService.findTop5CrewMembers(REVI.getId(), CREW.getId());
+            List<Top5CrewMemberResponse> TOP_MEMBERS = crewTopMemberService.findTop5CrewMembers(REVI.getId(), CREW.getId());
 
             // then
             assertAll(() -> {

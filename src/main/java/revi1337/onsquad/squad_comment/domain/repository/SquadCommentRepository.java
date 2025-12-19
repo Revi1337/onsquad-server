@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 public interface SquadCommentRepository {
 
@@ -13,10 +13,10 @@ public interface SquadCommentRepository {
 
     Optional<SquadComment> findById(Long id);
 
-    List<SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
+    List<SquadCommentResult> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
 
-    List<SquadCommentDomainDto> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childSize);
+    List<SquadCommentResult> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childSize);
 
-    List<SquadCommentDomainDto> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable);
+    List<SquadCommentResult> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable);
 
 }

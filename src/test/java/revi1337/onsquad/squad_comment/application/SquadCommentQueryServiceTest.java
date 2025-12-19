@@ -20,7 +20,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
-import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
+import revi1337.onsquad.squad_comment.application.response.SquadCommentResponse;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 
@@ -67,7 +67,7 @@ class SquadCommentQueryServiceTest extends ApplicationLayerTestSupport {
             int CHILD_SIZE = 3;
             clearPersistenceContext();
 
-            List<SquadCommentDto> comments = squadCommentQueryService
+            List<SquadCommentResponse> comments = squadCommentQueryService
                     .fetchInitialComments(REVI.getId(), CREW.getId(), SQUAD.getId(), PAGE_REQUEST, CHILD_SIZE);
 
             assertThat(comments).hasSize(2);
@@ -98,7 +98,7 @@ class SquadCommentQueryServiceTest extends ApplicationLayerTestSupport {
             int CHILD_SIZE = 2;
             clearPersistenceContext();
 
-            List<SquadCommentDto> comments = squadCommentQueryService
+            List<SquadCommentResponse> comments = squadCommentQueryService
                     .fetchInitialComments(REVI.getId(), CREW.getId(), SQUAD.getId(), PAGE_REQUEST, CHILD_SIZE);
 
             assertThat(comments).hasSize(1);
@@ -124,7 +124,7 @@ class SquadCommentQueryServiceTest extends ApplicationLayerTestSupport {
             squadCommentRepository.save(SquadComment.createReply(PARENT1, "reply_3", SQUAD, OWNER));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
 
-            List<SquadCommentDto> children = squadCommentQueryService
+            List<SquadCommentResponse> children = squadCommentQueryService
                     .fetchMoreChildren(REVI.getId(), CREW.getId(), SQUAD.getId(), PARENT1.getId(), PAGE_REQUEST);
 
             assertThat(children).hasSize(2);

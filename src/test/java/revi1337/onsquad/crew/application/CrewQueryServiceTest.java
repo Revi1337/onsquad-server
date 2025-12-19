@@ -33,8 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.application.dto.CrewDto;
-import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
+import revi1337.onsquad.crew.application.dto.response.CrewResponse;
+import revi1337.onsquad.crew.application.dto.response.EnrolledCrewResponse;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
@@ -76,7 +76,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             crewRepository.save(CREW(REVI));
 
-            boolean duplicate = crewQueryService.isDuplicateCrewName(CREW_NAME_VALUE);
+            boolean duplicate = crewQueryService.checkNameDuplicate(CREW_NAME_VALUE);
 
             assertThat(duplicate).isTrue();
         }
@@ -84,7 +84,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
         @Test
         @DisplayName("Crew Name 이 중복되지 않으면 false 를 반환한다.")
         void success2() {
-            boolean duplicate = crewQueryService.isDuplicateCrewName(CREW_NAME_VALUE);
+            boolean duplicate = crewQueryService.checkNameDuplicate(CREW_NAME_VALUE);
 
             assertThat(duplicate).isFalse();
         }
@@ -101,7 +101,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW = crewRepository.save(CREW_WITH_IMAGE(REVI, CREW_IMAGE_LINK_VALUE));
             crewHashtagRepository.insertBatch(CREW.getId(), Hashtag.fromHashtagTypes(List.of(ACTIVE, ESCAPE)));
 
-            CrewDto CREW_INFO = crewQueryService.findCrewById(CREW.getId());
+            CrewResponse CREW_INFO = crewQueryService.findCrewById(CREW.getId());
 
             assertAll(() -> {
                 assertThat(CREW_INFO.id()).isEqualTo(CREW.getId());
@@ -135,7 +135,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             crewHashtagRepository.insertBatch(CREW_2.getId(), Hashtag.fromHashtagTypes(List.of(FOODIE, MOVIE)));
             crewHashtagRepository.insertBatch(CREW_3.getId(), Hashtag.fromHashtagTypes(List.of(IMPULSIVE)));
 
-            List<CrewDto> FIND_CREWS = crewQueryService.fetchCrewsByName(CREW_NAME_VALUE, PageRequest.of(0, 10));
+            List<CrewResponse> FIND_CREWS = crewQueryService.fetchCrewsByName(CREW_NAME_VALUE, PageRequest.of(0, 10));
 
             assertAll(() -> {
                 assertThat(FIND_CREWS.get(0).hashtagTypes()).contains(IMPULSIVE.getText());
@@ -163,7 +163,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, ANDONG, NOW.plusMinutes(1)));
 
-            List<EnrolledCrewDto> DTOS = crewQueryService.fetchParticipantCrews(REVI.getId());
+            List<EnrolledCrewResponse> DTOS = crewQueryService.fetchParticipantCrews(REVI.getId());
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);
@@ -210,7 +210,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             Crew CREW4 = crewJpaRepository.save(CREW_4(KWANGWON));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
 
-            List<CrewDto> DTOS = crewQueryService.fetchOwnedCrews(KWANGWON.getId(), PAGE_REQUEST);
+            List<CrewResponse> DTOS = crewQueryService.fetchOwnedCrews(KWANGWON.getId(), PAGE_REQUEST);
 
             assertThat(DTOS).hasSize(2);
             assertThat(DTOS.get(0).id()).isEqualTo(CREW4.getId());

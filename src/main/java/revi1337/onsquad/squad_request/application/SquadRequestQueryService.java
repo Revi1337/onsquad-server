@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
-import revi1337.onsquad.squad_request.application.dto.SquadRequestDto;
-import revi1337.onsquad.squad_request.application.dto.SquadRequestWithSquadAndCrewDto;
+import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
+import revi1337.onsquad.squad_request.application.response.SquadRequestWithSquadAndCrewResponse;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
 
 @Transactional(readOnly = true)
@@ -20,17 +20,18 @@ public class SquadRequestQueryService {
     private final SquadRequestAccessPolicy squadRequestAccessPolicy;
     private final SquadRequestRepository squadRequestRepository;
 
-    public List<SquadRequestDto> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
+    public List<SquadRequestResponse> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
         SquadMember squadMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
         squadRequestAccessPolicy.ensureRequestListAccessible(squadMember);
+
         return squadRequestRepository.fetchAllBySquadId(squadId, pageable).stream()
-                .map(SquadRequestDto::from)
+                .map(SquadRequestResponse::from)
                 .toList();
     }
 
-    public List<SquadRequestWithSquadAndCrewDto> fetchAllMyRequests(Long memberId) {
+    public List<SquadRequestWithSquadAndCrewResponse> fetchAllMyRequests(Long memberId) {
         return squadRequestRepository.findSquadParticipantRequestsByMemberId(memberId).stream()
-                .map(SquadRequestWithSquadAndCrewDto::from)
+                .map(SquadRequestWithSquadAndCrewResponse::from)
                 .toList();
     }
 }

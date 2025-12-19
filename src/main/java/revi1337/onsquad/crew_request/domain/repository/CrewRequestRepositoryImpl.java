@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithCrewDomainDto;
-import revi1337.onsquad.crew_request.domain.dto.CrewRequestWithMemberDomainDto;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
+import revi1337.onsquad.crew_request.domain.result.CrewRequestWithCrewResult;
+import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -48,12 +48,12 @@ public class CrewRequestRepositoryImpl implements CrewRequestRepository {
     }
 
     @Override
-    public List<CrewRequestWithCrewDomainDto> fetchAllWithSimpleCrewByMemberId(Long memberId) {
+    public List<CrewRequestWithCrewResult> fetchAllWithSimpleCrewByMemberId(Long memberId) {
         return crewRequestQueryDslRepository.fetchAllWithSimpleCrewByMemberId(memberId);
     }
 
     @Override
-    public Page<CrewRequestWithMemberDomainDto> fetchCrewRequests(Long crewId, Pageable pageable) {
+    public Page<CrewRequestWithMemberResult> fetchCrewRequests(Long crewId, Pageable pageable) {
         return crewRequestQueryDslRepository.fetchCrewRequests(crewId, pageable);
     }
 }

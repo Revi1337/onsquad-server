@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
-import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
+import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
-import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
-import revi1337.onsquad.squad.presentation.dto.response.SquadResponse;
-import revi1337.onsquad.squad.presentation.dto.response.SquadWithLeaderStateResponse;
-import revi1337.onsquad.squad.presentation.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
+import revi1337.onsquad.squad.presentation.request.SquadCreateRequest;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -34,7 +34,7 @@ public class SquadController {
     private final SquadQueryService squadQueryService;
 
     @PostMapping("/{crewId}/squads")
-    public ResponseEntity<RestResponse<String>> newSquad(
+    public ResponseEntity<RestResponse<Void>> newSquad(
             @PathVariable Long crewId,
             @Valid @RequestBody SquadCreateRequest squadCreateRequest,
             @Authenticate CurrentMember currentMember
@@ -50,11 +50,9 @@ public class SquadController {
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
-        SquadWithParticipantAndLeaderAndViewStateResponse squadResponse = SquadWithParticipantAndLeaderAndViewStateResponse.from(
-                squadQueryService.fetchSquad(currentMember.id(), crewId, squadId)
-        );
+        SquadWithParticipantAndLeaderAndViewStateResponse response = squadQueryService.fetchSquad(currentMember.id(), crewId, squadId);
 
-        return ResponseEntity.ok(RestResponse.success(squadResponse));
+        return ResponseEntity.ok(RestResponse.success(response));
     }
 
     @GetMapping("/{crewId}/squads")
@@ -64,12 +62,9 @@ public class SquadController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadResponse> squadResponses = squadQueryService
-                .fetchSquads(currentMember.id(), crewId, category, pageable).stream()
-                .map(SquadResponse::from)
-                .toList();
+        List<SquadResponse> response = squadQueryService.fetchSquads(currentMember.id(), crewId, category, pageable);
 
-        return ResponseEntity.ok(RestResponse.success(squadResponses));
+        return ResponseEntity.ok(RestResponse.success(response));
     }
 
     @GetMapping("/{crewId}/manage/squads")
@@ -78,16 +73,13 @@ public class SquadController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadWithLeaderStateResponse> squadResponses = squadQueryService
-                .fetchSquadsWithOwnerState(currentMember.id(), crewId, pageable).stream()
-                .map(SquadWithLeaderStateResponse::from)
-                .toList();
+        List<SquadWithLeaderStateResponse> response = squadQueryService.fetchSquadsWithOwnerState(currentMember.id(), crewId, pageable);
 
-        return ResponseEntity.ok().body(RestResponse.success(squadResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @DeleteMapping("/{crewId}/squads/{squadId}")
-    public ResponseEntity<RestResponse<String>> deleteSquad(
+    public ResponseEntity<RestResponse<Void>> deleteSquad(
             @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember

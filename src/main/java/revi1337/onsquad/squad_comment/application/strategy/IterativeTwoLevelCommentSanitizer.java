@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.application.CommentMaskPolicy;
 import revi1337.onsquad.squad_comment.application.CommentSanitizeStrategy;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 /**
  * Implements the {@link CommentSanitizeStrategy} using a simple <b>iterative approach</b> (loop-based).
@@ -28,18 +28,18 @@ public class IterativeTwoLevelCommentSanitizer implements CommentSanitizeStrateg
     private final CommentMaskPolicy maskPolicy;
 
     @Override
-    public List<SquadCommentDomainDto> sanitize(List<SquadCommentDomainDto> comments) {
-        List<SquadCommentDomainDto> sanitized = new ArrayList<>();
-        for (SquadCommentDomainDto parent : comments) {
-            SquadCommentDomainDto recreatedParent = maskPolicy.apply(parent);
-            List<SquadCommentDomainDto> sanitizedChildren = sanitizeChildren(parent.replies());
+    public List<SquadCommentResult> sanitize(List<SquadCommentResult> comments) {
+        List<SquadCommentResult> sanitized = new ArrayList<>();
+        for (SquadCommentResult parent : comments) {
+            SquadCommentResult recreatedParent = maskPolicy.apply(parent);
+            List<SquadCommentResult> sanitizedChildren = sanitizeChildren(parent.replies());
             recreatedParent.addReplies(sanitizedChildren);
             sanitized.add(recreatedParent);
         }
         return sanitized;
     }
 
-    private List<SquadCommentDomainDto> sanitizeChildren(List<SquadCommentDomainDto> children) {
+    private List<SquadCommentResult> sanitizeChildren(List<SquadCommentResult> children) {
         return children.stream()
                 .map(maskPolicy::apply)
                 .toList();

@@ -41,16 +41,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
+import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
-import revi1337.onsquad.squad.application.dto.SimpleSquadDto;
-import revi1337.onsquad.squad.application.dto.SquadDto;
-import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
-import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
-import revi1337.onsquad.squad.presentation.dto.request.SquadCreateRequest;
+import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
+import revi1337.onsquad.squad.presentation.request.SquadCreateRequest;
 
 @WebMvcTest(SquadController.class)
 class SquadControllerTest extends PresentationLayerTestSupport {
@@ -114,11 +114,11 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            SquadWithParticipantAndLeaderAndViewStateDto SERVICE_DTO = new SquadWithParticipantAndLeaderAndViewStateDto(
+            SquadWithParticipantAndLeaderAndViewStateResponse SERVICE_DTO = new SquadWithParticipantAndLeaderAndViewStateResponse(
                     true,
                     true,
                     true,
-                    new SquadDto(
+                    new SquadResponse(
                             SQUAD_ID,
                             SQUAD_TITLE_VALUE,
                             SQUAD_CONTENT_VALUE,
@@ -166,7 +166,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            List<SquadDto> SERVICE_DTOS = List.of(new SquadDto(
+            List<SquadResponse> SERVICE_DTOS = List.of(new SquadResponse(
                     SQUAD_ID,
                     SQUAD_TITLE_VALUE,
                     SQUAD_CONTENT_VALUE,
@@ -218,9 +218,9 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         @DisplayName("스쿼드 관리를 문서화에 성공한다.")
         void success() throws Exception {
             Long CREW_ID = 1L;
-            List<SquadWithLeaderStateDto> SERVICE_DTOS = List.of(new SquadWithLeaderStateDto(
+            List<SquadWithLeaderStateResponse> SERVICE_DTOS = List.of(new SquadWithLeaderStateResponse(
                     true,
-                    new SimpleSquadDto(
+                    new SimpleSquadResponse(
                             1L,
                             SQUAD_TITLE_VALUE,
                             20,

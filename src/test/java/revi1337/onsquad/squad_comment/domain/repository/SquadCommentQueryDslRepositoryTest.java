@@ -23,8 +23,8 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @Import({SquadCommentQueryDslRepository.class})
 class SquadCommentQueryDslRepositoryTest extends PersistenceLayerTestSupport {
@@ -70,7 +70,7 @@ class SquadCommentQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             PageRequest PAGE_REQUEST = PageRequest.of(0, 1);
             clearPersistenceContext();
 
-            List<SquadCommentDomainDto> parents = squadCommentQueryDslRepository.fetchAllParentsBySquadId(SQUAD2.getId(), PAGE_REQUEST);
+            List<SquadCommentResult> parents = squadCommentQueryDslRepository.fetchAllParentsBySquadId(SQUAD2.getId(), PAGE_REQUEST);
 
             assertThat(parents).hasSize(1);
             assertThat(parents.get(0).content()).isEqualTo("parent_4");
@@ -95,7 +95,7 @@ class SquadCommentQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
             clearPersistenceContext();
 
-            List<SquadCommentDomainDto> chilren = squadCommentQueryDslRepository
+            List<SquadCommentResult> chilren = squadCommentQueryDslRepository
                     .fetchAllChildrenBySquadIdAndParentId(SQUAD.getId(), PARENT1.getId(), PAGE_REQUEST);
 
             assertThat(chilren).hasSize(2);
@@ -121,7 +121,7 @@ class SquadCommentQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             squadCommentRepository.save(SquadComment.createReply(PARENT1, "reply_3", SQUAD, OWNER));
             clearPersistenceContext();
 
-            List<SquadCommentDomainDto> chilren = squadCommentQueryDslRepository
+            List<SquadCommentResult> chilren = squadCommentQueryDslRepository
                     .findAllWithMemberBySquadId(SQUAD.getId());
 
             assertThat(chilren).hasSize(4);

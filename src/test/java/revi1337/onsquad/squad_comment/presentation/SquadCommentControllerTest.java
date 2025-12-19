@@ -46,8 +46,8 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 import revi1337.onsquad.squad_comment.application.SquadCommentCommandService;
 import revi1337.onsquad.squad_comment.application.SquadCommentQueryService;
-import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
-import revi1337.onsquad.squad_comment.presentation.dto.request.CommentCreateRequest;
+import revi1337.onsquad.squad_comment.application.response.SquadCommentResponse;
+import revi1337.onsquad.squad_comment.presentation.request.CommentCreateRequest;
 
 @WebMvcTest(SquadCommentController.class)
 class SquadCommentControllerTest extends PresentationLayerTestSupport {
@@ -137,7 +137,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
             int CHILD_SIZE = 2;
             when(squadCommentQueryService.fetchInitialComments(eq(MEMBER_ID), eq(CREW_ID), eq(SQUAD_ID), any(PageRequest.class), eq(CHILD_SIZE)))
                     .thenReturn(List.of(
-                            new SquadCommentDto(null,
+                            new SquadCommentResponse(null,
                                     1L,
                                     "parent_1",
                                     false,
@@ -145,7 +145,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     LocalDateTime.now(),
                                     new SimpleMemberDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
                                     List.of(
-                                            new SquadCommentDto(
+                                            new SquadCommentResponse(
                                                     1L,
                                                     2L,
                                                     "child_1",
@@ -156,7 +156,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                             ANDONG_MBTI_VALUE),
                                                     List.of()
                                             ),
-                                            new SquadCommentDto(
+                                            new SquadCommentResponse(
                                                     1L,
                                                     3L,
                                                     "child_2",
@@ -168,7 +168,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                             )
                                     )
                             ),
-                            new SquadCommentDto(
+                            new SquadCommentResponse(
                                     null,
                                     4L,
                                     "parent_2",
@@ -177,7 +177,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     LocalDateTime.now(),
                                     new SimpleMemberDto(3L, KWANGWON_EMAIL_VALUE, KWANGWON_NICKNAME_VALUE, KWANGWON_INTRODUCE_VALUE, KWANGWON_MBTI_VALUE),
                                     List.of(
-                                            new SquadCommentDto(
+                                            new SquadCommentResponse(
                                                     4L,
                                                     5L,
                                                     "child_3",
@@ -188,7 +188,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                             ANDONG_MBTI_VALUE),
                                                     List.of()
                                             ),
-                                            new SquadCommentDto(
+                                            new SquadCommentResponse(
                                                     4L,
                                                     6L,
                                                     "child_4",
@@ -239,7 +239,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
             Long PARENT_ID = 3L;
             when(squadCommentQueryService.fetchMoreChildren(eq(MEMBER_ID), eq(CREW_ID), eq(SQUAD_ID), eq(PARENT_ID), any(PageRequest.class)))
                     .thenReturn(List.of(
-                            new SquadCommentDto(
+                            new SquadCommentResponse(
                                     PARENT_ID,
                                     7L,
                                     "child_4",
@@ -249,7 +249,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     new SimpleMemberDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE),
                                     List.of()
                             ),
-                            new SquadCommentDto(
+                            new SquadCommentResponse(
                                     PARENT_ID,
                                     8L,
                                     "child_5",

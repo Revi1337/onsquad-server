@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
-import revi1337.onsquad.squad_comment.application.dto.SquadCommentDto;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.application.response.SquadCommentResponse;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -21,26 +21,27 @@ public class SquadCommentQueryService {
     private final CommentCombinator commentCombinator;
     private final CommentSanitizer commentSanitizer;
 
-    public List<SquadCommentDto> fetchInitialComments(Long memberId, Long crewId, Long squadId, Pageable pageable, int childSize) {
+    public List<SquadCommentResponse> fetchInitialComments(Long memberId, Long crewId, Long squadId, Pageable pageable, int childSize) {
         crewMemberAccessPolicy.ensureMemberInCrew(memberId, crewId);
-        List<SquadCommentDomainDto> parents = commentRepository.fetchAllParentsBySquadId(squadId, pageable);
+        List<SquadCommentResult> parents = commentRepository.fetchAllParentsBySquadId(squadId, pageable);
         if (parents.isEmpty()) {
             return new ArrayList<>();
         }
 
-        List<Long> parentIds = parents.stream().map(SquadCommentDomainDto::id).toList();
-        List<SquadCommentDomainDto> replies = commentRepository.fetchAllChildrenByParentIdIn(parentIds, childSize);
-        List<SquadCommentDomainDto> comments = commentCombinator.combine(parents, replies);
+        List<Long> parentIds = parents.stream().map(SquadCommentResult::id).toList();
+        List<SquadCommentResult> replies = commentRepository.fetchAllChildrenByParentIdIn(parentIds, childSize);
+        List<SquadCommentResult> comments = commentCombinator.combine(parents, replies);
 
         return commentSanitizer.sanitize(comments).stream()
-                .map(SquadCommentDto::from)
+                .map(SquadCommentResponse::from)
                 .toList();
     }
 
-    public List<SquadCommentDto> fetchMoreChildren(Long memberId, Long crewId, Long squadId, Long parentId, Pageable pageable) {
+    public List<SquadCommentResponse> fetchMoreChildren(Long memberId, Long crewId, Long squadId, Long parentId, Pageable pageable) {
         crewMemberAccessPolicy.ensureMemberInCrew(memberId, crewId);
+
         return commentRepository.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable).stream()
-                .map(SquadCommentDto::from)
+                .map(SquadCommentResponse::from)
                 .toList();
     }
 }

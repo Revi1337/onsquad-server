@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
-import revi1337.onsquad.crew.domain.dto.top.Top5CrewMemberDomainDto;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.CrewTopMember;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
@@ -30,6 +29,7 @@ import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberJdbcRepository;
 import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberJpaRepository;
 import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepository;
 import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepositoryImpl;
+import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -131,7 +131,7 @@ class CrewTopMemberRepositoryTest extends PersistenceLayerTestSupport {
             LocalDate FROM = TO.minusDays(7);
 
             // when
-            List<Top5CrewMemberDomainDto> TOP_MEMBERS = crewTopMemberRepository.fetchAggregatedTopMembers(TO, FROM, 5);
+            List<Top5CrewMemberResult> TOP_MEMBERS = crewTopMemberRepository.fetchAggregatedTopMembers(TO, FROM, 5);
 
             // then
             assertAll(() -> {

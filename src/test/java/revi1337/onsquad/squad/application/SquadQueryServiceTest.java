@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.category.presentation.dto.request.CategoryCondition;
+import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
@@ -33,9 +33,9 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
-import revi1337.onsquad.squad.application.dto.SquadDto;
-import revi1337.onsquad.squad.application.dto.SquadWithLeaderStateDto;
-import revi1337.onsquad.squad.application.dto.SquadWithParticipantAndLeaderAndViewStateDto;
+import revi1337.onsquad.squad.application.dto.response.SquadResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJdbcRepository;
@@ -79,7 +79,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
+            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
                     .fetchSquad(REVI.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -116,7 +116,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
+            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
                     .fetchSquad(ANDONG.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -140,7 +140,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
+            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
                     .fetchSquad(ANDONG.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -162,7 +162,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateDto DTO = squadQueryService
+            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
                     .fetchSquad(REVI.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -197,7 +197,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            List<SquadDto> SQUADS = squadQueryService
+            List<SquadResponse> SQUADS = squadQueryService
                     .fetchSquads(ANDONG.getId(), CREW.getId(), CONDITION, PAGE_REQUEST);
 
             // then
@@ -262,7 +262,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            List<SquadWithLeaderStateDto> RESULTS = squadQueryService
+            List<SquadWithLeaderStateResponse> RESULTS = squadQueryService
                     .fetchSquadsWithOwnerState(ANDONG.getId(), CREW2.getId(), PAGE_REQUEST);
 
             // then

@@ -38,12 +38,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew.application.dto.SimpleCrewDto;
+import revi1337.onsquad.crew.application.dto.response.SimpleCrewResponse;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
 import revi1337.onsquad.crew_request.application.CrewRequestQueryService;
-import revi1337.onsquad.crew_request.application.dto.CrewRequestDto;
-import revi1337.onsquad.crew_request.application.dto.CrewRequestWithCrewDto;
-import revi1337.onsquad.crew_request.application.dto.CrewRequestWithMemberDto;
+import revi1337.onsquad.crew_request.application.response.CrewRequestResponse;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
 @WebMvcTest(CrewRequestController.class)
@@ -143,8 +143,8 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
         @DisplayName("특정 Crew 의 참가신청 관리 목록을 성공한다.")
         void success() throws Exception {
             Long CREW_Id = 1L;
-            List<CrewRequestWithMemberDto> SERVICE_DTOS = List.of(new CrewRequestWithMemberDto(
-                    new CrewRequestDto(2L, LocalDateTime.now()),
+            List<CrewRequestWithMemberResponse> SERVICE_DTOS = List.of(new CrewRequestWithMemberResponse(
+                    new CrewRequestResponse(2L, LocalDateTime.now()),
                     new SimpleMemberDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             ));
             when(crewRequestQueryService.fetchAllRequests(any(), anyLong(), any(Pageable.class)))
@@ -201,9 +201,9 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("내가 보낸 Crew 신청들 조회에 성공한다.")
         void success() throws Exception {
-            List<CrewRequestWithCrewDto> SERVICE_DTOS = List.of(new CrewRequestWithCrewDto(
-                    new CrewRequestDto(3L, LocalDateTime.now()),
-                    new SimpleCrewDto(
+            List<CrewRequestWithCrewResponse> SERVICE_DTOS = List.of(new CrewRequestWithCrewResponse(
+                    new CrewRequestResponse(3L, LocalDateTime.now()),
+                    new SimpleCrewResponse(
                             1L,
                             CREW_NAME_VALUE,
                             CREW_INTRODUCE_VALUE,

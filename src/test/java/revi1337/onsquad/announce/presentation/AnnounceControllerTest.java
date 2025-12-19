@@ -41,14 +41,14 @@ import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.AnnounceQueryService;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
-import revi1337.onsquad.announce.application.dto.AnnounceDto;
 import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
-import revi1337.onsquad.announce.application.dto.AnnounceWithFixAndModifyStateDto;
-import revi1337.onsquad.announce.application.dto.AnnouncesWithWriteStateDto;
-import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
-import revi1337.onsquad.announce.presentation.dto.request.AnnounceUpdateRequest;
+import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnounceWithFixAndModifyStateResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnouncesWithWriteStateResponse;
+import revi1337.onsquad.announce.presentation.request.AnnounceCreateRequest;
+import revi1337.onsquad.announce.presentation.request.AnnounceUpdateRequest;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew_member.application.dto.SimpleCrewMemberDto;
+import revi1337.onsquad.crew_member.application.response.SimpleCrewMemberResponse;
 
 @WebMvcTest(AnnounceController.class)
 class AnnounceControllerTest extends PresentationLayerTestSupport {
@@ -104,17 +104,17 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long CREW_ID = 2L;
             Long ANNOUNCE_ID = 3L;
             LocalDateTime NOW = LocalDateTime.now();
-            AnnounceWithFixAndModifyStateDto SERVICE_DTO = new AnnounceWithFixAndModifyStateDto(
+            AnnounceWithFixAndModifyStateResponse SERVICE_DTO = new AnnounceWithFixAndModifyStateResponse(
                     true,
                     true,
-                    new AnnounceDto(
+                    new AnnounceResponse(
                             ANNOUNCE_ID,
                             ANNOUNCE_TITLE_VALUE,
                             ANNOUNCE_CONTENT_VALUE,
                             NOW.minusHours(1),
                             true,
                             NOW,
-                            new SimpleCrewMemberDto(
+                            new SimpleCrewMemberResponse(
                                     MEMBER_ID,
                                     REVI_NICKNAME_VALUE,
                                     OWNER.getText()
@@ -153,16 +153,16 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             Long ANNOUNCE_ID = 3L;
             PageRequest PAGE_REQUEST = PageRequest.of(0, 10);
             LocalDateTime NOW = LocalDateTime.now();
-            AnnouncesWithWriteStateDto SERVICE_DTO = new AnnouncesWithWriteStateDto(
+            AnnouncesWithWriteStateResponse SERVICE_DTO = new AnnouncesWithWriteStateResponse(
                     true,
-                    List.of(new AnnounceDto(
+                    List.of(new AnnounceResponse(
                             ANNOUNCE_ID,
                             ANNOUNCE_TITLE_VALUE,
                             ANNOUNCE_CONTENT_VALUE,
                             NOW.minusHours(1),
                             true,
                             NOW,
-                            new SimpleCrewMemberDto(
+                            new SimpleCrewMemberResponse(
                                     MEMBER_ID,
                                     REVI_NICKNAME_VALUE,
                                     OWNER.getText()

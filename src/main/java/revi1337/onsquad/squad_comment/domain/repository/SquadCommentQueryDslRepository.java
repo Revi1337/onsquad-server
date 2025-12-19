@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
-import revi1337.onsquad.squad_comment.domain.dto.QSquadCommentDomainDto;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
+import revi1337.onsquad.squad_comment.domain.result.QSquadCommentResult;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -21,9 +21,9 @@ public class SquadCommentQueryDslRepository {
     /**
      * 페이징처리에 맞게 부모 댓글들을 가져오고, id 별로 묶어서 반환한다.
      */
-    public List<SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
+    public List<SquadCommentResult> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return jpaQueryFactory
-                .select(new QSquadCommentDomainDto(
+                .select(new QSquadCommentResult(
                         squadComment.id,
                         squadComment.content,
                         squadComment.deleted,
@@ -44,9 +44,9 @@ public class SquadCommentQueryDslRepository {
                 .fetch();
     }
 
-    public List<SquadCommentDomainDto> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
+    public List<SquadCommentResult> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
         return jpaQueryFactory
-                .select(new QSquadCommentDomainDto(
+                .select(new QSquadCommentResult(
                         squadComment.id,
                         squadComment.content,
                         squadComment.deleted,
@@ -71,9 +71,9 @@ public class SquadCommentQueryDslRepository {
      * 모든 댓글(부모, 자식)들을 모두 가져온다.
      */
     @Deprecated(forRemoval = true)
-    public List<SquadCommentDomainDto> findAllWithMemberBySquadId(Long squadId) {
+    public List<SquadCommentResult> findAllWithMemberBySquadId(Long squadId) {
         return jpaQueryFactory
-                .select(new QSquadCommentDomainDto(
+                .select(new QSquadCommentResult(
                         squadComment.parent.id,
                         squadComment.id,
                         squadComment.content,

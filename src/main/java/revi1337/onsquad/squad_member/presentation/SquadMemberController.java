@@ -13,8 +13,8 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_member.application.SquadMemberCommandService;
 import revi1337.onsquad.squad_member.application.SquadMemberQueryService;
-import revi1337.onsquad.squad_member.presentation.dto.response.EnrolledSquadResponse;
-import revi1337.onsquad.squad_member.presentation.dto.response.SquadMemberResponse;
+import revi1337.onsquad.squad_member.application.response.EnrolledSquadResponse;
+import revi1337.onsquad.squad_member.application.response.SquadMemberResponse;
 
 // TODO /crews/{crewId} 를 prefix 로 넣을까 고민 필요. 도메인 일관성을 위해 넣고싶은데 쿼리 한방더 필요할지도? crewId 없이도 리소스 식별이 가능한데.. 그럼 Squad 가 Crew 에 종속된 개념이란걸 URL 에 나타낼 수가 없고.. 하 짜증난다.
 @RequiredArgsConstructor
@@ -29,12 +29,9 @@ public class SquadMemberController {
     public ResponseEntity<RestResponse<List<EnrolledSquadResponse>>> fetchAllJoinedSquads(
             @Authenticate CurrentMember currentMember
     ) {
-        List<EnrolledSquadResponse> enrolledSquadResponses = squadMemberQueryService
-                .fetchAllJoinedSquads(currentMember.id()).stream()
-                .map(EnrolledSquadResponse::from)
-                .toList();
+        List<EnrolledSquadResponse> response = squadMemberQueryService.fetchAllJoinedSquads(currentMember.id());
 
-        return ResponseEntity.ok().body(RestResponse.success(enrolledSquadResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @GetMapping("/squads/{squadId}/members")
@@ -42,16 +39,13 @@ public class SquadMemberController {
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadMemberResponse> results = squadMemberQueryService
-                .fetchAllBySquadId(currentMember.id(), squadId).stream()
-                .map(SquadMemberResponse::from)
-                .toList();
+        List<SquadMemberResponse> response = squadMemberQueryService.fetchAllBySquadId(currentMember.id(), squadId);
 
-        return ResponseEntity.ok().body(RestResponse.success(results));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @DeleteMapping("/squads/{squadId}/me")
-    public ResponseEntity<RestResponse<String>> leaveSquad(
+    public ResponseEntity<RestResponse<Void>> leaveSquad(
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {

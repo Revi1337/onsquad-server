@@ -2,6 +2,7 @@ package revi1337.onsquad.announce.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.AnnounceQueryService;
-import revi1337.onsquad.announce.presentation.dto.request.AnnounceCreateRequest;
-import revi1337.onsquad.announce.presentation.dto.request.AnnounceUpdateRequest;
-import revi1337.onsquad.announce.presentation.dto.response.AnnounceWithFixAndModifyStateResponse;
-import revi1337.onsquad.announce.presentation.dto.response.AnnouncesWithWriteStateResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnounceWithFixAndModifyStateResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnouncesWithWriteStateResponse;
+import revi1337.onsquad.announce.presentation.request.AnnounceCreateRequest;
+import revi1337.onsquad.announce.presentation.request.AnnounceUpdateRequest;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
 @RestController
@@ -34,7 +36,7 @@ public class AnnounceController {
     private final AnnounceQueryService announceQueryService;
 
     @PostMapping("/{crewId}/announces")
-    public ResponseEntity<RestResponse<String>> newAnnounce(
+    public ResponseEntity<RestResponse<Void>> newAnnounce(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember,
             @Valid @RequestBody AnnounceCreateRequest createRequest
@@ -50,11 +52,9 @@ public class AnnounceController {
             @PathVariable Long announceId,
             @Authenticate CurrentMember currentMember
     ) {
-        AnnounceWithFixAndModifyStateResponse announceInfoResponse = AnnounceWithFixAndModifyStateResponse.from(
-                announceQueryService.findAnnounce(currentMember.id(), crewId, announceId)
-        );
+        AnnounceWithFixAndModifyStateResponse response = announceQueryService.findAnnounce(currentMember.id(), crewId, announceId);
 
-        return ResponseEntity.ok().body(RestResponse.success(announceInfoResponse));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @GetMapping("/{crewId}/announces")
@@ -63,15 +63,13 @@ public class AnnounceController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        AnnouncesWithWriteStateResponse announceResponses = AnnouncesWithWriteStateResponse.from(
-                announceQueryService.findAnnounces(currentMember.id(), crewId, pageable)
-        );
+        AnnouncesWithWriteStateResponse response = announceQueryService.findAnnounces(currentMember.id(), crewId, pageable);
 
-        return ResponseEntity.ok().body(RestResponse.success(announceResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @PutMapping("/{crewId}/announces/{announceId}")
-    public ResponseEntity<RestResponse<String>> updateAnnounce(
+    public ResponseEntity<RestResponse<Void>> updateAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @Valid @RequestBody AnnounceUpdateRequest updateRequest,
@@ -83,7 +81,7 @@ public class AnnounceController {
     }
 
     @PatchMapping("/{crewId}/announces/{announceId}/fix")
-    public ResponseEntity<RestResponse<String>> updateAnnounceFixed(
+    public ResponseEntity<RestResponse<Void>> updateAnnounceFixed(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @RequestParam boolean state,
@@ -95,7 +93,7 @@ public class AnnounceController {
     }
 
     @DeleteMapping("/{crewId}/announces/{announceId}")
-    public ResponseEntity<RestResponse<String>> deleteAnnounce(
+    public ResponseEntity<RestResponse<Void>> deleteAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @Authenticate CurrentMember currentMember

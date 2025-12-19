@@ -8,9 +8,9 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
 import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
 import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
+import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.common.constant.CacheConst;
 
 @Slf4j
@@ -29,7 +29,7 @@ public class AnnounceFixedEventListener {
     }
 
     private void updateAnnounceCache(AnnounceFixedEvent event) {
-        Optional<AnnounceDomainDto> announceInfo = announceQueryDslRepository
+        Optional<AnnounceResult> announceInfo = announceQueryDslRepository
                 .fetchByCrewIdAndId(event.crewId(), event.announceId());
 
         Cache cache = caffeineCacheManager.getCache(CacheConst.CREW_ANNOUNCE);
@@ -41,7 +41,7 @@ public class AnnounceFixedEventListener {
     }
 
     private void updateAnnouncesCache(AnnounceFixedEvent event) {
-        List<AnnounceDomainDto> announceInfos = announceQueryDslRepository.fetchAllInDefaultByCrewId(event.crewId());
+        List<AnnounceResult> announceInfos = announceQueryDslRepository.fetchAllInDefaultByCrewId(event.crewId());
 
         Cache cache = caffeineCacheManager.getCache(CacheConst.CREW_ANNOUNCES);
         if (cache != null) {

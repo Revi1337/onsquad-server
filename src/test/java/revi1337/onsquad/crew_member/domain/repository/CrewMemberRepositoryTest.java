@@ -26,9 +26,9 @@ import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.crew_member.domain.result.CrewMemberResult;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
@@ -190,7 +190,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             crewMemberRepository.save(CrewMemberFactory.general(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            Page<CrewMemberDomainDto> DTOS = crewMemberRepository.findManagedCrewMembersByCrewId(CREW.getId(), PAGE_REQUEST);
+            Page<CrewMemberResult> DTOS = crewMemberRepository.findManagedCrewMembersByCrewId(CREW.getId(), PAGE_REQUEST);
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);

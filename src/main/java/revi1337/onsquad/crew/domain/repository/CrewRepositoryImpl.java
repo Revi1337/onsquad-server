@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
-import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.EnrolledCrewResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -54,22 +54,22 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<CrewDomainDto> findCrewById(Long id) {
+    public Optional<CrewResult> findCrewById(Long id) {
         return crewQueryDslRepository.findCrewById(id);
     }
 
     @Override
-    public Page<CrewDomainDto> fetchCrewsByName(String name, Pageable pageable) {
+    public Page<CrewResult> fetchCrewsByName(String name, Pageable pageable) {
         return crewQueryDslRepository.fetchCrewsByName(name, pageable);
     }
 
     @Override
-    public Page<CrewDomainDto> fetchOwnedByMemberId(Long memberId, Pageable pageable) {
+    public Page<CrewResult> fetchOwnedByMemberId(Long memberId, Pageable pageable) {
         return crewQueryDslRepository.fetchCrewsByMemberId(memberId, pageable);
     }
 
     @Override
-    public List<EnrolledCrewDomainDto> fetchParticipantsByMemberId(Long memberId) {
+    public List<EnrolledCrewResult> fetchParticipantsByMemberId(Long memberId) {
         return crewQueryDslRepository.fetchEnrolledCrewsByMemberId(memberId);
     }
 }

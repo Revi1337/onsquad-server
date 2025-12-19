@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
-import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.EnrolledCrewResult;
 
 public interface CrewRepository {
 
@@ -25,12 +25,12 @@ public interface CrewRepository {
 
     boolean existsByName(Name name);
 
-    Optional<CrewDomainDto> findCrewById(Long id);
+    Optional<CrewResult> findCrewById(Long id);
 
-    Page<CrewDomainDto> fetchCrewsByName(String name, Pageable pageable);
+    Page<CrewResult> fetchCrewsByName(String name, Pageable pageable);
 
-    Page<CrewDomainDto> fetchOwnedByMemberId(Long memberId, Pageable pageable);
+    Page<CrewResult> fetchOwnedByMemberId(Long memberId, Pageable pageable);
 
-    List<EnrolledCrewDomainDto> fetchParticipantsByMemberId(Long memberId);
+    List<EnrolledCrewResult> fetchParticipantsByMemberId(Long memberId);
 
 }

@@ -5,11 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew.application.dto.CrewDto;
-import revi1337.onsquad.crew.application.dto.EnrolledCrewDto;
-import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
-import revi1337.onsquad.crew.domain.dto.CrewWithParticipantStateDto;
+import revi1337.onsquad.crew.application.dto.response.CrewResponse;
+import revi1337.onsquad.crew.application.dto.response.DuplicateCrewNameResponse;
+import revi1337.onsquad.crew.application.dto.response.EnrolledCrewResponse;
+import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
+import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.CrewWithParticipantResult;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
@@ -22,46 +24,46 @@ public class CrewQueryService {
 
     private final CrewRepository crewRepository;
     private final CrewMemberAccessPolicy crewMemberAccessPolicy;
-    private final CrewAccessPolicy crewAccessPolicy;
 
-    public boolean isDuplicateCrewName(String name) {
-        try {
-            crewAccessPolicy.ensureCrewNameIsDuplicate(name);
-            return true;
-        } catch (CrewBusinessException e) {
-            return false;
+    public DuplicateCrewNameResponse checkNameDuplicate(String name) {
+        if (crewRepository.existsByName(new Name(name))) {
+            return DuplicateCrewNameResponse.of(true);
         }
+
+        return DuplicateCrewNameResponse.of(false);
     }
 
-    public CrewDto findCrewById(Long crewId) {
-        CrewDomainDto crewInfo = crewRepository.findCrewById(crewId)
+    public CrewResponse findCrewById(Long crewId) {
+        CrewResult crewInfo = crewRepository.findCrewById(crewId)
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
-        return CrewDto.from(crewInfo);
+
+        return CrewResponse.from(crewInfo);
     }
 
-    public CrewWithParticipantStateDto findCrewById(Long memberId, Long crewId) {
+    public CrewWithParticipantResult findCrewById(Long memberId, Long crewId) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         boolean alreadyParticipants = crewMember != null;
-        CrewDomainDto crewInfo = crewRepository.findCrewById(crewId)
+        CrewResult crewInfo = crewRepository.findCrewById(crewId)
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
-        return CrewWithParticipantStateDto.from(alreadyParticipants, crewInfo);
+
+        return CrewWithParticipantResult.from(alreadyParticipants, crewInfo);
     }
 
-    public List<CrewDto> fetchCrewsByName(String crewName, Pageable pageable) {
+    public List<CrewResponse> fetchCrewsByName(String crewName, Pageable pageable) {
         return crewRepository.fetchCrewsByName(crewName, pageable).stream()
-                .map(CrewDto::from)
+                .map(CrewResponse::from)
                 .toList();
     }
 
-    public List<CrewDto> fetchOwnedCrews(Long memberId, Pageable pageable) {
+    public List<CrewResponse> fetchOwnedCrews(Long memberId, Pageable pageable) {
         return crewRepository.fetchOwnedByMemberId(memberId, pageable).stream()
-                .map(CrewDto::from)
+                .map(CrewResponse::from)
                 .toList();
     }
 
-    public List<EnrolledCrewDto> fetchParticipantCrews(Long memberId) {
+    public List<EnrolledCrewResponse> fetchParticipantCrews(Long memberId) {
         return crewRepository.fetchParticipantsByMemberId(memberId).stream()
-                .map(EnrolledCrewDto::from)
+                .map(EnrolledCrewResponse::from)
                 .toList();
     }
 }

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.squad_request.domain.dto.SquadRequestDomainDto;
-import revi1337.onsquad.squad_request.domain.dto.SquadRequestWithSquadAndCrewDomainDto;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
+import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
+import revi1337.onsquad.squad_request.domain.result.SquadRequestWithSquadAndCrewResult;
 
 public interface SquadRequestRepository {
 
@@ -20,9 +20,9 @@ public interface SquadRequestRepository {
 
     Optional<SquadRequest> findBySquadIdAndMemberId(Long squadId, Long memberId);
 
-    List<SquadRequestWithSquadAndCrewDomainDto> findSquadParticipantRequestsByMemberId(Long memberId);
+    List<SquadRequestWithSquadAndCrewResult> findSquadParticipantRequestsByMemberId(Long memberId);
 
-    Page<SquadRequestDomainDto> fetchAllBySquadId(Long squadId, Pageable pageable);
+    Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable);
 
     void deleteById(Long id);
 

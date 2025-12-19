@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.PageRequest;
-import revi1337.onsquad.announce.application.dto.AnnounceWithFixAndModifyStateDto;
-import revi1337.onsquad.announce.application.dto.AnnouncesWithWriteStateDto;
+import revi1337.onsquad.announce.application.dto.response.AnnounceWithFixAndModifyStateResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnouncesWithWriteStateResponse;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.repository.AnnounceJpaRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
@@ -69,7 +69,7 @@ class AnnounceQueryServiceTest extends ApplicationLayerTestSupport {
             CrewMember CREW_OWNER = crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId());
             Announce ANNOUNCE = announceJpaRepository.save(ANNOUNCE(CREW, CREW_OWNER));
 
-            AnnounceWithFixAndModifyStateDto DTO = announceQueryService.findAnnounce(REVI.getId(), CREW.getId(),
+            AnnounceWithFixAndModifyStateResponse DTO = announceQueryService.findAnnounce(REVI.getId(), CREW.getId(),
                     ANNOUNCE.getId());
 
             assertThat(DTO.canModify()).isTrue();
@@ -99,7 +99,7 @@ class AnnounceQueryServiceTest extends ApplicationLayerTestSupport {
             Announce ANNOUNCE = announceJpaRepository.save(FIXED_ANNOUNCE(CREW, CREW_OWNER));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 10);
 
-            AnnouncesWithWriteStateDto DTO = announceQueryService
+            AnnouncesWithWriteStateResponse DTO = announceQueryService
                     .findAnnounces(REVI.getId(), CREW.getId(), PAGE_REQUEST);
 
             assertThat(DTO.canWrite()).isTrue();

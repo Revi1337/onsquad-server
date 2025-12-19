@@ -3,8 +3,8 @@ package revi1337.onsquad.crew_member.domain.repository;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.result.CrewMemberResult;
 
 public interface CrewMemberRepository {
 
@@ -20,6 +20,6 @@ public interface CrewMemberRepository {
 
     Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
 
-    Page<CrewMemberDomainDto> findManagedCrewMembersByCrewId(Long crewId, Pageable pageable);
+    Page<CrewMemberResult> findManagedCrewMembersByCrewId(Long crewId, Pageable pageable);
 
 }

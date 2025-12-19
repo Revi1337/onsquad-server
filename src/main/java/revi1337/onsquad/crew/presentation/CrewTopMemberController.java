@@ -11,7 +11,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewTopMemberService;
-import revi1337.onsquad.crew.presentation.dto.response.Top5CrewMemberResponse;
+import revi1337.onsquad.crew.application.dto.response.Top5CrewMemberResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -25,11 +25,8 @@ public class CrewTopMemberController {
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        List<Top5CrewMemberResponse> top5CrewMembers = crewTopMemberService
-                .findTop5CrewMembers(currentMember.id(), crewId).stream()
-                .map(Top5CrewMemberResponse::from)
-                .toList();
+        List<Top5CrewMemberResponse> response = crewTopMemberService.findTop5CrewMembers(currentMember.id(), crewId);
 
-        return ResponseEntity.ok().body(RestResponse.success(top5CrewMembers));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 }

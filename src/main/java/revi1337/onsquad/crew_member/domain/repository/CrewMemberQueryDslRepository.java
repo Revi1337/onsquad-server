@@ -11,8 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew_member.domain.dto.CrewMemberDomainDto;
-import revi1337.onsquad.crew_member.domain.dto.QCrewMemberDomainDto;
+import revi1337.onsquad.crew_member.domain.result.CrewMemberResult;
+import revi1337.onsquad.crew_member.domain.result.QCrewMemberResult;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
 @RequiredArgsConstructor
@@ -21,9 +21,9 @@ public class CrewMemberQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<CrewMemberDomainDto> fetchAllByCrewId(Long crewId, Pageable pageable) {
-        List<CrewMemberDomainDto> results = jpaQueryFactory
-                .select(new QCrewMemberDomainDto(
+    public Page<CrewMemberResult> fetchAllByCrewId(Long crewId, Pageable pageable) {
+        List<CrewMemberResult> results = jpaQueryFactory
+                .select(new QCrewMemberResult(
                         new QSimpleMemberDomainDto(
                                 member.id,
                                 member.nickname,

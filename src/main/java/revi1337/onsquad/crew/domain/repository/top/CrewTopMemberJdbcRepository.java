@@ -11,8 +11,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.dto.top.Top5CrewMemberDomainDto;
 import revi1337.onsquad.crew.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -46,7 +46,7 @@ public class CrewTopMemberJdbcRepository {
      * @param to
      * @param rankLimit
      */
-    public List<Top5CrewMemberDomainDto> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
+    public List<Top5CrewMemberResult> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
@@ -94,8 +94,8 @@ public class CrewTopMemberJdbcRepository {
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewTop5RowMapper());
     }
 
-    private RowMapper<Top5CrewMemberDomainDto> crewTop5RowMapper() {
-        return (rs, rowNum) -> new Top5CrewMemberDomainDto(
+    private RowMapper<Top5CrewMemberResult> crewTop5RowMapper() {
+        return (rs, rowNum) -> new Top5CrewMemberResult(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
                 rs.getInt("counter"),

@@ -7,9 +7,9 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
 import revi1337.onsquad.announce.domain.event.AnnounceCreateEvent;
 import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
+import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.common.constant.CacheConst;
 
 @Slf4j
@@ -23,7 +23,7 @@ public class AnnounceCreateEventListener {
     @TransactionalEventListener
     public void handleAnnounceCreateEvent(AnnounceCreateEvent event) {
         log.debug("[{}] Renew new announces caches in crew_id = {}", event.getEventName(), event.crewId());
-        List<AnnounceDomainDto> announceInfos = announceQueryDslRepository.fetchAllInDefaultByCrewId(event.crewId());
+        List<AnnounceResult> announceInfos = announceQueryDslRepository.fetchAllInDefaultByCrewId(event.crewId());
 
         Cache cache = caffeineCacheManager.getCache(CacheConst.CREW_ANNOUNCES);
         if (cache != null) {

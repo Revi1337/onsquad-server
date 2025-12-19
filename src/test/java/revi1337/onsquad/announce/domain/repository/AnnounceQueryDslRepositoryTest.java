@@ -25,9 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
-import revi1337.onsquad.announce.domain.dto.AnnounceDomainDto;
-import revi1337.onsquad.announce.domain.dto.AnnounceWithModifyStateDomainDto;
 import revi1337.onsquad.announce.domain.entity.Announce;
+import revi1337.onsquad.announce.domain.result.AnnounceResult;
+import revi1337.onsquad.announce.domain.result.AnnounceWithModifyStateResult;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
@@ -73,7 +73,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
                     ANNOUNCE_5(CREW, CREW_MEMBER)
             ));
 
-            List<AnnounceDomainDto> DOMAIN_DTO = announceQueryDslRepository
+            List<AnnounceResult> DOMAIN_DTO = announceQueryDslRepository
                     .fetchAllByCrewId(CREW.getId(), PAGE_REQUEST)
                     .getContent();
 
@@ -106,7 +106,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
                     ANNOUNCE_5(CREW, CREW_MEMBER)
             ));
 
-            List<AnnounceDomainDto> DOMAIN_DTO = announceQueryDslRepository
+            List<AnnounceResult> DOMAIN_DTO = announceQueryDslRepository
                     .fetchAllInDefaultByCrewId(CREW.getId());
 
             assertAll(() -> {
@@ -135,7 +135,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             ANNOUNCE_4.fix(NOW.plusHours(1));
             announceJpaRepository.saveAll(List.of(ANNOUNCE_1, ANNOUNCE_2, ANNOUNCE_3, ANNOUNCE_4, ANNOUNCE_5));
 
-            List<AnnounceDomainDto> DOMAIN_DTO = announceQueryDslRepository.fetchAllInDefaultByCrewId(CREW.getId());
+            List<AnnounceResult> DOMAIN_DTO = announceQueryDslRepository.fetchAllInDefaultByCrewId(CREW.getId());
 
             assertAll(() -> {
                 assertThat(DOMAIN_DTO).hasSize(4);
@@ -173,7 +173,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             CrewMember CREW_MEMBER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
             Announce ANNOUNCE = announceJpaRepository.save(ANNOUNCE(CREW, CREW_MEMBER));
 
-            Optional<AnnounceWithModifyStateDomainDto> DOMAIN_DTO = announceQueryDslRepository
+            Optional<AnnounceWithModifyStateResult> DOMAIN_DTO = announceQueryDslRepository
                     .fetchByCrewIdAndIdAndMemberId(CREW.getId(), ANNOUNCE.getId(), REVI.getId());
 
             assertAll(() -> {
@@ -191,7 +191,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             Announce ANNOUNCE = announceJpaRepository.save(ANNOUNCE(CREW, CREW_MEMBER));
             Long DUMMY_MEMBER_ID = 2L;
 
-            Optional<AnnounceWithModifyStateDomainDto> DOMAIN_DTO = announceQueryDslRepository
+            Optional<AnnounceWithModifyStateResult> DOMAIN_DTO = announceQueryDslRepository
                     .fetchByCrewIdAndIdAndMemberId(CREW.getId(), ANNOUNCE.getId(), DUMMY_MEMBER_ID);
 
             assertAll(() -> {
@@ -213,7 +213,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             CrewMember CREW_MEMBER = crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
             Announce ANNOUNCE = announceJpaRepository.save(ANNOUNCE(CREW, CREW_MEMBER));
 
-            Optional<AnnounceDomainDto> DTO = announceQueryDslRepository
+            Optional<AnnounceResult> DTO = announceQueryDslRepository
                     .fetchByCrewIdAndId(CREW.getId(), ANNOUNCE.getId());
 
             assertThat(DTO).isPresent();
@@ -227,7 +227,7 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             crewMemberJpaRepository.findByCrewIdAndMemberId(CREW.getId(), REVI.getId()).get();
             Long DUMMY_ANNOUNCE_ID = 1L;
 
-            Optional<AnnounceDomainDto> DTO = announceQueryDslRepository
+            Optional<AnnounceResult> DTO = announceQueryDslRepository
                     .fetchByCrewIdAndId(CREW.getId(), DUMMY_ANNOUNCE_ID);
 
             assertThat(DTO).isEmpty();

@@ -27,8 +27,8 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.crew_request.application.dto.CrewRequestWithCrewDto;
-import revi1337.onsquad.crew_request.application.dto.CrewRequestWithMemberDto;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
+import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
@@ -66,7 +66,7 @@ class CrewRequestQueryServiceTest extends ApplicationLayerTestSupport {
             crewRequestRepository.save(CREW_PARTICIPANT(CREW, KWANGWON, NOW.plusHours(1)));
             clearPersistenceContext();
 
-            List<CrewRequestWithMemberDto> REQUESTS = crewRequestQueryService
+            List<CrewRequestWithMemberResponse> REQUESTS = crewRequestQueryService
                     .fetchAllRequests(REVI.getId(), CREW.getId(), PageRequest.of(0, 3));
 
             assertAll(() -> {
@@ -129,7 +129,7 @@ class CrewRequestQueryServiceTest extends ApplicationLayerTestSupport {
             crewRequestRepository.save(CREW_PARTICIPANT(CREW2, ANDONG, NOW.plusHours(2)));
             clearPersistenceContext();
 
-            List<CrewRequestWithCrewDto> REQUESTS = crewRequestQueryService.fetchAllCrewRequests(ANDONG.getId());
+            List<CrewRequestWithCrewResponse> REQUESTS = crewRequestQueryService.fetchAllCrewRequests(ANDONG.getId());
 
             assertAll(() -> {
                 assertThat(REQUESTS).hasSize(2);

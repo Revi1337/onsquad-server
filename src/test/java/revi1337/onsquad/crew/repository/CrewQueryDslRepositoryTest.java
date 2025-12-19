@@ -32,11 +32,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
-import revi1337.onsquad.crew.domain.dto.CrewDomainDto;
-import revi1337.onsquad.crew.domain.dto.EnrolledCrewDomainDto;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.repository.CrewQueryDslRepository;
+import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.EnrolledCrewResult;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
@@ -71,7 +71,7 @@ class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             Member REVI = memberJpaRepository.save(REVI());
             Crew CREW = crewJpaRepository.save(CREW(REVI));
 
-            Optional<CrewDomainDto> OPTIONAL_CREW = crewQueryDslRepository.findCrewById(CREW.getId());
+            Optional<CrewResult> OPTIONAL_CREW = crewQueryDslRepository.findCrewById(CREW.getId());
 
             assertThat(OPTIONAL_CREW).isPresent();
             assertThat(OPTIONAL_CREW.get().getId()).isEqualTo(CREW.getId());
@@ -105,7 +105,7 @@ class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             Crew CREW4 = crewJpaRepository.save(CREW_4(KWANGWON));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 2);
 
-            Page<CrewDomainDto> DTOS = crewQueryDslRepository.fetchCrewsByMemberId(KWANGWON.getId(), PAGE_REQUEST);
+            Page<CrewResult> DTOS = crewQueryDslRepository.fetchCrewsByMemberId(KWANGWON.getId(), PAGE_REQUEST);
 
             assertThat(DTOS).hasSize(2);
             assertThat(DTOS.getContent().get(0).getId()).isEqualTo(CREW4.getId());
@@ -133,7 +133,7 @@ class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, ANDONG, NOW.plusMinutes(1)));
 
-            List<EnrolledCrewDomainDto> DTOS = crewQueryDslRepository.fetchEnrolledCrewsByMemberId(REVI.getId());
+            List<EnrolledCrewResult> DTOS = crewQueryDslRepository.fetchEnrolledCrewsByMemberId(REVI.getId());
 
             assertThat(DTOS).hasSize(3);
 

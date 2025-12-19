@@ -6,9 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
-import revi1337.onsquad.squad.domain.dto.SquadWithLeaderStateDomainDto;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.result.SquadResult;
+import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -48,17 +48,17 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Optional<SquadDomainDto> fetchById(Long id) {
+    public Optional<SquadResult> fetchById(Long id) {
         return squadQueryDslRepository.fetchById(id);
     }
 
     @Override
-    public Page<SquadDomainDto> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
+    public Page<SquadResult> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
         return squadQueryDslRepository.fetchAllByCrewId(crewId, categoryType, pageable);
     }
 
     @Override
-    public Page<SquadWithLeaderStateDomainDto> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
+    public Page<SquadWithLeaderStateResult> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
         return squadQueryDslRepository.fetchAllWithOwnerState(memberId, crewId, pageable);
     }
 

@@ -17,8 +17,8 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 import revi1337.onsquad.squad_request.application.SquadRequestQueryService;
-import revi1337.onsquad.squad_request.presentation.dto.SquadRequestResponse;
-import revi1337.onsquad.squad_request.presentation.dto.SquadRequestWithSquadAndCrewResponse;
+import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
+import revi1337.onsquad.squad_request.application.response.SquadRequestWithSquadAndCrewResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -29,7 +29,7 @@ public class SquadRequestController {
     private final SquadRequestQueryService squadRequestQueryService;
 
     @PostMapping("/squads/{squadId}/requests")
-    public ResponseEntity<RestResponse<String>> request(
+    public ResponseEntity<RestResponse<Void>> request(
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
@@ -39,7 +39,7 @@ public class SquadRequestController {
     }
 
     @PatchMapping("/squads/{squadId}/requests/{requestId}")
-    public ResponseEntity<RestResponse<String>> acceptRequest(
+    public ResponseEntity<RestResponse<Void>> acceptRequest(
             @PathVariable Long squadId,
             @PathVariable Long requestId,
             @Authenticate CurrentMember currentMember
@@ -50,7 +50,7 @@ public class SquadRequestController {
     }
 
     @DeleteMapping("/squads/{squadId}/requests/{requestId}")
-    public ResponseEntity<RestResponse<String>> rejectRequest(
+    public ResponseEntity<RestResponse<Void>> rejectRequest(
             @PathVariable Long squadId,
             @PathVariable Long requestId,
             @Authenticate CurrentMember currentMember
@@ -61,7 +61,7 @@ public class SquadRequestController {
     }
 
     @DeleteMapping("/squads/{squadId}/requests/me")
-    public ResponseEntity<RestResponse<String>> cancelMyRequest(
+    public ResponseEntity<RestResponse<Void>> cancelMyRequest(
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember
     ) {
@@ -76,23 +76,17 @@ public class SquadRequestController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadRequestResponse> squadRequestResponses = squadRequestQueryService
-                .fetchAllRequests(currentMember.id(), squadId, pageable).stream()
-                .map(SquadRequestResponse::from)
-                .toList();
+        List<SquadRequestResponse> response = squadRequestQueryService.fetchAllRequests(currentMember.id(), squadId, pageable);
 
-        return ResponseEntity.ok().body(RestResponse.success(squadRequestResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @GetMapping("/squad-requests/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이지가 나뉠 가능성이 매우 큼
     public ResponseEntity<RestResponse<List<SquadRequestWithSquadAndCrewResponse>>> fetchMyAllRequests(
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadRequestWithSquadAndCrewResponse> requestResponses = squadRequestQueryService
-                .fetchAllMyRequests(currentMember.id()).stream()
-                .map(SquadRequestWithSquadAndCrewResponse::from)
-                .toList();
+        List<SquadRequestWithSquadAndCrewResponse> response = squadRequestQueryService.fetchAllMyRequests(currentMember.id());
 
-        return ResponseEntity.ok().body(RestResponse.success(requestResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 }

@@ -6,8 +6,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.squad_comment.domain.dto.SquadCommentDomainDto;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
+import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -28,17 +28,17 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
-    public List<SquadCommentDomainDto> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
+    public List<SquadCommentResult> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return squadCommentQueryDslRepository.fetchAllParentsBySquadId(squadId, pageable);
     }
 
     @Override
-    public List<SquadCommentDomainDto> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childSize) {
+    public List<SquadCommentResult> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childSize) {
         return squadCommentJdbcRepository.fetchAllChildrenByParentIdIn(parentIds, childSize);
     }
 
     @Override
-    public List<SquadCommentDomainDto> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
+    public List<SquadCommentResult> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
         return squadCommentQueryDslRepository.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
     }
 }

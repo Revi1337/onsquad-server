@@ -26,7 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.crew.application.dto.CrewMainDto;
+import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
@@ -72,7 +72,7 @@ class CrewMainServiceTest extends ApplicationLayerTestSupport {
         Announce ANNOUNCE = ANNOUNCE(CREW, crewMemberRepository.getByCrewIdAndMemberId(CREW.getId(), REVI.getId()));
         announceRepository.save(ANNOUNCE);
 
-        CrewMainDto CREW_MAIN_DTO = crewMainService.fetchMain(
+        CrewMainResponse CREW_MAIN_DTO = crewMainService.fetchMain(
                 REVI.getId(), CREW.getId(), PageRequest.of(0, 10)
         );
 

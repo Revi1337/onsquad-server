@@ -28,12 +28,12 @@ import revi1337.onsquad.crew.application.CrewCommandService;
 import revi1337.onsquad.crew.application.CrewCreationCoordinator;
 import revi1337.onsquad.crew.application.CrewImageUpdateCoordinator;
 import revi1337.onsquad.crew.application.CrewQueryService;
-import revi1337.onsquad.crew.presentation.dto.request.CrewCreateRequest;
-import revi1337.onsquad.crew.presentation.dto.request.CrewUpdateRequest;
-import revi1337.onsquad.crew.presentation.dto.response.CrewResponse;
-import revi1337.onsquad.crew.presentation.dto.response.CrewWithParticipantStateResponse;
-import revi1337.onsquad.crew.presentation.dto.response.DuplicateCrewNameResponse;
-import revi1337.onsquad.crew.presentation.dto.response.EnrolledCrewResponse;
+import revi1337.onsquad.crew.application.dto.response.CrewResponse;
+import revi1337.onsquad.crew.application.dto.response.DuplicateCrewNameResponse;
+import revi1337.onsquad.crew.application.dto.response.EnrolledCrewResponse;
+import revi1337.onsquad.crew.domain.result.CrewWithParticipantResult;
+import revi1337.onsquad.crew.presentation.request.CrewCreateRequest;
+import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -50,15 +50,13 @@ public class CrewController {
             @RequestParam String name,
             @Authenticate CurrentMember ignored
     ) {
-        if (crewQueryService.isDuplicateCrewName(name)) {
-            return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(true)));
-        }
+        DuplicateCrewNameResponse response = crewQueryService.checkNameDuplicate(name);
 
-        return ResponseEntity.ok().body(RestResponse.success(DuplicateCrewNameResponse.of(false)));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
-    public ResponseEntity<RestResponse<String>> newCrew(
+    public ResponseEntity<RestResponse<Void>> newCrew(
             @Valid @RequestPart CrewCreateRequest request,
             @RequestPart(required = false) MultipartFile file,
             @Authenticate CurrentMember currentMember
@@ -74,17 +72,16 @@ public class CrewController {
             @Authenticate(required = false) CurrentMember currentMember
     ) {
         if (currentMember == null) {
-            CrewResponse crewResponse = CrewResponse.from(crewQueryService.findCrewById(crewId));
-            return ResponseEntity.ok().body(RestResponse.success(crewResponse));
+            CrewResponse response = crewQueryService.findCrewById(crewId);
+            return ResponseEntity.ok().body(RestResponse.success(response));
         }
 
-        CrewWithParticipantStateResponse crewResponse = CrewWithParticipantStateResponse
-                .from(crewQueryService.findCrewById(currentMember.id(), crewId));
-        return ResponseEntity.ok().body(RestResponse.success(crewResponse));
+        CrewWithParticipantResult response = crewQueryService.findCrewById(currentMember.id(), crewId);
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @PutMapping("/{crewId}")
-    public ResponseEntity<RestResponse<String>> updateCrew(
+    public ResponseEntity<RestResponse<Void>> updateCrew(
             @PathVariable Long crewId,
             @Valid @RequestBody CrewUpdateRequest crewUpdateRequest,
             @Authenticate CurrentMember currentMember
@@ -95,7 +92,7 @@ public class CrewController {
     }
 
     @DeleteMapping("/{crewId}")
-    public ResponseEntity<RestResponse<String>> deleteCrew(
+    public ResponseEntity<RestResponse<Void>> deleteCrew(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
@@ -105,7 +102,7 @@ public class CrewController {
     }
 
     @PatchMapping(value = "/{crewId}/image", consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RestResponse<String>> updateCrewImage(
+    public ResponseEntity<RestResponse<Void>> updateCrewImage(
             @PathVariable Long crewId,
             @RequestPart MultipartFile file,
             @Authenticate CurrentMember currentMember
@@ -116,7 +113,7 @@ public class CrewController {
     }
 
     @DeleteMapping("/{crewId}/image")
-    public ResponseEntity<RestResponse<String>> deleteCrewImage(
+    public ResponseEntity<RestResponse<Void>> deleteCrewImage(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
@@ -130,11 +127,9 @@ public class CrewController {
             @RequestParam(required = false) String name,
             @PageableDefault Pageable pageable
     ) {
-        List<CrewResponse> crewResponses = crewQueryService.fetchCrewsByName(name, pageable).stream()
-                .map(CrewResponse::from)
-                .toList();
+        List<CrewResponse> response = crewQueryService.fetchCrewsByName(name, pageable);
 
-        return ResponseEntity.ok().body(RestResponse.success(crewResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @GetMapping("/me/owned")
@@ -142,22 +137,17 @@ public class CrewController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewResponse> ownCrewResponses = crewQueryService.fetchOwnedCrews(currentMember.id(), pageable).stream()
-                .map(CrewResponse::from)
-                .toList();
+        List<CrewResponse> response = crewQueryService.fetchOwnedCrews(currentMember.id(), pageable);
 
-        return ResponseEntity.ok().body(RestResponse.success(ownCrewResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @GetMapping("/me/participants")
     public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchMyParticipants(
             @Authenticate CurrentMember currentMember
     ) {
-        List<EnrolledCrewResponse> participantCrewResponses = crewQueryService
-                .fetchParticipantCrews(currentMember.id()).stream()
-                .map(EnrolledCrewResponse::from)
-                .toList();
+        List<EnrolledCrewResponse> response = crewQueryService.fetchParticipantCrews(currentMember.id());
 
-        return ResponseEntity.ok().body(RestResponse.success(participantCrewResponses));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 }

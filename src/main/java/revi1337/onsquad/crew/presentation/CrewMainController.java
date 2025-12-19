@@ -12,8 +12,8 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewMainService;
-import revi1337.onsquad.crew.presentation.dto.response.CrewMainResponse;
-import revi1337.onsquad.crew.presentation.dto.response.CrewStatisticResponse;
+import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
+import revi1337.onsquad.crew.application.dto.response.CrewStatisticResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -28,11 +28,9 @@ public class CrewMainController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        CrewMainResponse crewMainResponse = CrewMainResponse.from(
-                crewMainService.fetchMain(currentMember.id(), crewId, pageable)
-        );
+        CrewMainResponse response = crewMainService.fetchMain(currentMember.id(), crewId, pageable);
 
-        return ResponseEntity.ok().body(RestResponse.success(crewMainResponse));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @GetMapping("/{crewId}/manage")
@@ -40,10 +38,8 @@ public class CrewMainController {
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        CrewStatisticResponse crewStatisticResponse = CrewStatisticResponse.from(
-                crewMainService.calculateStatistic(currentMember.id(), crewId)
-        );
+        CrewStatisticResponse response = crewMainService.calculateStatistic(currentMember.id(), crewId);
 
-        return ResponseEntity.ok(RestResponse.success(crewStatisticResponse));
+        return ResponseEntity.ok(RestResponse.success(response));
     }
 }

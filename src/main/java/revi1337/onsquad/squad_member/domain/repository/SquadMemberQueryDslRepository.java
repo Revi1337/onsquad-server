@@ -23,14 +23,14 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.entity.QMember;
-import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.EnrolledSquadDomainDto.SimpleSquadInfoDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.QEnrolledSquadDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.QEnrolledSquadDomainDto_SimpleSquadInfoDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.QSquadInMembersDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.QSquadMemberDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadInMembersDomainDto;
-import revi1337.onsquad.squad_member.domain.dto.SquadMemberDomainDto;
+import revi1337.onsquad.squad_member.domain.result.EnrolledSquadResult;
+import revi1337.onsquad.squad_member.domain.result.EnrolledSquadResult.SimpleSquadInfoDomainDto;
+import revi1337.onsquad.squad_member.domain.result.QEnrolledSquadResult;
+import revi1337.onsquad.squad_member.domain.result.QEnrolledSquadResult_SimpleSquadInfoDomainDto;
+import revi1337.onsquad.squad_member.domain.result.QSquadInMembersResult;
+import revi1337.onsquad.squad_member.domain.result.QSquadMemberResult;
+import revi1337.onsquad.squad_member.domain.result.SquadInMembersResult;
+import revi1337.onsquad.squad_member.domain.result.SquadMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -43,7 +43,7 @@ public class SquadMemberQueryDslRepository {
     /**
      * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 분리한다.
      */
-    public List<EnrolledSquadDomainDto> findEnrolledSquads(Long memberId) {
+    public List<EnrolledSquadResult> findEnrolledSquads(Long memberId) {
         List<SimpleSquadInfoDomainDto> squads = jpaQueryFactory
                 .from(squadMember)
                 .innerJoin(squadMember.member, member).on(member.id.eq(memberId))
@@ -52,7 +52,7 @@ public class SquadMemberQueryDslRepository {
                 .innerJoin(squadCategory.category, category)
                 .orderBy(squadMember.requestAt.desc())
                 .transform(groupBy(squad.id)
-                        .list(new QEnrolledSquadDomainDto_SimpleSquadInfoDomainDto(
+                        .list(new QEnrolledSquadResult_SimpleSquadInfoDomainDto(
                                 squad.crew.id,
                                 squad.id,
                                 squad.title,
@@ -74,12 +74,12 @@ public class SquadMemberQueryDslRepository {
         Map<Long, List<SimpleSquadInfoDomainDto>> transformed = squads.stream()
                 .collect(Collectors.groupingBy(SimpleSquadInfoDomainDto::crewId));
 
-        Map<Long, EnrolledSquadDomainDto> crewMap = jpaQueryFactory
+        Map<Long, EnrolledSquadResult> crewMap = jpaQueryFactory
                 .from(crewMember)
                 .innerJoin(crewMember.crew, crew).on(crew.id.in(transformed.keySet()), crewMember.member.id.eq(memberId))
                 .innerJoin(crew.member, crewCreator)
                 .transform(groupBy(crew.id)
-                        .as(new QEnrolledSquadDomainDto(
+                        .as(new QEnrolledSquadResult(
                                 crew.id,
                                 crew.name,
                                 crew.imageUrl,
@@ -93,8 +93,8 @@ public class SquadMemberQueryDslRepository {
 
         return transformed.keySet().stream()
                 .map(crewId -> {
-                    EnrolledSquadDomainDto temp = crewMap.get(crewId);
-                    return new EnrolledSquadDomainDto(
+                    EnrolledSquadResult temp = crewMap.get(crewId);
+                    return new EnrolledSquadResult(
                             temp.id(),
                             temp.name(),
                             temp.imageUrl(),
@@ -104,9 +104,9 @@ public class SquadMemberQueryDslRepository {
                 }).toList();
     }
 
-    public List<SquadMemberDomainDto> fetchAllBySquadId(Long squadId) {
+    public List<SquadMemberResult> fetchAllBySquadId(Long squadId) {
         return jpaQueryFactory
-                .select(new QSquadMemberDomainDto(
+                .select(new QSquadMemberResult(
                         squadMember.requestAt,
                         new QSimpleMemberDomainDto(
                                 member.id,
@@ -121,15 +121,15 @@ public class SquadMemberQueryDslRepository {
     }
 
     @Deprecated
-    public SquadInMembersDomainDto fetchAllWithSquad(Long memberId, Long squadId) {
-        SquadInMembersDomainDto result = jpaQueryFactory
+    public SquadInMembersResult fetchAllWithSquad(Long memberId, Long squadId) {
+        SquadInMembersResult result = jpaQueryFactory
                 .from(squadMember)
                 .innerJoin(squadMember.squad, squad).on(squad.id.eq(squadId))
                 .innerJoin(squad.member, squadCreator)
                 .innerJoin(squadMember.member, member)
                 .orderBy(squadMember.requestAt.asc())
                 .transform(groupBy(squad.id)
-                        .as(new QSquadInMembersDomainDto(
+                        .as(new QSquadInMembersResult(
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
@@ -144,7 +144,7 @@ public class SquadMemberQueryDslRepository {
                                         squadCreator.introduce,
                                         squadCreator.mbti
                                 ),
-                                list(new QSquadMemberDomainDto(
+                                list(new QSquadMemberResult(
                                         squadMember.requestAt,
                                         new QSimpleMemberDomainDto(
                                                 member.id,
@@ -167,14 +167,14 @@ public class SquadMemberQueryDslRepository {
     }
 
     @Deprecated
-    public Optional<SquadInMembersDomainDto> fetchAllWithSquad(Long memberId, Long crewId, Long squadId) {
-        Map<Long, SquadInMembersDomainDto> result = jpaQueryFactory
+    public Optional<SquadInMembersResult> fetchAllWithSquad(Long memberId, Long crewId, Long squadId) {
+        Map<Long, SquadInMembersResult> result = jpaQueryFactory
                 .from(squadMember)
                 .innerJoin(squadMember.squad, squad).on(squad.crew.id.eq(crewId), squad.id.eq(squadId))
                 .innerJoin(squad.member, squadCreator)
                 .innerJoin(squadMember.member, member)
                 .transform(groupBy(squad.id)
-                        .as(new QSquadInMembersDomainDto(
+                        .as(new QSquadInMembersResult(
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
@@ -189,7 +189,7 @@ public class SquadMemberQueryDslRepository {
                                         squadCreator.introduce,
                                         squadCreator.mbti
                                 ),
-                                list(new QSquadMemberDomainDto(
+                                list(new QSquadMemberResult(
                                         squadMember.requestAt,
                                         new QSimpleMemberDomainDto(
                                                 member.id,
@@ -208,7 +208,7 @@ public class SquadMemberQueryDslRepository {
                     .where(squadCategory.squad.id.eq(squadId))
                     .fetch();
 
-            SquadInMembersDomainDto squadMembersWithSquadDomainDto = result.get(squadId);
+            SquadInMembersResult squadMembersWithSquadDomainDto = result.get(squadId);
             squadMembersWithSquadDomainDto.registerCategories(categories);
             return Optional.of(squadMembersWithSquadDomainDto);
         }

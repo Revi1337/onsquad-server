@@ -25,7 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
-import revi1337.onsquad.crew_member.application.dto.CrewMemberDto;
+import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
@@ -62,7 +62,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            Page<CrewMemberDto> DTOS = crewMemberService.fetchCrewMembers(REVI.getId(), CREW.getId(), PAGE_REQUEST);
+            Page<CrewMemberResponse> DTOS = crewMemberService.fetchCrewMembers(REVI.getId(), CREW.getId(), PAGE_REQUEST);
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);

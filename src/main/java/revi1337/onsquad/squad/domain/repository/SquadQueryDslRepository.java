@@ -25,11 +25,11 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
-import revi1337.onsquad.squad.domain.dto.QSimpleSquadDomainDto;
-import revi1337.onsquad.squad.domain.dto.QSquadDomainDto;
-import revi1337.onsquad.squad.domain.dto.QSquadWithLeaderStateDomainDto;
-import revi1337.onsquad.squad.domain.dto.SquadDomainDto;
-import revi1337.onsquad.squad.domain.dto.SquadWithLeaderStateDomainDto;
+import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
+import revi1337.onsquad.squad.domain.result.QSquadResult;
+import revi1337.onsquad.squad.domain.result.QSquadWithLeaderStateResult;
+import revi1337.onsquad.squad.domain.result.SquadResult;
+import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -42,14 +42,14 @@ public class SquadQueryDslRepository {
      *
      * @param id
      */
-    public Optional<SquadDomainDto> fetchById(Long id) {
+    public Optional<SquadResult> fetchById(Long id) {
         return Optional.ofNullable(jpaQueryFactory
                 .from(squad)
                 .innerJoin(squad.member, member)
                 .leftJoin(squad.categories, squadCategory)
                 .leftJoin(squadCategory.category, category)
                 .transform(groupBy(squad.id)
-                        .as(new QSquadDomainDto(
+                        .as(new QSquadResult(
                                 squad.id,
                                 squad.title,
                                 squad.content,
@@ -77,7 +77,7 @@ public class SquadQueryDslRepository {
      * @param categoryType
      * @param pageable
      */
-    public Page<SquadDomainDto> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
+    public Page<SquadResult> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
         List<Long> squadIds = jpaQueryFactory
                 .select(squad.id)
                 .from(squad)
@@ -92,14 +92,14 @@ public class SquadQueryDslRepository {
                 .orderBy(squad.createdAt.desc())
                 .fetch();
 
-        Map<Long, SquadDomainDto> groupResults = jpaQueryFactory
+        Map<Long, SquadResult> groupResults = jpaQueryFactory
                 .from(squad)
                 .innerJoin(squad.member, member)
                 .leftJoin(squad.categories, squadCategory)
                 .leftJoin(squadCategory.category, category)
                 .where(squad.id.in(squadIds))
                 .transform(groupBy(squad.id)
-                        .as(new QSquadDomainDto(
+                        .as(new QSquadResult(
                                 squad.id,
                                 squad.title,
                                 squad.content,
@@ -118,7 +118,7 @@ public class SquadQueryDslRepository {
                         ))
                 );
 
-        List<SquadDomainDto> results = squadIds.stream()
+        List<SquadResult> results = squadIds.stream()
                 .map(groupResults::get)
                 .toList();
 
@@ -135,16 +135,16 @@ public class SquadQueryDslRepository {
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
-    public Page<SquadWithLeaderStateDomainDto> fetchAllWithOwnerState(Long memberId,
-                                                                      Long crewId,
-                                                                      Pageable pageable) {
-        List<SquadWithLeaderStateDomainDto> results = jpaQueryFactory
-                .select(new QSquadWithLeaderStateDomainDto(
+    public Page<SquadWithLeaderStateResult> fetchAllWithOwnerState(Long memberId,
+                                                                   Long crewId,
+                                                                   Pageable pageable) {
+        List<SquadWithLeaderStateResult> results = jpaQueryFactory
+                .select(new QSquadWithLeaderStateResult(
                         new CaseBuilder()
                                 .when(member.id.eq(memberId))
                                 .then(TRUE)
                                 .otherwise(FALSE),
-                        new QSimpleSquadDomainDto(
+                        new QSimpleSquadResult(
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
@@ -181,7 +181,7 @@ public class SquadQueryDslRepository {
                         .as(list(category.categoryType)));
 
         results.stream()
-                .map(SquadWithLeaderStateDomainDto::squad)
+                .map(SquadWithLeaderStateResult::squad)
                 .forEach(squad -> {
                     if (categories.get(squad.id()) != null) {
                         squad.addCategories(categories.get(squad.id()));
@@ -204,9 +204,9 @@ public class SquadQueryDslRepository {
      * @deprecated Use {@link #fetchById(Long)} instead.
      */
     @Deprecated
-    public Optional<SquadDomainDto> fetchByIdV2(Long id) {
+    public Optional<SquadResult> fetchByIdV2(Long id) {
         return Optional.ofNullable(jpaQueryFactory
-                .select(new QSquadDomainDto(
+                .select(new QSquadResult(
                         squad.id,
                         squad.title,
                         squad.content,
@@ -235,8 +235,8 @@ public class SquadQueryDslRepository {
      */
     // TODO Join 이 한번 더 들어가지만, 처음부터 on 절로 필터링하는게 빠른지, 아니면 join 이 하나 덜 들어가지만 where 절로 필터링하는게 더 빠를까? Execution Plan 을 확인해 볼 필요가 있음.
     @Deprecated
-    public Page<SquadDomainDto> fetchAllByCrewIdV2(Long crewId, CategoryType categoryType, Pageable pageable) {
-        List<SquadDomainDto> transformedResults = jpaQueryFactory
+    public Page<SquadResult> fetchAllByCrewIdV2(Long crewId, CategoryType categoryType, Pageable pageable) {
+        List<SquadResult> transformedResults = jpaQueryFactory
                 .from(squad)
                 .innerJoin(squad.member, member)
                 .leftJoin(squad.categories, squadCategory)
@@ -246,7 +246,7 @@ public class SquadQueryDslRepository {
                 .limit(pageable.getPageSize())
                 .orderBy(squad.createdAt.desc())
                 .transform(groupBy(squad.id)
-                        .list(new QSquadDomainDto(
+                        .list(new QSquadResult(
                                 squad.id,
                                 squad.title,
                                 squad.content,
