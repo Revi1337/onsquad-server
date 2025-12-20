@@ -29,9 +29,8 @@ import revi1337.onsquad.crew.application.CrewCreationCoordinator;
 import revi1337.onsquad.crew.application.CrewImageUpdateCoordinator;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
+import revi1337.onsquad.crew.application.dto.response.CrewWithParticipantStateResponse;
 import revi1337.onsquad.crew.application.dto.response.DuplicateCrewNameResponse;
-import revi1337.onsquad.crew.application.dto.response.EnrolledCrewResponse;
-import revi1337.onsquad.crew.domain.result.CrewWithParticipantResult;
 import revi1337.onsquad.crew.presentation.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
 
@@ -67,17 +66,14 @@ public class CrewController {
     }
 
     @GetMapping("/{crewId}")
-    public ResponseEntity<RestResponse<?>> findCrew(
+    public ResponseEntity<RestResponse<CrewWithParticipantStateResponse>> findCrew(
             @PathVariable Long crewId,
             @Authenticate(required = false) CurrentMember currentMember
     ) {
-        if (currentMember == null) {
-            CrewResponse response = crewQueryService.findCrewById(crewId);
-            return ResponseEntity.ok().body(RestResponse.success(response));
-        }
+        Long memberId = currentMember == null ? null : currentMember.id();
+        CrewWithParticipantStateResponse response = crewQueryService.findCrewById(memberId, crewId);
 
-        CrewWithParticipantResult response = crewQueryService.findCrewById(currentMember.id(), crewId);
-        return ResponseEntity.ok().body(RestResponse.success(response));
+        return ResponseEntity.ok(RestResponse.success(response));
     }
 
     @PutMapping("/{crewId}")
@@ -132,21 +128,12 @@ public class CrewController {
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @GetMapping("/me/owned")
+    @GetMapping("/me/owned") // TODO 이거 도대체 뭐하는 API 인지 물어봐야 함. (기억 증발)
     public ResponseEntity<RestResponse<List<CrewResponse>>> fetchOwnedCrews(
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
         List<CrewResponse> response = crewQueryService.fetchOwnedCrews(currentMember.id(), pageable);
-
-        return ResponseEntity.ok().body(RestResponse.success(response));
-    }
-
-    @GetMapping("/me/participants")
-    public ResponseEntity<RestResponse<List<EnrolledCrewResponse>>> fetchMyParticipants(
-            @Authenticate CurrentMember currentMember
-    ) {
-        List<EnrolledCrewResponse> response = crewQueryService.fetchParticipantCrews(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

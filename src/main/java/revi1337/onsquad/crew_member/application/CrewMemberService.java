@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
+import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 
@@ -17,12 +18,18 @@ public class CrewMemberService {
     private final CrewMemberAccessPolicy crewMemberAccessPolicy;
     private final CrewMemberRepository crewMemberRepository;
 
-    public List<CrewMemberResponse> fetchCrewMembers(Long memberId, Long crewId, Pageable pageable) {
+    public List<CrewMemberResponse> manageCrewMembers(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         crewMemberAccessPolicy.ensureReadParticipantsAccessible(crewMember);
 
-        return crewMemberRepository.findManagedCrewMembersByCrewId(crewId, pageable).stream()
+        return crewMemberRepository.fetchParticipantsByCrewId(crewId, pageable).stream()
                 .map(CrewMemberResponse::from)
+                .toList();
+    }
+
+    public List<JoinedCrewResponse> fetchJoinedCrews(Long memberId) {
+        return crewMemberRepository.fetchJoinedCrewsByMemberId(memberId).stream()
+                .map(JoinedCrewResponse::from)
                 .toList();
     }
 }

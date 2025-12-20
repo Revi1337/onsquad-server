@@ -62,7 +62,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            Page<CrewMemberResponse> DTOS = crewMemberService.fetchCrewMembers(REVI.getId(), CREW.getId(), PAGE_REQUEST);
+            Page<CrewMemberResponse> DTOS = crewMemberService.manageCrewMembers(REVI.getId(), CREW.getId(), PAGE_REQUEST);
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);
@@ -92,7 +92,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, NOW));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            assertThatThrownBy(() -> crewMemberService.fetchCrewMembers(KWANGWON.getId(), CREW.getId(), PAGE_REQUEST))
+            assertThatThrownBy(() -> crewMemberService.manageCrewMembers(KWANGWON.getId(), CREW.getId(), PAGE_REQUEST))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotParticipant.class);
         }
 
@@ -105,7 +105,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            assertThatThrownBy(() -> crewMemberService.fetchCrewMembers(ANDONG.getId(), CREW.getId(), PAGE_REQUEST))
+            assertThatThrownBy(() -> crewMemberService.manageCrewMembers(ANDONG.getId(), CREW.getId(), PAGE_REQUEST))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
     }

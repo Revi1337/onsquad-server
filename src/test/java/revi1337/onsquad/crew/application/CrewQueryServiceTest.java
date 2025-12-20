@@ -34,11 +34,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
-import revi1337.onsquad.crew.application.dto.response.EnrolledCrewResponse;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
+import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
@@ -110,8 +110,8 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
                 assertThat(CREW_INFO.detail()).isEqualTo(CREW_DETAIL_VALUE);
                 assertThat(CREW_INFO.imageUrl()).isEqualTo(CREW_IMAGE_LINK_VALUE);
                 assertThat(CREW_INFO.kakaoLink()).isNull();
-                assertThat(CREW_INFO.memberCnt()).isEqualTo(1);
-                assertThat(CREW_INFO.hashtagTypes()).contains(ACTIVE.getText(), ESCAPE.getText());
+                assertThat(CREW_INFO.memberCount()).isEqualTo(1);
+                assertThat(CREW_INFO.hashtags()).contains(ACTIVE.getText(), ESCAPE.getText());
                 assertThat(CREW_INFO.owner().id()).isEqualTo(REVI.getId());
                 assertThat(CREW_INFO.owner().nickname()).isEqualTo(REVI_NICKNAME_VALUE);
                 assertThat(CREW_INFO.owner().mbti()).isEqualTo(ISTP.name());
@@ -138,9 +138,9 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             List<CrewResponse> FIND_CREWS = crewQueryService.fetchCrewsByName(CREW_NAME_VALUE, PageRequest.of(0, 10));
 
             assertAll(() -> {
-                assertThat(FIND_CREWS.get(0).hashtagTypes()).contains(IMPULSIVE.getText());
-                assertThat(FIND_CREWS.get(1).hashtagTypes()).contains(FOODIE.getText(), MOVIE.getText());
-                assertThat(FIND_CREWS.get(2).hashtagTypes()).contains(ACTIVE.getText(), ESCAPE.getText());
+                assertThat(FIND_CREWS.get(0).hashtags()).contains(IMPULSIVE.getText());
+                assertThat(FIND_CREWS.get(1).hashtags()).contains(FOODIE.getText(), MOVIE.getText());
+                assertThat(FIND_CREWS.get(2).hashtags()).contains(ACTIVE.getText(), ESCAPE.getText());
             });
         }
     }
@@ -163,7 +163,7 @@ class CrewQueryServiceTest extends ApplicationLayerTestSupport {
             crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, REVI, NOW.plusMinutes(1)));
             crewMemberJpaRepository.save(CrewMemberFactory.general(CREW2, ANDONG, NOW.plusMinutes(1)));
 
-            List<EnrolledCrewResponse> DTOS = crewQueryService.fetchParticipantCrews(REVI.getId());
+            List<JoinedCrewResponse> DTOS = crewQueryService.fetchParticipantCrews(REVI.getId());
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);

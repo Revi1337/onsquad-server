@@ -14,6 +14,7 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
+import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -22,13 +23,22 @@ public class CrewMemberController {
 
     private final CrewMemberService crewMemberService;
 
-    @GetMapping("/crews/{crewId}/manage/members")
-    public ResponseEntity<RestResponse<List<CrewMemberResponse>>> fetchCrewMembers(
+    @GetMapping("/crews/{crewId}/members/manage")
+    public ResponseEntity<RestResponse<List<CrewMemberResponse>>> manageCrewMembers(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewMemberResponse> response = crewMemberService.fetchCrewMembers(currentMember.id(), crewId, pageable);
+        List<CrewMemberResponse> response = crewMemberService.manageCrewMembers(currentMember.id(), crewId, pageable);
+
+        return ResponseEntity.ok().body(RestResponse.success(response));
+    }
+
+    @GetMapping("/members/me/crew-participants")
+    public ResponseEntity<RestResponse<List<JoinedCrewResponse>>> fetchJoinedCrews(
+            @Authenticate CurrentMember currentMember
+    ) {
+        List<JoinedCrewResponse> response = crewMemberService.fetchJoinedCrews(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

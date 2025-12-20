@@ -1,10 +1,10 @@
-package revi1337.onsquad.crew.domain.result;
+package revi1337.onsquad.crew_member.domain.result;
 
 import com.querydsl.core.annotations.QueryProjection;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 
-public record EnrolledCrewResult(
+public record JoinedCrewResult(
         Long id,
         Name name,
         String imageUrl,
@@ -13,13 +13,7 @@ public record EnrolledCrewResult(
 ) {
 
     @QueryProjection
-    public EnrolledCrewResult(
-            Long id,
-            Name name,
-            String imageUrl,
-            boolean isOwner,
-            SimpleMemberDomainDto owner
-    ) {
+    public JoinedCrewResult(Long id, Name name, String imageUrl, boolean isOwner, SimpleMemberDomainDto owner) {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;

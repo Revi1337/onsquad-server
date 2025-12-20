@@ -13,6 +13,10 @@ public class CrewMemberAccessPolicy {
 
     private final CrewMemberRepository crewMemberRepository;
 
+    public boolean alreadyParticipant(Long memberId, Long crewId) {
+        return crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId);
+    }
+
     public void ensureMemberInCrew(Long memberId, Long crewId) {
         if (crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).isEmpty()) {
             throw new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT);

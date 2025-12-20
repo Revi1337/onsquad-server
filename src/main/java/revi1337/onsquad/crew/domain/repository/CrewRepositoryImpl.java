@@ -3,13 +3,11 @@ package revi1337.onsquad.crew.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.result.CrewResult;
-import revi1337.onsquad.crew.domain.result.EnrolledCrewResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -54,22 +52,17 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<CrewResult> findCrewById(Long id) {
-        return crewQueryDslRepository.findCrewById(id);
+    public Optional<CrewResult> fetchCrewWithDetailById(Long id) {
+        return crewQueryDslRepository.fetchCrewWithDetailById(id);
     }
 
     @Override
-    public Page<CrewResult> fetchCrewsByName(String name, Pageable pageable) {
-        return crewQueryDslRepository.fetchCrewsByName(name, pageable);
+    public List<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable) {
+        return crewQueryDslRepository.fetchCrewsWithDetailByName(name, pageable);
     }
 
     @Override
-    public Page<CrewResult> fetchOwnedByMemberId(Long memberId, Pageable pageable) {
-        return crewQueryDslRepository.fetchCrewsByMemberId(memberId, pageable);
-    }
-
-    @Override
-    public List<EnrolledCrewResult> fetchParticipantsByMemberId(Long memberId) {
-        return crewQueryDslRepository.fetchEnrolledCrewsByMemberId(memberId);
+    public List<CrewResult> fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable) {
+        return crewQueryDslRepository.fetchCrewsWithDetailByMemberId(memberId, pageable);
     }
 }

@@ -190,7 +190,7 @@ class CrewMemberRepositoryTest extends PersistenceLayerTestSupport {
             crewMemberRepository.save(CrewMemberFactory.general(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            Page<CrewMemberResult> DTOS = crewMemberRepository.findManagedCrewMembersByCrewId(CREW.getId(), PAGE_REQUEST);
+            Page<CrewMemberResult> DTOS = crewMemberRepository.fetchParticipantsByCrewId(CREW.getId(), PAGE_REQUEST);
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);

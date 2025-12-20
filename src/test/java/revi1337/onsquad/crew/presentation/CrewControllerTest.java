@@ -73,10 +73,10 @@ import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
-import revi1337.onsquad.crew.application.dto.response.EnrolledCrewResponse;
-import revi1337.onsquad.crew.domain.result.CrewWithParticipantResult;
+import revi1337.onsquad.crew.application.dto.response.CrewWithParticipantStateResponse;
 import revi1337.onsquad.crew.presentation.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
+import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
 
@@ -254,7 +254,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("토큰이 있는 경우에도 Crew 조회에 성공한다.")
         void success2() throws Exception {
-            CrewWithParticipantResult CREW_INFO = new CrewWithParticipantResult(
+            CrewWithParticipantStateResponse CREW_INFO = new CrewWithParticipantStateResponse(
                     true,
                     new CrewResponse(
                             1L,
@@ -621,21 +621,21 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("내가 참여하고 있는 Crew 에 대한 CrewMember 조회를 문서화에 성공한다.")
         void success() throws Exception {
-            EnrolledCrewResponse SERVICE_DTO1 = new EnrolledCrewResponse(
+            JoinedCrewResponse SERVICE_DTO1 = new JoinedCrewResponse(
                     1L,
                     CREW1_NAME_VALUE,
                     CREW1_IMAGE_LINK_VALUE,
                     true,
                     new SimpleMemberDto(1L, null, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE)
             );
-            EnrolledCrewResponse SERVICE_DTO2 = new EnrolledCrewResponse(
+            JoinedCrewResponse SERVICE_DTO2 = new JoinedCrewResponse(
                     2L,
                     CREW2_NAME_VALUE,
                     CREW2_IMAGE_LINK_VALUE,
                     false,
                     new SimpleMemberDto(2L, null, ANDONG_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             );
-            List<EnrolledCrewResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
+            List<JoinedCrewResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
             when(crewQueryService.fetchParticipantCrews(any())).thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/me/participants")

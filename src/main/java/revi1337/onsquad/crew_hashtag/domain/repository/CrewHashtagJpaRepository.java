@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_hashtag.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,5 +14,8 @@ public interface CrewHashtagJpaRepository extends JpaRepository<CrewHashtag, Lon
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete CrewHashtag as ch where ch.crew.id = :crewId")
     void deleteById(Long crewId);
+
+    @Query("select ch from CrewHashtag ch inner join fetch ch.hashtag where ch.crew.id in :crewIds")
+    List<CrewHashtag> fetchHashtagsByCrewIdIn(List<Long> crewIds);
 
 }

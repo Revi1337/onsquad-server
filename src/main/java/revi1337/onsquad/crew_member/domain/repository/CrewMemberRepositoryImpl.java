@@ -1,12 +1,13 @@
 package revi1337.onsquad.crew_member.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.result.CrewMemberResult;
+import revi1337.onsquad.crew_member.domain.result.JoinedCrewResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -46,7 +47,12 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public Page<CrewMemberResult> findManagedCrewMembersByCrewId(Long crewId, Pageable pageable) {
-        return crewMemberQueryDslRepository.fetchAllByCrewId(crewId, pageable);
+    public List<CrewMemberResult> fetchParticipantsByCrewId(Long crewId, Pageable pageable) {
+        return crewMemberQueryDslRepository.fetchParticipantsByCrewId(crewId, pageable);
+    }
+
+    @Override
+    public List<JoinedCrewResult> fetchJoinedCrewsByMemberId(Long memberId) {
+        return crewMemberQueryDslRepository.fetchJoinedCrewsByMemberId(memberId);
     }
 }

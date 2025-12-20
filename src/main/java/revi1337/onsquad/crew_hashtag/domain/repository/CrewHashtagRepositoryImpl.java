@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_hashtag.domain.repository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_hashtag.domain.entity.CrewHashtag;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 
 @RequiredArgsConstructor
@@ -15,6 +16,11 @@ public class CrewHashtagRepositoryImpl implements CrewHashtagRepository {
     @Override
     public void insertBatch(Long crewId, List<Hashtag> hashtags) {
         crewHashtagJdbcRepository.batchInsert(crewId, hashtags);
+    }
+
+    @Override
+    public List<CrewHashtag> fetchHashtagsByCrewIdIn(List<Long> crewIds) {
+        return crewHashtagJpaRepository.fetchHashtagsByCrewIdIn(crewIds);
     }
 
     @Override
