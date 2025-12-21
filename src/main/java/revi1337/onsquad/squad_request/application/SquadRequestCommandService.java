@@ -13,7 +13,9 @@ import revi1337.onsquad.squad_member.application.SquadMemberAccessPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
+import revi1337.onsquad.squad_request.domain.event.RequestAccepted;
 import revi1337.onsquad.squad_request.domain.event.RequestAdded;
+import revi1337.onsquad.squad_request.domain.event.RequestRejected;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
 
 @Transactional
@@ -46,6 +48,7 @@ public class SquadRequestCommandService {
         Squad squad = request.getSquad();
         squad.addMembers(SquadMemberFactory.general(request.getMember(), LocalDateTime.now()));
         squadRequestRepository.deleteById(requestId);
+        eventPublisher.publishEvent(new RequestAccepted(squadId, request.getRequesterId(), memberId));
     }
 
     public void rejectRequest(Long memberId, Long squadId, Long requestId) {
@@ -54,6 +57,7 @@ public class SquadRequestCommandService {
         SquadMember squadMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
         squadRequestAccessPolicy.ensureRejectable(squadMember);
         squadRequestRepository.deleteById(requestId);
+        eventPublisher.publishEvent(new RequestRejected(squadId, request.getRequesterId(), memberId));
     }
 
     public void cancelMyRequest(Long memberId, Long squadId) {
