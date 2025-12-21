@@ -25,6 +25,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
+import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
 import revi1337.onsquad.squad.domain.result.QSquadResult;
 import revi1337.onsquad.squad.domain.result.QSquadWithLeaderStateResult;
@@ -37,19 +38,126 @@ public class SquadQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    /**
-     * Optimized Query Base {@link #fetchByIdV2(Long)}
-     *
-     * @param id
-     */
-    public Optional<SquadResult> fetchById(Long id) {
+    public Optional<Squad> findSquadWithDetailById(Long id) {
         return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(squad)
+                .innerJoin(squad.member, member).fetchJoin()
+                .leftJoin(squad.categories, squadCategory).fetchJoin()
+                .leftJoin(squadCategory.category, category).fetchJoin()
+                .where(squad.id.eq(id))
+                .fetchOne()
+        );
+    }
+
+    public List<SquadResult> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
+        return jpaQueryFactory
+                .select(new QSquadResult(
+                        squad.id,
+                        squad.title,
+                        squad.content,
+                        squad.capacity,
+                        squad.remain,
+                        squad.address,
+                        squad.kakaoLink,
+                        squad.discordLink,
+                        new QSimpleMemberDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.introduce,
+                                member.mbti
+                        )
+                ))
+                .from(squad)
+                .innerJoin(squad.member, member)
+                .where(squad.crew.id.eq(crewId), categoryEq(categoryType))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(squad.createdAt.desc())
+                .fetch();
+    }
+
+    public List<SquadWithLeaderStateResult> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
+        return jpaQueryFactory
+                .select(new QSquadWithLeaderStateResult(
+                        new CaseBuilder()
+                                .when(member.id.eq(memberId))
+                                .then(TRUE)
+                                .otherwise(FALSE),
+                        new QSimpleSquadResult(
+                                squad.id,
+                                squad.title,
+                                squad.capacity,
+                                squad.remain,
+                                new QSimpleMemberDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.introduce,
+                                        member.mbti
+                                )
+                        )))
+                .from(squad)
+                .innerJoin(squad.member, member)
+                .where(squad.crew.id.eq(crewId))
+                .orderBy(squad.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    private BooleanExpression categoryEq(CategoryType categoryType) {
+        if (categoryType == CategoryType.ALL) {
+            return null;
+        }
+
+        return category.id.eq(categoryType.getPk());
+    }
+
+    /**
+     * @see #findSquadWithDetailById(Long)
+     * @deprecated
+     */
+    @Deprecated
+    public Optional<SquadResult> fetchSquadWithDetailByIdLegacy(Long id) {
+        return Optional.ofNullable(jpaQueryFactory
+                .select(new QSquadResult(
+                        squad.id,
+                        squad.title,
+                        squad.content,
+                        squad.capacity,
+                        squad.remain,
+                        squad.address,
+                        squad.kakaoLink,
+                        squad.discordLink,
+                        new QSimpleMemberDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.introduce,
+                                member.mbti
+                        )
+                ))
+                .from(squad)
+                .innerJoin(squad.member, member)
+                .where(squad.id.eq(id))
+                .fetchOne());
+    }
+
+    /**
+     * @see #fetchSquadsWithDetailByCrewIdAndCategory(Long, CategoryType, Pageable)
+     * @deprecated
+     */
+    @Deprecated
+    public Page<SquadResult> fetchSquadsWithDetailByCrewIdAndCategoryLegacy(Long crewId, CategoryType categoryType, Pageable pageable) {
+        List<SquadResult> transformedResults = jpaQueryFactory
                 .from(squad)
                 .innerJoin(squad.member, member)
                 .leftJoin(squad.categories, squadCategory)
                 .leftJoin(squadCategory.category, category)
+                .where(squad.crew.id.eq(crewId), categoryEq(categoryType))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(squad.createdAt.desc())
                 .transform(groupBy(squad.id)
-                        .as(new QSquadResult(
+                        .list(new QSquadResult(
                                 squad.id,
                                 squad.title,
                                 squad.content,
@@ -66,27 +174,26 @@ public class SquadQueryDslRepository {
                                         member.mbti
                                 )
                         ))
-                ).get(id)
-        );
+                );
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(squad.count())
+                .from(squad)
+                .where(squad.crew.id.eq(crewId), categoryEq(categoryType));
+
+        return PageableExecutionUtils.getPage(transformedResults, pageable, countQuery::fetchOne);
     }
 
     /**
-     * Optimized Query Base {@link #fetchAllByCrewIdV2(Long, CategoryType, Pageable)}
-     *
-     * @param crewId
-     * @param categoryType
-     * @param pageable
+     * @see #fetchSquadsWithDetailByCrewIdAndCategory(Long, CategoryType, Pageable)
+     * @deprecated
      */
-    public Page<SquadResult> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
+    @Deprecated
+    public Page<SquadResult> fetchSquadsWithDetailByCrewIdAndCategoryLegacyV2(Long crewId, CategoryType categoryType, Pageable pageable) {
         List<Long> squadIds = jpaQueryFactory
                 .select(squad.id)
                 .from(squad)
-                .leftJoin(squad.categories, squadCategory)
-                .leftJoin(squadCategory.category, category)
-                .where(
-                        squad.crew.id.eq(crewId),
-                        categoryEq(categoryType)
-                )
+                .where(squad.crew.id.eq(crewId), categoryEq(categoryType))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(squad.createdAt.desc())
@@ -135,9 +242,12 @@ public class SquadQueryDslRepository {
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
-    public Page<SquadWithLeaderStateResult> fetchAllWithOwnerState(Long memberId,
-                                                                   Long crewId,
-                                                                   Pageable pageable) {
+    /**
+     * @see #fetchManageList(Long, Long, Pageable)
+     * @deprecated
+     */
+    @Deprecated
+    public Page<SquadWithLeaderStateResult> fetchManageListLegacy(Long memberId, Long crewId, Pageable pageable) {
         List<SquadWithLeaderStateResult> results = jpaQueryFactory
                 .select(new QSquadWithLeaderStateResult(
                         new CaseBuilder()
@@ -189,87 +299,5 @@ public class SquadQueryDslRepository {
                 });
 
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
-    }
-
-    private BooleanExpression categoryEq(CategoryType categoryType) {
-        if (categoryType == CategoryType.ALL) {
-            return null;
-        }
-
-        return category.id.eq(categoryType.getPk());
-    }
-
-    /**
-     * @param id
-     * @deprecated Use {@link #fetchById(Long)} instead.
-     */
-    @Deprecated
-    public Optional<SquadResult> fetchByIdV2(Long id) {
-        return Optional.ofNullable(jpaQueryFactory
-                .select(new QSquadResult(
-                        squad.id,
-                        squad.title,
-                        squad.content,
-                        squad.capacity,
-                        squad.remain,
-                        squad.address,
-                        squad.kakaoLink,
-                        squad.discordLink,
-                        new QSimpleMemberDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.introduce,
-                                member.mbti
-                        )
-                ))
-                .from(squad)
-                .innerJoin(squad.member, member)
-                .fetchOne());
-    }
-
-    /**
-     * @param crewId
-     * @param categoryType
-     * @param pageable
-     * @deprecated Use {@link #fetchAllByCrewId(Long, CategoryType, Pageable)} instead.
-     */
-    // TODO Join 이 한번 더 들어가지만, 처음부터 on 절로 필터링하는게 빠른지, 아니면 join 이 하나 덜 들어가지만 where 절로 필터링하는게 더 빠를까? Execution Plan 을 확인해 볼 필요가 있음.
-    @Deprecated
-    public Page<SquadResult> fetchAllByCrewIdV2(Long crewId, CategoryType categoryType, Pageable pageable) {
-        List<SquadResult> transformedResults = jpaQueryFactory
-                .from(squad)
-                .innerJoin(squad.member, member)
-                .leftJoin(squad.categories, squadCategory)
-                .leftJoin(squadCategory.category, category)
-                .where(categoryEq(categoryType))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .orderBy(squad.createdAt.desc())
-                .transform(groupBy(squad.id)
-                        .list(new QSquadResult(
-                                squad.id,
-                                squad.title,
-                                squad.content,
-                                squad.capacity,
-                                squad.remain,
-                                squad.address,
-                                squad.kakaoLink,
-                                squad.discordLink,
-                                list(category.categoryType),
-                                new QSimpleMemberDomainDto(
-                                        member.id,
-                                        member.nickname,
-                                        member.introduce,
-                                        member.mbti
-                                )
-                        ))
-                );
-
-        JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(squad.count())
-                .from(squad)
-                .where(squad.crew.id.eq(crewId));
-
-        return PageableExecutionUtils.getPage(transformedResults, pageable, countQuery::fetchOne);
     }
 }

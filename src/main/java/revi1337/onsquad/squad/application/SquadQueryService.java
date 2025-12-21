@@ -1,20 +1,28 @@
 package revi1337.onsquad.squad.application;
 
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
-import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
+import revi1337.onsquad.squad.domain.SquadLinkable;
+import revi1337.onsquad.squad.domain.SquadLinkableGroup;
+import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad.domain.result.SquadResult;
+import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
 import revi1337.onsquad.squad.error.SquadErrorCode;
 import revi1337.onsquad.squad.error.exception.SquadBusinessException;
+import revi1337.onsquad.squad_category.domain.SquadCategories;
+import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
@@ -27,41 +35,55 @@ public class SquadQueryService {
     private final SquadMemberAccessPolicy squadMemberAccessPolicy;
     private final SquadAccessPolicy squadAccessPolicy;
     private final SquadRepository squadRepository;
+    private final SquadCategoryRepository squadCategoryRepository;
 
-    public SquadWithParticipantAndLeaderAndViewStateResponse fetchSquad(Long memberId, Long crewId, Long squadId) {
-        validateSquadBelongToCrew(squadId, crewId);
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
+    public SquadWithStatesResponse fetchSquad(Long memberId, Long squadId) {
+        Squad squad = squadRepository.findSquadWithDetailById(squadId).orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND));
         SquadMember squadMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
-        SquadResult squad = squadRepository.fetchById(squadId)
-                .orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND)); // TODO 여기 쿼리 이상할거임. 일단 나중에.
+        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, squad.getCrewId());
 
-        boolean alreadyParticipant = squadMember != null;
-        boolean isLeader = squadMember.isLeader();
-        boolean canSeeMembers = crewMember.isOwner();
+        boolean alreadyParticipant = squadAccessPolicy.isParticipant(squadId, squadMember);
+        boolean isLeader = squadAccessPolicy.isLeader(squadMember);
+        boolean canSeeMembers = squadAccessPolicy.canSeeParticipants(crewMember);
 
-        return SquadWithParticipantAndLeaderAndViewStateResponse.from(alreadyParticipant, canSeeMembers, isLeader, squad);
+        return SquadWithStatesResponse.from(alreadyParticipant, canSeeMembers, isLeader, squad);
     }
 
-    public List<SquadResponse> fetchSquads(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
+    public List<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
         crewMemberAccessPolicy.ensureMemberInCrew(memberId, crewId);
+        SquadLinkableGroup<SquadResult> results = new SquadLinkableGroup<>(
+                squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable));
+        if (results.isNotEmpty()) {
+            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(results.getSquadIds()));
+            linkCategories(results, categories);
+        }
 
-        return squadRepository.fetchAllByCrewId(crewId, condition.categoryType(), pageable).stream()
+        return results.values().stream()
                 .map(SquadResponse::from)
                 .toList();
     }
 
-    public List<SquadWithLeaderStateResponse> fetchSquadsWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
+    public List<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        squadAccessPolicy.ensureSquadListAccessible(crewMember);
+        squadAccessPolicy.ensureSquadManageListAccessible(crewMember);
+        SquadLinkableGroup<SquadWithLeaderStateResult> results = new SquadLinkableGroup<>(squadRepository.fetchManageList(memberId, crewId, pageable));
+        if (results.isNotEmpty()) {
+            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(results.getSquadIds()));
+            linkCategories(results, categories);
+        }
 
-        return squadRepository.fetchAllWithOwnerState(memberId, crewId, pageable).stream()
+        return results.values().stream()
                 .map(SquadWithLeaderStateResponse::from)
                 .toList();
     }
 
-    private void validateSquadBelongToCrew(Long squadId, Long crewId) { // TODO 이거는 Policy 에서 제외. 어짜피 Squad Query 리팩토링할 때 삭제해야할듯
-        if (!squadRepository.existsByIdAndCrewId(squadId, crewId)) {
-            throw new SquadBusinessException.MismatchReference(SquadErrorCode.MISMATCH_CREW_REFERENCE);
-        }
+    private void linkCategories(SquadLinkableGroup<? extends SquadLinkable> squadLinks, SquadCategories categories) {
+        Map<Long, List<CategoryType>> categoryMap = categories.groupBySquadId();
+        squadLinks.values().forEach(squadLink -> {
+            List<CategoryType> categoryTypes = categoryMap.get(squadLink.getSquadId());
+            if (categoryTypes != null) {
+                squadLink.addCategories(categoryTypes);
+            }
+        });
     }
 }

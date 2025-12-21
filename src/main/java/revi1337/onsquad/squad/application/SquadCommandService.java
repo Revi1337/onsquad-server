@@ -9,9 +9,7 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
-import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJdbcRepository;
-import revi1337.onsquad.squad_member.application.SquadMemberAccessPolicy;
-import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository;
 
 @Transactional
 @RequiredArgsConstructor
@@ -19,23 +17,20 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 public class SquadCommandService {
 
     private final CrewMemberAccessPolicy crewMemberAccessPolicy;
-    private final SquadMemberAccessPolicy squadMemberAccessPolicy;
     private final SquadAccessPolicy squadAccessPolicy;
     private final SquadRepository squadRepository;
-    private final SquadCategoryJdbcRepository squadCategoryJdbcRepository;
+    private final SquadCategoryRepository squadCategoryRepository;
 
     public Long newSquad(Long memberId, Long crewId, SquadCreateDto dto) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         Squad squad = squadRepository.save(Squad.create(dto.toEntityMetadata(), crewMember.getMember(), crewMember.getCrew()));
-        squadCategoryJdbcRepository.insertBatch(squad.getId(), Category.fromCategoryTypes(dto.categories()));
+        squadCategoryRepository.insertBatch(squad.getId(), Category.fromCategoryTypes(dto.categories()));
         return squad.getId();
     }
 
-    public void deleteSquad(Long memberId, Long crewId, Long squadId) {
-        SquadMember squadMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
-        Squad squad = squadMember.getSquad();
-        squadAccessPolicy.ensureMatchCrew(squad, crewId);
-        squadAccessPolicy.ensureDeletable(squadMember);
+    public void deleteSquad(Long memberId, Long squadId) {
+        Squad squad = squadAccessPolicy.ensureSquadExistsAndGet(squadId);
+        squadAccessPolicy.ensureDeletable(squad, memberId);
         squadRepository.deleteById(squadId);
     }
 }

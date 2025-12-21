@@ -2,9 +2,12 @@ package revi1337.onsquad.squad.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
+import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.result.SquadResult;
+import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SquadResponse(
@@ -36,6 +39,26 @@ public record SquadResponse(
                         .map(CategoryType::getText)
                         .toList(),
                 SimpleMemberDto.from(squadResult.leader())
+        );
+    }
+
+    public static SquadResponse from(Squad squad) {
+        return new SquadResponse(
+                squad.getId(),
+                squad.getTitle().getValue(),
+                squad.getContent().getValue(),
+                squad.getCapacity(),
+                squad.getRemain(),
+                squad.getAddress().getValue(),
+                squad.getAddress().getDetail(),
+                squad.getKakaoLink(),
+                squad.getDiscordLink(),
+                squad.getCategories().stream()
+                        .map(SquadCategory::getCategory)
+                        .map(Category::getCategoryType)
+                        .map(CategoryType::getText)
+                        .toList(),
+                SimpleMemberDto.from(squad.getMember())
         );
     }
 }

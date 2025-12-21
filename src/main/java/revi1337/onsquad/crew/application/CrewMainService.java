@@ -2,7 +2,6 @@ package revi1337.onsquad.crew.application;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.announce.domain.repository.AnnounceCacheRepository;
@@ -41,9 +40,9 @@ public class CrewMainService {
 
         List<AnnounceResult> announces = announceCacheRepository.fetchAllCacheInDefaultByCrewId(crewId);
         List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
-        Page<SquadResult> squads = squadRepository.fetchAllByCrewId(crewId, CategoryType.ALL, pageable);
+        List<SquadResult> squads = squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
-        return CrewMainResponse.from(crewMember.isOwner(), result, announces, topMembers, squads.getContent());
+        return CrewMainResponse.from(crewMember.isOwner(), result, announces, topMembers, squads);
     }
 
     // TODO 캐시 정합성을 조금 더 올릴 방법을 생각해봐야 한다. 캐싱 된 이후에 추가된 인원 수, 추가된 신청 수, 추가된 스쿼드 수 를 파악(Redis)해 추가해주는 방향을 생각해야한다.

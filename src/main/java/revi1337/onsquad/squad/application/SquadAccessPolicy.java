@@ -34,9 +34,27 @@ public class SquadAccessPolicy {
         }
     }
 
-    public void ensureSquadListAccessible(CrewMember crewMember) {
+    public void ensureDeletable(Squad squad, Long memberId) {
+        if (squad.mismatchMemberId(memberId)) {
+            throw new SquadBusinessException.InsufficientAuthority(SquadErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
+        }
+    }
+
+    public void ensureSquadManageListAccessible(CrewMember crewMember) {
         if (crewMember.isNotOwner()) {
             throw new CrewMemberBusinessException.NotOwner(CrewMemberErrorCode.NOT_OWNER);
         }
+    }
+
+    public boolean canSeeParticipants(CrewMember crewMember) {
+        return crewMember != null && crewMember.isOwner();
+    }
+
+    public boolean isLeader(SquadMember squadMember) {
+        return squadMember != null && squadMember.isLeader();
+    }
+
+    public boolean isParticipant(Long squadId, SquadMember squadMember) {
+        return squadMember != null && squadMember.matchSquadId(squadId);
     }
 }

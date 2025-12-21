@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.squad.domain.entity.Squad;
@@ -16,17 +16,15 @@ public interface SquadRepository {
 
     Squad saveAndFlush(Squad squad);
 
-    boolean existsByIdAndCrewId(Long squadId, Long crewId);
-
     Optional<Squad> findById(Long id);
 
     Optional<Squad> findWithCrewById(Long id);
 
-    Optional<SquadResult> fetchById(Long id);
+    Optional<Squad> findSquadWithDetailById(Long id);
 
-    Page<SquadResult> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable);
+    List<SquadResult> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable);
 
-    Page<SquadWithLeaderStateResult> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable);
+    List<SquadWithLeaderStateResult> fetchManageList(Long memberId, Long crewId, Pageable pageable);
 
     void deleteById(Long id);
 

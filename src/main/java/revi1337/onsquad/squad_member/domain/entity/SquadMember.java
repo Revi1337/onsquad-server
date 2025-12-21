@@ -120,7 +120,7 @@ public class SquadMember extends RequestEntity {
         return Objects.hashCode(id);
     }
 
-    public boolean matchMemberId(Long memberId) {
-        return member.getId().equals(memberId);
+    public boolean matchSquadId(Long squadId) {
+        return squad.matchId(squadId);
     }
 }

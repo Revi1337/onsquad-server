@@ -1,8 +1,8 @@
 package revi1337.onsquad.squad.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
@@ -33,11 +33,6 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public boolean existsByIdAndCrewId(Long id, Long crewId) {
-        return squadJpaRepository.existsByIdAndCrew_id(id, crewId);
-    }
-
-    @Override
     public Optional<Squad> findById(Long id) {
         return squadJpaRepository.findById(id);
     }
@@ -48,18 +43,18 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Optional<SquadResult> fetchById(Long id) {
-        return squadQueryDslRepository.fetchById(id);
+    public Optional<Squad> findSquadWithDetailById(Long id) {
+        return squadQueryDslRepository.findSquadWithDetailById(id);
     }
 
     @Override
-    public Page<SquadResult> fetchAllByCrewId(Long crewId, CategoryType categoryType, Pageable pageable) {
-        return squadQueryDslRepository.fetchAllByCrewId(crewId, categoryType, pageable);
+    public List<SquadResult> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
+        return squadQueryDslRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, categoryType, pageable);
     }
 
     @Override
-    public Page<SquadWithLeaderStateResult> fetchAllWithOwnerState(Long memberId, Long crewId, Pageable pageable) {
-        return squadQueryDslRepository.fetchAllWithOwnerState(memberId, crewId, pageable);
+    public List<SquadWithLeaderStateResult> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
+        return squadQueryDslRepository.fetchManageList(memberId, crewId, pageable);
     }
 
     @Override

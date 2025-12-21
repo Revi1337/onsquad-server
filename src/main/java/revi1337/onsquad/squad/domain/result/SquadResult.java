@@ -6,6 +6,7 @@ import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.entity.vo.Address;
+import revi1337.onsquad.squad.domain.SquadLinkable;
 import revi1337.onsquad.squad.domain.entity.vo.Content;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
@@ -20,7 +21,7 @@ public record SquadResult(
         String discordLink,
         List<CategoryType> categories,
         SimpleMemberDomainDto leader
-) {
+) implements SquadLinkable {
 
     @QueryProjection
     public SquadResult(Long id, Title title, Content content, int capacity, int remain, Address address,
@@ -42,5 +43,15 @@ public record SquadResult(
         this.discordLink = discordLink;
         this.categories = categories;
         this.leader = leader;
+    }
+
+    @Override
+    public Long getSquadId() {
+        return id;
+    }
+
+    @Override
+    public void addCategories(List<CategoryType> categories) {
+        this.categories.addAll(categories);
     }
 }

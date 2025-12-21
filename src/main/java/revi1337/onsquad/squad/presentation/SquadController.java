@@ -22,18 +22,18 @@ import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
-import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.presentation.request.SquadCreateRequest;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/crews")
+@RequestMapping("/api")
 @RestController
 public class SquadController {
 
     private final SquadCommandService squadCommandService;
     private final SquadQueryService squadQueryService;
 
-    @PostMapping("/{crewId}/squads")
+    @PostMapping("/crews/{crewId}/squads")
     public ResponseEntity<RestResponse<Void>> newSquad(
             @PathVariable Long crewId,
             @Valid @RequestBody SquadCreateRequest squadCreateRequest,
@@ -44,48 +44,46 @@ public class SquadController {
         return ResponseEntity.ok(RestResponse.created());
     }
 
-    @GetMapping("/{crewId}/squads/{squadId}")
-    public ResponseEntity<RestResponse<SquadWithParticipantAndLeaderAndViewStateResponse>> fetchSquad(
-            @PathVariable Long crewId,
-            @PathVariable Long squadId,
-            @Authenticate CurrentMember currentMember
-    ) {
-        SquadWithParticipantAndLeaderAndViewStateResponse response = squadQueryService.fetchSquad(currentMember.id(), crewId, squadId);
-
-        return ResponseEntity.ok(RestResponse.success(response));
-    }
-
-    @GetMapping("/{crewId}/squads")
+    @GetMapping("/crews/{crewId}/squads")
     public ResponseEntity<RestResponse<List<SquadResponse>>> fetchSquads(
             @PathVariable Long crewId,
             @RequestParam CategoryCondition category,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadResponse> response = squadQueryService.fetchSquads(currentMember.id(), crewId, category, pageable);
+        List<SquadResponse> response = squadQueryService.fetchSquadsByCrewId(currentMember.id(), crewId, category, pageable);
 
         return ResponseEntity.ok(RestResponse.success(response));
     }
 
-    @GetMapping("/{crewId}/manage/squads")
-    public ResponseEntity<RestResponse<List<SquadWithLeaderStateResponse>>> fetchSquadsWithOwnerState(
+    @GetMapping("/squads/{squadId}")
+    public ResponseEntity<RestResponse<SquadWithStatesResponse>> fetchSquad(
+            @PathVariable Long squadId,
+            @Authenticate CurrentMember currentMember
+    ) {
+        SquadWithStatesResponse response = squadQueryService.fetchSquad(currentMember.id(), squadId);
+
+        return ResponseEntity.ok(RestResponse.success(response));
+    }
+
+    @DeleteMapping("/squads/{squadId}")
+    public ResponseEntity<RestResponse<Void>> deleteSquad(
+            @PathVariable Long squadId,
+            @Authenticate CurrentMember currentMember
+    ) {
+        squadCommandService.deleteSquad(currentMember.id(), squadId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
+    @GetMapping("/manage/crews/{crewId}/squads")
+    public ResponseEntity<RestResponse<List<SquadWithLeaderStateResponse>>> fetchManageList(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadWithLeaderStateResponse> response = squadQueryService.fetchSquadsWithOwnerState(currentMember.id(), crewId, pageable);
+        List<SquadWithLeaderStateResponse> response = squadQueryService.fetchManageList(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
-    }
-
-    @DeleteMapping("/{crewId}/squads/{squadId}")
-    public ResponseEntity<RestResponse<Void>> deleteSquad(
-            @PathVariable Long crewId,
-            @PathVariable Long squadId,
-            @Authenticate CurrentMember currentMember
-    ) {
-        squadCommandService.deleteSquad(currentMember.id(), crewId, squadId);
-
-        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 }

@@ -49,7 +49,7 @@ import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
-import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.presentation.request.SquadCreateRequest;
 
 @WebMvcTest(SquadController.class)
@@ -114,7 +114,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long CREW_ID = 1L;
             Long SQUAD_ID = 2L;
-            SquadWithParticipantAndLeaderAndViewStateResponse SERVICE_DTO = new SquadWithParticipantAndLeaderAndViewStateResponse(
+            SquadWithStatesResponse SERVICE_DTO = new SquadWithStatesResponse(
                     true,
                     true,
                     true,
@@ -185,7 +185,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             ANDONG_MBTI_VALUE
                     )
             ));
-            when(squadQueryService.fetchSquads(any(), anyLong(), any(CategoryCondition.class), any(Pageable.class)))
+            when(squadQueryService.fetchSquadsByCrewId(any(), anyLong(), any(CategoryCondition.class), any(Pageable.class)))
                     .thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/squads", CREW_ID)
@@ -235,7 +235,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             )
                     )
             ));
-            when(squadQueryService.fetchSquadsWithOwnerState(any(), anyLong(), any(Pageable.class)))
+            when(squadQueryService.fetchManageList(any(), anyLong(), any(Pageable.class)))
                     .thenReturn(SERVICE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/manage/squads", CREW_ID)

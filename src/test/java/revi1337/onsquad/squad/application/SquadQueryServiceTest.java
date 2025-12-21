@@ -35,7 +35,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
-import revi1337.onsquad.squad.application.dto.response.SquadWithParticipantAndLeaderAndViewStateResponse;
+import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJdbcRepository;
@@ -79,7 +79,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
+            SquadWithStatesResponse DTO = squadQueryService
                     .fetchSquad(REVI.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -116,7 +116,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
+            SquadWithStatesResponse DTO = squadQueryService
                     .fetchSquad(ANDONG.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -140,7 +140,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
+            SquadWithStatesResponse DTO = squadQueryService
                     .fetchSquad(ANDONG.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -162,7 +162,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
 
             // when
-            SquadWithParticipantAndLeaderAndViewStateResponse DTO = squadQueryService
+            SquadWithStatesResponse DTO = squadQueryService
                     .fetchSquad(REVI.getId(), CREW.getId(), SQUAD.getId());
 
             // then
@@ -198,7 +198,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
 
             // when
             List<SquadResponse> SQUADS = squadQueryService
-                    .fetchSquads(ANDONG.getId(), CREW.getId(), CONDITION, PAGE_REQUEST);
+                    .fetchSquadsByCrewId(ANDONG.getId(), CREW.getId(), CONDITION, PAGE_REQUEST);
 
             // then
             assertThat(SQUADS.size()).isEqualTo(2);
@@ -263,7 +263,7 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
 
             // when
             List<SquadWithLeaderStateResponse> RESULTS = squadQueryService
-                    .fetchSquadsWithOwnerState(ANDONG.getId(), CREW2.getId(), PAGE_REQUEST);
+                    .fetchManageList(ANDONG.getId(), CREW2.getId(), PAGE_REQUEST);
 
             // then
             assertThat(RESULTS.size()).isEqualTo(2);
