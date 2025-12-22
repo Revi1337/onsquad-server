@@ -5,6 +5,7 @@ import java.util.List;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 
+@Deprecated
 public record SquadRequestWithSquadAndCrewResult(
         Long crewId,
         Name crewName,

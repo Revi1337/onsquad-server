@@ -9,6 +9,7 @@ import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
+@Deprecated
 public record MySquadRequestResult(
         Long id,
         Name name,
@@ -18,13 +19,7 @@ public record MySquadRequestResult(
 ) {
 
     @QueryProjection
-    public MySquadRequestResult(
-            Long id,
-            Name name,
-            String imageUrl,
-            SimpleMemberDomainDto owner,
-            List<SquadWithParticipant> squads
-    ) {
+    public MySquadRequestResult(Long id, Name name, String imageUrl, SimpleMemberDomainDto owner, List<SquadWithParticipant> squads) {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -43,27 +38,13 @@ public record MySquadRequestResult(
     ) {
 
         @QueryProjection
-        public SquadWithParticipant(
-                Long id,
-                Title title,
-                int capacity,
-                int remain,
-                SimpleMemberDomainDto squadOwner,
-                RequestParticipantDomainDto request
-        ) {
+        public SquadWithParticipant(Long id, Title title, int capacity, int remain, SimpleMemberDomainDto squadOwner, RequestParticipantDomainDto request) {
             this(id, title, capacity, remain, new ArrayList<>(), squadOwner, request);
         }
 
         @QueryProjection
-        public SquadWithParticipant(
-                Long id,
-                Title title,
-                int capacity,
-                int remain,
-                List<CategoryType> categories,
-                SimpleMemberDomainDto owner,
-                RequestParticipantDomainDto request
-        ) {
+        public SquadWithParticipant(Long id, Title title, int capacity, int remain, List<CategoryType> categories,
+                                    SimpleMemberDomainDto owner, RequestParticipantDomainDto request) {
             this.id = id;
             this.title = title;
             this.capacity = capacity;
@@ -79,10 +60,7 @@ public record MySquadRequestResult(
         ) {
 
             @QueryProjection
-            public RequestParticipantDomainDto(
-                    Long id,
-                    LocalDateTime requestAt
-            ) {
+            public RequestParticipantDomainDto(Long id, LocalDateTime requestAt) {
                 this.id = id;
                 this.requestAt = requestAt;
             }

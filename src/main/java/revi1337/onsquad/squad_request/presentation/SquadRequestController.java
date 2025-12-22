@@ -17,8 +17,8 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 import revi1337.onsquad.squad_request.application.SquadRequestQueryService;
+import revi1337.onsquad.squad_request.application.response.MySquadRequestResponse;
 import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
-import revi1337.onsquad.squad_request.application.response.SquadRequestWithSquadAndCrewResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -81,11 +81,11 @@ public class SquadRequestController {
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @GetMapping("/squad-requests/me") // TODO Presentation, Application, Persistence 테스트 보류. 페이지가 나뉠 가능성이 매우 큼
-    public ResponseEntity<RestResponse<List<SquadRequestWithSquadAndCrewResponse>>> fetchMyAllRequests(
+    @GetMapping("/squad-requests/me")
+    public ResponseEntity<RestResponse<List<MySquadRequestResponse>>> fetchMyRequests(
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadRequestWithSquadAndCrewResponse> response = squadRequestQueryService.fetchAllMyRequests(currentMember.id());
+        List<MySquadRequestResponse> response = squadRequestQueryService.fetchMyRequests(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

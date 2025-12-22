@@ -3,12 +3,10 @@ package revi1337.onsquad.squad_request.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
-import revi1337.onsquad.squad_request.domain.result.SquadRequestWithSquadAndCrewResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -33,23 +31,18 @@ public class SquadRequestRepositoryImpl implements SquadRequestRepository {
     }
 
     @Override
-    public Optional<SquadRequest> findByIdWithSquad(Long id) {
-        return squadRequestJpaRepository.findByIdWithSquad(id);
-    }
-
-    @Override
     public Optional<SquadRequest> findBySquadIdAndMemberId(Long squadId, Long memberId) {
         return squadRequestJpaRepository.findBySquadIdAndMemberId(squadId, memberId);
     }
 
     @Override
-    public List<SquadRequestWithSquadAndCrewResult> findSquadParticipantRequestsByMemberId(Long memberId) {
-        return squadRequestQueryDslRepository.findSquadParticipantRequestsByMemberIdV2(memberId);
+    public List<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
+        return squadRequestQueryDslRepository.fetchAllBySquadId(squadId, pageable);
     }
 
     @Override
-    public Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
-        return squadRequestQueryDslRepository.fetchAllBySquadId(squadId, pageable);
+    public List<SquadRequest> fetchMyRequests(Long memberId) {
+        return squadRequestQueryDslRepository.fetchMySquadRequestsWithDetails(memberId);
     }
 
     @Override

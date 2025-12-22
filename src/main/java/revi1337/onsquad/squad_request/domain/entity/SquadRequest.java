@@ -51,6 +51,10 @@ public class SquadRequest extends RequestEntity {
         return member.getId();
     }
 
+    public Long getSquadId() {
+        return squad.getId();
+    }
+
     public boolean matchSquadId(Long squadId) {
         return squad.matchId(squadId);
     }

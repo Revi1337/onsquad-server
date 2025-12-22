@@ -7,6 +7,7 @@ import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
+@Deprecated
 public record SquadRequestWithSquadResult(
         Long crewId,
         Long id,
@@ -20,8 +21,7 @@ public record SquadRequestWithSquadResult(
 
     @QueryProjection
     public SquadRequestWithSquadResult(Long crewId, Long id, Title title, int capacity, int remain,
-                                       List<CategoryType> categories, SimpleMemberDomainDto squadOwner,
-                                       RequestParticipantDomainDto request) {
+                                       List<CategoryType> categories, SimpleMemberDomainDto squadOwner, RequestParticipantDomainDto request) {
         this.crewId = crewId;
         this.id = id;
         this.title = title;
