@@ -23,10 +23,4 @@ public class SquadMemberAccessPolicy {
             throw new SquadMemberBusinessException.AlreadyParticipant(SquadMemberErrorCode.ALREADY_JOIN);
         }
     }
-
-    public void ensureReadParticipantsAccessible(SquadMember squadMember) {
-        if (squadMember.isNotLeader()) {
-            throw new SquadMemberBusinessException.InsufficientAuthority(SquadMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
-        }
-    }
 }

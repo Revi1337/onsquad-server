@@ -21,8 +21,7 @@ public record SimpleSquadResult(
         this(id, title, capacity, remain, new ArrayList<>(), owner);
     }
 
-    public SimpleSquadResult(Long id, Title title, int capacity, int remain, List<CategoryType> categories,
-                             SimpleMemberDomainDto leader) {
+    public SimpleSquadResult(Long id, Title title, int capacity, int remain, List<CategoryType> categories, SimpleMemberDomainDto leader) {
         this.id = id;
         this.title = title;
         this.capacity = capacity;

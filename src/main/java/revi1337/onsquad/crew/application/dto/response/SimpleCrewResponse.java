@@ -15,8 +15,8 @@ public record SimpleCrewResponse(
     public static SimpleCrewResponse from(SimpleCrewResult simpleCrewResult) {
         return new SimpleCrewResponse(
                 simpleCrewResult.id(),
-                simpleCrewResult.name().getValue(),
-                simpleCrewResult.introduce() != null ? simpleCrewResult.introduce().getValue() : "",
+                simpleCrewResult.name(),
+                simpleCrewResult.introduce() != null ? simpleCrewResult.introduce() : "",
                 simpleCrewResult.kakaoLink() != null ? simpleCrewResult.kakaoLink() : "",
                 simpleCrewResult.imageUrl() != null ? simpleCrewResult.imageUrl() : "",
                 SimpleMemberDto.from(simpleCrewResult.owner())

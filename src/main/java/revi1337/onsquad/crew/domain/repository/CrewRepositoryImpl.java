@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -64,5 +65,10 @@ public class CrewRepositoryImpl implements CrewRepository {
     @Override
     public List<CrewResult> fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable) {
         return crewQueryDslRepository.fetchCrewsWithDetailByMemberId(memberId, pageable);
+    }
+
+    @Override
+    public List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId) {
+        return crewQueryDslRepository.fetchCrewWithStateByIdsIn(ids, currentMemberId);
     }
 }

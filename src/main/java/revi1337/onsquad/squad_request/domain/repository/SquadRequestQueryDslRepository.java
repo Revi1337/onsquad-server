@@ -152,7 +152,7 @@ public class SquadRequestQueryDslRepository {
                 .transform(groupBy(crew.id)
                         .as(new QSimpleCrewResult(
                                 crew.id,
-                                crew.name,
+                                crew.name.value,
                                 crew.kakaoLink,
                                 crew.imageUrl,
                                 new QSimpleMemberDomainDto(

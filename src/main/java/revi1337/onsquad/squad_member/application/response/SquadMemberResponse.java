@@ -8,7 +8,7 @@ import revi1337.onsquad.squad_member.domain.result.SquadMemberResult;
 
 @JsonInclude(Include.NON_NULL)
 public record SquadMemberResponse(
-        Boolean matchCurrentMember,
+        Boolean isMe,
         LocalDateTime participantAt,
         SimpleMemberDto member
 ) {

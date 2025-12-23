@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 
 public interface CrewRepository {
 
@@ -28,5 +29,7 @@ public interface CrewRepository {
     List<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable);
 
     List<CrewResult> fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable);
+
+    List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId);
 
 }

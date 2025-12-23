@@ -2,6 +2,8 @@ package revi1337.onsquad.crew.domain.repository;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static revi1337.onsquad.crew.domain.entity.QCrew.crew;
 import static revi1337.onsquad.crew_hashtag.domain.entity.QCrewHashtag.crewHashtag;
 import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
@@ -9,6 +11,8 @@ import static revi1337.onsquad.hashtag.domain.entity.QHashtag.hashtag;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -22,7 +26,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 import revi1337.onsquad.crew.domain.result.QCrewResult;
+import revi1337.onsquad.crew.domain.result.QCrewWithOwnerStateResult;
+import revi1337.onsquad.crew.domain.result.QSimpleCrewResult;
 import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
@@ -111,6 +118,36 @@ public class CrewQueryDslRepository {
                                 )
                         ))
                 );
+    }
+
+    public List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId) {
+        ComparableExpression<Boolean> isCrewOwner = new CaseBuilder()
+                .when(member.id.eq(currentMemberId))
+                .then(TRUE)
+                .otherwise(FALSE);
+
+        return jpaQueryFactory
+                .select(new QCrewWithOwnerStateResult(
+                        isCrewOwner,
+                        new QSimpleCrewResult(
+                                crew.id,
+                                crew.name.value,
+                                crew.introduce.value,
+                                crew.kakaoLink,
+                                crew.imageUrl,
+                                new QSimpleMemberDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.introduce,
+                                        member.mbti
+                                )
+                        )
+                ))
+                .from(crew)
+                .innerJoin(crew.member, member)
+                .where(crew.id.in(ids))
+                .orderBy(isCrewOwner.desc(), crew.createdAt.desc())
+                .fetch();
     }
 
     private BooleanExpression crewNameStartsWith(String name) {

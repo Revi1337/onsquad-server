@@ -13,8 +13,17 @@ public class CrewMemberAccessPolicy {
 
     private final CrewMemberRepository crewMemberRepository;
 
+    public CrewMember ensureMemberInCrewAndGet(Long memberId, Long crewId) {
+        return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
+                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
+    }
+
     public boolean alreadyParticipant(Long memberId, Long crewId) {
         return crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId);
+    }
+
+    public boolean cannotReadSquadParticipants(CrewMember crewMember) {
+        return crewMember.isNotOwner();
     }
 
     public void ensureMemberInCrew(Long memberId, Long crewId) {
@@ -27,11 +36,6 @@ public class CrewMemberAccessPolicy {
         if (crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).isPresent()) {
             throw new CrewMemberBusinessException.AlreadyParticipant(CrewMemberErrorCode.ALREADY_JOIN);
         }
-    }
-
-    public CrewMember ensureMemberInCrewAndGet(Long memberId, Long crewId) {
-        return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
-                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 
     public void ensureReadParticipantsAccessible(CrewMember crewMember) {

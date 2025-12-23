@@ -23,10 +23,13 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.entity.QMember;
+import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
 import revi1337.onsquad.squad_member.domain.result.EnrolledSquadResult;
 import revi1337.onsquad.squad_member.domain.result.EnrolledSquadResult.SimpleSquadInfoDomainDto;
+import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 import revi1337.onsquad.squad_member.domain.result.QEnrolledSquadResult;
 import revi1337.onsquad.squad_member.domain.result.QEnrolledSquadResult_SimpleSquadInfoDomainDto;
+import revi1337.onsquad.squad_member.domain.result.QMyParticipantSquadResult;
 import revi1337.onsquad.squad_member.domain.result.QSquadInMembersResult;
 import revi1337.onsquad.squad_member.domain.result.QSquadMemberResult;
 import revi1337.onsquad.squad_member.domain.result.SquadInMembersResult;
@@ -40,10 +43,58 @@ public class SquadMemberQueryDslRepository {
     private final QMember crewCreator = new QMember("crew-creator");
     private final QMember squadCreator = new QMember("squad-creator");
 
+    public List<SquadMemberResult> fetchParticipantsBySquadId(Long squadId) {
+        return jpaQueryFactory
+                .select(new QSquadMemberResult(
+                        squadMember.requestAt,
+                        new QSimpleMemberDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.introduce,
+                                member.mbti
+                        )
+                ))
+                .from(squadMember)
+                .innerJoin(squadMember.member, member)
+                .where(squadMember.squad.id.eq(squadId))
+                .fetch();
+    }
+
+    public List<MyParticipantSquadResult> fetchParticipantSquads(Long memberId) {
+        return jpaQueryFactory
+                .select(new QMyParticipantSquadResult(
+                        squad.crew.id,
+                        new CaseBuilder()
+                                .when(member.id.eq(memberId))
+                                .then(TRUE)
+                                .otherwise(FALSE),
+                        new QSimpleSquadResult(
+                                squad.id,
+                                squad.title,
+                                squad.capacity,
+                                squad.remain,
+                                new QSimpleMemberDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.introduce,
+                                        member.mbti
+                                )
+                        )
+                ))
+                .from(squadMember)
+                .innerJoin(squadMember.squad, squad)
+                .innerJoin(squad.member, member)
+                .where(squadMember.member.id.eq(memberId))
+                .orderBy(squadMember.requestAt.desc())
+                .fetch();
+    }
+
     /**
-     * Squad 와 Crew 의 정렬조건을 따로 줄 수 여지가 있으므로, 쿼리를 2개로 분리한다.
+     * @see #fetchParticipantSquads(Long)
+     * @deprecated
      */
-    public List<EnrolledSquadResult> findEnrolledSquads(Long memberId) {
+    @Deprecated
+    public List<EnrolledSquadResult> findEnrolledSquadsLegacy(Long memberId) {
         List<SimpleSquadInfoDomainDto> squads = jpaQueryFactory
                 .from(squadMember)
                 .innerJoin(squadMember.member, member).on(member.id.eq(memberId))
@@ -104,9 +155,14 @@ public class SquadMemberQueryDslRepository {
                 }).toList();
     }
 
-    public List<SquadMemberResult> fetchAllBySquadId(Long squadId) {
+    @Deprecated
+    public List<SquadMemberResult> fetchParticipantsBySquadIdLegacy(Long squadId, Long currentMemberId) {
         return jpaQueryFactory
                 .select(new QSquadMemberResult(
+                        new CaseBuilder()
+                                .when(member.id.eq(currentMemberId))
+                                .then(TRUE)
+                                .otherwise(FALSE),
                         squadMember.requestAt,
                         new QSimpleMemberDomainDto(
                                 member.id,
@@ -116,7 +172,8 @@ public class SquadMemberQueryDslRepository {
                         )
                 ))
                 .from(squadMember)
-                .innerJoin(squadMember.member, member).on(squadMember.squad.id.eq(squadId))
+                .innerJoin(squadMember.member, member)
+                .where(squadMember.squad.id.eq(squadId))
                 .fetch();
     }
 

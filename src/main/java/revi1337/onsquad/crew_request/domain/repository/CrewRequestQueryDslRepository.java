@@ -31,8 +31,8 @@ public class CrewRequestQueryDslRepository {
                 .select(new QCrewRequestWithCrewResult(
                         new QSimpleCrewResult(
                                 crew.id,
-                                crew.name,
-                                crew.introduce,
+                                crew.name.value,
+                                crew.introduce.value,
                                 crew.kakaoLink,
                                 crew.imageUrl,
                                 new QSimpleMemberDomainDto(

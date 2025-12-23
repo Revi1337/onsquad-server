@@ -5,7 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
-import revi1337.onsquad.squad_member.domain.result.EnrolledSquadResult;
+import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 import revi1337.onsquad.squad_member.domain.result.SquadMemberResult;
 
 @RequiredArgsConstructor
@@ -46,12 +46,12 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public List<SquadMemberResult> fetchAllBySquadId(Long squadId) {
-        return squadMemberQueryDslRepository.fetchAllBySquadId(squadId);
+    public List<SquadMemberResult> fetchParticipantsBySquadId(Long squadId) {
+        return squadMemberQueryDslRepository.fetchParticipantsBySquadId(squadId);
     }
 
     @Override
-    public List<EnrolledSquadResult> fetchAllJoinedSquadsByMemberId(Long memberId) {
-        return squadMemberQueryDslRepository.findEnrolledSquads(memberId);
+    public List<MyParticipantSquadResult> fetchParticipantSquads(Long memberId) {
+        return squadMemberQueryDslRepository.fetchParticipantSquads(memberId);
     }
 }
