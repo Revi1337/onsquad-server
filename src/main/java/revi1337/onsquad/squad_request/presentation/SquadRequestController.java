@@ -81,7 +81,7 @@ public class SquadRequestController {
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @GetMapping("/squad-requests/me")
+    @GetMapping("/members/me/squad-requests")
     public ResponseEntity<RestResponse<List<MySquadRequestResponse>>> fetchMyRequests(
             @Authenticate CurrentMember currentMember
     ) {
