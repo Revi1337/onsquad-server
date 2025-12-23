@@ -13,6 +13,8 @@ public interface SquadCommentRepository {
 
     Optional<SquadComment> findById(Long id);
 
+    Optional<SquadComment> findWithSquadById(Long id);
+
     List<SquadCommentResult> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
 
     List<SquadCommentResult> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childSize);

@@ -28,6 +28,11 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     }
 
     @Override
+    public Optional<SquadComment> findWithSquadById(Long id) {
+        return squadCommentJpaRepository.findWithSquadById(id);
+    }
+
+    @Override
     public List<SquadCommentResult> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return squadCommentQueryDslRepository.fetchAllParentsBySquadId(squadId, pageable);
     }

@@ -32,78 +32,72 @@ public class SquadCommentController {
     private final SquadCommentCommandService squadCommentCommandService;
     private final SquadCommentQueryService squadCommentQueryService;
 
-    @PostMapping("/crews/{crewId}/squads/{squadId}/comments")
+    @PostMapping("/squads/{squadId}/comments")
     public ResponseEntity<RestResponse<Void>> add(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @Valid @RequestBody CommentCreateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
-        squadCommentCommandService.add(currentMember.id(), crewId, squadId, request.content());
+        squadCommentCommandService.add(currentMember.id(), squadId, request.content());
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @PostMapping("/crews/{crewId}/squads/{squadId}/replies/{parentId}")
+    @PostMapping("/squads/{squadId}/replies/{parentId}")
     public ResponseEntity<RestResponse<Void>> addReply(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PathVariable Long parentId,
             @Valid @RequestBody CommentCreateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
-        squadCommentCommandService.addReply(currentMember.id(), crewId, squadId, parentId, request.content());
+        squadCommentCommandService.addReply(currentMember.id(), squadId, parentId, request.content());
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
 
-    @GetMapping("/crews/{crewId}/squads/{squadId}/comments")
+    @GetMapping("/squads/{squadId}/comments")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchInitialComments(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PageableDefault Pageable pageable,
             @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) int childSize,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadCommentResponse> response = squadCommentQueryService.fetchInitialComments(currentMember.id(), crewId, squadId, pageable, childSize);
+        List<SquadCommentResponse> response = squadCommentQueryService.fetchInitialComments(currentMember.id(), squadId, pageable, childSize);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @GetMapping("/crews/{crewId}/squads/{squadId}/replies/{parentId}")
+    @GetMapping("/squads/{squadId}/replies/{parentId}")
     public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchMoreChildren(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PathVariable Long parentId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadCommentResponse> response = squadCommentQueryService.fetchMoreChildren(currentMember.id(), crewId, squadId, parentId, pageable);
+        List<SquadCommentResponse> response = squadCommentQueryService.fetchMoreChildren(currentMember.id(), squadId, parentId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @PatchMapping("/crews/{crewId}/squads/{squadId}/comments/{commentId}")
+    @PatchMapping("/squads/{squadId}/comments/{commentId}")
     public ResponseEntity<RestResponse<Void>> updateComment(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PathVariable Long commentId,
             @Valid @RequestBody CommentCreateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
-        squadCommentCommandService.update(currentMember.id(), crewId, squadId, commentId, request.content());
+        squadCommentCommandService.update(currentMember.id(), squadId, commentId, request.content());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @DeleteMapping("/crews/{crewId}/squads/{squadId}/comments/{commentId}")
+    @DeleteMapping("/squads/{squadId}/comments/{commentId}")
     public ResponseEntity<RestResponse<Void>> deleteComment(
-            @PathVariable Long crewId,
             @PathVariable Long squadId,
             @PathVariable Long commentId,
             @Authenticate CurrentMember currentMember
     ) {
-        squadCommentCommandService.delete(currentMember.id(), crewId, squadId, commentId);
+        squadCommentCommandService.delete(currentMember.id(), squadId, commentId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

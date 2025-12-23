@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad_comment.domain.repository;
 
 import java.util.Optional;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
@@ -17,4 +18,6 @@ public interface SquadCommentJpaRepository extends JpaRepository<SquadComment, L
     @Query("select sc from SquadComment sc inner join fetch sc.squad as s where sc.id = :id and sc.squad.id = :squadId")
     Optional<SquadComment> findWithSquadByIdAndSquadId(Long id, Long squadId);
 
+    @EntityGraph(attributePaths = "squad")
+    Optional<SquadComment> findWithSquadById(Long id);
 }
