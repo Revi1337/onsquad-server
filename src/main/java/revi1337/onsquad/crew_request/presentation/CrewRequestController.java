@@ -81,7 +81,7 @@ public class CrewRequestController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @GetMapping("/crew-requests/me")
+    @GetMapping("/members/me/crew-requests")
     public ResponseEntity<RestResponse<List<CrewRequestWithCrewResponse>>> fetchAllCrewRequests(
             @Authenticate CurrentMember currentMember
     ) {
