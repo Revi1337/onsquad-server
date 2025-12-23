@@ -55,7 +55,7 @@ public class CrewQueryService {
             linkHashtags(results, hashtags);
         }
 
-        return results.getContent().stream()
+        return results.values().stream()
                 .map(CrewResponse::from)
                 .toList();
     }
@@ -66,13 +66,14 @@ public class CrewQueryService {
             CrewHashtags hashtags = new CrewHashtags(crewHashtagRepository.fetchHashtagsByCrewIdIn(results.getIds()));
             linkHashtags(results, hashtags);
         }
-        return results.getContent().stream()
+
+        return results.values().stream()
                 .map(CrewResponse::from)
                 .toList();
     }
 
     private void linkHashtags(CrewResults crews, CrewHashtags hashtags) {
-        List<CrewResult> results = crews.getContent();
+        List<CrewResult> results = crews.values();
         Map<Long, List<HashtagType>> hashtagMap = hashtags.groupByCrewId();
         results.forEach(result -> {
             List<HashtagType> hashtagTypes = hashtagMap.get(result.getId());

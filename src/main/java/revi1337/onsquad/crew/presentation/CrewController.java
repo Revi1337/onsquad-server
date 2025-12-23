@@ -76,6 +76,16 @@ public class CrewController {
         return ResponseEntity.ok(RestResponse.success(response));
     }
 
+    @GetMapping
+    public ResponseEntity<RestResponse<List<CrewResponse>>> fetchCrewsByName(
+            @RequestParam(required = false) String name,
+            @PageableDefault Pageable pageable
+    ) {
+        List<CrewResponse> response = crewQueryService.fetchCrewsByName(name, pageable);
+
+        return ResponseEntity.ok().body(RestResponse.success(response));
+    }
+
     @PutMapping("/{crewId}")
     public ResponseEntity<RestResponse<Void>> updateCrew(
             @PathVariable Long crewId,
@@ -116,25 +126,5 @@ public class CrewController {
         crewCommandService.deleteImage(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
-    }
-
-    @GetMapping
-    public ResponseEntity<RestResponse<List<CrewResponse>>> fetchCrewsByName(
-            @RequestParam(required = false) String name,
-            @PageableDefault Pageable pageable
-    ) {
-        List<CrewResponse> response = crewQueryService.fetchCrewsByName(name, pageable);
-
-        return ResponseEntity.ok().body(RestResponse.success(response));
-    }
-
-    @GetMapping("/me/owned") // TODO 이거 도대체 뭐하는 API 인지 물어봐야 함. (기억 증발)
-    public ResponseEntity<RestResponse<List<CrewResponse>>> fetchOwnedCrews(
-            @PageableDefault Pageable pageable,
-            @Authenticate CurrentMember currentMember
-    ) {
-        List<CrewResponse> response = crewQueryService.fetchOwnedCrews(currentMember.id(), pageable);
-
-        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 }

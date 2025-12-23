@@ -18,7 +18,7 @@ public final class CrewResults {
                 .toList();
     }
 
-    public List<CrewResult> getContent() {
+    public List<CrewResult> values() {
         return results;
     }
 
