@@ -6,13 +6,11 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.SquadAccessPolicy;
-import revi1337.onsquad.squad.domain.SquadLinkable;
 import revi1337.onsquad.squad.domain.SquadLinkableGroup;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
@@ -54,12 +52,12 @@ public class SquadMemberQueryService {
         SquadLinkableGroup<MyParticipantSquadResult> squadGroup = new SquadLinkableGroup<>(squads);
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds()));
-            linkCategories(squadGroup, categories);
+            squadGroup.linkCategories(categories);
         }
 
         List<Long> crewIds = squads.stream().map(MyParticipantSquadResult::crewId).toList();
         List<CrewWithOwnerStateResult> crews = crewRepository.fetchCrewWithStateByIdsIn(crewIds, memberId);
-        Map<Long, List<MyParticipantSquadResult>> groupedSquads = squads.stream().collect(Collectors.groupingBy(MyParticipantSquadResult::crewId));
+        Map<Long, List<MyParticipantSquadResult>> groupedSquads = squadGroup.values().stream().collect(Collectors.groupingBy(MyParticipantSquadResult::crewId));
 
         return crews.stream()
                 .map(crewResult -> MyParticipantResponse.from(crewResult, groupedSquads.get(crewResult.crew().id())))
@@ -70,15 +68,5 @@ public class SquadMemberQueryService {
         return squadMemberRepository.fetchParticipantsBySquadId(squadId).stream()
                 .map(result -> SquadMemberResponse.from(memberId, result))
                 .toList();
-    }
-
-    private void linkCategories(SquadLinkableGroup<? extends SquadLinkable> squadLinks, SquadCategories categories) {
-        Map<Long, List<CategoryType>> categoryMap = categories.groupBySquadId();
-        squadLinks.values().forEach(squadLink -> {
-            List<CategoryType> categoryTypes = categoryMap.get(squadLink.getSquadId());
-            if (categoryTypes != null) {
-                squadLink.addCategories(categoryTypes);
-            }
-        });
     }
 }

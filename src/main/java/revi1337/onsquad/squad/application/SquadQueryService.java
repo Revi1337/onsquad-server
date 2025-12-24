@@ -1,19 +1,16 @@
 package revi1337.onsquad.squad.application;
 
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
-import revi1337.onsquad.squad.domain.SquadLinkable;
 import revi1337.onsquad.squad.domain.SquadLinkableGroup;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
@@ -51,14 +48,14 @@ public class SquadQueryService {
 
     public List<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
         crewMemberAccessPolicy.ensureMemberInCrew(memberId, crewId);
-        SquadLinkableGroup<SquadResult> results = new SquadLinkableGroup<>(
+        SquadLinkableGroup<SquadResult> squadGroup = new SquadLinkableGroup<>(
                 squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable));
-        if (results.isNotEmpty()) {
-            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(results.getSquadIds()));
-            linkCategories(results, categories);
+        if (squadGroup.isNotEmpty()) {
+            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds()));
+            squadGroup.linkCategories(categories);
         }
 
-        return results.values().stream()
+        return squadGroup.values().stream()
                 .map(SquadResponse::from)
                 .toList();
     }
@@ -66,24 +63,14 @@ public class SquadQueryService {
     public List<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         squadAccessPolicy.ensureSquadManageListAccessible(crewMember);
-        SquadLinkableGroup<SquadWithLeaderStateResult> results = new SquadLinkableGroup<>(squadRepository.fetchManageList(memberId, crewId, pageable));
-        if (results.isNotEmpty()) {
-            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(results.getSquadIds()));
-            linkCategories(results, categories);
+        SquadLinkableGroup<SquadWithLeaderStateResult> squadGroup = new SquadLinkableGroup<>(squadRepository.fetchManageList(memberId, crewId, pageable));
+        if (squadGroup.isNotEmpty()) {
+            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds()));
+            squadGroup.linkCategories(categories);
         }
 
-        return results.values().stream()
+        return squadGroup.values().stream()
                 .map(SquadWithLeaderStateResponse::from)
                 .toList();
-    }
-
-    private void linkCategories(SquadLinkableGroup<? extends SquadLinkable> squadLinks, SquadCategories categories) {
-        Map<Long, List<CategoryType>> categoryMap = categories.groupBySquadId();
-        squadLinks.values().forEach(squadLink -> {
-            List<CategoryType> categoryTypes = categoryMap.get(squadLink.getSquadId());
-            if (categoryTypes != null) {
-                squadLink.addCategories(categoryTypes);
-            }
-        });
     }
 }

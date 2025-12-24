@@ -2,6 +2,9 @@ package revi1337.onsquad.squad.domain;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.squad_category.domain.SquadCategories;
 
 public record SquadLinkableGroup<T extends SquadLinkable>(List<T> results) {
 
@@ -21,5 +24,15 @@ public record SquadLinkableGroup<T extends SquadLinkable>(List<T> results) {
 
     public boolean isNotEmpty() {
         return !results.isEmpty();
+    }
+
+    public void linkCategories(SquadCategories categories) {
+        Map<Long, List<CategoryType>> categoryMap = categories.groupBySquadId();
+        this.results.forEach(squadLink -> {
+            List<CategoryType> categoryTypes = categoryMap.get(squadLink.getSquadId());
+            if (categoryTypes != null) {
+                squadLink.addCategories(categoryTypes);
+            }
+        });
     }
 }
