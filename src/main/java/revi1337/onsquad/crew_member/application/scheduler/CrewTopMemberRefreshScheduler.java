@@ -1,12 +1,12 @@
-package revi1337.onsquad.crew.application.scheduler;
+package revi1337.onsquad.crew_member.application.scheduler;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew.application.CrewTopMemberRefreshService;
-import revi1337.onsquad.crew.config.CrewTopMemberProperties;
+import revi1337.onsquad.crew_member.application.CrewTopMemberRefreshService;
+import revi1337.onsquad.crew_member.config.CrewTopMemberProperties;
 
 @Slf4j
 @RequiredArgsConstructor

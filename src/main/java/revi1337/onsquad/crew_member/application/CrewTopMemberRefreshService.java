@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.application;
+package revi1337.onsquad.crew_member.application;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -6,8 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepository;
-import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
+import revi1337.onsquad.crew_member.application.scheduler.CrewTopMemberRefreshScheduler;
+import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberRepository;
+import revi1337.onsquad.crew_member.domain.result.Top5CrewMemberResult;
 
 /**
  * Service responsible for aggregating and refreshing top-ranked members in each crew.
@@ -15,7 +16,7 @@ import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
  * <p>This service recalculates crew member rankings for a given period and
  * updates the persisted ranking data in batch.</p>
  *
- * <p>The refresh operation is triggered by {@link revi1337.onsquad.crew.application.scheduler.CrewTopMemberRefreshScheduler}
+ * <p>The refresh operation is triggered by {@link CrewTopMemberRefreshScheduler}
  * and executed asynchronously using a dedicated worker thread pool.</p>
  */
 @Slf4j

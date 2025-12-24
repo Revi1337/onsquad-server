@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.config;
+package revi1337.onsquad.crew_member.config;
 
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;

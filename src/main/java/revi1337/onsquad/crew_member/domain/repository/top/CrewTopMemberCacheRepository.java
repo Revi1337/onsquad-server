@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.domain.repository.top;
+package revi1337.onsquad.crew_member.domain.repository.top;
 
 import static revi1337.onsquad.common.constant.CacheConst.CREW_TOP_USERS;
 
@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
 
 @RequiredArgsConstructor
 @Repository

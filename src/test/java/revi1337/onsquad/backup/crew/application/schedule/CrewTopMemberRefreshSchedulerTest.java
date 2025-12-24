@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.crew.application.scheduler.CrewTopMemberRefreshScheduler;
-import revi1337.onsquad.crew.config.CrewTopMemberProperties;
-import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepository;
+import revi1337.onsquad.crew_member.application.scheduler.CrewTopMemberRefreshScheduler;
+import revi1337.onsquad.crew_member.config.CrewTopMemberProperties;
+import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberRepository;
 
 @ContextConfiguration(classes = {CrewTopMemberRefreshScheduler.class})
 @ExtendWith(SpringExtension.class)

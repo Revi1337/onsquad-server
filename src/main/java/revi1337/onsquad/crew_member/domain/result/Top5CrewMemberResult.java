@@ -1,7 +1,7 @@
-package revi1337.onsquad.crew.domain.result;
+package revi1337.onsquad.crew_member.domain.result;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.crew.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
 
 public record Top5CrewMemberResult(
         Long crewId,

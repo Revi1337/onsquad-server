@@ -9,15 +9,15 @@ import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewStatisticResponse;
-import revi1337.onsquad.crew.domain.entity.CrewTopMember;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.domain.repository.CrewStatisticCacheRepository;
-import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberCacheRepository;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberCacheRepository;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 

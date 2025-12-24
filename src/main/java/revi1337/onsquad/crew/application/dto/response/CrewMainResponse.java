@@ -4,8 +4,9 @@ import java.util.List;
 import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew.domain.entity.CrewTopMember;
 import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew_member.application.response.Top5CrewMemberResponse;
+import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 

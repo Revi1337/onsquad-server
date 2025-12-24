@@ -19,10 +19,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.crew.application.initializer.LocalCrewTopMemberInitializer;
-import revi1337.onsquad.crew.application.initializer.NonLocalCrewTopMemberInitializer;
-import revi1337.onsquad.crew.config.CrewTopMemberProperties;
-import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepository;
+import revi1337.onsquad.crew_member.application.initializer.LocalCrewTopMemberInitializer;
+import revi1337.onsquad.crew_member.application.initializer.NonLocalCrewTopMemberInitializer;
+import revi1337.onsquad.crew_member.config.CrewTopMemberProperties;
+import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberRepository;
 
 class CrewTopMemberConfigurationTest {
 

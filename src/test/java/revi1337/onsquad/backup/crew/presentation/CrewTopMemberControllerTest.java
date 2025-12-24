@@ -27,9 +27,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew.application.CrewTopMemberService;
-import revi1337.onsquad.crew.application.dto.response.Top5CrewMemberResponse;
-import revi1337.onsquad.crew.presentation.CrewTopMemberController;
+import revi1337.onsquad.crew_member.application.CrewTopMemberService;
+import revi1337.onsquad.crew_member.application.response.Top5CrewMemberResponse;
+import revi1337.onsquad.crew_member.presentation.CrewTopMemberController;
 
 @WebMvcTest(CrewTopMemberController.class)
 class CrewTopMemberControllerTest extends PresentationLayerTestSupport {

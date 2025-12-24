@@ -1,15 +1,16 @@
-package revi1337.onsquad.crew.config;
+package revi1337.onsquad.crew_member.config;
 
 import java.util.concurrent.Executor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import revi1337.onsquad.crew_member.application.CrewTopMemberRefreshService;
 
 @Configuration
 public class CrewTopMemberThreadPoolConfig {
 
     /**
-     * Worker Thread Used For {@link revi1337.onsquad.crew.application.CrewTopMemberRefreshService}
+     * Worker Thread Used For {@link CrewTopMemberRefreshService}
      */
     @Bean(name = "crewTopMemberRefreshExecutor")
     public Executor crewTopMemberRefreshExecutor() {

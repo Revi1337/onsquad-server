@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.domain.entity;
+package revi1337.onsquad.crew_member.domain.entity;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;

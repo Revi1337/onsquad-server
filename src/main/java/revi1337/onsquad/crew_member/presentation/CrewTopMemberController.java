@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.presentation;
+package revi1337.onsquad.crew_member.presentation;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.crew.application.CrewTopMemberService;
-import revi1337.onsquad.crew.application.dto.response.Top5CrewMemberResponse;
+import revi1337.onsquad.crew_member.application.CrewTopMemberService;
+import revi1337.onsquad.crew_member.application.response.Top5CrewMemberResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")

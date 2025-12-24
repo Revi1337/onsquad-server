@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.domain.repository.top;
+package revi1337.onsquad.crew_member.domain.repository.top;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -11,8 +11,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.entity.CrewTopMember;
-import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
+import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.result.Top5CrewMemberResult;
 
 @RequiredArgsConstructor
 @Repository

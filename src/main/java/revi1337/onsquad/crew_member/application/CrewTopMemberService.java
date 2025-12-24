@@ -1,11 +1,10 @@
-package revi1337.onsquad.crew.application;
+package revi1337.onsquad.crew_member.application;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.crew.application.dto.response.Top5CrewMemberResponse;
-import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberCacheRepository;
-import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
+import revi1337.onsquad.crew_member.application.response.Top5CrewMemberResponse;
+import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberCacheRepository;
 
 @RequiredArgsConstructor
 @Service

@@ -1,9 +1,9 @@
-package revi1337.onsquad.crew.domain.repository.top;
+package revi1337.onsquad.crew_member.domain.repository.top;
 
 import java.time.LocalDate;
 import java.util.List;
-import revi1337.onsquad.crew.domain.entity.CrewTopMember;
-import revi1337.onsquad.crew.domain.result.Top5CrewMemberResult;
+import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.result.Top5CrewMemberResult;
 
 public interface CrewTopMemberRepository {
 

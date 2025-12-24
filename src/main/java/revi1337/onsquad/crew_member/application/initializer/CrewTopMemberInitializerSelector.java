@@ -1,11 +1,11 @@
-package revi1337.onsquad.crew.application.initializer;
+package revi1337.onsquad.crew_member.application.initializer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import revi1337.onsquad.crew.config.CrewTopMemberProperties;
-import revi1337.onsquad.crew.domain.repository.top.CrewTopMemberRepository;
+import revi1337.onsquad.crew_member.config.CrewTopMemberProperties;
+import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberRepository;
 
 @Configuration
 class CrewTopMemberInitializerSelector {

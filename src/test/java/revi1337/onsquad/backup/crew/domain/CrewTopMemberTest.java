@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.crew.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
 
 class CrewTopMemberTest {
 
