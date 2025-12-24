@@ -14,7 +14,7 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
 import revi1337.onsquad.crew_member.application.response.CrewMembersWithCountResponse;
-import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
+import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -35,10 +35,10 @@ public class CrewMemberController {
     }
 
     @GetMapping("/members/me/crew-participants")
-    public ResponseEntity<RestResponse<List<JoinedCrewResponse>>> fetchJoinedCrews(
+    public ResponseEntity<RestResponse<List<MyParticipantResponse>>> fetchMyParticipatingCrews(
             @Authenticate CurrentMember currentMember
     ) {
-        List<JoinedCrewResponse> response = crewMemberService.fetchJoinedCrews(currentMember.id());
+        List<MyParticipantResponse> response = crewMemberService.fetchMyParticipatingCrews(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

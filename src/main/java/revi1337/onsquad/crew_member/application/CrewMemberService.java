@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.response.CrewMembersWithCountResponse;
-import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
+import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
@@ -27,9 +27,9 @@ public class CrewMemberService {
         return CrewMembersWithCountResponse.from(results);
     }
 
-    public List<JoinedCrewResponse> fetchJoinedCrews(Long memberId) {
-        return crewMemberRepository.fetchJoinedCrewsByMemberId(memberId).stream()
-                .map(JoinedCrewResponse::from)
+    public List<MyParticipantResponse> fetchMyParticipatingCrews(Long memberId) {
+        return crewMemberRepository.fetchParticipantCrews(memberId).stream()
+                .map(MyParticipantResponse::from)
                 .toList();
     }
 }

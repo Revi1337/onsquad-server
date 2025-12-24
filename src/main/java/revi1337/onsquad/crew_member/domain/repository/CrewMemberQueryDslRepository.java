@@ -1,11 +1,13 @@
 package revi1337.onsquad.crew_member.domain.repository;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static revi1337.onsquad.crew.domain.entity.QCrew.crew;
 import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -14,12 +16,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew.domain.result.QSimpleCrewResult;
 import revi1337.onsquad.crew_member.domain.result.CrewMemberResult;
 import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
-import revi1337.onsquad.crew_member.domain.result.JoinedCrewResult;
+import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 import revi1337.onsquad.crew_member.domain.result.QCrewMemberResult;
 import revi1337.onsquad.crew_member.domain.result.QCrewMemberWithCountResult;
-import revi1337.onsquad.crew_member.domain.result.QJoinedCrewResult;
+import revi1337.onsquad.crew_member.domain.result.QMyParticipantCrewResult;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
 @RequiredArgsConstructor
@@ -52,28 +55,34 @@ public class CrewMemberQueryDslRepository {
                 .fetch();
     }
 
-    public List<JoinedCrewResult> fetchJoinedCrewsByMemberId(Long memberId) {
+    public List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId) {
+        ComparableExpression<Boolean> isCrewOwner = new CaseBuilder()
+                .when(member.id.eq(memberId))
+                .then(TRUE)
+                .otherwise(FALSE);
+
         return jpaQueryFactory
-                .select(new QJoinedCrewResult(
-                        crew.id,
-                        crew.name,
-                        crew.imageUrl,
-                        new CaseBuilder()
-                                .when(member.id.eq(memberId))
-                                .then(true)
-                                .otherwise(false),
-                        new QSimpleMemberDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.introduce,
-                                member.mbti
+                .select(new QMyParticipantCrewResult(
+                        isCrewOwner,
+                        new QSimpleCrewResult(
+                                crew.id,
+                                crew.name.value,
+                                crew.introduce.value,
+                                crew.kakaoLink,
+                                crew.imageUrl,
+                                new QSimpleMemberDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.introduce,
+                                        member.mbti
+                                )
                         )
                 ))
                 .from(crewMember)
                 .innerJoin(crewMember.crew, crew)
                 .innerJoin(crew.member, member)
                 .where(crewMember.member.id.eq(memberId))
-                .orderBy(crewMember.requestAt.desc())
+                .orderBy(isCrewOwner.desc(), crewMember.requestAt.desc())
                 .fetch();
     }
 
@@ -131,37 +140,5 @@ public class CrewMemberQueryDslRepository {
                 .where(crewMember.crew.id.eq(crewId));
 
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
-    }
-
-    /**
-     * @see #fetchJoinedCrewsByMemberId(Long)
-     * @deprecated
-     */
-    @Deprecated
-    public List<JoinedCrewResult> fetchJoinedCrewsByMemberIdLegacy(Long memberId) {
-        BooleanExpression isCrewOwner = new CaseBuilder()
-                .when(member.id.eq(memberId))
-                .then(true)
-                .otherwise(false);
-
-        return jpaQueryFactory
-                .select(new QJoinedCrewResult(
-                        crew.id,
-                        crew.name,
-                        crew.imageUrl,
-                        isCrewOwner,
-                        new QSimpleMemberDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.introduce,
-                                member.mbti
-                        )
-                ))
-                .from(crewMember)
-                .innerJoin(crewMember.crew, crew)
-                .innerJoin(crew.member, member)
-                .where(crewMember.member.id.eq(memberId))
-                .orderBy(crewMember.requestAt.desc(), isCrewOwner.desc())
-                .fetch();
     }
 }

@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
-import revi1337.onsquad.crew_member.domain.result.JoinedCrewResult;
+import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 
 public interface CrewMemberRepository {
 
@@ -23,6 +23,6 @@ public interface CrewMemberRepository {
 
     List<CrewMemberWithCountResult> fetchParticipantsWithCountByCrewId(Long crewId, Pageable pageable);
 
-    List<JoinedCrewResult> fetchJoinedCrewsByMemberId(Long memberId);
+    List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId);
 
 }
