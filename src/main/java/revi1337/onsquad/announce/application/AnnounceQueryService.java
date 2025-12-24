@@ -18,13 +18,14 @@ public class AnnounceQueryService {
 
     private final CrewMemberAccessPolicy crewMemberAccessPolicy;
     private final AnnounceCacheService announceCacheService;
+    private final AnnounceAccessPolicy announceAccessPolicy;
     private final AnnounceRepository announceRepository;
 
     public AnnounceWithFixAndModifyStateResponse findAnnounce(Long memberId, Long crewId, Long announceId) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         AnnounceResult announce = announceCacheService.getAnnounce(crewId, announceId);
-        boolean canFix = crewMember.isOwner();
-        boolean canModify = announce.writer().id().equals(memberId);
+        boolean canFix = announceAccessPolicy.canFixable(crewMember);
+        boolean canModify = announceAccessPolicy.canModify(announce.writer().id(), memberId);
 
         return AnnounceWithFixAndModifyStateResponse.from(canFix, canModify, announce);
     }

@@ -54,4 +54,12 @@ public class AnnounceAccessPolicy {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_FIX_AUTHORITY);
         }
     }
+
+    public boolean canFixable(CrewMember crewMember) {
+        return crewMember.isOwner();
+    }
+
+    public boolean canModify(Long announceWriterId, Long currentMemberId) {
+        return announceWriterId.equals(currentMemberId);
+    }
 }
