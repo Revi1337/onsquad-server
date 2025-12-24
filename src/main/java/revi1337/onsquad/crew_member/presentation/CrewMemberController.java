@@ -13,7 +13,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
-import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
+import revi1337.onsquad.crew_member.application.response.CrewMembersWithCountResponse;
 import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
 
 @RequiredArgsConstructor
@@ -23,13 +23,13 @@ public class CrewMemberController {
 
     private final CrewMemberService crewMemberService;
 
-    @GetMapping("/crews/{crewId}/members/manage")
-    public ResponseEntity<RestResponse<List<CrewMemberResponse>>> manageCrewMembers(
+    @GetMapping("/crews/{crewId}/members")
+    public ResponseEntity<RestResponse<CrewMembersWithCountResponse>> fetchParticipants(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewMemberResponse> response = crewMemberService.manageCrewMembers(currentMember.id(), crewId, pageable);
+        CrewMembersWithCountResponse response = crewMemberService.fetchParticipants(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

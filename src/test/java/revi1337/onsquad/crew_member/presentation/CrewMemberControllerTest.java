@@ -65,7 +65,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
             );
             List<CrewMemberResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
             Page<CrewMemberResponse> PAGE_DTOS = new PageImpl<>(SERVICE_DTOS, PAGE_REQUEST, SERVICE_DTOS.size());
-            when(crewMemberService.manageCrewMembers(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST))).thenReturn(PAGE_DTOS);
+            when(crewMemberService.fetchParticipants(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST))).thenReturn(PAGE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/manage/members", DUMMY_CREW_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -85,7 +85,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(crewMemberService).manageCrewMembers(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST));
+            verify(crewMemberService).fetchParticipants(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST));
         }
     }
 }

@@ -5,10 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
+import revi1337.onsquad.crew_member.application.response.CrewMembersWithCountResponse;
 import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -18,13 +19,12 @@ public class CrewMemberService {
     private final CrewMemberAccessPolicy crewMemberAccessPolicy;
     private final CrewMemberRepository crewMemberRepository;
 
-    public List<CrewMemberResponse> manageCrewMembers(Long memberId, Long crewId, Pageable pageable) {
+    public CrewMembersWithCountResponse fetchParticipants(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
         crewMemberAccessPolicy.ensureReadParticipantsAccessible(crewMember);
+        List<CrewMemberWithCountResult> results = crewMemberRepository.fetchParticipantsWithCountByCrewId(crewId, pageable);
 
-        return crewMemberRepository.fetchParticipantsByCrewId(crewId, pageable).stream()
-                .map(CrewMemberResponse::from)
-                .toList();
+        return CrewMembersWithCountResponse.from(results);
     }
 
     public List<JoinedCrewResponse> fetchJoinedCrews(Long memberId) {

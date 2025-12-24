@@ -15,8 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.result.CrewMemberResult;
+import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
 import revi1337.onsquad.crew_member.domain.result.JoinedCrewResult;
 import revi1337.onsquad.crew_member.domain.result.QCrewMemberResult;
+import revi1337.onsquad.crew_member.domain.result.QCrewMemberWithCountResult;
 import revi1337.onsquad.crew_member.domain.result.QJoinedCrewResult;
 import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 
@@ -26,19 +28,23 @@ public class CrewMemberQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<CrewMemberResult> fetchParticipantsByCrewId(Long crewId, Pageable pageable) {
+    public List<CrewMemberWithCountResult> fetchParticipantsWithCountByCrewId(Long crewId, Pageable pageable) {
         return jpaQueryFactory
-                .select(new QCrewMemberResult(
-                        new QSimpleMemberDomainDto(
-                                member.id,
-                                member.nickname,
-                                member.introduce,
-                                member.mbti
-                        ),
-                        crewMember.requestAt
+                .select(new QCrewMemberWithCountResult(
+                        crew.currentSize,
+                        new QCrewMemberResult(
+                                new QSimpleMemberDomainDto(
+                                        member.id,
+                                        member.nickname,
+                                        member.introduce,
+                                        member.mbti
+                                ),
+                                crewMember.requestAt
+                        )
                 ))
                 .from(crewMember)
                 .innerJoin(crewMember.member, member)
+                .innerJoin(crewMember.crew, crew)
                 .where(crewMember.crew.id.eq(crewId))
                 .orderBy(crewMember.requestAt.desc())
                 .offset(pageable.getOffset())
@@ -72,7 +78,31 @@ public class CrewMemberQueryDslRepository {
     }
 
     /**
-     * @see #fetchParticipantsByCrewId(Long, Pageable)
+     * @see #fetchParticipantsWithCountByCrewId(Long, Pageable)
+     * @deprecated
+     */
+    public List<CrewMemberResult> fetchParticipantsByCrewIdLegacyV2(Long crewId, Pageable pageable) {
+        return jpaQueryFactory
+                .select(new QCrewMemberResult(
+                        new QSimpleMemberDomainDto(
+                                member.id,
+                                member.nickname,
+                                member.introduce,
+                                member.mbti
+                        ),
+                        crewMember.requestAt
+                ))
+                .from(crewMember)
+                .innerJoin(crewMember.member, member)
+                .where(crewMember.crew.id.eq(crewId))
+                .orderBy(crewMember.requestAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    /**
+     * @see #fetchParticipantsByCrewIdLegacyV2(Long, Pageable)
      * @deprecated
      */
     @Deprecated
