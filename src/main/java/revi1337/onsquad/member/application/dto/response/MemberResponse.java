@@ -1,8 +1,8 @@
-package revi1337.onsquad.member.application.dto;
+package revi1337.onsquad.member.application.dto.response;
 
 import revi1337.onsquad.member.domain.entity.Member;
 
-public record MemberInfoDto(
+public record MemberResponse(
         Long id,
         String email,
         String nickname,
@@ -15,8 +15,8 @@ public record MemberInfoDto(
         String addressDetail
 ) {
 
-    public static MemberInfoDto from(Member member) {
-        return new MemberInfoDto(
+    public static MemberResponse from(Member member) {
+        return new MemberResponse(
                 member.getId(),
                 member.getEmail().getValue(),
                 member.getNickname().getValue(),

@@ -22,11 +22,11 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberCommandService;
 import revi1337.onsquad.member.application.MemberImageUpdateCoordinator;
 import revi1337.onsquad.member.application.MemberQueryService;
-import revi1337.onsquad.member.presentation.dto.request.MemberCreateRequest;
-import revi1337.onsquad.member.presentation.dto.request.MemberPasswordUpdateRequest;
-import revi1337.onsquad.member.presentation.dto.request.MemberUpdateRequest;
-import revi1337.onsquad.member.presentation.dto.response.DuplicateResponse;
-import revi1337.onsquad.member.presentation.dto.response.MemberResponse;
+import revi1337.onsquad.member.application.dto.response.DuplicateResponse;
+import revi1337.onsquad.member.application.dto.response.MemberResponse;
+import revi1337.onsquad.member.presentation.request.MemberCreateRequest;
+import revi1337.onsquad.member.presentation.request.MemberPasswordUpdateRequest;
+import revi1337.onsquad.member.presentation.request.MemberUpdateRequest;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -41,26 +41,22 @@ public class MemberController {
     public ResponseEntity<RestResponse<DuplicateResponse>> checkDuplicateNickname(
             @RequestParam String value
     ) {
-        if (memberQueryService.checkDuplicateNickname(value)) {
-            return ResponseEntity.ok(RestResponse.success(DuplicateResponse.of(true)));
-        }
+        DuplicateResponse response = memberQueryService.checkDuplicateNickname(value);
 
-        return ResponseEntity.ok(RestResponse.success(DuplicateResponse.of(false)));
+        return ResponseEntity.ok(RestResponse.success(response));
     }
 
     @GetMapping("/check-email")
     public ResponseEntity<RestResponse<DuplicateResponse>> checkDuplicateEmail(
             @RequestParam String value
     ) {
-        if (memberQueryService.checkDuplicateEmail(value)) {
-            return ResponseEntity.ok(RestResponse.success(DuplicateResponse.of(true)));
-        }
+        DuplicateResponse response = memberQueryService.checkDuplicateEmail(value);
 
-        return ResponseEntity.ok(RestResponse.success(DuplicateResponse.of(false)));
+        return ResponseEntity.ok(RestResponse.success(response));
     }
 
     @PostMapping
-    public ResponseEntity<RestResponse<String>> newMember(
+    public ResponseEntity<RestResponse<Void>> newMember(
             @Valid @RequestBody MemberCreateRequest memberCreateRequest
     ) {
         memberCommandService.newMember(memberCreateRequest.toDto());
@@ -72,15 +68,13 @@ public class MemberController {
     public ResponseEntity<RestResponse<MemberResponse>> findMember(
             @Authenticate CurrentMember currentMember
     ) {
-        MemberResponse memberResponse = MemberResponse.from(
-                memberQueryService.findMember(currentMember.id())
-        );
+        MemberResponse response = memberQueryService.findMember(currentMember.id());
 
-        return ResponseEntity.ok().body(RestResponse.success(memberResponse));
+        return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<RestResponse<String>> updateMember(
+    public ResponseEntity<RestResponse<Void>> updateMember(
             @Valid @RequestBody MemberUpdateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
@@ -90,7 +84,7 @@ public class MemberController {
     }
 
     @PatchMapping("/me/password")
-    public ResponseEntity<RestResponse<String>> updatePassword(
+    public ResponseEntity<RestResponse<Void>> updatePassword(
             @Valid @RequestBody MemberPasswordUpdateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
@@ -100,7 +94,7 @@ public class MemberController {
     }
 
     @PatchMapping(value = "/me/image", consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RestResponse<String>> updateImage(
+    public ResponseEntity<RestResponse<Void>> updateImage(
             @RequestPart MultipartFile file,
             @Authenticate CurrentMember currentMember
     ) {
@@ -110,7 +104,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/me/image")
-    public ResponseEntity<RestResponse<String>> deleteImage(
+    public ResponseEntity<RestResponse<Void>> deleteImage(
             @Authenticate CurrentMember currentMember
     ) {
         memberCommandService.deleteImage(currentMember.id());

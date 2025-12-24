@@ -39,12 +39,12 @@ import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.domain.result.JoinedCrewResult;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Introduce;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 
 @Import(CrewQueryDslRepository.class)
 class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
@@ -81,7 +81,7 @@ class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
             assertThat(OPTIONAL_CREW.get().getImageUrl()).isNull();
             assertThat(OPTIONAL_CREW.get().getKakaoLink()).isNull();
             assertThat(OPTIONAL_CREW.get().getMemberCnt()).isEqualTo(1);
-            assertThat(OPTIONAL_CREW.get().getCrewOwner()).isEqualTo(new SimpleMemberDomainDto(
+            assertThat(OPTIONAL_CREW.get().getCrewOwner()).isEqualTo(new SimpleMemberResult(
                     REVI.getId(),
                     new Nickname(REVI_NICKNAME_VALUE),
                     new Introduce(REVI_INTRODUCE_VALUE),

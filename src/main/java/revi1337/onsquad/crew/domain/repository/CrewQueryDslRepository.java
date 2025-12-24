@@ -32,7 +32,7 @@ import revi1337.onsquad.crew.domain.result.QCrewWithOwnerStateResult;
 import revi1337.onsquad.crew.domain.result.QSimpleCrewResult;
 import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -57,7 +57,7 @@ public class CrewQueryDslRepository {
                                 crew.kakaoLink,
                                 list(hashtag.hashtagType),
                                 crew.currentSize,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -85,7 +85,7 @@ public class CrewQueryDslRepository {
                                 crew.imageUrl,
                                 crew.kakaoLink,
                                 crew.currentSize,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -110,7 +110,7 @@ public class CrewQueryDslRepository {
                                 crew.imageUrl,
                                 crew.kakaoLink,
                                 crew.currentSize,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -135,7 +135,7 @@ public class CrewQueryDslRepository {
                                 crew.introduce.value,
                                 crew.kakaoLink,
                                 crew.imageUrl,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -194,7 +194,7 @@ public class CrewQueryDslRepository {
                                 crew.imageUrl,
                                 crew.kakaoLink,
                                 crew.currentSize,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -235,7 +235,7 @@ public class CrewQueryDslRepository {
                                 crew.imageUrl,
                                 crew.kakaoLink,
                                 crew.currentSize,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -273,7 +273,7 @@ public class CrewQueryDslRepository {
                                 crew.kakaoLink,
                                 list(hashtag.hashtagType),
                                 crew.currentSize,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,

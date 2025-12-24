@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 @Deprecated
@@ -15,13 +15,13 @@ public record SquadRequestWithSquadResult(
         int capacity,
         int remain,
         List<CategoryType> categories,
-        SimpleMemberDomainDto squadOwner,
+        SimpleMemberResult squadOwner,
         RequestParticipantDomainDto request
 ) {
 
     @QueryProjection
     public SquadRequestWithSquadResult(Long crewId, Long id, Title title, int capacity, int remain,
-                                       List<CategoryType> categories, SimpleMemberDomainDto squadOwner, RequestParticipantDomainDto request) {
+                                       List<CategoryType> categories, SimpleMemberResult squadOwner, RequestParticipantDomainDto request) {
         this.crewId = crewId;
         this.id = id;
         this.title = title;

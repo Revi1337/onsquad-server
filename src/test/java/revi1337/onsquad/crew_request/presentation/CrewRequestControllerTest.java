@@ -44,7 +44,7 @@ import revi1337.onsquad.crew_request.application.CrewRequestQueryService;
 import revi1337.onsquad.crew_request.application.response.CrewRequestResponse;
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 @WebMvcTest(CrewRequestController.class)
 class CrewRequestControllerTest extends PresentationLayerTestSupport {
@@ -145,7 +145,7 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
             Long CREW_Id = 1L;
             List<CrewRequestWithMemberResponse> SERVICE_DTOS = List.of(new CrewRequestWithMemberResponse(
                     new CrewRequestResponse(2L, LocalDateTime.now()),
-                    new SimpleMemberDto(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
+                    new SimpleMemberResponse(1L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             ));
             when(crewRequestQueryService.fetchAllRequests(any(), anyLong(), any(Pageable.class)))
                     .thenReturn(SERVICE_DTOS);
@@ -209,7 +209,7 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
                             CREW_INTRODUCE_VALUE,
                             CREW_KAKAO_LINK_VALUE,
                             CREW_IMAGE_LINK_VALUE,
-                            new SimpleMemberDto(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
+                            new SimpleMemberResponse(2L, null, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
                     )
             ));
             when(crewRequestQueryService.fetchAllCrewRequests(any())).thenReturn(SERVICE_DTOS);

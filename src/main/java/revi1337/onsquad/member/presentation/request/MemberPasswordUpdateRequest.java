@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.presentation.dto.request;
+package revi1337.onsquad.member.presentation.request;
 
 import java.util.HashMap;
 import java.util.Map;

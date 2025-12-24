@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 @Deprecated
@@ -14,12 +14,12 @@ public record MySquadRequestResult(
         Long id,
         Name name,
         String imageUrl,
-        SimpleMemberDomainDto owner,
+        SimpleMemberResult owner,
         List<SquadWithParticipant> squads
 ) {
 
     @QueryProjection
-    public MySquadRequestResult(Long id, Name name, String imageUrl, SimpleMemberDomainDto owner, List<SquadWithParticipant> squads) {
+    public MySquadRequestResult(Long id, Name name, String imageUrl, SimpleMemberResult owner, List<SquadWithParticipant> squads) {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -33,18 +33,18 @@ public record MySquadRequestResult(
             int capacity,
             int remain,
             List<CategoryType> categories,
-            SimpleMemberDomainDto owner,
+            SimpleMemberResult owner,
             RequestParticipantDomainDto request
     ) {
 
         @QueryProjection
-        public SquadWithParticipant(Long id, Title title, int capacity, int remain, SimpleMemberDomainDto squadOwner, RequestParticipantDomainDto request) {
+        public SquadWithParticipant(Long id, Title title, int capacity, int remain, SimpleMemberResult squadOwner, RequestParticipantDomainDto request) {
             this(id, title, capacity, remain, new ArrayList<>(), squadOwner, request);
         }
 
         @QueryProjection
         public SquadWithParticipant(Long id, Title title, int capacity, int remain, List<CategoryType> categories,
-                                    SimpleMemberDomainDto owner, RequestParticipantDomainDto request) {
+                                    SimpleMemberResult owner, RequestParticipantDomainDto request) {
             this.id = id;
             this.title = title;
             this.capacity = capacity;

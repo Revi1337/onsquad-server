@@ -43,7 +43,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad_comment.application.SquadCommentCommandService;
 import revi1337.onsquad.squad_comment.application.SquadCommentQueryService;
 import revi1337.onsquad.squad_comment.application.response.SquadCommentResponse;
@@ -143,7 +143,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
-                                    new SimpleMemberDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
+                                    new SimpleMemberResponse(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
                                     List.of(
                                             new SquadCommentResponse(
                                                     1L,
@@ -152,7 +152,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
-                                                    new SimpleMemberDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE,
+                                                    new SimpleMemberResponse(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE,
                                                             ANDONG_MBTI_VALUE),
                                                     List.of()
                                             ),
@@ -163,7 +163,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
-                                                    new SimpleMemberDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
+                                                    new SimpleMemberResponse(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
                                                     List.of()
                                             )
                                     )
@@ -175,7 +175,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
-                                    new SimpleMemberDto(3L, KWANGWON_EMAIL_VALUE, KWANGWON_NICKNAME_VALUE, KWANGWON_INTRODUCE_VALUE, KWANGWON_MBTI_VALUE),
+                                    new SimpleMemberResponse(3L, KWANGWON_EMAIL_VALUE, KWANGWON_NICKNAME_VALUE, KWANGWON_INTRODUCE_VALUE, KWANGWON_MBTI_VALUE),
                                     List.of(
                                             new SquadCommentResponse(
                                                     4L,
@@ -184,7 +184,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
-                                                    new SimpleMemberDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE,
+                                                    new SimpleMemberResponse(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE,
                                                             ANDONG_MBTI_VALUE),
                                                     List.of()
                                             ),
@@ -195,7 +195,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                                     false,
                                                     LocalDateTime.now(),
                                                     LocalDateTime.now(),
-                                                    new SimpleMemberDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
+                                                    new SimpleMemberResponse(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
                                                     List.of()
                                             )
                                     )
@@ -246,7 +246,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
-                                    new SimpleMemberDto(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE),
+                                    new SimpleMemberResponse(2L, ANDONG_EMAIL_VALUE, ANDONG_NICKNAME_VALUE, ANDONG_INTRODUCE_VALUE, ANDONG_MBTI_VALUE),
                                     List.of()
                             ),
                             new SquadCommentResponse(
@@ -256,7 +256,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                                     false,
                                     LocalDateTime.now(),
                                     LocalDateTime.now(),
-                                    new SimpleMemberDto(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
+                                    new SimpleMemberResponse(1L, REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE),
                                     List.of()
                             )
                     ));

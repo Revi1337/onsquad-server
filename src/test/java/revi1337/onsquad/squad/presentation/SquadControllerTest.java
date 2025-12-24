@@ -43,7 +43,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
@@ -129,7 +129,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             SQUAD_KAKAO_LINK_VALUE,
                             SQUAD_DISCORD_LINK_VALUE,
                             List.of(GAME.getText(), MOVIE.getText()),
-                            new SimpleMemberDto(
+                            new SimpleMemberResponse(
                                     2L,
                                     null,
                                     ANDONG_NICKNAME_VALUE,
@@ -177,7 +177,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                     SQUAD_KAKAO_LINK_VALUE,
                     SQUAD_DISCORD_LINK_VALUE,
                     List.of(GAME.getText(), MOVIE.getText()),
-                    new SimpleMemberDto(
+                    new SimpleMemberResponse(
                             2L,
                             null,
                             ANDONG_NICKNAME_VALUE,
@@ -226,7 +226,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
                             20,
                             8,
                             List.of(GAME.getText(), MOVIE.getText()),
-                            new SimpleMemberDto(
+                            new SimpleMemberResponse(
                                     2L,
                                     null,
                                     ANDONG_NICKNAME_VALUE,

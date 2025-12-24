@@ -3,7 +3,7 @@ package revi1337.onsquad.squad.application.dto.response;
 import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.result.SimpleSquadResult;
 
@@ -13,7 +13,7 @@ public record SimpleSquadResponse(
         int capacity,
         int remain,
         List<String> categories,
-        SimpleMemberDto leader
+        SimpleMemberResponse leader
 ) {
 
     public static SimpleSquadResponse from(SimpleSquadResult simpleSquadResult) {
@@ -25,7 +25,7 @@ public record SimpleSquadResponse(
                 simpleSquadResult.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberDto.from(simpleSquadResult.leader())
+                SimpleMemberResponse.from(simpleSquadResult.leader())
         );
     }
 
@@ -36,7 +36,7 @@ public record SimpleSquadResponse(
                 squad.getCapacity(),
                 squad.getRemain(),
                 new ArrayList<>(),
-                SimpleMemberDto.from(squad.getMember())
+                SimpleMemberResponse.from(squad.getMember())
         );
     }
 
@@ -49,7 +49,7 @@ public record SimpleSquadResponse(
                 categories.stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberDto.from(squad.getMember())
+                SimpleMemberResponse.from(squad.getMember())
         );
     }
 }

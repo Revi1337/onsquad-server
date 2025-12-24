@@ -2,17 +2,17 @@ package revi1337.onsquad.crew_member.application.response;
 
 import java.time.LocalDateTime;
 import revi1337.onsquad.crew_member.domain.result.CrewMemberResult;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 public record CrewMemberResponse(
         LocalDateTime participantAt,
-        SimpleMemberDto member
+        SimpleMemberResponse member
 ) {
 
     public static CrewMemberResponse from(CrewMemberResult crewMemberResult) {
         return new CrewMemberResponse(
                 crewMemberResult.participantAt(),
-                SimpleMemberDto.from(crewMemberResult.memberInfo())
+                SimpleMemberResponse.from(crewMemberResult.memberInfo())
         );
     }
 }

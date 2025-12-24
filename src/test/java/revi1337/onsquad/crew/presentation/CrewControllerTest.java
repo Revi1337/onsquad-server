@@ -78,7 +78,7 @@ import revi1337.onsquad.crew.presentation.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
 import revi1337.onsquad.crew_member.application.response.JoinedCrewResponse;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 @WebMvcTest(CrewController.class)
 class CrewControllerTest extends PresentationLayerTestSupport {
@@ -217,7 +217,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_KAKAO_LINK_VALUE,
                     List.of(HashtagType.ACTIVE.getText()),
                     1L,
-                    new SimpleMemberDto(
+                    new SimpleMemberResponse(
                             1L,
                             null,
                             REVI_NICKNAME_VALUE,
@@ -265,7 +265,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             CREW_KAKAO_LINK_VALUE,
                             List.of(HashtagType.ACTIVE.getText()),
                             1L,
-                            new SimpleMemberDto(
+                            new SimpleMemberResponse(
                                     1L,
                                     null,
                                     REVI_NICKNAME_VALUE,
@@ -519,7 +519,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_KAKAO_LINK_VALUE,
                     List.of(HashtagType.ACTIVE.getText()),
                     1L,
-                    new SimpleMemberDto(
+                    new SimpleMemberResponse(
                             1L,
                             null,
                             REVI_NICKNAME_VALUE,
@@ -580,7 +580,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW_KAKAO_LINK_VALUE,
                     List.of(HashtagType.ACTIVE.getText()),
                     1L,
-                    new SimpleMemberDto(
+                    new SimpleMemberResponse(
                             1L,
                             null,
                             REVI_NICKNAME_VALUE,
@@ -626,14 +626,14 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                     CREW1_NAME_VALUE,
                     CREW1_IMAGE_LINK_VALUE,
                     true,
-                    new SimpleMemberDto(1L, null, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE)
+                    new SimpleMemberResponse(1L, null, REVI_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, REVI_MBTI_VALUE)
             );
             JoinedCrewResponse SERVICE_DTO2 = new JoinedCrewResponse(
                     2L,
                     CREW2_NAME_VALUE,
                     CREW2_IMAGE_LINK_VALUE,
                     false,
-                    new SimpleMemberDto(2L, null, ANDONG_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
+                    new SimpleMemberResponse(2L, null, ANDONG_NICKNAME_VALUE, REVI_INTRODUCE_VALUE, ANDONG_MBTI_VALUE)
             );
             List<JoinedCrewResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
             when(crewQueryService.fetchParticipantCrews(any())).thenReturn(SERVICE_DTOS);

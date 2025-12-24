@@ -7,7 +7,7 @@ import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew_hashtag.domain.entity.CrewHashtag;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record CrewResponse(
@@ -19,7 +19,7 @@ public record CrewResponse(
         String kakaoLink,
         List<String> hashtags,
         Long memberCount,
-        SimpleMemberDto owner
+        SimpleMemberResponse owner
 ) {
 
     public static CrewResponse from(CrewResult crewResult) {
@@ -34,7 +34,7 @@ public record CrewResponse(
                         .map(HashtagType::getText)
                         .toList(),
                 crewResult.getMemberCnt(),
-                SimpleMemberDto.from(crewResult.getCrewOwner())
+                SimpleMemberResponse.from(crewResult.getCrewOwner())
         );
     }
 
@@ -52,7 +52,7 @@ public record CrewResponse(
                         .map(HashtagType::getText)
                         .toList(),
                 crew.getCurrentSize(),
-                SimpleMemberDto.from(crew.getMember())
+                SimpleMemberResponse.from(crew.getMember())
         );
     }
 }

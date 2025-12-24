@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 public record SimpleSquadResult(
@@ -13,15 +13,15 @@ public record SimpleSquadResult(
         int capacity,
         int remain,
         List<CategoryType> categories,
-        SimpleMemberDomainDto leader
+        SimpleMemberResult leader
 ) {
 
     @QueryProjection
-    public SimpleSquadResult(Long id, Title title, int capacity, int remain, SimpleMemberDomainDto owner) {
+    public SimpleSquadResult(Long id, Title title, int capacity, int remain, SimpleMemberResult owner) {
         this(id, title, capacity, remain, new ArrayList<>(), owner);
     }
 
-    public SimpleSquadResult(Long id, Title title, int capacity, int remain, List<CategoryType> categories, SimpleMemberDomainDto leader) {
+    public SimpleSquadResult(Long id, Title title, int capacity, int remain, List<CategoryType> categories, SimpleMemberResult leader) {
         this.id = id;
         this.title = title;
         this.capacity = capacity;

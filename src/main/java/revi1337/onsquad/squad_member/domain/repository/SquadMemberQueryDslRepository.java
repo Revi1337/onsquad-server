@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.entity.QMember;
+import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
 import revi1337.onsquad.squad_member.domain.result.EnrolledSquadResult;
 import revi1337.onsquad.squad_member.domain.result.EnrolledSquadResult.SimpleSquadInfoDomainDto;
@@ -47,7 +47,7 @@ public class SquadMemberQueryDslRepository {
         return jpaQueryFactory
                 .select(new QSquadMemberResult(
                         squadMember.requestAt,
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -73,7 +73,7 @@ public class SquadMemberQueryDslRepository {
                                 squad.title,
                                 squad.capacity,
                                 squad.remain,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -114,7 +114,7 @@ public class SquadMemberQueryDslRepository {
                                         .then(true)
                                         .otherwise(false),
                                 list(category.categoryType),
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -134,7 +134,7 @@ public class SquadMemberQueryDslRepository {
                                 crew.id,
                                 crew.name,
                                 crew.imageUrl,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         crewCreator.id,
                                         crewCreator.nickname,
                                         crewCreator.introduce,
@@ -164,7 +164,7 @@ public class SquadMemberQueryDslRepository {
                                 .then(TRUE)
                                 .otherwise(FALSE),
                         squadMember.requestAt,
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -195,7 +195,7 @@ public class SquadMemberQueryDslRepository {
                                         .when(squadCreator.id.eq(memberId))
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         squadCreator.id,
                                         squadCreator.nickname,
                                         squadCreator.introduce,
@@ -203,7 +203,7 @@ public class SquadMemberQueryDslRepository {
                                 ),
                                 list(new QSquadMemberResult(
                                         squadMember.requestAt,
-                                        new QSimpleMemberDomainDto(
+                                        new QSimpleMemberResult(
                                                 member.id,
                                                 member.nickname,
                                                 member.introduce,
@@ -240,7 +240,7 @@ public class SquadMemberQueryDslRepository {
                                         .when(squadCreator.id.eq(memberId))
                                         .then(TRUE)
                                         .otherwise(FALSE),
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         squadCreator.id,
                                         squadCreator.nickname,
                                         squadCreator.introduce,
@@ -248,7 +248,7 @@ public class SquadMemberQueryDslRepository {
                                 ),
                                 list(new QSquadMemberResult(
                                         squadMember.requestAt,
-                                        new QSimpleMemberDomainDto(
+                                        new QSimpleMemberResult(
                                                 member.id,
                                                 member.nickname,
                                                 member.introduce,

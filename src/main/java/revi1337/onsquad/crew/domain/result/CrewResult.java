@@ -10,7 +10,7 @@ import revi1337.onsquad.crew.domain.entity.vo.Detail;
 import revi1337.onsquad.crew.domain.entity.vo.Introduce;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 
 @Getter
 public class CrewResult {
@@ -24,12 +24,12 @@ public class CrewResult {
     @Setter
     private Collection<HashtagType> hashtagTypes;
     private Long memberCnt;
-    private SimpleMemberDomainDto crewOwner;
+    private SimpleMemberResult crewOwner;
 
     @QueryProjection
     public CrewResult(Long id, Name name, Introduce introduce, Detail detail, String imageUrl, String kakaoLink,
                       Collection<HashtagType> hashtagTypes, Long memberCnt,
-                      SimpleMemberDomainDto crewOwner) {
+                      SimpleMemberResult crewOwner) {
         this.id = id;
         this.name = name;
         this.introduce = introduce;
@@ -48,13 +48,13 @@ public class CrewResult {
     @QueryProjection
     public CrewResult(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink,
                       Collection<HashtagType> hashtagTypes, Long memberCnt,
-                      SimpleMemberDomainDto crewOwner) {
+                      SimpleMemberResult crewOwner) {
         this(id, name, introduce, null, imageUrl, kakaoLink, hashtagTypes, memberCnt, crewOwner);
     }
 
     @QueryProjection
     public CrewResult(Long id, Name name, Introduce introduce, String imageUrl, String kakaoLink, Long memberCnt,
-                      SimpleMemberDomainDto crewOwner) {
+                      SimpleMemberResult crewOwner) {
         this(id, name, introduce, null, imageUrl, kakaoLink, new ArrayList<>(), memberCnt, crewOwner);
     }
 }

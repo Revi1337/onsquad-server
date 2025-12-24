@@ -3,7 +3,8 @@ package revi1337.onsquad.member.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.member.application.dto.MemberInfoDto;
+import revi1337.onsquad.member.application.dto.response.DuplicateResponse;
+import revi1337.onsquad.member.application.dto.response.MemberResponse;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -12,15 +13,23 @@ public class MemberQueryService {
 
     private final MemberAccessPolicy memberAccessPolicy;
 
-    public boolean checkDuplicateNickname(String nickname) {
-        return memberAccessPolicy.checkNicknameDuplicate(nickname);
+    public DuplicateResponse checkDuplicateNickname(String nickname) {
+        if (memberAccessPolicy.checkNicknameDuplicate(nickname)) {
+            return DuplicateResponse.of(true);
+        }
+
+        return DuplicateResponse.of(false);
     }
 
-    public boolean checkDuplicateEmail(String email) {
-        return memberAccessPolicy.checkEmailDuplicate(email);
+    public DuplicateResponse checkDuplicateEmail(String email) {
+        if (memberAccessPolicy.checkEmailDuplicate(email)) {
+            return DuplicateResponse.of(true);
+        }
+
+        return DuplicateResponse.of(false);
     }
 
-    public MemberInfoDto findMember(Long memberId) {
-        return MemberInfoDto.from(memberAccessPolicy.ensureMemberExistsAndGet(memberId));
+    public MemberResponse findMember(Long memberId) {
+        return MemberResponse.from(memberAccessPolicy.ensureMemberExistsAndGet(memberId));
     }
 }

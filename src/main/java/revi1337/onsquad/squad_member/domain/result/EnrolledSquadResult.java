@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 public record EnrolledSquadResult(
         Long id,
         Name name,
         String imageUrl,
-        SimpleMemberDomainDto owner,
+        SimpleMemberResult owner,
         List<SimpleSquadInfoDomainDto> squads
 ) {
 
     @QueryProjection
-    public EnrolledSquadResult(Long crewId, Name crewName, String imageUrl, SimpleMemberDomainDto crewOwner) {
+    public EnrolledSquadResult(Long crewId, Name crewName, String imageUrl, SimpleMemberResult crewOwner) {
         this(crewId, crewName, imageUrl, crewOwner, new ArrayList<>());
     }
 
@@ -29,12 +29,12 @@ public record EnrolledSquadResult(
             int remain,
             Boolean isLeader,
             List<CategoryType> categories,
-            SimpleMemberDomainDto squadOwner
+            SimpleMemberResult squadOwner
     ) {
 
         @QueryProjection
         public SimpleSquadInfoDomainDto(Long crewId, Long id, Title title, int capacity, int remain, Boolean isLeader,
-                                        List<CategoryType> categories, SimpleMemberDomainDto squadOwner) {
+                                        List<CategoryType> categories, SimpleMemberResult squadOwner) {
             this.crewId = crewId;
             this.id = id;
             this.title = title;

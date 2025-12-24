@@ -1,7 +1,7 @@
 package revi1337.onsquad.crew.domain.result;
 
 import com.querydsl.core.annotations.QueryProjection;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 
 public record SimpleCrewResult(
         Long id,
@@ -9,11 +9,11 @@ public record SimpleCrewResult(
         String introduce,
         String kakaoLink,
         String imageUrl,
-        SimpleMemberDomainDto owner
+        SimpleMemberResult owner
 ) {
 
     @QueryProjection
-    public SimpleCrewResult(Long id, String name, String introduce, String kakaoLink, String imageUrl, SimpleMemberDomainDto owner) {
+    public SimpleCrewResult(Long id, String name, String introduce, String kakaoLink, String imageUrl, SimpleMemberResult owner) {
         this.id = id;
         this.name = name;
         this.introduce = introduce;
@@ -23,7 +23,7 @@ public record SimpleCrewResult(
     }
 
     @QueryProjection
-    public SimpleCrewResult(Long id, String name, String kakaoLink, String imageUrl, SimpleMemberDomainDto owner) {
+    public SimpleCrewResult(Long id, String name, String kakaoLink, String imageUrl, SimpleMemberResult owner) {
         this(id, name, null, kakaoLink, imageUrl, owner);
     }
 }

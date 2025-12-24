@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 
 public record SquadCommentResult(
         Long parentId,
@@ -13,19 +13,19 @@ public record SquadCommentResult(
         boolean deleted,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        SimpleMemberDomainDto writer,
+        SimpleMemberResult writer,
         List<SquadCommentResult> replies
 ) {
 
     @QueryProjection
     public SquadCommentResult(Long parentId, Long commentId, String content, boolean deleted, LocalDateTime createdAt,
-                              LocalDateTime updatedAt, SimpleMemberDomainDto memberInfo) {
+                              LocalDateTime updatedAt, SimpleMemberResult memberInfo) {
         this(parentId, commentId, content, deleted, createdAt, updatedAt, memberInfo, new ArrayList<>());
     }
 
     @QueryProjection
     public SquadCommentResult(Long commentId, String content, boolean deleted, LocalDateTime createdAt, LocalDateTime updatedAt,
-                              SimpleMemberDomainDto memberInfo) {
+                              SimpleMemberResult memberInfo) {
         this(null, commentId, content, deleted, createdAt, updatedAt, memberInfo, new ArrayList<>());
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 import revi1337.onsquad.squad_comment.domain.result.QSquadCommentResult;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
@@ -29,7 +29,7 @@ public class SquadCommentQueryDslRepository {
                         squadComment.deleted,
                         squadComment.createdAt,
                         squadComment.updatedAt,
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -52,7 +52,7 @@ public class SquadCommentQueryDslRepository {
                         squadComment.deleted,
                         squadComment.createdAt,
                         squadComment.updatedAt,
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -80,7 +80,7 @@ public class SquadCommentQueryDslRepository {
                         squadComment.deleted,
                         squadComment.createdAt,
                         squadComment.updatedAt,
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,

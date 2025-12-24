@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.AuthMailService;
-import revi1337.onsquad.member.presentation.dto.response.EmailValidResponse;
+import revi1337.onsquad.member.application.dto.response.EmailValidResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api")

@@ -24,7 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
 import revi1337.onsquad.squad.domain.result.QSquadResult;
@@ -60,7 +60,7 @@ public class SquadQueryDslRepository {
                         squad.address,
                         squad.kakaoLink,
                         squad.discordLink,
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -88,7 +88,7 @@ public class SquadQueryDslRepository {
                                 squad.title,
                                 squad.capacity,
                                 squad.remain,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -128,7 +128,7 @@ public class SquadQueryDslRepository {
                         squad.address,
                         squad.kakaoLink,
                         squad.discordLink,
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -167,7 +167,7 @@ public class SquadQueryDslRepository {
                                 squad.kakaoLink,
                                 squad.discordLink,
                                 list(category.categoryType),
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -216,7 +216,7 @@ public class SquadQueryDslRepository {
                                 squad.kakaoLink,
                                 squad.discordLink,
                                 list(category.categoryType),
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -259,7 +259,7 @@ public class SquadQueryDslRepository {
                                 squad.title,
                                 squad.capacity,
                                 squad.remain,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,

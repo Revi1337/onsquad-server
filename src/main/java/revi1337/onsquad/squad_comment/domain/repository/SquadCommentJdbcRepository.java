@@ -9,10 +9,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
 import revi1337.onsquad.member.domain.entity.vo.Introduce;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
 @RequiredArgsConstructor
@@ -63,7 +63,7 @@ public class SquadCommentJdbcRepository {
                     rs.getBoolean("deleted"),
                     rs.getObject("created_at", LocalDateTime.class),
                     rs.getObject("updated_at", LocalDateTime.class),
-                    new SimpleMemberDomainDto(
+                    new SimpleMemberResult(
                             rs.getLong("comment_creator_id"),
                             new Nickname(rs.getString("comment_creator_nickname")),
                             new Introduce(rs.getString("comment_creator_introduce")),

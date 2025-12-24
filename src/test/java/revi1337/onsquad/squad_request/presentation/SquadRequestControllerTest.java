@@ -33,7 +33,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 import revi1337.onsquad.squad_request.application.SquadRequestQueryService;
 import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
@@ -179,7 +179,7 @@ class SquadRequestControllerTest extends PresentationLayerTestSupport {
             List<SquadRequestResponse> SERVICE_DTOS = List.of(new SquadRequestResponse(
                     SQUAD_ID,
                     LocalDateTime.now(),
-                    new SimpleMemberDto(
+                    new SimpleMemberResponse(
                             1L,
                             null,
                             REVI_NICKNAME_VALUE,

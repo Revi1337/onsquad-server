@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.domain.dto.SimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 
 @Getter
@@ -16,13 +16,13 @@ public class SquadInMembersResult {
     private int capacity;
     private int remain;
     private Boolean isOwner;
-    private SimpleMemberDomainDto owner;
+    private SimpleMemberResult owner;
     private List<CategoryType> categories = new ArrayList<>();
     private List<SquadMemberResult> members;
 
     @QueryProjection
     public SquadInMembersResult(Long id, Title title, int capacity, int remain, Boolean isOwner,
-                                SimpleMemberDomainDto owner, List<SquadMemberResult> members) {
+                                SimpleMemberResult owner, List<SquadMemberResult> members) {
         this.id = id;
         this.title = title;
         this.capacity = capacity;

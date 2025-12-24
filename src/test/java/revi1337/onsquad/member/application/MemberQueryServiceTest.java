@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.fixture.MemberFixture;
-import revi1337.onsquad.member.application.dto.MemberInfoDto;
+import revi1337.onsquad.member.application.dto.response.MemberResponse;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
@@ -77,19 +77,19 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
         Member revi = memberRepository.save(MemberFixture.REVI());
         Long reviId = revi.getId();
 
-        MemberInfoDto memberInfoDto = memberQueryService.findMember(reviId);
+        MemberResponse memberResponse = memberQueryService.findMember(reviId);
 
         assertAll(() -> {
-            assertThat(memberInfoDto.id()).isEqualTo(reviId);
-            assertThat(memberInfoDto.email()).isEqualTo(REVI_EMAIL_VALUE);
-            assertThat(memberInfoDto.nickname()).isEqualTo(REVI_NICKNAME_VALUE);
-            assertThat(memberInfoDto.introduce()).isEqualTo(REVI_INTRODUCE_VALUE);
-            assertThat(memberInfoDto.kakaoLink()).isEqualTo(REVI_KAKAO_LINK);
-            assertThat(memberInfoDto.profileImage()).isEqualTo(REVI_PROFILE_IMAGE_LINK);
-            assertThat(memberInfoDto.address()).isEqualTo(REVI_ADDRESS_VALUE);
-            assertThat(memberInfoDto.addressDetail()).isEqualTo(REVI_ADDRESS_DETAIL_VALUE);
-            assertThat(memberInfoDto.mbti()).isEqualTo(Mbti.ISTP.name());
-            assertThat(memberInfoDto.userType()).isEqualTo(UserType.GENERAL.getText());
+            assertThat(memberResponse.id()).isEqualTo(reviId);
+            assertThat(memberResponse.email()).isEqualTo(REVI_EMAIL_VALUE);
+            assertThat(memberResponse.nickname()).isEqualTo(REVI_NICKNAME_VALUE);
+            assertThat(memberResponse.introduce()).isEqualTo(REVI_INTRODUCE_VALUE);
+            assertThat(memberResponse.kakaoLink()).isEqualTo(REVI_KAKAO_LINK);
+            assertThat(memberResponse.profileImage()).isEqualTo(REVI_PROFILE_IMAGE_LINK);
+            assertThat(memberResponse.address()).isEqualTo(REVI_ADDRESS_VALUE);
+            assertThat(memberResponse.addressDetail()).isEqualTo(REVI_ADDRESS_DETAIL_VALUE);
+            assertThat(memberResponse.mbti()).isEqualTo(Mbti.ISTP.name());
+            assertThat(memberResponse.userType()).isEqualTo(UserType.GENERAL.getText());
         });
     }
 }

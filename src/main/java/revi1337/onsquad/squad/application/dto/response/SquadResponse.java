@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
@@ -21,7 +21,7 @@ public record SquadResponse(
         String kakaoLink,
         String discordLink,
         List<String> categories,
-        SimpleMemberDto leader
+        SimpleMemberResponse leader
 ) {
 
     public static SquadResponse from(SquadResult squadResult) {
@@ -38,7 +38,7 @@ public record SquadResponse(
                 squadResult.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberDto.from(squadResult.leader())
+                SimpleMemberResponse.from(squadResult.leader())
         );
     }
 
@@ -58,7 +58,7 @@ public record SquadResponse(
                         .map(Category::getCategoryType)
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberDto.from(squad.getMember())
+                SimpleMemberResponse.from(squad.getMember())
         );
     }
 }

@@ -1,7 +1,7 @@
 package revi1337.onsquad.crew.application.dto.response;
 
 import revi1337.onsquad.crew.domain.result.SimpleCrewResult;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 public record SimpleCrewResponse(
         Long id,
@@ -9,7 +9,7 @@ public record SimpleCrewResponse(
         String introduce,
         String kakaoLink,
         String imageUrl,
-        SimpleMemberDto owner
+        SimpleMemberResponse owner
 ) {
 
     public static SimpleCrewResponse from(SimpleCrewResult simpleCrewResult) {
@@ -19,7 +19,7 @@ public record SimpleCrewResponse(
                 simpleCrewResult.introduce() != null ? simpleCrewResult.introduce() : "",
                 simpleCrewResult.kakaoLink() != null ? simpleCrewResult.kakaoLink() : "",
                 simpleCrewResult.imageUrl() != null ? simpleCrewResult.imageUrl() : "",
-                SimpleMemberDto.from(simpleCrewResult.owner())
+                SimpleMemberResponse.from(simpleCrewResult.owner())
         );
     }
 }

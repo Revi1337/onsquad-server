@@ -48,10 +48,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.application.MemberCommandService;
 import revi1337.onsquad.member.application.MemberQueryService;
-import revi1337.onsquad.member.application.dto.MemberInfoDto;
-import revi1337.onsquad.member.presentation.dto.request.MemberCreateRequest;
-import revi1337.onsquad.member.presentation.dto.request.MemberPasswordUpdateRequest;
-import revi1337.onsquad.member.presentation.dto.request.MemberUpdateRequest;
+import revi1337.onsquad.member.application.dto.response.MemberResponse;
+import revi1337.onsquad.member.presentation.request.MemberCreateRequest;
+import revi1337.onsquad.member.presentation.request.MemberPasswordUpdateRequest;
+import revi1337.onsquad.member.presentation.request.MemberUpdateRequest;
 
 @WebMvcTest({MemberController.class})
 public class MemberControllerTest extends PresentationLayerTestSupport {
@@ -177,7 +177,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("내 정보 조회에 성공한다.")
         void success() throws Exception {
-            MemberInfoDto MEMBER_INFO_DTO = new MemberInfoDto(
+            MemberResponse MEMBER_INFO_DTO = new MemberResponse(
                     1L,
                     REVI_EMAIL_VALUE,
                     REVI_NICKNAME_VALUE,

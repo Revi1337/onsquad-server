@@ -23,7 +23,7 @@ import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 import revi1337.onsquad.crew_member.domain.result.QCrewMemberResult;
 import revi1337.onsquad.crew_member.domain.result.QCrewMemberWithCountResult;
 import revi1337.onsquad.crew_member.domain.result.QMyParticipantCrewResult;
-import revi1337.onsquad.member.domain.dto.QSimpleMemberDomainDto;
+import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -36,7 +36,7 @@ public class CrewMemberQueryDslRepository {
                 .select(new QCrewMemberWithCountResult(
                         crew.currentSize,
                         new QCrewMemberResult(
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -70,7 +70,7 @@ public class CrewMemberQueryDslRepository {
                                 crew.introduce.value,
                                 crew.kakaoLink,
                                 crew.imageUrl,
-                                new QSimpleMemberDomainDto(
+                                new QSimpleMemberResult(
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -93,7 +93,7 @@ public class CrewMemberQueryDslRepository {
     public List<CrewMemberResult> fetchParticipantsByCrewIdLegacyV2(Long crewId, Pageable pageable) {
         return jpaQueryFactory
                 .select(new QCrewMemberResult(
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -118,7 +118,7 @@ public class CrewMemberQueryDslRepository {
     public Page<CrewMemberResult> fetchParticipantsByCrewIdLegacy(Long crewId, Pageable pageable) {
         List<CrewMemberResult> results = jpaQueryFactory
                 .select(new QCrewMemberResult(
-                        new QSimpleMemberDomainDto(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
                                 member.introduce,

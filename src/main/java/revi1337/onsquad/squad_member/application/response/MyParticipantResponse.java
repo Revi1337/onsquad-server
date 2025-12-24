@@ -2,7 +2,7 @@ package revi1337.onsquad.squad_member.application.response;
 
 import java.util.List;
 import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
-import revi1337.onsquad.member.application.dto.SimpleMemberDto;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
 import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 
@@ -22,7 +22,7 @@ public record MyParticipantResponse(
             Long id,
             String name,
             String imageUrl,
-            SimpleMemberDto owner,
+            SimpleMemberResponse owner,
             List<MySquadParticipantResponse> squads
     ) {
 
@@ -31,7 +31,7 @@ public record MyParticipantResponse(
                     crewResult.crew().id(),
                     crewResult.crew().name(),
                     crewResult.crew().imageUrl() == null ? "" : crewResult.crew().imageUrl(),
-                    SimpleMemberDto.from(crewResult.crew().owner()),
+                    SimpleMemberResponse.from(crewResult.crew().owner()),
                     squadResults.stream()
                             .map(MySquadParticipantResponse::from)
                             .toList()
