@@ -6,14 +6,10 @@ import static revi1337.onsquad.announce.domain.entity.QAnnounce.announce;
 import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.announce.domain.result.AnnounceWithModifyStateResult;
@@ -29,8 +25,8 @@ public class AnnounceQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<AnnounceResult> fetchAllByCrewId(Long crewId, Pageable pageable) {
-        List<AnnounceResult> results = jpaQueryFactory
+    public List<AnnounceResult> fetchAllByCrewId(Long crewId) {
+        return jpaQueryFactory
                 .select(new QAnnounceResult(
                         announce.id,
                         announce.title,
@@ -45,23 +41,15 @@ public class AnnounceQueryDslRepository {
                         )
                 ))
                 .from(announce)
-                .innerJoin(announce.crewMember, crewMember).on(announce.crew.id.eq(crewId))
+                .innerJoin(announce.crewMember, crewMember)
                 .innerJoin(crewMember.member, member)
+                .where(announce.crew.id.eq(crewId))
                 .orderBy(
                         announce.fixed.desc(),
                         announce.fixedAt.desc(),
                         announce.createdAt.desc()
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .fetch();
-
-        JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(announce.id.count())
-                .from(announce)
-                .where(announce.crew.id.eq(crewId));
-
-        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
     public List<AnnounceResult> fetchAllInDefaultByCrewId(Long crewId) {

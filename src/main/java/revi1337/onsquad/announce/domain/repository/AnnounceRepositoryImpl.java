@@ -1,9 +1,8 @@
 package revi1337.onsquad.announce.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
@@ -14,7 +13,6 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
 
     private final AnnounceJpaRepository announceJpaRepository;
     private final AnnounceQueryDslRepository announceQueryDslRepository;
-    private final AnnounceCacheRepository announceCacheRepository;
 
     @Override
     public Announce save(Announce announce) {
@@ -37,12 +35,7 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     }
 
     @Override
-    public Page<AnnounceResult> fetchAllByCrewId(Long crewId, Pageable pageable) {
-        return announceQueryDslRepository.fetchAllByCrewId(crewId, pageable);
-    }
-
-    @Override
-    public AnnounceResult fetchCacheByCrewIdAndId(Long crewId, Long id) {
-        return announceCacheRepository.fetchCacheByCrewIdAndId(crewId, id);
+    public List<AnnounceResult> fetchAllByCrewId(Long crewId) {
+        return announceQueryDslRepository.fetchAllByCrewId(crewId);
     }
 }

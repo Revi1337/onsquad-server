@@ -3,8 +3,6 @@ package revi1337.onsquad.announce.presentation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,10 +58,9 @@ public class AnnounceController {
     @GetMapping("/{crewId}/announces")
     public ResponseEntity<RestResponse<AnnouncesWithWriteStateResponse>> findAnnounces(
             @PathVariable Long crewId,
-            @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        AnnouncesWithWriteStateResponse response = announceQueryService.findAnnounces(currentMember.id(), crewId, pageable);
+        AnnouncesWithWriteStateResponse response = announceQueryService.findAnnounces(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

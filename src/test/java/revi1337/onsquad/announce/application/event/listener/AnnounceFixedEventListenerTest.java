@@ -55,7 +55,7 @@ class AnnounceFixedEventListenerTest extends ApplicationLayerTestSupport {
         TestTransaction.end();
 
         // then
-        verify(eventListener).handleAnnounceFixedEvent(EVENT);
+        verify(eventListener).onFixed(EVENT);
     }
 
     @Test

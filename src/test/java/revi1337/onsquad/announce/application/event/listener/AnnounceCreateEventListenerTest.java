@@ -50,7 +50,7 @@ class AnnounceCreateEventListenerTest extends ApplicationLayerTestSupport {
         TestTransaction.end();
 
         // then
-        verify(eventListener).handleAnnounceCreateEvent(EVENT);
+        verify(eventListener).onCreate(EVENT);
     }
 
     @Test

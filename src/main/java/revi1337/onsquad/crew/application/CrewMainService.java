@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.announce.domain.repository.AnnounceCacheRepository;
+import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
@@ -28,7 +28,7 @@ public class CrewMainService {
     private final CrewMemberAccessPolicy crewMemberAccessPolicy;
     private final CrewAccessPolicy crewAccessPolicy;
     private final CrewTopMemberCacheRepository crewTopMemberCacheRepository;
-    private final AnnounceCacheRepository announceCacheRepository;
+    private final AnnounceCacheService announceCacheService;
     private final CrewRepository crewRepository;
     private final SquadRepository squadRepository;
     private final CrewStatisticCacheRepository crewStatisticRedisRepository;
@@ -38,7 +38,7 @@ public class CrewMainService {
         CrewResult result = crewRepository.fetchCrewWithDetailById(crewId)
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
 
-        List<AnnounceResult> announces = announceCacheRepository.fetchAllCacheInDefaultByCrewId(crewId);
+        List<AnnounceResult> announces = announceCacheService.getDefaultAnnounces(crewId);
         List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
         List<SquadResult> squads = squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
