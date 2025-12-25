@@ -46,7 +46,7 @@ public class SquadMemberController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @DeleteMapping("/squads/{squadId}/me")
+    @DeleteMapping("/squads/{squadId}/members/me")
     public ResponseEntity<RestResponse<Void>> leaveSquad(
             @PathVariable Long squadId,
             @Authenticate CurrentMember currentMember

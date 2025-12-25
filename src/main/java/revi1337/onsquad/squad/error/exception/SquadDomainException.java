@@ -35,4 +35,11 @@ public abstract class SquadDomainException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }
+
+    public static class UnderflowSize extends SquadDomainException {
+
+        public UnderflowSize(ErrorCode errorCode) {
+            super(errorCode, String.format(errorCode.getDescription()));
+        }
+    }
 }

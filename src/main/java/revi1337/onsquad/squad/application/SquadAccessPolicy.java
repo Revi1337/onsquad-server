@@ -57,4 +57,8 @@ public class SquadAccessPolicy {
     public boolean isParticipant(Long squadId, SquadMember squadMember) {
         return squadMember != null && squadMember.matchSquadId(squadId);
     }
+
+    public boolean isLastMemberRemaining(Squad squad) {
+        return squad.getCurrentSize() == 1;
+    }
 }

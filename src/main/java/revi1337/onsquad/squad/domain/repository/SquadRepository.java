@@ -18,6 +18,8 @@ public interface SquadRepository {
 
     Optional<Squad> findById(Long id);
 
+    Optional<Squad> findByIdForUpdate(Long squadId);
+
     Optional<Squad> findWithCrewById(Long id);
 
     Optional<Squad> findSquadWithDetailById(Long id);

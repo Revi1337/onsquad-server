@@ -8,6 +8,7 @@ import static lombok.AccessLevel.PROTECTED;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.NOT_ENOUGH_LEFT;
+import static revi1337.onsquad.squad.error.SquadErrorCode.SQUAD_MEMBER_UNDERFLOW;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -62,6 +63,9 @@ public class Squad extends BaseEntity {
 
     @Column(name = "capacity", nullable = false)
     private int capacity;
+
+    @Column(name = "current_size", nullable = false)
+    private int currentSize;
 
     @Column(name = "remain", nullable = false)
     private int remain;
@@ -120,9 +124,33 @@ public class Squad extends BaseEntity {
 
     public void addMembers(SquadMember... squadMembers) {
         for (SquadMember squadMember : squadMembers) {
-            decreaseRemain();
+            increaseCurrentSize();
             squadMember.addSquad(this);
             this.members.add(squadMember);
+        }
+    }
+
+    public void increaseCurrentSize() {
+        if (this.currentSize + 1 > this.capacity) {
+            throw new SquadDomainException.NotEnoughLeft(NOT_ENOUGH_LEFT);
+        }
+        this.currentSize++;
+        this.remain--;
+    }
+
+    public void decreaseCurrentSize() {
+        if (this.currentSize - 1 < 0) {
+            throw new SquadDomainException.UnderflowSize(SQUAD_MEMBER_UNDERFLOW);
+        }
+        this.currentSize--;
+        this.remain++;
+    }
+
+    public void delegateLeader(SquadMember currentLeader, SquadMember nextLeader) {
+        if (currentLeader.isLeader()) {
+            nextLeader.promoteToLeader();
+            currentLeader.demoteToGeneral();
+            updateLeader(nextLeader.getMember());
         }
     }
 
@@ -132,28 +160,6 @@ public class Squad extends BaseEntity {
 
     public void registerCrew(Crew crew) {
         this.crew = crew;
-    }
-
-    public void increaseRemain() {
-        if (this.remain + 1 > MAX_CAPACITY) {
-            throw new SquadDomainException.NotEnoughLeft(NOT_ENOUGH_LEFT);
-        }
-        this.remain += 1;
-    }
-
-    public void decreaseRemain() {
-        if (this.remain - 1 < 0) {
-            throw new SquadDomainException.NotEnoughLeft(NOT_ENOUGH_LEFT);
-        }
-        this.remain -= 1;
-    }
-
-    public void delegateLeader(SquadMember currentLeader, SquadMember nextLeader) {
-        if (currentLeader.isLeader()) {
-            nextLeader.promoteToLeader();
-            currentLeader.demoteToGeneral();
-            updateLeader(nextLeader.getMember());
-        }
     }
 
     public boolean matchId(Long squadId) {
@@ -172,6 +178,14 @@ public class Squad extends BaseEntity {
         return !member.getId().equals(memberId);
     }
 
+    public Long getCrewId() {
+        return crew.getId();
+    }
+
+    public Member getOwner() {
+        return member;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -188,22 +202,14 @@ public class Squad extends BaseEntity {
         return Objects.hashCode(id);
     }
 
-    public Long getCrewId() {
-        return crew.getId();
-    }
-
-    public Member getOwner() {
-        return member;
-    }
-
-    private void updateLeader(Member member) {
-        this.member = member;
-    }
-
     private void validateCapacity(int value) {
         if (value < MIN_CAPACITY || value > MAX_CAPACITY) {
             throw new SquadDomainException.InvalidCapacitySize(INVALID_CAPACITY_SIZE, MIN_CAPACITY, MAX_CAPACITY);
         }
+    }
+
+    private void updateLeader(Member member) {
+        this.member = member;
     }
 
     public record SquadMetadata(
@@ -216,7 +222,7 @@ public class Squad extends BaseEntity {
             String discordLink
     ) {
 
-        public Squad toEntity() {
+        Squad toEntity() {
             return new Squad(title, content, capacity, address, addressDetail, kakaoLink, discordLink);
         }
     }
