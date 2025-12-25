@@ -4,7 +4,7 @@ import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_HASHTAG;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import revi1337.onsquad.crew.error.exception.CrewDomainException;
+import revi1337.onsquad.crew.error.CrewDomainException;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 
 public abstract class HashtagTypeUtil {

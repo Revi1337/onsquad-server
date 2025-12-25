@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import revi1337.onsquad.member.error.exception.MemberDomainException;
+import revi1337.onsquad.member.error.MemberDomainException;
 
 class PasswordTest {
 

@@ -32,7 +32,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Address;
 import revi1337.onsquad.squad.domain.entity.vo.Content;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
-import revi1337.onsquad.squad.error.exception.SquadDomainException;
+import revi1337.onsquad.squad.error.SquadDomainException;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;

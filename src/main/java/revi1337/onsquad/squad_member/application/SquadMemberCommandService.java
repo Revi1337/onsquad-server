@@ -7,8 +7,8 @@ import revi1337.onsquad.squad.application.SquadAccessPolicy;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
+import revi1337.onsquad.squad.error.SquadBusinessException;
 import revi1337.onsquad.squad.error.SquadErrorCode;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 

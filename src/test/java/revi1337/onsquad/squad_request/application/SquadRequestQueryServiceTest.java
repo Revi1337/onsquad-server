@@ -27,7 +27,7 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberJpaRepository;
-import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
+import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestJpaRepository;
 

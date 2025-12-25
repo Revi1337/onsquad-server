@@ -39,14 +39,14 @@ import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
 import revi1337.onsquad.announce.domain.repository.AnnounceCacheRepository;
 import revi1337.onsquad.announce.domain.repository.AnnounceJpaRepository;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
-import revi1337.onsquad.announce.error.exception.AnnounceBusinessException.MismatchReference;
+import revi1337.onsquad.announce.error.AnnounceBusinessException.MismatchReference;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException.InsufficientAuthority;
+import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.error.CrewMemberBusinessException.InsufficientAuthority;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 

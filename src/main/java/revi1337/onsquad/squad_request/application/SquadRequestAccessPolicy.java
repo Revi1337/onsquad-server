@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
+import revi1337.onsquad.squad_request.error.SquadRequestBusinessException;
 import revi1337.onsquad.squad_request.error.SquadRequestErrorCode;
-import revi1337.onsquad.squad_request.error.exception.SquadRequestBusinessException;
 
 @RequiredArgsConstructor
 @Component

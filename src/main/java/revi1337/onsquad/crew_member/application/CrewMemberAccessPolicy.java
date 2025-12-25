@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 
 @RequiredArgsConstructor
 @Component

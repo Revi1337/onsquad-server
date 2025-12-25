@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.error.exception.MemberDomainException;
+import revi1337.onsquad.member.error.MemberDomainException;
 
 class IntroduceTest {
 

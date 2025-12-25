@@ -11,8 +11,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
+import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
-import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
 
 /**
  * Service responsible for managing announcement caches with different strategies.

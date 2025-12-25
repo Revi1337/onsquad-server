@@ -19,8 +19,8 @@ import revi1337.onsquad.squad_member.application.response.MyParticipantResponse;
 import revi1337.onsquad.squad_member.application.response.SquadMemberResponse;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
+import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
-import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

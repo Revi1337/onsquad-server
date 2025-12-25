@@ -1,20 +1,18 @@
-package revi1337.onsquad.announce.error.handler;
+package revi1337.onsquad.squad.error;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
-import revi1337.onsquad.announce.error.exception.AnnounceDomainException;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
 
 @RestControllerAdvice
-public class AnnounceExceptionHandler {
+public class SquadExceptionHandler {
 
-    @ExceptionHandler(AnnounceBusinessException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleAnnounceBusinessException(
-            AnnounceBusinessException exception
+    @ExceptionHandler(SquadBusinessException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleSquadBusinessException(
+            SquadBusinessException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
@@ -22,9 +20,9 @@ public class AnnounceExceptionHandler {
         return ResponseEntity.ok().body(restResponse);
     }
 
-    @ExceptionHandler(AnnounceDomainException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleAnnounceDomainException(
-            AnnounceDomainException exception
+    @ExceptionHandler(SquadDomainException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleSquadDomainException(
+            SquadDomainException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());

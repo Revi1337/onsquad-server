@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.error.handler;
+package revi1337.onsquad.crew.error;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -6,15 +6,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
-import revi1337.onsquad.member.error.exception.MemberDomainException;
 
 @RestControllerAdvice
-public class MemberExceptionHandler {
+public class CrewExceptionHandler {
 
-    @ExceptionHandler(MemberDomainException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleMemberDomainException(
-            MemberDomainException exception
+    @ExceptionHandler(CrewBusinessException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleCrewBusinessException(
+            CrewBusinessException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
@@ -22,9 +20,9 @@ public class MemberExceptionHandler {
         return ResponseEntity.ok().body(restResponse);
     }
 
-    @ExceptionHandler(MemberBusinessException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleMemberBusinessException(
-            MemberBusinessException exception
+    @ExceptionHandler(CrewDomainException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleCrewDomainException(
+            CrewDomainException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());

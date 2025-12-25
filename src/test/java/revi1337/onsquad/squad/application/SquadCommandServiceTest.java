@@ -37,7 +37,7 @@ import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException.InsufficientAuthority;
+import revi1337.onsquad.squad.error.SquadBusinessException.InsufficientAuthority;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJpaRepository;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentJpaRepository;

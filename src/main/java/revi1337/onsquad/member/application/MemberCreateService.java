@@ -7,8 +7,8 @@ import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.model.VerificationStatus;
 import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
+import revi1337.onsquad.member.error.MemberBusinessException;
 import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
 @RequiredArgsConstructor
 @Service

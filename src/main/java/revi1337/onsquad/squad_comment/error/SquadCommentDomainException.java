@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad_comment.error.exception;
+package revi1337.onsquad.squad_comment.error;
 
 import lombok.Getter;
 import revi1337.onsquad.common.error.ErrorCode;

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
+import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
-import revi1337.onsquad.announce.error.exception.AnnounceBusinessException;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
 @RequiredArgsConstructor

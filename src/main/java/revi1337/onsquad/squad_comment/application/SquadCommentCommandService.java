@@ -12,8 +12,8 @@ import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_comment.domain.event.CommentAdded;
 import revi1337.onsquad.squad_comment.domain.event.CommentReplyAdded;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
+import revi1337.onsquad.squad_comment.error.SquadCommentBusinessException;
 import revi1337.onsquad.squad_comment.error.SquadCommentErrorCode;
-import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
 
 @Transactional
 @RequiredArgsConstructor

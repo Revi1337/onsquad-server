@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad_comment.error.handler;
+package revi1337.onsquad.announce.error;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -6,15 +6,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
-import revi1337.onsquad.squad_comment.error.exception.SquadCommentBusinessException;
-import revi1337.onsquad.squad_comment.error.exception.SquadCommentDomainException;
 
 @RestControllerAdvice
-public class SquadCommentExceptionHandler {
+public class AnnounceExceptionHandler {
 
-    @ExceptionHandler(SquadCommentDomainException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleSquadCommentDomainException(
-            SquadCommentDomainException exception
+    @ExceptionHandler(AnnounceBusinessException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleAnnounceBusinessException(
+            AnnounceBusinessException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
@@ -22,9 +20,9 @@ public class SquadCommentExceptionHandler {
         return ResponseEntity.ok().body(restResponse);
     }
 
-    @ExceptionHandler(SquadCommentBusinessException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleSquadCommentBusinessException(
-            SquadCommentBusinessException exception
+    @ExceptionHandler(AnnounceDomainException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleAnnounceDomainException(
+            AnnounceDomainException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());

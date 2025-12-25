@@ -5,8 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.error.MemberBusinessException;
 import revi1337.onsquad.member.error.MemberErrorCode;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
 
 @RequiredArgsConstructor
 @Service

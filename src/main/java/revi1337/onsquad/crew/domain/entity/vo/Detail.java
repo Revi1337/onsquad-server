@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import revi1337.onsquad.crew.error.exception.CrewDomainException;
+import revi1337.onsquad.crew.error.CrewDomainException;
 
 @Getter
 @EqualsAndHashCode

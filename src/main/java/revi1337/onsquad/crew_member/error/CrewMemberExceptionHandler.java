@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad_request.error.handler;
+package revi1337.onsquad.crew_member.error;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -6,14 +6,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;
-import revi1337.onsquad.squad_request.error.exception.SquadRequestBusinessException;
 
 @RestControllerAdvice
-public class SquadRequestExceptionHandler {
+public class CrewMemberExceptionHandler {
 
-    @ExceptionHandler(SquadRequestBusinessException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleSquadParticipantBusinessException(
-            SquadRequestBusinessException exception
+    @ExceptionHandler(CrewMemberBusinessException.class)
+    public ResponseEntity<RestResponse<ProblemDetail>> handleCrewMemberBusinessException(
+            CrewMemberBusinessException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());

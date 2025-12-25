@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
+import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.crew.error.CrewErrorCode;
-import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
 @RequiredArgsConstructor

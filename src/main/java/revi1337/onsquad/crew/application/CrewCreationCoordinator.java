@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.common.application.file.FileStorageManager;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
-import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 
 /**

@@ -53,8 +53,8 @@ import revi1337.onsquad.member.domain.entity.vo.Password;
 import revi1337.onsquad.member.domain.event.MemberImageDeleteEvent;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
-import revi1337.onsquad.member.error.exception.MemberBusinessException.WrongPassword;
+import revi1337.onsquad.member.error.MemberBusinessException;
+import revi1337.onsquad.member.error.MemberBusinessException.WrongPassword;
 
 class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 

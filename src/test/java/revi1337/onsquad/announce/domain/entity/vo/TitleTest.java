@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import revi1337.onsquad.announce.error.exception.AnnounceDomainException;
+import revi1337.onsquad.announce.error.AnnounceDomainException;
 
 class TitleTest {
 

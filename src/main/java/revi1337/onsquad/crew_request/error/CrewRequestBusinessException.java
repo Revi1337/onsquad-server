@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_request.error.exception;
+package revi1337.onsquad.crew_request.error;
 
 import lombok.Getter;
 import revi1337.onsquad.common.error.ErrorCode;

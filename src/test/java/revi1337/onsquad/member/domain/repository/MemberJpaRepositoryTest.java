@@ -17,7 +17,7 @@ import revi1337.onsquad.common.fixture.MemberFixture;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Email;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
-import revi1337.onsquad.member.error.exception.MemberBusinessException;
+import revi1337.onsquad.member.error.MemberBusinessException;
 
 @Import(MemberRepositoryImpl.class)
 class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {

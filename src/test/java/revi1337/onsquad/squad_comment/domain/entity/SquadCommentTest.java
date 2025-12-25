@@ -10,7 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.ReflectionUtils;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad_comment.error.exception.SquadCommentDomainException;
+import revi1337.onsquad.squad_comment.error.SquadCommentDomainException;
 
 class SquadCommentTest {
 

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.squad.error.exception.SquadDomainException;
+import revi1337.onsquad.squad.error.SquadDomainException;
 
 public abstract class CategoryTypeUtil {
 

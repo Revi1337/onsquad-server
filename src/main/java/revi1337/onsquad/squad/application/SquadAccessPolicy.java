@@ -3,12 +3,12 @@ package revi1337.onsquad.squad.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
+import revi1337.onsquad.squad.error.SquadBusinessException;
 import revi1337.onsquad.squad.error.SquadErrorCode;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 @RequiredArgsConstructor

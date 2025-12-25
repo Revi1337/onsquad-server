@@ -27,15 +27,15 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException;
-import revi1337.onsquad.squad.error.exception.SquadBusinessException.MismatchReference;
-import revi1337.onsquad.squad.error.exception.SquadDomainException;
+import revi1337.onsquad.squad.error.SquadBusinessException;
+import revi1337.onsquad.squad.error.SquadBusinessException.MismatchReference;
+import revi1337.onsquad.squad.error.SquadDomainException;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberJpaRepository;
-import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
+import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestJpaRepository;
-import revi1337.onsquad.squad_request.error.exception.SquadRequestBusinessException;
+import revi1337.onsquad.squad_request.error.SquadRequestBusinessException;
 
 class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
 

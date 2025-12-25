@@ -28,7 +28,7 @@ import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 

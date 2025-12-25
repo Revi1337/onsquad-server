@@ -9,7 +9,7 @@ import static revi1337.onsquad.common.fixture.CrewValueFixture.CREW_DETAIL_VALUE
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.crew.error.exception.CrewDomainException;
+import revi1337.onsquad.crew.error.CrewDomainException;
 
 class DetailTest {
 

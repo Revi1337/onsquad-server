@@ -42,7 +42,7 @@ import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.event.CrewImageDeleteEvent;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
-import revi1337.onsquad.crew.error.exception.CrewBusinessException;
+import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;

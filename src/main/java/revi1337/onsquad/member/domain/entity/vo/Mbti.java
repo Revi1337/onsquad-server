@@ -2,7 +2,7 @@ package revi1337.onsquad.member.domain.entity.vo;
 
 import static revi1337.onsquad.member.error.MemberErrorCode.INVALID_MBTI;
 
-import revi1337.onsquad.member.error.exception.MemberDomainException;
+import revi1337.onsquad.member.error.MemberDomainException;
 
 public enum Mbti {
 

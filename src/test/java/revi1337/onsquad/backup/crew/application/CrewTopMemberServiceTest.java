@@ -27,7 +27,7 @@ import revi1337.onsquad.crew_member.application.CrewTopMemberService;
 import revi1337.onsquad.crew_member.application.response.Top5CrewMemberResponse;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberJpaRepository;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 

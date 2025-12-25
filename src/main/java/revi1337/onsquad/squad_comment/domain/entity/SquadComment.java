@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad_comment.error.exception.SquadCommentDomainException;
+import revi1337.onsquad.squad_comment.error.SquadCommentDomainException;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)

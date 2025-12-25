@@ -26,7 +26,7 @@ import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
-import revi1337.onsquad.crew_member.error.exception.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;

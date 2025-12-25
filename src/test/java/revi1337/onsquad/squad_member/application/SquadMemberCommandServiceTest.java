@@ -23,7 +23,7 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberJpaRepository;
-import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
+import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 
 class SquadMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
