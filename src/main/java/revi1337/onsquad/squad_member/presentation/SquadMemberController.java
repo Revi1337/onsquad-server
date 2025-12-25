@@ -44,7 +44,7 @@ public class SquadMemberController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @GetMapping("/members/me/squads")
+    @GetMapping("/members/me/squad-participants")
     public ResponseEntity<RestResponse<List<MyParticipantResponse>>> fetchMyParticipatingSquads(
             @Authenticate CurrentMember currentMember
     ) {
