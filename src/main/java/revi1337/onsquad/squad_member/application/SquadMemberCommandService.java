@@ -23,6 +23,15 @@ public class SquadMemberCommandService {
     private final SquadMemberRepository squadMemberRepository;
     private final SquadCommandService squadCommandService;
 
+    public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) {
+        Squad squad = squadAccessPolicy.ensureSquadExistsAndGet(squadId);
+        SquadMember currentLeader = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
+        squadMemberAccessPolicy.ensureCanDelegateLeader(currentLeader);
+        squadMemberAccessPolicy.ensureNotSelfDelegation(memberId, targetMemberId);
+        SquadMember nextLeader = squadMemberAccessPolicy.ensureMemberInSquadAndGet(targetMemberId, squadId);
+        squad.delegateLeader(currentLeader, nextLeader);
+    }
+
     public void leaveSquad(Long memberId, Long squadId) {
         Squad squad = squadRepository.findByIdForUpdate(squadId).orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND));
         SquadMember currentMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
@@ -35,12 +44,13 @@ public class SquadMemberCommandService {
         squadMemberRepository.delete(currentMember);
     }
 
-    public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) {
-        Squad squad = squadAccessPolicy.ensureSquadExistsAndGet(squadId);
-        SquadMember currentLeader = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
-        squadMemberAccessPolicy.ensureNotSelfDelegation(memberId, targetMemberId);
-        squadMemberAccessPolicy.ensureCanDelegateLeader(currentLeader);
-        SquadMember nextLeader = squadMemberAccessPolicy.ensureMemberInSquadAndGet(targetMemberId, squadId);
-        squad.delegateLeader(currentLeader, nextLeader);
+    public void kickOutMember(Long memberId, Long squadId, Long targetMemberId) {
+        squadRepository.findByIdForUpdate(squadId).orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND));
+        SquadMember leader = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
+        squadMemberAccessPolicy.ensureCanKickOutMember(leader);
+        squadMemberAccessPolicy.ensureNotSelfKickOut(memberId, targetMemberId);
+        SquadMember targetMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(targetMemberId, squadId);
+        targetMember.leaveSquad();
+        squadMemberRepository.delete(targetMember);
     }
 }

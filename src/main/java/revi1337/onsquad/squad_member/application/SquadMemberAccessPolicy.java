@@ -1,7 +1,5 @@
 package revi1337.onsquad.squad_member.application;
 
-import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.CANNOT_LEAVE_LEADER;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
@@ -28,19 +26,31 @@ public class SquadMemberAccessPolicy {
 
     public void ensureNotSelfDelegation(Long currentMemberId, Long targetMemberId) {
         if (currentMemberId.equals(targetMemberId)) {
-            throw new SquadMemberBusinessException.InvalidRequest(SquadMemberErrorCode.CANNOT_DELEGATE_TO_SELF);
+            throw new SquadMemberBusinessException.InvalidRequest(SquadMemberErrorCode.CANNOT_TARGET_SELF);
         }
     }
 
-    public void ensureCanDelegateLeader(SquadMember currentLeader) {
-        if (currentLeader.isNotLeader()) {
+    public void ensureNotSelfKickOut(Long currentMemberId, Long targetMemberId) {
+        if (currentMemberId.equals(targetMemberId)) {
+            throw new SquadMemberBusinessException.InvalidRequest(SquadMemberErrorCode.CANNOT_TARGET_SELF);
+        }
+    }
+
+    public void ensureCanDelegateLeader(SquadMember currentMember) {
+        if (currentMember.isNotLeader()) {
             throw new SquadMemberBusinessException.InsufficientAuthority(SquadMemberErrorCode.INSUFFICIENT_DELEGATE_LEADER_AUTHORITY);
         }
     }
 
     public void ensureCanLeaveSquad(SquadMember currentMember) {
         if (currentMember.isLeader()) {
-            throw new SquadMemberBusinessException.CannotLeaveLeader(CANNOT_LEAVE_LEADER);
+            throw new SquadMemberBusinessException.InsufficientAuthority(SquadMemberErrorCode.INSUFFICIENT_LEAVE_SQUAD_AUTHORITY);
+        }
+    }
+
+    public void ensureCanKickOutMember(SquadMember currentMember) {
+        if (currentMember.isNotLeader()) {
+            throw new SquadMemberBusinessException.InsufficientAuthority(SquadMemberErrorCode.INSUFFICIENT_KICK_MEMBER_AUTHORITY);
         }
     }
 }

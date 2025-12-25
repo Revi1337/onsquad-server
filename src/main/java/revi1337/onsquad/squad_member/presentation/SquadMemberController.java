@@ -56,6 +56,17 @@ public class SquadMemberController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
+    @DeleteMapping("/squads/{squadId}/members/{targetMemberId}")
+    public ResponseEntity<RestResponse<Void>> kickOutMember(
+            @PathVariable Long squadId,
+            @PathVariable Long targetMemberId,
+            @Authenticate CurrentMember currentMember
+    ) {
+        squadMemberCommandService.kickOutMember(currentMember.id(), squadId, targetMemberId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
     @GetMapping("/members/me/squad-participants")
     public ResponseEntity<RestResponse<List<MyParticipantResponse>>> fetchMyParticipatingSquads(
             @Authenticate CurrentMember currentMember
