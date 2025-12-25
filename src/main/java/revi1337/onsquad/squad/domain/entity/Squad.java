@@ -148,6 +148,14 @@ public class Squad extends BaseEntity {
         this.remain -= 1;
     }
 
+    public void delegateLeader(SquadMember currentLeader, SquadMember nextLeader) {
+        if (currentLeader.isLeader()) {
+            nextLeader.promoteToLeader();
+            currentLeader.demoteToGeneral();
+            updateLeader(nextLeader.getMember());
+        }
+    }
+
     public boolean matchId(Long squadId) {
         return id.equals(squadId);
     }
@@ -186,6 +194,10 @@ public class Squad extends BaseEntity {
 
     public Member getOwner() {
         return member;
+    }
+
+    private void updateLeader(Member member) {
+        this.member = member;
     }
 
     private void validateCapacity(int value) {

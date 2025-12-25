@@ -5,6 +5,8 @@ import static revi1337.onsquad.squad_member.error.SquadMemberErrorCode.CANNOT_LE
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.squad.application.SquadAccessPolicy;
+import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 import revi1337.onsquad.squad_member.error.exception.SquadMemberBusinessException;
@@ -16,6 +18,7 @@ public class SquadMemberCommandService {
 
     private static final int LEADER_LIMIT_THRESHOLD = 2;
 
+    private final SquadAccessPolicy squadAccessPolicy;
     private final SquadMemberAccessPolicy squadMemberAccessPolicy;
     private final SquadMemberRepository squadMemberRepository;
 
@@ -27,5 +30,14 @@ public class SquadMemberCommandService {
         squadMemberRepository.delete(squadMember);
         squadMemberRepository.flush();
         squadMember.leaveSquad();
+    }
+
+    public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) {
+        Squad squad = squadAccessPolicy.ensureSquadExistsAndGet(squadId);
+        SquadMember currentLeader = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
+        squadMemberAccessPolicy.ensureNotSelfDelegation(memberId, targetMemberId);
+        squadMemberAccessPolicy.ensureCanDelegateLeader(currentLeader);
+        SquadMember nextLeader = squadMemberAccessPolicy.ensureMemberInSquadAndGet(targetMemberId, squadId);
+        squad.delegateLeader(currentLeader, nextLeader);
     }
 }

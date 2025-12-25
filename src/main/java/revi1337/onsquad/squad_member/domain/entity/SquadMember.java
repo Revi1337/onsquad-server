@@ -88,12 +88,16 @@ public class SquadMember extends RequestEntity {
         releaseSquad();
     }
 
-    private void releaseOwner() {
-        this.member = null;
+    public void promoteToLeader() {
+        this.role = SquadRole.LEADER;
     }
 
-    private void releaseSquad() {
-        this.squad = null;
+    public void demoteToGeneral() {
+        this.role = SquadRole.GENERAL;
+    }
+
+    public boolean matchSquadId(Long squadId) {
+        return squad.matchId(squadId);
     }
 
     public boolean isNotLeader() {
@@ -120,7 +124,12 @@ public class SquadMember extends RequestEntity {
         return Objects.hashCode(id);
     }
 
-    public boolean matchSquadId(Long squadId) {
-        return squad.matchId(squadId);
+    private void releaseOwner() {
+        this.member = null;
     }
+
+    private void releaseSquad() {
+        this.squad = null;
+    }
+
 }

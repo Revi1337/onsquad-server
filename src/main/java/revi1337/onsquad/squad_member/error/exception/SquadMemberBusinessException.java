@@ -42,4 +42,11 @@ public abstract class SquadMemberBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class InvalidRequest extends SquadMemberBusinessException {
+
+        public InvalidRequest(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }
