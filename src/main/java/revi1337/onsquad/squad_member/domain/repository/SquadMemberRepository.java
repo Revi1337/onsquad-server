@@ -8,8 +8,6 @@ import revi1337.onsquad.squad_member.domain.result.SquadMemberResult;
 
 public interface SquadMemberRepository {
 
-    SquadMember save(SquadMember squadMember);
-
     SquadMember saveAndFlush(SquadMember squadMember);
 
     void flush();

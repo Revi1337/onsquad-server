@@ -15,7 +15,7 @@ public class CrewHashtagRepositoryImpl implements CrewHashtagRepository {
 
     @Override
     public void insertBatch(Long crewId, List<Hashtag> hashtags) {
-        crewHashtagJdbcRepository.batchInsert(crewId, hashtags);
+        crewHashtagJdbcRepository.insertBatch(crewId, hashtags);
     }
 
     @Override

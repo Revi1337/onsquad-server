@@ -1,7 +1,6 @@
 package revi1337.onsquad.crew_request.domain.repository;
 
 import java.util.Optional;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,9 +11,6 @@ public interface CrewRequestJpaRepository extends JpaRepository<CrewRequest, Lon
 
     @Query("select cp from CrewRequest cp where cp.crew.id = :crewId and cp.member.id = :memberId")
     Optional<CrewRequest> findByCrewIdAndMemberId(Long crewId, Long memberId);
-
-    @EntityGraph(attributePaths = "crew")
-    Optional<CrewRequest> findWithCrewById(Long id);
 
     @Transactional
     @Modifying(flushAutomatically = true, clearAutomatically = true)

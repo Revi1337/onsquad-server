@@ -6,6 +6,7 @@ import static revi1337.onsquad.member.domain.entity.QMember.member;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+@Deprecated
 @RequiredArgsConstructor
 public class CrewMemberQueryRepositoryImpl implements CrewMemberQueryRepository {
 

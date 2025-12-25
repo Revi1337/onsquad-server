@@ -5,13 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/**
- * Repository for upserting Squad requests using JDBC.
- * <p>
- * This class is no longer in use.
- * </p>
- */
-@Deprecated(forRemoval = true)
+@Deprecated
 @RequiredArgsConstructor
 @Repository
 public class SquadRequestJdbcRepository {

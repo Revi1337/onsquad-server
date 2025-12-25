@@ -9,17 +9,9 @@ import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 
 public interface CrewMemberRepository {
 
-    CrewMember save(CrewMember crewMember);
-
-    CrewMember saveAndFlush(CrewMember crewMember);
-
-    void deleteAllByCrewId(Long crewId);
-
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    Optional<CrewMember> findWithCrewByCrewIdAndMemberId(Long crewId, Long memberId);
-
-    Boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
+    boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
 
     List<CrewMemberWithCountResult> fetchParticipantsWithCountByCrewId(Long crewId, Pageable pageable);
 

@@ -66,7 +66,7 @@ public class LocalCrewTopMemberInitializerTest {
             assertThatThrownBy(() -> applicationContext.getBean(NonLocalCrewTopMemberInitializer.class))
                     .isExactlyInstanceOf(NoSuchBeanDefinitionException.class);
             verify(crewTopMemberRepository, times(1)).deleteAllInBatch();
-            verify(crewTopMemberRepository, times(1)).batchInsert(anyList());
+            verify(crewTopMemberRepository, times(1)).insertBatch(anyList());
         });
     }
 

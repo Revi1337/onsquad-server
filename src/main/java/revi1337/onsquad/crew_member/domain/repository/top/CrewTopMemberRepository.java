@@ -13,6 +13,6 @@ public interface CrewTopMemberRepository {
 
     void deleteAllInBatch();
 
-    void batchInsert(List<CrewTopMember> crewTopCaches);
+    void insertBatch(List<CrewTopMember> crewTopCaches);
 
 }

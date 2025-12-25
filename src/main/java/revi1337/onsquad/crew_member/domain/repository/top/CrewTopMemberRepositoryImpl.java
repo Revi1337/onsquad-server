@@ -30,7 +30,7 @@ public class CrewTopMemberRepositoryImpl implements CrewTopMemberRepository {
     }
 
     @Override
-    public void batchInsert(List<CrewTopMember> crewTopCaches) {
-        crewTopMemberJdbcRepository.batchInsertCrewTop(crewTopCaches);
+    public void insertBatch(List<CrewTopMember> crewTopCaches) {
+        crewTopMemberJdbcRepository.insertBatch(crewTopCaches);
     }
 }

@@ -8,13 +8,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.Category;
 
+@Deprecated
 @RequiredArgsConstructor
 @Repository
 public class CategoryJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public int batchInsert(List<Category> categories) {
+    public int insertBatch(List<Category> categories) {
         String sql = "INSERT INTO category(id, category_type) VALUES (?, ?)";
         int[][] influenced = jdbcTemplate.batchUpdate(
                 sql,

@@ -21,7 +21,7 @@ public class CrewTopMemberJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
-    public void batchInsertCrewTop(List<CrewTopMember> crewTopMembers) {
+    public void insertBatch(List<CrewTopMember> crewTopMembers) {
         String sql = "INSERT INTO crew_top_member(crew_id, member_id, nickname, mbti, participate_at, contribute, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.batchUpdate(
                 sql,

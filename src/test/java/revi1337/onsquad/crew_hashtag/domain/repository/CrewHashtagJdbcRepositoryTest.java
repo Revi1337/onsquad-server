@@ -42,7 +42,7 @@ class CrewHashtagJdbcRepositoryTest extends PersistenceLayerTestSupport {
         Member member = memberJpaRepository.save(MemberFixture.REVI());
         Crew crew = crewJpaRepository.save(CrewFixture.CREW(member));
         Hashtag hashtag = Hashtag.fromHashtagType(HashtagType.ACTIVE);
-        crewHashtagJdbcRepository.batchInsert(crew.getId(), List.of(hashtag));
+        crewHashtagJdbcRepository.insertBatch(crew.getId(), List.of(hashtag));
 
         Optional<CrewHashtag> optional = crewHashtagJpaRepository.findByCrewIdAndHashtagId(crew.getId(), hashtag.getId());
 

@@ -31,7 +31,7 @@ public class CrewTopMemberRefreshService {
     public void refresh(LocalDate from, LocalDate to, Integer rankLimit) {
         try {
             crewTopMemberRepository.deleteAllInBatch();
-            crewTopMemberRepository.batchInsert(
+            crewTopMemberRepository.insertBatch(
                     crewTopMemberRepository.fetchAggregatedTopMembers(from, to, rankLimit).stream()
                             .map(Top5CrewMemberResult::toEntity)
                             .toList()

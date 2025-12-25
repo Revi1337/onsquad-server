@@ -41,6 +41,6 @@ class CrewTopMemberRefreshSchedulerTest {
 
         verify(crewTopMemberRepository).deleteAllInBatch();
         verify(crewTopMemberRepository).fetchAggregatedTopMembers(any(LocalDate.class), any(LocalDate.class), any());
-        verify(crewTopMemberRepository).batchInsert(anyList());
+        verify(crewTopMemberRepository).insertBatch(anyList());
     }
 }

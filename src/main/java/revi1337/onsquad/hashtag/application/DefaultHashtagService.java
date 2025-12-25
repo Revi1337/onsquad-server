@@ -4,18 +4,18 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.hashtag.domain.repository.HashtagRepository;
+import revi1337.onsquad.hashtag.domain.repository.HashtagJpaRepository;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class DefaultHashtagService implements HashtagService {
 
-    private final HashtagRepository hashtagRepository;
+    private final HashtagJpaRepository hashtagJpaRepository;
 
     @Override
     public List<String> findHashtags() {
-        return hashtagRepository.findAll().stream()
+        return hashtagJpaRepository.findAll().stream()
                 .map(hashtag -> hashtag.getHashtagType().getText())
                 .toList();
     }

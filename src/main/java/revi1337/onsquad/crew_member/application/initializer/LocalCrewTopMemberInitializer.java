@@ -23,7 +23,7 @@ public class LocalCrewTopMemberInitializer {
 
         log.info("[Initialize Crew Top Members]");
         crewTopMemberRepository.deleteAllInBatch();
-        crewTopMemberRepository.batchInsert(
+        crewTopMemberRepository.insertBatch(
                 crewTopMemberRepository.fetchAggregatedTopMembers(from, to, crewTopMemberProperties.rankLimit()).stream()
                         .map(Top5CrewMemberResult::toEntity)
                         .toList()

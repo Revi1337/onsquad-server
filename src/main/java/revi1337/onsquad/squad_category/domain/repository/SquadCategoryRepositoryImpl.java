@@ -22,5 +22,4 @@ public class SquadCategoryRepositoryImpl implements SquadCategoryRepository {
     public List<SquadCategory> fetchCategoriesBySquadIdIn(List<Long> squadIds) {
         return squadCategoryJpaRepository.fetchCategoriesBySquadIdIn(squadIds);
     }
-
 }

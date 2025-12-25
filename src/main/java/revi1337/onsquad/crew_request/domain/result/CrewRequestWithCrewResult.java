@@ -9,10 +9,7 @@ public record CrewRequestWithCrewResult(
 ) {
 
     @QueryProjection
-    public CrewRequestWithCrewResult(
-            SimpleCrewResult crew,
-            CrewRequestResult request
-    ) {
+    public CrewRequestWithCrewResult(SimpleCrewResult crew, CrewRequestResult request) {
         this.crew = crew;
         this.request = request;
     }

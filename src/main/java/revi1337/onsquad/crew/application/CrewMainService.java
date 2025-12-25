@@ -15,9 +15,9 @@ import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 import revi1337.onsquad.crew.error.exception.CrewBusinessException;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
+import revi1337.onsquad.crew_member.application.CrewTopMemberCacheService;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
-import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberCacheRepository;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 
@@ -27,7 +27,7 @@ public class CrewMainService {
 
     private final CrewMemberAccessPolicy crewMemberAccessPolicy;
     private final CrewAccessPolicy crewAccessPolicy;
-    private final CrewTopMemberCacheRepository crewTopMemberCacheRepository;
+    private final CrewTopMemberCacheService crewTopMemberCacheService;
     private final AnnounceCacheService announceCacheService;
     private final CrewRepository crewRepository;
     private final SquadRepository squadRepository;
@@ -39,7 +39,7 @@ public class CrewMainService {
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
 
         List<AnnounceResult> announces = announceCacheService.getDefaultAnnounces(crewId);
-        List<CrewTopMember> topMembers = crewTopMemberCacheRepository.findAllByCrewId(crewId);
+        List<CrewTopMember> topMembers = crewTopMemberCacheService.findAllByCrewId(crewId);
         List<SquadResult> squads = squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
         return CrewMainResponse.from(crewMember.isOwner(), result, announces, topMembers, squads);

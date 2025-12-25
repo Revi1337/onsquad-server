@@ -1,6 +1,5 @@
 package revi1337.onsquad.member.domain.repository;
 
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,11 +16,6 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public Member save(Member member) {
         return memberJpaRepository.save(member);
-    }
-
-    @Override
-    public List<Member> saveAll(List<Member> members) {
-        return memberJpaRepository.saveAll(members);
     }
 
     @Override

@@ -15,6 +15,7 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.member.domain.entity.Member;
 
+@Deprecated
 @RequiredArgsConstructor
 @Repository
 public class CrewRequestJdbcRepository {

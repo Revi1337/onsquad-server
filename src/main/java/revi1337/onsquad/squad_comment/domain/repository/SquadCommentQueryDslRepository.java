@@ -18,9 +18,6 @@ public class SquadCommentQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    /**
-     * 페이징처리에 맞게 부모 댓글들을 가져오고, id 별로 묶어서 반환한다.
-     */
     public List<SquadCommentResult> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return jpaQueryFactory
                 .select(new QSquadCommentResult(
@@ -64,36 +61,6 @@ public class SquadCommentQueryDslRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(squadComment.createdAt.desc())
-                .fetch();
-    }
-
-    /**
-     * 모든 댓글(부모, 자식)들을 모두 가져온다.
-     */
-    @Deprecated(forRemoval = true)
-    public List<SquadCommentResult> findAllWithMemberBySquadId(Long squadId) {
-        return jpaQueryFactory
-                .select(new QSquadCommentResult(
-                        squadComment.parent.id,
-                        squadComment.id,
-                        squadComment.content,
-                        squadComment.deleted,
-                        squadComment.createdAt,
-                        squadComment.updatedAt,
-                        new QSimpleMemberResult(
-                                member.id,
-                                member.nickname,
-                                member.introduce,
-                                member.mbti
-                        )
-                ))
-                .from(squadComment)
-                .innerJoin(squadComment.member, member).on(squadComment.squad.id.eq(squadId))
-                .leftJoin(squadComment.parent)
-                .orderBy(
-                        squadComment.parent.id.asc().nullsFirst(),
-                        squadComment.createdAt.desc()
-                )
                 .fetch();
     }
 }

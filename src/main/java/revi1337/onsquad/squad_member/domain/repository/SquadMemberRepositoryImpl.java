@@ -16,11 +16,6 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     private final SquadMemberQueryDslRepository squadMemberQueryDslRepository;
 
     @Override
-    public SquadMember save(SquadMember squadMember) {
-        return squadMemberJpaRepository.save(squadMember);
-    }
-
-    @Override
     public SquadMember saveAndFlush(SquadMember squadMember) {
         return squadMemberJpaRepository.saveAndFlush(squadMember);
     }

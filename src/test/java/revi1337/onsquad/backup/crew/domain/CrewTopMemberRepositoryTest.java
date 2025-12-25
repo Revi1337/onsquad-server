@@ -104,7 +104,7 @@ class CrewTopMemberRepositoryTest extends PersistenceLayerTestSupport {
         void success1() {
             List<CrewTopMember> TOP_MEMBERS = List.of(CREW1_REVI_RANK1, CREW1_ANDONG_RANK2, CREW1_KWANGWON_RANK3);
 
-            crewTopMemberRepository.batchInsert(TOP_MEMBERS);
+            crewTopMemberRepository.insertBatch(TOP_MEMBERS);
 
             assertThat(crewTopMemberJpaRepository.findAll()).hasSize(3);
         }

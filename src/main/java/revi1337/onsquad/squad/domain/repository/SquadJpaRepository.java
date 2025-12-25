@@ -9,9 +9,6 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 
 public interface SquadJpaRepository extends JpaRepository<Squad, Long> {
 
-    @Query("select s from Squad s left join fetch s.members where s.id = :id")
-    Optional<Squad> findByIdWithMembers(Long id);
-
     @EntityGraph(attributePaths = "crew")
     Optional<Squad> findWithCrewById(Long id);
 

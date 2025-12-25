@@ -7,10 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 
 public interface SquadRequestJpaRepository extends JpaRepository<SquadRequest, Long> {
-
-    @Query("select sp from SquadRequest as sp inner join fetch sp.squad where sp.id = :id")
-    Optional<SquadRequest> findByIdWithSquad(Long id);
-
+    
     @Query("select sp from SquadRequest as sp where sp.squad.id = :squadId and sp.member.id = :memberId")
     Optional<SquadRequest> findBySquadIdAndMemberId(Long squadId, Long memberId);
 
