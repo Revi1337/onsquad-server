@@ -1,37 +1,35 @@
-package revi1337.onsquad.announce.application;
+package revi1337.onsquad.announce.domain;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import revi1337.onsquad.announce.domain.entity.Announce;
-import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
 @RequiredArgsConstructor
-@Component
-public class AnnounceAccessPolicy {
+public class AnnouncePolicy {
 
-    private final AnnounceRepository announceRepository;
-
-    public Announce ensureAnnounceExistsAndGet(Long announceId) {
-        return announceRepository.findById(announceId)
-                .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
+    public static boolean canFixable(CrewMember crewMember) {
+        return crewMember.isOwner();
     }
 
-    public void ensureMatchCrew(Announce announce, Long crewId) {
+    public static boolean canModify(Long announceWriterId, Long currentMemberId) {
+        return announceWriterId.equals(currentMemberId);
+    }
+
+    public static void ensureMatchCrew(Announce announce, Long crewId) {
         if (announce.mismatchCrewId(crewId)) {
             throw new AnnounceBusinessException.MismatchReference(AnnounceErrorCode.MISMATCH_CREW_REFERENCE);
         }
     }
 
-    public void ensureAnnounceCreatable(CrewMember crewMember) {
+    public static void ensureAnnounceCreatable(CrewMember crewMember) {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_CREATE_AUTHORITY);
         }
     }
 
-    public void ensureAnnounceUpdatable(Announce announce, CrewMember crewMember) {
+    public static void ensureAnnounceUpdatable(Announce announce, CrewMember crewMember) {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
@@ -40,7 +38,7 @@ public class AnnounceAccessPolicy {
         }
     }
 
-    public void ensureAnnounceDeletable(Announce announce, CrewMember crewMember) {
+    public static void ensureAnnounceDeletable(Announce announce, CrewMember crewMember) {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
@@ -49,17 +47,9 @@ public class AnnounceAccessPolicy {
         }
     }
 
-    public void ensureAnnounceFixable(CrewMember crewMember) {
+    public static void ensureAnnounceFixable(CrewMember crewMember) {
         if (crewMember.isNotOwner()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_FIX_AUTHORITY);
         }
-    }
-
-    public boolean canFixable(CrewMember crewMember) {
-        return crewMember.isOwner();
-    }
-
-    public boolean canModify(Long announceWriterId, Long currentMemberId) {
-        return announceWriterId.equals(currentMemberId);
     }
 }

@@ -6,9 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.dto.response.AnnounceWithFixAndModifyStateResponse;
 import revi1337.onsquad.announce.application.dto.response.AnnouncesWithWriteStateResponse;
+import revi1337.onsquad.announce.domain.AnnouncePolicy;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
-import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
+import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
 @Transactional(readOnly = true)
@@ -16,22 +17,21 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 @Service
 public class AnnounceQueryService {
 
-    private final CrewMemberAccessPolicy crewMemberAccessPolicy;
+    private final CrewMemberAccessor crewMemberAccessor;
     private final AnnounceCacheService announceCacheService;
-    private final AnnounceAccessPolicy announceAccessPolicy;
     private final AnnounceRepository announceRepository;
 
     public AnnounceWithFixAndModifyStateResponse findAnnounce(Long memberId, Long crewId, Long announceId) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnounceResult announce = announceCacheService.getAnnounce(crewId, announceId);
-        boolean canFix = announceAccessPolicy.canFixable(crewMember);
-        boolean canModify = announceAccessPolicy.canModify(announce.writer().id(), memberId);
+        boolean canFix = AnnouncePolicy.canFixable(crewMember);
+        boolean canModify = AnnouncePolicy.canModify(announce.writer().id(), memberId);
 
         return AnnounceWithFixAndModifyStateResponse.from(canFix, canModify, announce);
     }
 
     public AnnouncesWithWriteStateResponse findAnnounces(Long memberId, Long crewId) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         List<AnnounceResult> announces = announceRepository.fetchAllByCrewId(crewId);
 
         return AnnouncesWithWriteStateResponse.from(crewMember.isGreaterThenManager(), announces);

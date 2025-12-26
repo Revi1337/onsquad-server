@@ -14,8 +14,6 @@ public interface SquadMemberRepository {
 
     void delete(SquadMember squadMember);
 
-    int countBySquadId(Long squadId);
-
     Optional<SquadMember> findBySquadIdAndMemberId(Long squadId, Long memberId);
 
     List<SquadMemberResult> fetchParticipantsBySquadId(Long squadId);

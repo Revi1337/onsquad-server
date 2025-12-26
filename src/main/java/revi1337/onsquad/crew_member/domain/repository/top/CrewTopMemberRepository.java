@@ -7,6 +7,8 @@ import revi1337.onsquad.crew_member.domain.result.Top5CrewMemberResult;
 
 public interface CrewTopMemberRepository {
 
+    List<CrewTopMember> findAllByCrewId(Long crewId);
+
     List<Top5CrewMemberResult> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit);
 
     boolean exists();

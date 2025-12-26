@@ -31,11 +31,6 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public int countBySquadId(Long squadId) {
-        return squadMemberJpaRepository.countBySquadId(squadId);
-    }
-
-    @Override
     public Optional<SquadMember> findBySquadIdAndMemberId(Long squadId, Long memberId) {
         return squadMemberJpaRepository.findBySquadIdAndMemberId(squadId, memberId);
     }

@@ -16,7 +16,7 @@ import revi1337.onsquad.member.domain.repository.MemberRepository;
 @Service
 public class MemberCommandService {
 
-    private final MemberAccessPolicy memberAccessPolicy;
+    private final MemberAccessor memberAccessor;
     private final MemberCreateService memberCreateService;
     private final MemberPasswordUpdateService memberPasswordUpdateService;
     private final MemberRepository memberRepository;
@@ -28,7 +28,7 @@ public class MemberCommandService {
     }
 
     public void updateMember(Long memberId, MemberUpdateDto dto) {
-        Member member = memberAccessPolicy.ensureMemberExistsAndGet(memberId);
+        Member member = memberAccessor.getById(memberId);
         member.updateProfile(dto.toMemberBase());
         memberRepository.saveAndFlush(member);
     }
@@ -39,7 +39,7 @@ public class MemberCommandService {
     }
 
     public void updateImage(Long memberId, String newImageUrl) {
-        Member member = memberAccessPolicy.ensureMemberExistsAndGet(memberId);
+        Member member = memberAccessor.getById(memberId);
         if (member.hasImage()) {
             applicationEventPublisher.publishEvent(new FileDeleteEvent(member.getProfileImage()));
         }
@@ -47,7 +47,7 @@ public class MemberCommandService {
     }
 
     public void deleteImage(Long memberId) {
-        Member member = memberAccessPolicy.ensureMemberExistsAndGet(memberId);
+        Member member = memberAccessor.getById(memberId);
         if (member.hasImage()) {
             applicationEventPublisher.publishEvent(new FileDeleteEvent(member.getProfileImage()));
             member.deleteImage();

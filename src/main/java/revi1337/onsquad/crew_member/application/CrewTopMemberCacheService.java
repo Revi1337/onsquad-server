@@ -7,16 +7,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
-import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.top.CrewTopMemberRepository;
 
 @RequiredArgsConstructor
 @Service
 public class CrewTopMemberCacheService {
 
-    private final CrewTopMemberJpaRepository crewTopMemberJpaRepository;
+    private final CrewTopMemberRepository crewTopMemberRepository;
 
     @Cacheable(cacheNames = CREW_TOP_USERS, key = "'crew:' + #crewId")
     public List<CrewTopMember> findAllByCrewId(Long crewId) {
-        return crewTopMemberJpaRepository.findAllByCrewId(crewId);
+        return crewTopMemberRepository.findAllByCrewId(crewId);
     }
 }

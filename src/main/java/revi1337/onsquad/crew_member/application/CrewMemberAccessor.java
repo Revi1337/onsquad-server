@@ -1,46 +1,48 @@
 package revi1337.onsquad.crew_member.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
+import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
+import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
 
 @RequiredArgsConstructor
 @Component
-public class CrewMemberAccessPolicy {
+public class CrewMemberAccessor {
 
     private final CrewMemberRepository crewMemberRepository;
 
-    public CrewMember ensureMemberInCrewAndGet(Long memberId, Long crewId) {
+    public CrewMember getByMemberIdAndCrewId(Long memberId, Long crewId) {
         return crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId)
                 .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 
-    public boolean alreadyParticipant(Long memberId, Long crewId) {
+    public List<CrewMemberWithCountResult> fetchParticipantsWithCountByCrewId(Long crewId, Pageable pageable) {
+        return crewMemberRepository.fetchParticipantsWithCountByCrewId(crewId, pageable);
+    }
+
+    public List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId) {
+        return crewMemberRepository.fetchParticipantCrews(memberId);
+    }
+
+    public boolean checkAlreadyParticipant(Long memberId, Long crewId) {
         return crewMemberRepository.existsByMemberIdAndCrewId(memberId, crewId);
     }
 
-    public boolean cannotReadSquadParticipants(CrewMember crewMember) {
-        return crewMember.isNotOwner();
-    }
-
-    public void ensureMemberInCrew(Long memberId, Long crewId) {
+    public void validateMemberInCrew(Long memberId, Long crewId) {
         if (crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).isEmpty()) {
             throw new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT);
         }
     }
 
-    public void ensureMemberNotInCrew(Long memberId, Long crewId) {
+    public void validateMemberNotInCrew(Long memberId, Long crewId) {
         if (crewMemberRepository.findByCrewIdAndMemberId(crewId, memberId).isPresent()) {
             throw new CrewMemberBusinessException.AlreadyParticipant(CrewMemberErrorCode.ALREADY_JOIN);
-        }
-    }
-
-    public void ensureReadParticipantsAccessible(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
-            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
         }
     }
 }

@@ -14,7 +14,7 @@ import revi1337.onsquad.member.error.MemberErrorCode;
 @Service
 public class MemberCreateService {
 
-    private final MemberAccessPolicy memberAccessPolicy;
+    private final MemberAccessor memberAccessor;
     private final PasswordEncoder passwordEncoder;
     private final VerificationCodeRepository redisCodeRepository;
 
@@ -29,10 +29,10 @@ public class MemberCreateService {
         if (!redisCodeRepository.isMarkedVerificationStatusWith(dto.email(), VerificationStatus.SUCCESS)) {
             throw new MemberBusinessException.NonAuthenticateEmail(MemberErrorCode.NON_AUTHENTICATE_EMAIL);
         }
-        if (memberAccessPolicy.checkNicknameDuplicate(dto.nickname())) {
+        if (memberAccessor.checkNicknameDuplicate(dto.nickname())) {
             throw new MemberBusinessException.DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
         }
-        if (memberAccessPolicy.checkEmailDuplicate(dto.email())) {
+        if (memberAccessor.checkEmailDuplicate(dto.email())) {
             throw new MemberBusinessException.DuplicateEmail(MemberErrorCode.DUPLICATE_EMAIL);
         }
     }

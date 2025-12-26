@@ -11,13 +11,17 @@ import revi1337.onsquad.member.error.MemberErrorCode;
 
 @RequiredArgsConstructor
 @Component
-public class MemberAccessPolicy {
+public class MemberAccessor {
 
     private final MemberRepository memberRepository;
 
-    public Member ensureMemberExistsAndGet(Long memberId) {
+    public Member getById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberBusinessException.NotFound(MemberErrorCode.NOT_FOUND));
+    }
+
+    public Member getReferenceById(Long memberId) {
+        return memberRepository.getReferenceById(memberId);
     }
 
     public boolean checkNicknameDuplicate(String nickname) {

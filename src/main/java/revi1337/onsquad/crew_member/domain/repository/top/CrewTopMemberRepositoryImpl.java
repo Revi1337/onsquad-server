@@ -15,6 +15,11 @@ public class CrewTopMemberRepositoryImpl implements CrewTopMemberRepository {
     private final CrewTopMemberJdbcRepository crewTopMemberJdbcRepository;
 
     @Override
+    public List<CrewTopMember> findAllByCrewId(Long crewId) {
+        return crewTopMemberJpaRepository.findAllByCrewId(crewId);
+    }
+
+    @Override
     public List<Top5CrewMemberResult> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
         return crewTopMemberJdbcRepository.fetchAggregatedTopMembers(from, to, rankLimit);
     }

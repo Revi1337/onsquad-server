@@ -12,7 +12,8 @@ public enum CrewMemberErrorCode implements ErrorCode {
     NOT_OWNER(403, "CRM002", "크루장만 이용할 수 있습니다."),
     LESS_THAN_MANAGER(403, "CRM003", "크루장 혹은 크루매니저만 이용할 수 있습니다."),
     ALREADY_JOIN(400, "CRM004", "이미 크루에 가입된 사용자입니다."),
-    INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY(403, "CRM005", "크루 참가자 조회는 크루장만 가능합니다.");
+    INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY(403, "CRM005", "크루 참가자 조회는 크루장만 가능합니다."),
+    INSUFFICIENT_READ_CREW_STATISTIC_AUTHORITY(403, "CRM006", "크루 통계 정보 조회는 크루장만 가능합니다.");
 
     private final int status;
     private final String code;

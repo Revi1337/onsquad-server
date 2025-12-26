@@ -19,8 +19,7 @@ public enum CrewErrorCode implements ErrorCode {
     INSUFFICIENT_UPDATE_AUTHORITY(403, "CR008", "크루 수정은 작성자만 가능합니다."),
     INSUFFICIENT_DELETE_AUTHORITY(403, "CR009", "크루 삭제는 작성자만 가능합니다."),
     INSUFFICIENT_IMAGE_UPDATE_AUTHORITY(403, "CR010", "크루 이미지 변경은 작성자만 가능합니다."),
-    INSUFFICIENT_IMAGE_DELETE_AUTHORITY(403, "CR011", "크루 이미지 삭제는 작성자만 가능합니다."),
-    INSUFFICIENT_READ_STATISTIC_AUTHORITY(403, "CR012", "크루 통계 정보 조회는 작성자만 가능합니다.");
+    INSUFFICIENT_IMAGE_DELETE_AUTHORITY(403, "CR011", "크루 이미지 삭제는 작성자만 가능합니다.");
 
     private final int status;
     private final String code;

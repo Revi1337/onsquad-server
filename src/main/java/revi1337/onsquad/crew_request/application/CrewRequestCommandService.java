@@ -6,60 +6,59 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.aspect.Throttling;
+import revi1337.onsquad.crew.application.CrewAccessor;
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew.domain.repository.CrewRepository;
-import revi1337.onsquad.crew.error.CrewBusinessException;
-import revi1337.onsquad.crew.error.CrewErrorCode;
-import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
+import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.crew_request.domain.CrewRequestPolicy;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.event.RequestAccepted;
 import revi1337.onsquad.crew_request.domain.event.RequestAdded;
 import revi1337.onsquad.crew_request.domain.event.RequestRejected;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
+import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.domain.entity.Member;
-import revi1337.onsquad.member.domain.repository.MemberRepository;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class CrewRequestCommandService {
 
-    private final MemberRepository memberRepository;
-    private final CrewRepository crewRepository;
-    private final CrewMemberAccessPolicy crewMemberAccessPolicy;
-    private final CrewRequestAccessPolicy crewRequestAccessPolicy;
+    private final MemberAccessor memberAccessor;
+    private final CrewAccessor crewAccessor;
+    private final CrewMemberAccessor crewMemberAccessor;
+    private final CrewRequestAccessor crewRequestAccessor;
     private final CrewRequestRepository crewRequestRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Throttling(name = "throttle-crew-req", key = "'crew:' + #crewId + ':member:' + #memberId", during = 5)
     public void request(Long memberId, Long crewId) {
-        crewMemberAccessPolicy.ensureMemberNotInCrew(memberId, crewId);
-        if (crewRequestAccessPolicy.isRequestAbsent(memberId, crewId)) {
-            Crew crewRef = crewRepository.getReferenceById(crewId);
-            Member memberRef = memberRepository.getReferenceById(memberId);
+        crewMemberAccessor.validateMemberNotInCrew(memberId, crewId);
+        if (crewRequestAccessor.isRequestAbsent(memberId, crewId)) {
+            Crew crewRef = crewAccessor.getReferenceById(crewId);
+            Member memberRef = memberAccessor.getReferenceById(memberId);
             CrewRequest request = crewRequestRepository.save(CrewRequest.of(crewRef, memberRef, LocalDateTime.now()));
             eventPublisher.publishEvent(new RequestAdded(crewId, memberId, request.getId()));
         }
     }
 
     public void acceptRequest(Long memberId, Long crewId, Long requestId) {
-        Crew crew = crewRepository.findByIdForUpdate(crewId).orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
-        CrewRequest request = crewRequestAccessPolicy.ensureRequestExistsAndGet(requestId);
-        crewRequestAccessPolicy.ensureMatchCrew(request, crewId);
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        crewRequestAccessPolicy.ensureAcceptable(crewMember);
+        Crew crew = crewAccessor.getByIdForUpdate(crewId);
+        CrewRequest request = crewRequestAccessor.getById(requestId);
+        CrewRequestPolicy.ensureMatchCrew(request, crewId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewRequestPolicy.ensureAcceptable(crewMember);
         crew.addCrewMember(CrewMemberFactory.general(crew, request.getMember(), LocalDateTime.now()));
         crewRequestRepository.deleteById(requestId);
         eventPublisher.publishEvent(new RequestAccepted(crewId, memberId, request.getRequesterId()));
     }
 
     public void rejectRequest(Long memberId, Long crewId, Long requestId) {
-        CrewRequest request = crewRequestAccessPolicy.ensureRequestExistsAndGet(requestId);
-        crewRequestAccessPolicy.ensureMatchCrew(request, crewId);
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        crewRequestAccessPolicy.ensureRejectable(crewMember);
+        CrewRequest request = crewRequestAccessor.getById(requestId);
+        CrewRequestPolicy.ensureMatchCrew(request, crewId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewRequestPolicy.ensureRejectable(crewMember);
         crewRequestRepository.deleteById(requestId);
         eventPublisher.publishEvent(new RequestRejected(crewId, memberId, request.getRequesterId()));
     }

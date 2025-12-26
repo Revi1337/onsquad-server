@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
+import revi1337.onsquad.announce.domain.AnnouncePolicy;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.event.AnnounceCreateEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceDeleteEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
-import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
+import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
 @RequiredArgsConstructor
@@ -21,41 +22,41 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 @Service
 public class AnnounceCommandService {
 
-    private final CrewMemberAccessPolicy crewMemberAccessPolicy;
-    private final AnnounceAccessPolicy announceAccessPolicy;
+    private final CrewMemberAccessor crewMemberAccessor;
+    private final AnnounceAccessor announceAccessor;
     private final AnnounceRepository announceRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public void newAnnounce(Long memberId, Long crewId, AnnounceCreateDto dto) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        announceAccessPolicy.ensureAnnounceCreatable(crewMember);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureAnnounceCreatable(crewMember);
         announceRepository.save(dto.toEntity(crewMember.getCrew(), crewMember));
         applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crewId));
     }
 
     public void updateAnnounce(Long memberId, Long crewId, Long announceId, AnnounceUpdateDto dto) {
-        Announce announce = announceAccessPolicy.ensureAnnounceExistsAndGet(announceId);
-        announceAccessPolicy.ensureMatchCrew(announce, crewId);
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        announceAccessPolicy.ensureAnnounceUpdatable(announce, crewMember);
+        Announce announce = announceAccessor.getById(announceId);
+        AnnouncePolicy.ensureMatchCrew(announce, crewId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureAnnounceUpdatable(announce, crewMember);
         announce.update(dto.title(), dto.content());
         applicationEventPublisher.publishEvent(new AnnounceUpdateEvent(crewId, announce.getId()));
     }
 
     public void deleteAnnounce(Long memberId, Long crewId, Long announceId) {
-        Announce announce = announceAccessPolicy.ensureAnnounceExistsAndGet(announceId);
-        announceAccessPolicy.ensureMatchCrew(announce, crewId);
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        announceAccessPolicy.ensureAnnounceDeletable(announce, crewMember);
+        Announce announce = announceAccessor.getById(announceId);
+        AnnouncePolicy.ensureMatchCrew(announce, crewId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureAnnounceDeletable(announce, crewMember);
         announceRepository.delete(announce);
         applicationEventPublisher.publishEvent(new AnnounceDeleteEvent(crewId, announce.getId()));
     }
 
     public void changeFixState(Long memberId, Long crewId, Long announceId, boolean state) {
-        Announce announce = announceAccessPolicy.ensureAnnounceExistsAndGet(announceId);
-        announceAccessPolicy.ensureMatchCrew(announce, crewId);
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        announceAccessPolicy.ensureAnnounceFixable(crewMember);
+        Announce announce = announceAccessor.getById(announceId);
+        AnnouncePolicy.ensureMatchCrew(announce, crewId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureAnnounceFixable(crewMember);
         if (state) {
             fixAnnounce(crewId, announce);
             return;

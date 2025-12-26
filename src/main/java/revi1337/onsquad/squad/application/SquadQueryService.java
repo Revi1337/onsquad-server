@@ -6,52 +6,48 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.presentation.request.CategoryCondition;
-import revi1337.onsquad.crew_member.application.CrewMemberAccessPolicy;
+import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.domain.SquadLinkableGroup;
+import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
-import revi1337.onsquad.squad.error.SquadBusinessException;
-import revi1337.onsquad.squad.error.SquadErrorCode;
+import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
-import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository;
-import revi1337.onsquad.squad_member.application.SquadMemberAccessPolicy;
+import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class SquadQueryService {
 
-    private final CrewMemberAccessPolicy crewMemberAccessPolicy;
-    private final SquadMemberAccessPolicy squadMemberAccessPolicy;
-    private final SquadAccessPolicy squadAccessPolicy;
-    private final SquadRepository squadRepository;
-    private final SquadCategoryRepository squadCategoryRepository;
+    private final CrewMemberAccessor crewMemberAccessor;
+    private final SquadAccessor squadAccessor;
+    private final SquadCategoryAccessor squadCategoryAccessor;
+    private final SquadMemberAccessor squadMemberAccessor;
 
     public SquadWithStatesResponse fetchSquad(Long memberId, Long squadId) {
-        Squad squad = squadRepository.findSquadWithDetailById(squadId).orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND));
-        SquadMember squadMember = squadMemberAccessPolicy.ensureMemberInSquadAndGet(memberId, squadId);
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, squad.getCrewId());
+        Squad squad = squadAccessor.getWithDetailById(squadId);
+        SquadMember squadMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
 
-        boolean alreadyParticipant = squadAccessPolicy.isParticipant(squadId, squadMember);
-        boolean isLeader = squadAccessPolicy.isLeader(squadMember);
-        boolean canSeeMembers = squadAccessPolicy.canSeeParticipants(crewMember);
+        boolean alreadyParticipant = SquadPolicy.isParticipant(squadId, squadMember);
+        boolean isLeader = SquadPolicy.isLeader(squadMember);
+        boolean canSeeMembers = SquadPolicy.canSeeParticipants(crewMember);
 
         return SquadWithStatesResponse.from(alreadyParticipant, canSeeMembers, isLeader, squad);
     }
 
     public List<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
-        crewMemberAccessPolicy.ensureMemberInCrew(memberId, crewId);
-        SquadLinkableGroup<SquadResult> squadGroup = new SquadLinkableGroup<>(
-                squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable));
+        crewMemberAccessor.validateMemberInCrew(memberId, crewId);
+        SquadLinkableGroup<SquadResult> squadGroup = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable);
         if (squadGroup.isNotEmpty()) {
-            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds()));
+            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 
@@ -61,11 +57,11 @@ public class SquadQueryService {
     }
 
     public List<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
-        CrewMember crewMember = crewMemberAccessPolicy.ensureMemberInCrewAndGet(memberId, crewId);
-        squadAccessPolicy.ensureSquadManageListAccessible(crewMember);
-        SquadLinkableGroup<SquadWithLeaderStateResult> squadGroup = new SquadLinkableGroup<>(squadRepository.fetchManageList(memberId, crewId, pageable));
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        SquadPolicy.ensureSquadManageListAccessible(crewMember);
+        SquadLinkableGroup<SquadWithLeaderStateResult> squadGroup = squadAccessor.fetchManageList(memberId, crewId, pageable);
         if (squadGroup.isNotEmpty()) {
-            SquadCategories categories = new SquadCategories(squadCategoryRepository.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds()));
+            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 

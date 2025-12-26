@@ -12,11 +12,11 @@ import revi1337.onsquad.member.error.MemberErrorCode;
 @Service
 public class MemberPasswordUpdateService {
 
-    private final MemberAccessPolicy memberAccessPolicy;
+    private final MemberAccessor memberAccessor;
     private final PasswordEncoder passwordEncoder;
 
     public Member attemptUpdate(Long memberId, MemberPasswordUpdateDto dto) {
-        Member member = memberAccessPolicy.ensureMemberExistsAndGet(memberId);
+        Member member = memberAccessor.getById(memberId);
         if (!passwordEncoder.matches(dto.currentPassword(), member.getPassword().getValue())) {
             throw new MemberBusinessException.WrongPassword(MemberErrorCode.WRONG_PASSWORD);
         }

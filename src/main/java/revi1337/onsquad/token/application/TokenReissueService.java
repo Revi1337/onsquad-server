@@ -6,7 +6,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.member.application.MemberAccessPolicy;
+import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.token.domain.model.AccessToken;
@@ -23,7 +23,7 @@ public class TokenReissueService {
 
     private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
     private final JsonWebTokenManager jsonWebTokenManager;
-    private final MemberAccessPolicy memberAccessPolicy;
+    private final MemberAccessor memberAccessor;
 
     public JsonWebToken reissue(RefreshToken refreshToken) {
         ClaimsParser claimsParser = jsonWebTokenEvaluator.verifyRefreshToken(refreshToken.value());
@@ -37,7 +37,7 @@ public class TokenReissueService {
     }
 
     private JsonWebToken generateAndStoreNewTokenPair(Long memberId) {
-        Member member = memberAccessPolicy.ensureMemberExistsAndGet(memberId);
+        Member member = memberAccessor.getById(memberId);
         AccessToken accessToken = jsonWebTokenManager.generateAccessToken(MemberSummary.from(member));
         RefreshToken refreshToken = jsonWebTokenManager.generateRefreshToken(memberId);
         jsonWebTokenManager.storeRefreshTokenFor(memberId, refreshToken);

@@ -11,10 +11,10 @@ import revi1337.onsquad.member.application.dto.response.MemberResponse;
 @Service
 public class MemberQueryService {
 
-    private final MemberAccessPolicy memberAccessPolicy;
+    private final MemberAccessor memberAccessor;
 
     public DuplicateResponse checkDuplicateNickname(String nickname) {
-        if (memberAccessPolicy.checkNicknameDuplicate(nickname)) {
+        if (memberAccessor.checkNicknameDuplicate(nickname)) {
             return DuplicateResponse.of(true);
         }
 
@@ -22,7 +22,7 @@ public class MemberQueryService {
     }
 
     public DuplicateResponse checkDuplicateEmail(String email) {
-        if (memberAccessPolicy.checkEmailDuplicate(email)) {
+        if (memberAccessor.checkEmailDuplicate(email)) {
             return DuplicateResponse.of(true);
         }
 
@@ -30,6 +30,6 @@ public class MemberQueryService {
     }
 
     public MemberResponse findMember(Long memberId) {
-        return MemberResponse.from(memberAccessPolicy.ensureMemberExistsAndGet(memberId));
+        return MemberResponse.from(memberAccessor.getById(memberId));
     }
 }

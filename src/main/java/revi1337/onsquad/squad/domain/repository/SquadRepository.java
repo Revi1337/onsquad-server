@@ -28,6 +28,8 @@ public interface SquadRepository {
 
     List<SquadWithLeaderStateResult> fetchManageList(Long memberId, Long crewId, Pageable pageable);
 
+    void deleteByCrewId(Long crewId);
+
     void deleteById(Long id);
 
 }
