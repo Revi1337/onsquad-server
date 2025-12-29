@@ -2,12 +2,12 @@ package revi1337.onsquad.squad_member.application;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.application.CrewAccessor;
-import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
@@ -18,6 +18,8 @@ import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
 import revi1337.onsquad.squad_member.application.response.MyParticipantResponse;
 import revi1337.onsquad.squad_member.application.response.SquadMemberResponse;
+import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
@@ -34,17 +36,24 @@ public class SquadMemberQueryService {
     private final SquadMemberAccessor squadMemberAccessor;
 
     public List<SquadMemberResponse> fetchParticipants(Long memberId, Long squadId) {
-        if (squadMemberAccessor.alreadyParticipant(memberId, squadId)) {
-            return fetchMembers(memberId, squadId);
+        Optional<SquadMember> memberOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
+        if (memberOpt.isPresent()) {
+            SquadMember me = memberOpt.get();
+
+            return squadMemberAccessor.fetchParticipantsBySquadId(squadId).stream()
+                    .map(participant -> resolveParticipantStates(me, participant))
+                    .toList();
         }
 
         Squad squad = squadAccessor.getById(squadId);
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
-        if (CrewMemberPolicy.cannotReadSquadParticipants(crewMember)) {
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
+        if (CrewMemberPolicy.cannotReadSquadParticipants(me)) {
             throw new SquadMemberBusinessException.InsufficientAuthority(SquadMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
         }
 
-        return fetchMembers(memberId, squadId);
+        return squadMemberAccessor.fetchParticipantsBySquadId(squadId).stream()
+                .map(participant -> resolveParticipantStates(me, participant))
+                .toList();
     }
 
     public List<MyParticipantResponse> fetchMyParticipatingSquads(Long memberId) {
@@ -55,18 +64,27 @@ public class SquadMemberQueryService {
             squadGroup.linkCategories(categories);
         }
 
-        List<Long> crewIds = squads.stream().map(MyParticipantSquadResult::crewId).toList();
-        List<CrewWithOwnerStateResult> crews = crewAccessor.fetchCrewWithStateByIdsIn(crewIds, memberId);
         Map<Long, List<MyParticipantSquadResult>> groupedSquads = squadGroup.values().stream().collect(Collectors.groupingBy(MyParticipantSquadResult::crewId));
+        List<Long> crewIds = squads.stream().map(MyParticipantSquadResult::crewId).toList();
 
-        return crews.stream()
+        return crewAccessor.fetchCrewWithStateByIdsIn(crewIds, memberId).stream()
                 .map(crewResult -> MyParticipantResponse.from(crewResult, groupedSquads.get(crewResult.crew().id())))
                 .toList();
     }
 
-    private List<SquadMemberResponse> fetchMembers(Long memberId, Long squadId) {
-        return squadMemberAccessor.fetchParticipantsBySquadId(squadId).stream()
-                .map(result -> SquadMemberResponse.from(memberId, result))
-                .toList();
+    private SquadMemberResponse resolveParticipantStates(SquadMember me, SquadMember participant) {
+        boolean isMe = SquadMemberPolicy.isMe(me, participant);
+        boolean canKick = SquadMemberPolicy.canKick(me, participant);
+        boolean canLeaderDelegate = SquadMemberPolicy.canLeaderDelegate(me, participant);
+
+        return SquadMemberResponse.from(isMe, canKick, canLeaderDelegate, participant);
+    }
+
+    private SquadMemberResponse resolveParticipantStates(CrewMember me, SquadMember participant) {
+        boolean isMe = CrewMemberPolicy.isMe(me, participant);
+        boolean canKick = CrewMemberPolicy.canKick(me, participant);
+        boolean canLeaderDelegate = CrewMemberPolicy.canLeaderDelegate(me, participant);
+
+        return SquadMemberResponse.from(isMe, canKick, canLeaderDelegate, participant);
     }
 }

@@ -16,7 +16,7 @@ public record SimpleMemberResponse(
     public static SimpleMemberResponse from(Member member) {
         return new SimpleMemberResponse(
                 member.getId(),
-                member.getEmail().getValue(),
+                null,
                 member.getNickname().getValue(),
                 member.getIntroduce() != null ? member.getIntroduce().getValue() : null,
                 member.getMbti() != null ? member.getMbti().name() : ""

@@ -13,10 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 import revi1337.onsquad.squad_member.domain.result.QMyParticipantSquadResult;
-import revi1337.onsquad.squad_member.domain.result.QSquadMemberResult;
-import revi1337.onsquad.squad_member.domain.result.SquadMemberResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -24,19 +23,10 @@ public class SquadMemberQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<SquadMemberResult> fetchParticipantsBySquadId(Long squadId) {
+    public List<SquadMember> fetchParticipantsBySquadId(Long squadId) {
         return jpaQueryFactory
-                .select(new QSquadMemberResult(
-                        squadMember.requestAt,
-                        new QSimpleMemberResult(
-                                member.id,
-                                member.nickname,
-                                member.introduce,
-                                member.mbti
-                        )
-                ))
-                .from(squadMember)
-                .innerJoin(squadMember.member, member)
+                .selectFrom(squadMember)
+                .innerJoin(squadMember.member, member).fetchJoin()
                 .where(squadMember.squad.id.eq(squadId))
                 .fetch();
     }

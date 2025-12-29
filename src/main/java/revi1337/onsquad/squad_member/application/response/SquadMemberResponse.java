@@ -1,31 +1,21 @@
 package revi1337.onsquad.squad_member.application.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.time.LocalDateTime;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
-import revi1337.onsquad.squad_member.domain.result.SquadMemberResult;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
-@JsonInclude(Include.NON_NULL)
 public record SquadMemberResponse(
-        Boolean isMe,
-        LocalDateTime participantAt,
+        boolean isMe,
+        boolean canKick,
+        boolean canLeaderDelegate,
         SimpleMemberResponse member
 ) {
 
-    public static SquadMemberResponse from(SquadMemberResult squadMemberResult) {
+    public static SquadMemberResponse from(boolean isMe, boolean canKick, boolean canLeaderDelegate, SquadMember participant) {
         return new SquadMemberResponse(
-                null,
-                squadMemberResult.participantAt(),
-                SimpleMemberResponse.from(squadMemberResult.member())
-        );
-    }
-
-    public static SquadMemberResponse from(Long memberId, SquadMemberResult squadMemberResult) {
-        return new SquadMemberResponse(
-                squadMemberResult.member().id().equals(memberId),
-                squadMemberResult.participantAt(),
-                SimpleMemberResponse.from(squadMemberResult.member())
+                isMe,
+                canKick,
+                canLeaderDelegate,
+                SimpleMemberResponse.from(participant.getMember())
         );
     }
 }

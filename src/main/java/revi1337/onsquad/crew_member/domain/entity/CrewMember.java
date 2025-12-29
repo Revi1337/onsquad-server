@@ -78,10 +78,6 @@ public class CrewMember extends RequestEntity {
         this.crew = null;
     }
 
-    public boolean mismatchMemberId(Long memberId) {
-        return member.mismatchId(memberId);
-    }
-
     public boolean isNotOwner() {
         return !isOwner();
     }

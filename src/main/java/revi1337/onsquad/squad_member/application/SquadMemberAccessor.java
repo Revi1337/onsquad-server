@@ -1,12 +1,12 @@
 package revi1337.onsquad.squad_member.application;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
-import revi1337.onsquad.squad_member.domain.result.SquadMemberResult;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
@@ -15,6 +15,10 @@ import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 public class SquadMemberAccessor {
 
     private final SquadMemberRepository squadMemberRepository;
+
+    public Optional<SquadMember> findByMemberIdAndSquadId(Long memberId, Long squadId) {
+        return squadMemberRepository.findBySquadIdAndMemberId(squadId, memberId);
+    }
 
     public SquadMember getByMemberIdAndSquadId(Long memberId, Long squadId) {
         return squadMemberRepository.findBySquadIdAndMemberId(squadId, memberId)
@@ -25,7 +29,7 @@ public class SquadMemberAccessor {
         return squadMemberRepository.fetchParticipantSquads(memberId);
     }
 
-    public List<SquadMemberResult> fetchParticipantsBySquadId(Long squadId) {
+    public List<SquadMember> fetchParticipantsBySquadId(Long squadId) {
         return squadMemberRepository.fetchParticipantsBySquadId(squadId);
     }
 

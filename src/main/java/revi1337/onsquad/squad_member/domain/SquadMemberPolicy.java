@@ -1,12 +1,22 @@
 package revi1337.onsquad.squad_member.domain;
 
-import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
-@RequiredArgsConstructor
 public class SquadMemberPolicy {
+
+    public static boolean isMe(SquadMember me, SquadMember participant) {
+        return me.getMember().matchId(participant.getMember().getId());
+    }
+
+    public static boolean canKick(SquadMember me, SquadMember participant) {
+        return !isMe(me, participant) && me.isLeader() && participant.isNotLeader();
+    }
+
+    public static boolean canLeaderDelegate(SquadMember me, SquadMember participant) {
+        return !isMe(me, participant) && me.isLeader() && participant.isNotLeader();
+    }
 
     public static void ensureNotSelfDelegation(Long currentMemberId, Long targetMemberId) {
         if (currentMemberId.equals(targetMemberId)) {
