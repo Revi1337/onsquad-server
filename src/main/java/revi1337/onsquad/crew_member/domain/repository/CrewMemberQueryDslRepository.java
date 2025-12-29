@@ -8,16 +8,17 @@ import static revi1337.onsquad.member.domain.entity.QMember.member;
 
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.result.QSimpleCrewResult;
-import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
-import revi1337.onsquad.crew_member.domain.result.QCrewMemberResult;
-import revi1337.onsquad.crew_member.domain.result.QCrewMemberWithCountResult;
 import revi1337.onsquad.crew_member.domain.result.QMyParticipantCrewResult;
 import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
@@ -27,28 +28,22 @@ public class CrewMemberQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<CrewMemberWithCountResult> fetchParticipantsWithCountByCrewId(Long crewId, Pageable pageable) {
-        return jpaQueryFactory
-                .select(new QCrewMemberWithCountResult(
-                        crew.currentSize,
-                        new QCrewMemberResult(
-                                new QSimpleMemberResult(
-                                        member.id,
-                                        member.nickname,
-                                        member.introduce,
-                                        member.mbti
-                                ),
-                                crewMember.requestAt
-                        )
-                ))
-                .from(crewMember)
-                .innerJoin(crewMember.member, member)
-                .innerJoin(crewMember.crew, crew)
+    public Page<CrewMember> fetchParticipantsByCrewId(Long crewId, Pageable pageable) {
+        List<CrewMember> participants = jpaQueryFactory
+                .selectFrom(crewMember)
+                .innerJoin(crewMember.member, member).fetchJoin()
                 .where(crewMember.crew.id.eq(crewId))
                 .orderBy(crewMember.requestAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(crew.currentSize)
+                .from(crew)
+                .where(crew.id.eq(crewId));
+
+        return PageableExecutionUtils.getPage(participants, pageable, countQuery::fetchOne);
     }
 
     public List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId) {

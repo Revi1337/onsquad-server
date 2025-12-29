@@ -11,12 +11,24 @@ public class CrewMemberPolicy {
         return me != null && me.isOwner();
     }
 
+    public static boolean isMe(CrewMember me, CrewMember participant) {
+        return me.getMember().matchId(participant.getMember().getId());
+    }
+
     public static boolean isMe(CrewMember me, SquadMember participant) {
         return me.getMember().matchId(participant.getMember().getId());
     }
 
+    public static boolean canKick(CrewMember me, CrewMember participant) {
+        return !isMe(me, participant) && me.isOwner() && participant.isNotOwner();
+    }
+
     public static boolean canKick(CrewMember me, SquadMember participant) {
         return !isMe(me, participant) && me.isOwner() && participant.isNotLeader();
+    }
+
+    public static boolean canOwnerDelegate(CrewMember me, CrewMember participant) {
+        return !isMe(me, participant) && me.isOwner() && participant.isNotOwner();
     }
 
     public static boolean canLeaderDelegate(CrewMember me, SquadMember participant) {

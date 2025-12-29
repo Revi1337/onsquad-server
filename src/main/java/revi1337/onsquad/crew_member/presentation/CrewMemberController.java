@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
-import revi1337.onsquad.crew_member.application.response.CrewMembersWithCountResponse;
+import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
 
 @RequiredArgsConstructor
@@ -24,12 +25,12 @@ public class CrewMemberController {
     private final CrewMemberService crewMemberService;
 
     @GetMapping("/crews/{crewId}/members")
-    public ResponseEntity<RestResponse<CrewMembersWithCountResponse>> fetchParticipants(
+    public ResponseEntity<RestResponse<PageResponse<CrewMemberResponse>>> fetchParticipants(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        CrewMembersWithCountResponse response = crewMemberService.fetchParticipants(currentMember.id(), crewId, pageable);
+        PageResponse<CrewMemberResponse> response = crewMemberService.fetchParticipants(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

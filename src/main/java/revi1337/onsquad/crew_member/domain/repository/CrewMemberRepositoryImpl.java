@@ -3,10 +3,10 @@ package revi1337.onsquad.crew_member.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.result.CrewMemberWithCountResult;
 import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public List<CrewMemberWithCountResult> fetchParticipantsWithCountByCrewId(Long crewId, Pageable pageable) {
-        return crewMemberQueryDslRepository.fetchParticipantsWithCountByCrewId(crewId, pageable);
+    public Page<CrewMember> fetchParticipantsByCrewId(Long crewId, Pageable pageable) {
+        return crewMemberQueryDslRepository.fetchParticipantsByCrewId(crewId, pageable);
     }
 
     @Override

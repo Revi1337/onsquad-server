@@ -11,10 +11,11 @@ public record PageResponse<T>(
         int resultsSize,
         List<T> results
 ) {
+
     public static <T> PageResponse<T> from(Page<T> page) {
         return new PageResponse<>(
                 page.getSize(),
-                page.getNumber(),
+                page.getNumber() == 0 ? 1 : page.getNumber() + 1,
                 page.getTotalPages(),
                 page.getTotalElements(),
                 page.getNumberOfElements(),
