@@ -1,12 +1,14 @@
 package revi1337.onsquad.squad.application;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
+import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
@@ -19,6 +21,7 @@ import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
+import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 @RequiredArgsConstructor
@@ -33,14 +36,24 @@ public class SquadQueryService {
 
     public SquadWithStatesResponse fetchSquad(Long memberId, Long squadId) {
         Squad squad = squadAccessor.getWithDetailById(squadId);
-        SquadMember squadMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+        Optional<SquadMember> meOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
+        if (meOpt.isPresent()) {
+            SquadMember me = meOpt.get();
+            boolean alreadyParticipant = true;
+            boolean isLeader = SquadMemberPolicy.isLeader(me);
+            boolean canSeeParticipants = true;
+            boolean canLeave = SquadMemberPolicy.canLeave(me, squad);
+
+            return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, squad);
+        }
+
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
+        boolean alreadyParticipant = false;
+        Boolean isLeader = null;
+        boolean canSeeParticipants = CrewMemberPolicy.canReadSquadParticipants(crewMember);
+        Boolean canLeave = null;
 
-        boolean alreadyParticipant = SquadPolicy.isParticipant(squadId, squadMember);
-        boolean isLeader = SquadPolicy.isLeader(squadMember);
-        boolean canSeeMembers = SquadPolicy.canSeeParticipants(crewMember);
-
-        return SquadWithStatesResponse.from(alreadyParticipant, canSeeMembers, isLeader, squad);
+        return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, squad);
     }
 
     public List<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {

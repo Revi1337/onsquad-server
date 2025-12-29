@@ -7,6 +7,10 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 public class CrewMemberPolicy {
 
+    public static boolean isOwner(CrewMember me) {
+        return me != null && me.isOwner();
+    }
+
     public static boolean isMe(CrewMember me, SquadMember participant) {
         return me.getMember().matchId(participant.getMember().getId());
     }
@@ -17,6 +21,10 @@ public class CrewMemberPolicy {
 
     public static boolean canLeaderDelegate(CrewMember me, SquadMember participant) {
         return !isMe(me, participant) && me.isOwner() && participant.isNotLeader();
+    }
+
+    public static boolean canReadSquadParticipants(CrewMember crewMember) {
+        return crewMember.isOwner();
     }
 
     public static boolean cannotReadSquadParticipants(CrewMember crewMember) {

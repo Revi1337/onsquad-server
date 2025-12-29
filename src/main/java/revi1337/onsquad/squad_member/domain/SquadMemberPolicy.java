@@ -1,10 +1,20 @@
 package revi1337.onsquad.squad_member.domain;
 
+import revi1337.onsquad.squad.domain.SquadPolicy;
+import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
 public class SquadMemberPolicy {
+
+    public static boolean isLeader(SquadMember me) {
+        return me != null && me.isLeader();
+    }
+
+    public static boolean isNotLeader(SquadMember me) {
+        return !isLeader(me);
+    }
 
     public static boolean isMe(SquadMember me, SquadMember participant) {
         return me.getMember().matchId(participant.getMember().getId());
@@ -16,6 +26,10 @@ public class SquadMemberPolicy {
 
     public static boolean canLeaderDelegate(SquadMember me, SquadMember participant) {
         return !isMe(me, participant) && me.isLeader() && participant.isNotLeader();
+    }
+
+    public static boolean canLeave(SquadMember me, Squad squad) {
+        return SquadMemberPolicy.isNotLeader(me) || SquadPolicy.isLastMemberRemaining(squad);
     }
 
     public static void ensureNotSelfDelegation(Long currentMemberId, Long targetMemberId) {

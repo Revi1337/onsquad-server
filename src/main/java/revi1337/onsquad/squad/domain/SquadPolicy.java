@@ -12,16 +12,8 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 @RequiredArgsConstructor
 public class SquadPolicy {
 
-    public static boolean canSeeParticipants(CrewMember crewMember) {
-        return crewMember != null && crewMember.isOwner();
-    }
-
     public static boolean isLeader(SquadMember squadMember) {
         return squadMember != null && squadMember.isLeader();
-    }
-
-    public static boolean isParticipant(Long squadId, SquadMember squadMember) {
-        return squadMember != null && squadMember.matchSquadId(squadId);
     }
 
     public static boolean isLastMemberRemaining(Squad squad) {

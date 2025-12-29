@@ -1,29 +1,23 @@
 package revi1337.onsquad.squad.application.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.result.SquadResult;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record SquadWithStatesResponse(
         boolean alreadyParticipant,
-        boolean isLeader,
-        boolean canSeeMembers,
+        Boolean isLeader,
+        boolean canSeeParticipants,
+        Boolean canLeave,
         SquadResponse squad
 ) {
 
-    public static SquadWithStatesResponse from(boolean alreadyParticipant, boolean canManage, boolean isLeader, SquadResult squadResult) {
+    public static SquadWithStatesResponse from(boolean alreadyParticipant, Boolean isLeader, boolean canSeeParticipants, Boolean canLeave, Squad squad) {
         return new SquadWithStatesResponse(
                 alreadyParticipant,
                 isLeader,
-                canManage,
-                SquadResponse.from(squadResult)
-        );
-    }
-
-    public static SquadWithStatesResponse from(boolean alreadyParticipant, boolean canManage, boolean isLeader, Squad squad) {
-        return new SquadWithStatesResponse(
-                alreadyParticipant,
-                isLeader,
-                canManage,
+                canSeeParticipants,
+                canLeave,
                 SquadResponse.from(squad)
         );
     }
