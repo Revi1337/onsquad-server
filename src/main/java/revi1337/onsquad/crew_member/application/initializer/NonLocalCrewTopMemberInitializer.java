@@ -24,7 +24,7 @@ public class NonLocalCrewTopMemberInitializer {
         log.info("[Initialize Crew Top Members]");
         if (!crewTopMemberRepository.exists()) {
             crewTopMemberRepository.insertBatch(
-                    crewTopMemberRepository.fetchAggregatedTopMembers(from, to, crewTopMemberProperties.rankLimit())
+                    crewTopMemberRepository.fetchAggregatedRankedMembers(from, to, crewTopMemberProperties.rankLimit())
                             .stream()
                             .map(Top5CrewMemberResult::toEntity)
                             .toList()

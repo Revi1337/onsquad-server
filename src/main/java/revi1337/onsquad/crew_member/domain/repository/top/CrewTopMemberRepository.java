@@ -9,7 +9,7 @@ public interface CrewTopMemberRepository {
 
     List<CrewTopMember> findAllByCrewId(Long crewId);
 
-    List<Top5CrewMemberResult> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit);
+    List<Top5CrewMemberResult> fetchAggregatedRankedMembers(LocalDate from, LocalDate to, Integer rankLimit);
 
     boolean exists();
 

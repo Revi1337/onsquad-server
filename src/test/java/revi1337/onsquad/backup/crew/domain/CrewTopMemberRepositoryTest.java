@@ -131,7 +131,7 @@ class CrewTopMemberRepositoryTest extends PersistenceLayerTestSupport {
             LocalDate FROM = TO.minusDays(7);
 
             // when
-            List<Top5CrewMemberResult> TOP_MEMBERS = crewTopMemberRepository.fetchAggregatedTopMembers(TO, FROM, 5);
+            List<Top5CrewMemberResult> TOP_MEMBERS = crewTopMemberRepository.fetchAggregatedRankedMembers(TO, FROM, 5);
 
             // then
             assertAll(() -> {

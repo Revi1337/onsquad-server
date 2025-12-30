@@ -20,8 +20,8 @@ public class CrewTopMemberRepositoryImpl implements CrewTopMemberRepository {
     }
 
     @Override
-    public List<Top5CrewMemberResult> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
-        return crewTopMemberJdbcRepository.fetchAggregatedTopMembers(from, to, rankLimit);
+    public List<Top5CrewMemberResult> fetchAggregatedRankedMembers(LocalDate from, LocalDate to, Integer rankLimit) {
+        return crewTopMemberJdbcRepository.aggregateRankedMembersGivenActivityWeight(from, to, rankLimit);
     }
 
     @Override

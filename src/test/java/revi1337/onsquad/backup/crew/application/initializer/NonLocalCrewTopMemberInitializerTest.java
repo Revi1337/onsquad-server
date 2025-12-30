@@ -66,7 +66,7 @@ class NonLocalCrewTopMemberInitializerTest {
                     .isExactlyInstanceOf(NoSuchBeanDefinitionException.class);
             verify(crewTopMemberRepository, times(1)).exists();
             verify(crewTopMemberRepository, times(1)).insertBatch(anyList());
-            verify(crewTopMemberRepository, times(1)).fetchAggregatedTopMembers(any(), any(), any());
+            verify(crewTopMemberRepository, times(1)).fetchAggregatedRankedMembers(any(), any(), any());
         });
     }
 

@@ -32,7 +32,7 @@ public class CrewTopMemberRefreshService {
         try {
             crewTopMemberRepository.deleteAllInBatch();
             crewTopMemberRepository.insertBatch(
-                    crewTopMemberRepository.fetchAggregatedTopMembers(from, to, rankLimit).stream()
+                    crewTopMemberRepository.fetchAggregatedRankedMembers(from, to, rankLimit).stream()
                             .map(Top5CrewMemberResult::toEntity)
                             .toList()
             );
