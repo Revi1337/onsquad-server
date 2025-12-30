@@ -22,7 +22,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.YamlPropertySourceFactory;
-import revi1337.onsquad.common.config.properties.OnsquadProperties;
+import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.token.config.TokenProperties;
 import revi1337.onsquad.token.config.TokenProperties.AccessTokenAttributes;

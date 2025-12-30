@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config.properties;
+package revi1337.onsquad.common.config.web.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;

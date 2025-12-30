@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config;
+package revi1337.onsquad.common.config.dataaccess;
 
 import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;

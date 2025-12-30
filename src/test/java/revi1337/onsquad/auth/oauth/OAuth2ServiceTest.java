@@ -28,7 +28,7 @@ import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2AccessTokenFetcher;
 import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2UserProfileFetcher;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.YamlPropertySourceFactory;
-import revi1337.onsquad.common.config.properties.OnsquadProperties;
+import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
 import revi1337.onsquad.token.domain.model.AccessToken;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
 

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.common.config.properties.OnsquadProperties;
+import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
 import revi1337.onsquad.token.config.TokenProperties;
 import revi1337.onsquad.token.config.TokenProperties.AccessTokenAttributes;
 import revi1337.onsquad.token.config.TokenProperties.RefreshTokenAttributes;

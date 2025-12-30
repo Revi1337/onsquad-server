@@ -1,7 +1,7 @@
 package revi1337.onsquad.infrastructure.recyclebin;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import revi1337.onsquad.common.config.properties.SchedulingProperty;
+import revi1337.onsquad.common.config.system.properties.SchedulingProperty;
 
 @Deprecated
 @ConfigurationProperties(prefix = "onsquad.api.clean-recycle-bin")

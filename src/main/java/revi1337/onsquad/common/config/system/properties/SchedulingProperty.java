@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config.properties;
+package revi1337.onsquad.common.config.system.properties;
 
 import lombok.Getter;
 import org.springframework.scheduling.support.CronExpression;

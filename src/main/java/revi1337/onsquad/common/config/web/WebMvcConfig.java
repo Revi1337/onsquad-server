@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config;
+package revi1337.onsquad.common.config.web;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

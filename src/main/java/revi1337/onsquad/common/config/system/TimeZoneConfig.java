@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config;
+package revi1337.onsquad.common.config.system;
 
 import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;

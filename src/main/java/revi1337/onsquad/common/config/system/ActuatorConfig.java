@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config;
+package revi1337.onsquad.common.config.system;
 
 import org.springframework.boot.actuate.autoconfigure.metrics.cache.CacheMetricsAutoConfiguration;
 import org.springframework.boot.actuate.web.exchanges.InMemoryHttpExchangeRepository;

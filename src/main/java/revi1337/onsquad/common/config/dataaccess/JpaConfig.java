@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config;
+package revi1337.onsquad.common.config.dataaccess;
 
 import com.blazebit.persistence.querydsl.JPQLNextTemplates;
 import com.querydsl.jpa.impl.JPAQueryFactory;

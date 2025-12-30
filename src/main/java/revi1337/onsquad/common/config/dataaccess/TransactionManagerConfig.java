@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config;
+package revi1337.onsquad.common.config.dataaccess;
 
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
