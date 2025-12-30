@@ -33,21 +33,21 @@ public class CrewTopMember {
     private String mbti;
 
     @Column(nullable = false)
-    private LocalDateTime participateAt;
+    private LocalDateTime lastActivityTime;
 
     @Column(nullable = false)
-    private int contribute;
+    private int score;
 
     @Column(nullable = false)
     private int ranks;
 
-    public CrewTopMember(Long crewId, int ranks, int contribute, Long memberId, String nickname, String mbti, LocalDateTime participateAt) {
+    public CrewTopMember(Long crewId, int ranks, int score, Long memberId, String nickname, String mbti, LocalDateTime lastActivityTime) {
         this.crewId = crewId;
         this.memberId = memberId;
         this.nickname = nickname;
         this.mbti = mbti;
-        this.participateAt = participateAt;
-        this.contribute = contribute;
+        this.lastActivityTime = lastActivityTime;
+        this.score = score;
         this.ranks = ranks;
     }
 

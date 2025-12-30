@@ -22,7 +22,7 @@ public class CrewTopMemberJdbcRepository {
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     public void insertBatch(List<CrewTopMember> crewTopMembers) {
-        String sql = "INSERT INTO crew_top_member(crew_id, member_id, nickname, mbti, participate_at, contribute, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO crew_top_member(crew_id, member_id, nickname, mbti, last_activity_time, score, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.batchUpdate(
                 sql,
                 crewTopMembers,
@@ -32,8 +32,8 @@ public class CrewTopMemberJdbcRepository {
                     ps.setLong(2, crewTopCache.getMemberId());
                     ps.setString(3, crewTopCache.getNickname());
                     ps.setString(4, crewTopCache.getMbti());
-                    ps.setObject(5, crewTopCache.getParticipateAt());
-                    ps.setInt(6, crewTopCache.getContribute());
+                    ps.setObject(5, crewTopCache.getLastActivityTime());
+                    ps.setInt(6, crewTopCache.getScore());
                     ps.setInt(7, crewTopCache.getRanks());
                 }
         );
@@ -41,49 +41,73 @@ public class CrewTopMemberJdbcRepository {
 
     /**
      * For more information, visit <a href="https://www.h2database.com/html/functions-window.html">this link</a>.
-     *
-     * @param from
-     * @param to
-     * @param rankLimit
      */
     public List<Top5CrewMemberResult> fetchAggregatedTopMembers(LocalDate from, LocalDate to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
-                        crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter, ranks
+                        ranked_activities.crew_id AS crew_id,
+                        ranked_activities.mem_id AS mem_id,
+                        ranked_activities.mem_nickname AS mem_nickname,
+                        ranked_activities.mem_mbti AS mem_mbti,
+                        ranked_activities.last_activity_time AS mem_last_activity_time,
+                        ranked_activities.counter AS score,
+                        ranked_activities.ranks AS ranks
                     FROM (
                         SELECT
-                            crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter,
-                            DENSE_RANK() OVER(PARTITION BY crew_id ORDER BY counter DESC, mem_join_time) AS ranks
+                            crew_id, mem_id, mem_nickname, mem_mbti, last_activity_time, counter,
+                            DENSE_RANK() OVER (PARTITION BY crew_id ORDER BY counter DESC, last_activity_time DESC) AS ranks
                         FROM (
-                            SELECT DISTINCT crew_id, mem_id, mem_nickname, mem_mbti, mem_join_time, counter
+                            SELECT DISTINCT
+                                raw_activities.crew_id AS crew_id,
+                                m.id AS mem_id,
+                                m.nickname AS mem_nickname,
+                                m.mbti AS mem_mbti,
+                                MAX(raw_activities.created_at) OVER (PARTITION BY raw_activities.crew_id, m.id) AS last_activity_time,
+                                COUNT(*) OVER (PARTITION BY raw_activities.crew_id, m.id) AS counter
                             FROM (
+                                -- crew participant
                                 SELECT
                                     cm.crew_id AS crew_id,
-                                    m.id AS mem_id,
-                                    m.nickname AS mem_nickname,
-                                    m.mbti AS mem_mbti,
-                                    cm.participate_at AS mem_join_time,
-                                    COUNT(*) OVER (PARTITION BY cm.crew_id, m.id) AS counter
-                                FROM (
-                                    SELECT
-                                        sc.member_id AS member_id, 
-                                        sc.created_at AS created_at
-                                    FROM squad_comment sc
-                                    WHERE sc.created_at BETWEEN :from AND :to
-                                    UNION ALL
-                                    SELECT
-                                        s.member_id AS member_id, 
-                                        s.created_at AS created_at
-                                    FROM squad s
-                                ) AS activities
-                                INNER JOIN member m ON activities.member_id = m.id
-                                INNER JOIN crew_member cm ON m.id = cm.member_id
-                            ) AS union_table
-                        ) AS distinct_table
-                    ) AS rank_table
+                                    cm.member_id AS member_id,
+                                    cm.participate_at AS created_at
+                                FROM crew_member cm
+                                WHERE cm.participate_at BETWEEN :from AND :to
+                                UNION ALL
+                
+                                -- squad create
+                                SELECT
+                                    s.crew_id AS crew_id,
+                                    s.member_id AS member_id,
+                                    s.created_at AS created_at
+                                FROM squad s
+                                WHERE s.created_at BETWEEN :from AND :to
+                                UNION ALL
+                
+                                -- squad participant
+                                SELECT
+                                    s.crew_id AS crew_id,
+                                    sm.member_id AS member_id,
+                                    sm.participate_at AS created_at
+                                FROM squad_member sm
+                                INNER JOIN squad s ON s.id = sm.squad_id
+                                WHERE sm.participate_at BETWEEN :from AND :to
+                                UNION ALL
+                
+                                -- squad comment create
+                                SELECT
+                                    s.crew_id AS crew_id,
+                                    sc.member_id AS member_id,
+                                    sc.created_at AS created_at
+                                FROM squad_comment sc
+                                INNER JOIN squad s ON s.id = sc.squad_id
+                                WHERE sc.created_at BETWEEN :from AND :to
+                            ) AS raw_activities
+                            INNER JOIN member m ON m.id = raw_activities.member_id
+                        ) AS aggregated_activities
+                    ) AS ranked_activities
                     WHERE ranks <= :rankLimit
-                    ORDER BY crew_id, ranks
+                    ORDER BY crew_id, ranks;
                 """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
@@ -98,11 +122,11 @@ public class CrewTopMemberJdbcRepository {
         return (rs, rowNum) -> new Top5CrewMemberResult(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
-                rs.getInt("counter"),
+                rs.getInt("score"),
                 rs.getLong("mem_id"),
                 rs.getString("mem_nickname"),
                 rs.getString("mem_mbti"),
-                rs.getObject("mem_join_time", LocalDateTime.class)
+                rs.getObject("mem_last_activity_time", LocalDateTime.class)
         );
     }
 }

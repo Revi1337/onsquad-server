@@ -7,6 +7,7 @@ import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
 
 public interface CrewTopMemberJpaRepository extends JpaRepository<CrewTopMember, Long> {
 
+    @Query("SELECT ctm FROM CrewTopMember ctm WHERE ctm.crewId = :crewId ORDER BY ctm.ranks DESC")
     List<CrewTopMember> findAllByCrewId(Long crewId);
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CrewTopMember c")
