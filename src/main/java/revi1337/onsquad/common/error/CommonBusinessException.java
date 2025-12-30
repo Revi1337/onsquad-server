@@ -20,4 +20,11 @@ public abstract class CommonBusinessException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }
+
+    public static class MaintenanceTime extends CommonBusinessException {
+
+        public MaintenanceTime(ErrorCode errorCode, String from, String to) {
+            super(errorCode, String.format("%s (%s ~ %s)", errorCode.getDescription(), from, to));
+        }
+    }
 }
