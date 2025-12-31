@@ -6,7 +6,7 @@ import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
 public record Top5CrewMemberResult(
         Long crewId,
         int rank,
-        int score,
+        double score,
         Long memberId,
         String nickname,
         String mbti,

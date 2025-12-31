@@ -33,7 +33,7 @@ public class CrewTopMemberJdbcRepository {
                     ps.setString(3, crewTopCache.getNickname());
                     ps.setString(4, crewTopCache.getMbti());
                     ps.setObject(5, crewTopCache.getLastActivityTime());
-                    ps.setInt(6, crewTopCache.getScore());
+                    ps.setDouble(6, crewTopCache.getScore());
                     ps.setInt(7, crewTopCache.getRanks());
                 }
         );
@@ -172,7 +172,7 @@ public class CrewTopMemberJdbcRepository {
         return (rs, rowNum) -> new Top5CrewMemberResult(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
-                rs.getInt("score"),
+                rs.getDouble("score"),
                 rs.getLong("mem_id"),
                 rs.getString("mem_nickname"),
                 rs.getString("mem_mbti"),
