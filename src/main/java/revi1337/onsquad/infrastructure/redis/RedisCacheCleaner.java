@@ -1,14 +1,15 @@
 package revi1337.onsquad.infrastructure.redis;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import static lombok.AccessLevel.PRIVATE;
+
 import java.util.List;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Slf4j
+@NoArgsConstructor(access = PRIVATE)
 public final class RedisCacheCleaner {
 
     /**
@@ -22,46 +23,27 @@ public final class RedisCacheCleaner {
      * @param stringRedisTemplate the Redis template used to obtain the connection
      */
     public static void cleanAll(StringRedisTemplate stringRedisTemplate) {
-        stringRedisTemplate.getConnectionFactory()
-                .getConnection()
-                .serverCommands()
-                .flushAll();
+        stringRedisTemplate.execute((RedisCallback<Void>) connection -> {
+            connection.serverCommands().flushAll();
+            return null;
+        });
     }
 
     /**
      * Scans Redis for keys matching the given pattern and deletes them using the UNLINK command.
      * <p>
-     * This method performs a non-blocking deletion of keys by first scanning Redis using the SCAN command and then calling UNLINK, which unlinks keys
-     * asynchronously to avoid blocking Redis during large deletions.
-     * <p>
-     * Suitable for removing keys belonging to a specific cache namespace without affecting unrelated data.
+     * This method leverages {@link RedisScanUtils} for safe scanning and performs a non-blocking deletion using UNLINK to avoid blocking the Redis event loop.
      *
      * @param stringRedisTemplate the Redis template used to execute scan and unlink operations
      * @param keyPattern          the Redis key pattern to match (e.g., "announce:*")
      */
     public static void cleanup(StringRedisTemplate stringRedisTemplate, String keyPattern) {
-        try (Cursor<byte[]> scanCursor = getRedisCursor(stringRedisTemplate, keyPattern)) {
-            deleteKeys(stringRedisTemplate, getKeysForDeletion(scanCursor));
+        try {
+            List<String> keys = RedisScanUtils.scanKeys(stringRedisTemplate, keyPattern);
+            deleteKeys(stringRedisTemplate, keys);
         } catch (RuntimeException e) {
             log.error("{}: cannot destroy redis-cache for pattern {}", RedisHealthLoggingIndicator.REDIS_HEALTH_CHECK_ERROR_LOG, keyPattern);
         }
-    }
-
-    private static Cursor<byte[]> getRedisCursor(StringRedisTemplate stringRedisTemplate, String keyPattern) {
-        return stringRedisTemplate.getConnectionFactory()
-                .getConnection()
-                .scan(ScanOptions.scanOptions()
-                        .match(keyPattern)
-                        .build()
-                );
-    }
-
-    private static List<String> getKeysForDeletion(Cursor<byte[]> scanCursor) {
-        List<String> keys = new ArrayList<>();
-        while (scanCursor.hasNext()) {
-            keys.add(new String(scanCursor.next(), StandardCharsets.UTF_8));
-        }
-        return keys;
     }
 
     private static void deleteKeys(StringRedisTemplate stringRedisTemplate, List<String> keys) {
