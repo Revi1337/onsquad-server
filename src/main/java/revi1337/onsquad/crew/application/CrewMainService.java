@@ -12,10 +12,10 @@ import revi1337.onsquad.crew.application.dto.response.CrewStatisticResponse;
 import revi1337.onsquad.crew.domain.repository.CrewStatisticCacheRepository;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.application.CrewTopMemberCacheService;
+import revi1337.onsquad.crew_member.application.CrewRankedMemberCacheService;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.SquadLinkableGroup;
 import revi1337.onsquad.squad.domain.result.SquadResult;
@@ -26,7 +26,7 @@ public class CrewMainService {
 
     private final CrewAccessor crewAccessor;
     private final CrewMemberAccessor crewMemberAccessor;
-    private final CrewTopMemberCacheService crewTopMemberCacheService;
+    private final CrewRankedMemberCacheService crewRankedMemberCacheService;
     private final AnnounceCacheService announceCacheService;
     private final SquadAccessor squadAccessor;
     private final CrewStatisticCacheRepository crewStatisticRedisRepository;
@@ -35,7 +35,7 @@ public class CrewMainService {
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewResult result = crewAccessor.getCrewWithDetailById(crewId);
         List<AnnounceResult> announces = announceCacheService.getDefaultAnnounces(crewId);
-        List<CrewTopMember> topMembers = crewTopMemberCacheService.findAllByCrewId(crewId);
+        List<CrewRankedMember> topMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
         SquadLinkableGroup<SquadResult> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
         return CrewMainResponse.from(CrewMemberPolicy.canMangeCrew(crewMember), result, announces, topMembers, squads.values());

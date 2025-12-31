@@ -2,17 +2,18 @@ package revi1337.onsquad.crew_member.config;
 
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import revi1337.onsquad.common.config.system.properties.SchedulingProperty;
 
-@ConfigurationProperties(prefix = "onsquad.api.crew-top-members")
-public record CrewTopMemberProperties(
+@ConfigurationProperties(prefix = "onsquad.api.crew-rank-members")
+public record CrewRankedMemberProperties(
         Duration during,
         Integer rankLimit,
-        SchedulingProperty schedule
+        @NestedConfigurationProperty SchedulingProperty schedule
 ) {
 
-    public CrewTopMemberProperties(
+    public CrewRankedMemberProperties(
             @DefaultValue("7d") Duration during,
             @DefaultValue("4") Integer rankLimit,
             SchedulingProperty schedule

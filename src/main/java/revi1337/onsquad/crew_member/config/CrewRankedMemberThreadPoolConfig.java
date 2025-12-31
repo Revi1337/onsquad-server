@@ -4,16 +4,16 @@ import java.util.concurrent.Executor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import revi1337.onsquad.crew_member.application.CrewTopMemberRefreshService;
+import revi1337.onsquad.crew_member.application.CrewRankedMemberRefreshService;
 
 @Configuration
-public class CrewTopMemberThreadPoolConfig {
+public class CrewRankedMemberThreadPoolConfig {
 
     /**
-     * Worker Thread Used For {@link CrewTopMemberRefreshService}
+     * Worker Thread Used For {@link CrewRankedMemberRefreshService}
      */
-    @Bean(name = "crewTopMemberRefreshExecutor")
-    public Executor crewTopMemberRefreshExecutor() {
+    @Bean(name = "crewRankedMemberRefreshExecutor")
+    public Executor crewRankedMemberRefreshExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(1);
         executor.setMaxPoolSize(1);

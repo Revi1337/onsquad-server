@@ -8,11 +8,11 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_MBTI_VALUE
 import static revi1337.onsquad.common.fixture.MemberValueFixture.REVI_NICKNAME_VALUE;
 
 import java.time.LocalDateTime;
-import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 
 public class CrewTopMemberFixture {
 
-    public static final CrewTopMember CREW1_REVI_RANK1 = new CrewTopMember(
+    public static final CrewRankedMember CREW1_REVI_RANK1 = new CrewRankedMember(
             1L,
             1,
             10,
@@ -22,7 +22,7 @@ public class CrewTopMemberFixture {
             LocalDateTime.now()
     );
 
-    public static final CrewTopMember CREW1_ANDONG_RANK2 = new CrewTopMember(
+    public static final CrewRankedMember CREW1_ANDONG_RANK2 = new CrewRankedMember(
             1L,
             2,
             9,
@@ -32,7 +32,7 @@ public class CrewTopMemberFixture {
             LocalDateTime.now()
     );
 
-    public static final CrewTopMember CREW1_KWANGWON_RANK3 = new CrewTopMember(
+    public static final CrewRankedMember CREW1_KWANGWON_RANK3 = new CrewRankedMember(
             1L,
             3,
             8,

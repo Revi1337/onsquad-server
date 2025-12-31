@@ -5,8 +5,8 @@ import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.result.CrewResult;
-import revi1337.onsquad.crew_member.application.response.Top5CrewMemberResponse;
-import revi1337.onsquad.crew_member.domain.entity.CrewTopMember;
+import revi1337.onsquad.crew_member.application.response.CrewRankedMemberResponse;
+import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 
@@ -14,12 +14,12 @@ public record CrewMainResponse(
         boolean canManage,
         CrewResponse crew,
         List<AnnounceResponse> announces,
-        List<Top5CrewMemberResponse> topMembers,
+        List<CrewRankedMemberResponse> topMembers,
         List<SquadResponse> squads
 ) {
 
     public static CrewMainResponse from(boolean canManage, CrewResult result, List<AnnounceResult> announces,
-                                        List<CrewTopMember> topMembers, List<SquadResult> squads) {
+                                        List<CrewRankedMember> topMembers, List<SquadResult> squads) {
         return new CrewMainResponse(
                 canManage,
                 CrewResponse.from(result),
@@ -27,7 +27,7 @@ public record CrewMainResponse(
                         .map(AnnounceResponse::from)
                         .toList(),
                 topMembers.stream()
-                        .map(Top5CrewMemberResponse::from)
+                        .map(CrewRankedMemberResponse::from)
                         .toList(),
                 squads.stream()
                         .map(SquadResponse::from)
@@ -36,7 +36,7 @@ public record CrewMainResponse(
     }
 
     public static CrewMainResponse from(boolean canManage, Crew crew, List<AnnounceResult> announces,
-                                        List<CrewTopMember> topMembers, List<SquadResult> squads) {
+                                        List<CrewRankedMember> topMembers, List<SquadResult> squads) {
         return new CrewMainResponse(
                 canManage,
                 CrewResponse.from(crew),
@@ -44,7 +44,7 @@ public record CrewMainResponse(
                         .map(AnnounceResponse::from)
                         .toList(),
                 topMembers.stream()
-                        .map(Top5CrewMemberResponse::from)
+                        .map(CrewRankedMemberResponse::from)
                         .toList(),
                 squads.stream()
                         .map(SquadResponse::from)

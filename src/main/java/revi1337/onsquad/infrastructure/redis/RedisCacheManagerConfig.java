@@ -41,7 +41,7 @@ public class RedisCacheManagerConfig {
             put(CacheConst.CREW_STATISTIC, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
             put(CacheConst.CREW_ANNOUNCES, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
             put(CacheConst.CREW_ANNOUNCE, defaultConfigurationWithoutDefaultTyping().entryTtl(Duration.ofHours(1)));
-            put(CacheConst.CREW_TOP_USERS, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
+            put(CacheConst.CREW_RANK_MEMBERS, defaultConfigurationWithDefaultTyping().entryTtl(Duration.ofHours(1)));
         }};
     }
 

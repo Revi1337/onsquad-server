@@ -2,8 +2,8 @@ package revi1337.onsquad.common.config;
 
 import static revi1337.onsquad.common.constant.CacheConst.CREW_ANNOUNCE;
 import static revi1337.onsquad.common.constant.CacheConst.CREW_ANNOUNCES;
+import static revi1337.onsquad.common.constant.CacheConst.CREW_RANK_MEMBERS;
 import static revi1337.onsquad.common.constant.CacheConst.CREW_STATISTIC;
-import static revi1337.onsquad.common.constant.CacheConst.CREW_TOP_USERS;
 
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +34,8 @@ public class ApplicationLayerConfiguration {
                 CREW_ANNOUNCES,
                 CREW_ANNOUNCE,
                 CREW_STATISTIC,
-                CREW_TOP_USERS,
-                CREW_TOP_USERS
+                CREW_RANK_MEMBERS,
+                CREW_RANK_MEMBERS
         );
     }
 
