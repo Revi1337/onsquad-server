@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.domain.repository.top;
+package revi1337.onsquad.crew_member.domain.repository.rank;
 
 import java.sql.Date;
 import java.time.LocalDate;

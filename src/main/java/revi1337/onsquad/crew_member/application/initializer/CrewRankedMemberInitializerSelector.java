@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
-import revi1337.onsquad.crew_member.domain.repository.top.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
 
 @Configuration
 class CrewRankedMemberInitializerSelector {

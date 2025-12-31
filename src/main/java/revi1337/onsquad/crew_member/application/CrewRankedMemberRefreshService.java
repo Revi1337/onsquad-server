@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.scheduler.CrewRankedMemberRefreshScheduler;
-import revi1337.onsquad.crew_member.domain.repository.top.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 
 /**

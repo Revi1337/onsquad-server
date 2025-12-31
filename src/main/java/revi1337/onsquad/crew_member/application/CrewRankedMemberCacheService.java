@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
-import revi1337.onsquad.crew_member.domain.repository.top.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
 
 @RequiredArgsConstructor
 @Service

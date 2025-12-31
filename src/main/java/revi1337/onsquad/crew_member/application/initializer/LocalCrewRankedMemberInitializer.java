@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
-import revi1337.onsquad.crew_member.domain.repository.top.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 
 @Slf4j
@@ -21,7 +21,7 @@ public class LocalCrewRankedMemberInitializer {
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusDays(crewRankedMemberProperties.during().toDays());
 
-        log.info("[Initialize Crew Top Members]");
+        log.info("[Initialize CrewRankedMembers]");
         crewRankedMemberRepository.deleteAllInBatch();
         crewRankedMemberRepository.insertBatch(
                 crewRankedMemberRepository.fetchAggregatedRankedMembers(from, to, crewRankedMemberProperties.rankLimit()).stream()

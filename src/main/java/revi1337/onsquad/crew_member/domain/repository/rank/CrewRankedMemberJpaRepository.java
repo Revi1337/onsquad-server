@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.domain.repository.top;
+package revi1337.onsquad.crew_member.domain.repository.rank;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
