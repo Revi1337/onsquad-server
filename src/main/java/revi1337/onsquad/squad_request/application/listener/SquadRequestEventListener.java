@@ -1,9 +1,12 @@
 package revi1337.onsquad.squad_request.application.listener;
 
+import java.time.Instant;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
+import revi1337.onsquad.crew.application.CrewRankingManager;
+import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.notification.domain.Notification;
 import revi1337.onsquad.squad_request.application.history.RequestAcceptHistory;
 import revi1337.onsquad.squad_request.application.history.RequestAddHistory;
@@ -19,13 +22,16 @@ import revi1337.onsquad.squad_request.domain.event.RequestRejected;
 @Component
 public class SquadRequestEventListener {
 
+    private final CrewRankingManager crewRankingManager;
     private final RequestContextReader requestContextReader;
     private final ApplicationEventPublisher eventPublisher;
 
     public SquadRequestEventListener(
+            CrewRankingManager crewRankingManager,
             @Qualifier("squadRequestContextReader") RequestContextReader requestContextReader,
             ApplicationEventPublisher eventPublisher
     ) {
+        this.crewRankingManager = crewRankingManager;
         this.requestContextReader = requestContextReader;
         this.eventPublisher = eventPublisher;
     }
@@ -43,6 +49,7 @@ public class SquadRequestEventListener {
     public void onRequestAccepted(RequestAccepted accepted) {
         requestContextReader.readAcceptedContext(accepted.squadId(), accepted.accepterId(), accepted.requesterId())
                 .ifPresent(context -> {
+                    crewRankingManager.applyActivityScore(context.crewId(), context.requesterId(), Instant.now(), CrewActivity.SQUAD_PARTICIPANT);
                     eventPublisher.publishEvent(new RequestAcceptHistory(context));
                     sendNotificationIfPossible(new RequestAcceptNotification(context));
                 });

@@ -1,5 +1,6 @@
 package revi1337.onsquad.member.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Email;
@@ -16,6 +17,8 @@ public interface MemberRepository {
     Optional<Member> findById(Long id);
 
     Optional<Member> findByEmail(Email email);
+
+    List<Member> findByIdIn(List<Long> memberIds);
 
     boolean existsByNickname(Nickname nickname);
 

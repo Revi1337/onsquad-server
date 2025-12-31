@@ -1,5 +1,6 @@
 package revi1337.onsquad.member.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -13,5 +14,7 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
     boolean existsByEmail(Email email);
 
     Optional<Member> findByEmail(Email email);
+
+    List<Member> findByIdIn(List<Long> memberIds);
 
 }

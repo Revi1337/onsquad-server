@@ -1,6 +1,6 @@
 package revi1337.onsquad.crew_member.domain.repository.rank;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,7 +20,7 @@ public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepositor
     }
 
     @Override
-    public List<CrewRankedMemberResult> fetchAggregatedRankedMembers(LocalDate from, LocalDate to, Integer rankLimit) {
+    public List<CrewRankedMemberResult> fetchAggregatedRankedMembers(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         return crewRankedMemberJdbcRepository.aggregateRankedMembersGivenActivityWeight(from, to, rankLimit);
     }
 

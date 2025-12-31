@@ -1,6 +1,6 @@
 package revi1337.onsquad.crew_member.application.initializer;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -18,8 +18,8 @@ public class NonLocalCrewRankedMemberInitializer {
 
     @EventListener(ApplicationReadyEvent.class)
     public void initializeCrewRankedMembers() {
-        LocalDate to = LocalDate.now();
-        LocalDate from = to.minusDays(crewRankedMemberProperties.during().toDays());
+        LocalDateTime to = LocalDateTime.now();
+        LocalDateTime from = to.toLocalDate().minusDays(crewRankedMemberProperties.during().toDays()).atStartOfDay();
 
         log.info("[Initialize CrewRankedMembers]");
         if (!crewRankedMemberRepository.exists()) {

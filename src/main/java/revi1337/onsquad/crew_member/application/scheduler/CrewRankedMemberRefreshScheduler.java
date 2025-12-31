@@ -1,12 +1,16 @@
 package revi1337.onsquad.crew_member.application.scheduler;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.crew.application.CrewRankingManager;
 import revi1337.onsquad.crew_member.application.CrewRankedMemberRefreshService;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
+import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 import revi1337.onsquad.infrastructure.redis.RedisLockExecutor;
 
 @Slf4j
@@ -19,12 +23,22 @@ public class CrewRankedMemberRefreshScheduler {
     private final CrewRankedMemberProperties crewRankedMemberProperties;
     private final CrewRankedMemberRefreshService crewRankedMemberRefreshService;
     private final RedisLockExecutor redisLockExecutor;
+    private final CrewRankingManager crewRankingManager;
 
     @Scheduled(cron = "${onsquad.api.crew-rank-members.schedule.expression}")
     public void refreshRankedMembers() {
         redisLockExecutor.executeWithLock(LOCK_KEY, () -> {
-            LocalDate to = LocalDate.now().minusDays(1);
-            LocalDate from = to.minusDays(crewRankedMemberProperties.during().toDays());
+            List<CrewRankedMemberResult> rankedMembers = crewRankingManager.getRankedMembers(crewRankedMemberProperties.rankLimit());
+            crewRankedMemberRefreshService.refresh(rankedMembers);
+        });
+    }
+
+    @Deprecated
+    public void deprecatedRefreshRankedMembers() {
+        redisLockExecutor.executeWithLock(LOCK_KEY, () -> {
+            LocalDate today = LocalDate.now();
+            LocalDateTime from = today.minusDays(crewRankedMemberProperties.during().toDays()).atStartOfDay();
+            LocalDateTime to = today.atStartOfDay().minusNanos(1);
             log.info("Starting To Renew CrewRankedMember - {} ~ {}", from, to);
             crewRankedMemberRefreshService.refresh(from, to, crewRankedMemberProperties.rankLimit());
         });

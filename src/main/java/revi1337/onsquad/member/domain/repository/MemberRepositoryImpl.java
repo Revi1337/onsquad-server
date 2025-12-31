@@ -1,5 +1,6 @@
 package revi1337.onsquad.member.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -36,6 +37,11 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public Optional<Member> findByEmail(Email email) {
         return memberJpaRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<Member> findByIdIn(List<Long> memberIds) {
+        return memberJpaRepository.findByIdIn(memberIds);
     }
 
     @Override

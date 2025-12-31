@@ -1,7 +1,5 @@
 package revi1337.onsquad.crew_member.domain.repository.rank;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -42,11 +40,11 @@ public class CrewRankedMemberJdbcRepository {
     /**
      * For more information, visit <a href="https://www.h2database.com/html/functions-window.html">this link</a>.
      *
-     * @see #aggregateRankedMembersGivenActivityWeight(LocalDate, LocalDate, Integer)
+     * @see #aggregateRankedMembersGivenActivityWeight(LocalDateTime, LocalDateTime, Integer)
      * @deprecated
      */
     @Deprecated
-    public List<CrewRankedMemberResult> aggregateRankedMembersByActivityOccurrence(LocalDate from, LocalDate to, Integer rankLimit) {
+    public List<CrewRankedMemberResult> aggregateRankedMembersByActivityOccurrence(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
@@ -100,14 +98,14 @@ public class CrewRankedMemberJdbcRepository {
                 """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
-                .addValue("from", Date.valueOf(from))
-                .addValue("to", Date.valueOf(to))
+                .addValue("from", from)
+                .addValue("to", to)
                 .addValue("rankLimit", rankLimit);
 
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankedMemberMapper());
     }
 
-    public List<CrewRankedMemberResult> aggregateRankedMembersGivenActivityWeight(LocalDate from, LocalDate to, Integer rankLimit) {
+    public List<CrewRankedMemberResult> aggregateRankedMembersGivenActivityWeight(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
@@ -161,8 +159,8 @@ public class CrewRankedMemberJdbcRepository {
                 """;
 
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
-                .addValue("from", Date.valueOf(from))
-                .addValue("to", Date.valueOf(to))
+                .addValue("from", from)
+                .addValue("to", to)
                 .addValue("rankLimit", rankLimit);
 
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankedMemberMapper());
