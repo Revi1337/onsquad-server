@@ -30,7 +30,7 @@ public class AnnounceCommandService {
     public void newAnnounce(Long memberId, Long crewId, AnnounceCreateDto dto) {
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnouncePolicy.ensureAnnounceCreatable(crewMember);
-        announceRepository.save(dto.toEntity(crewMember.getCrew(), crewMember));
+        announceRepository.save(dto.toEntity(crewMember.getCrew(), crewMember.getMember()));
         applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crewId));
     }
 

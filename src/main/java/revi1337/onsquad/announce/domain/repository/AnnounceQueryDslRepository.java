@@ -1,7 +1,6 @@
 package revi1337.onsquad.announce.domain.repository;
 
 import static revi1337.onsquad.announce.domain.entity.QAnnounce.announce;
-import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,13 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.announce.domain.result.QAnnounceResult;
-import revi1337.onsquad.crew_member.domain.result.QSimpleCrewMemberResult;
+import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
 @RequiredArgsConstructor
 @Repository
 public class AnnounceQueryDslRepository {
-
-    private static final Long DEFAULT_FETCH_SIZE = 4L;
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -30,15 +27,15 @@ public class AnnounceQueryDslRepository {
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
-                        new QSimpleCrewMemberResult(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
-                                crewMember.role
+                                member.introduce,
+                                member.mbti
                         )
                 ))
                 .from(announce)
-                .innerJoin(announce.crewMember, crewMember)
-                .innerJoin(crewMember.member, member)
+                .innerJoin(announce.member, member)
                 .where(announce.crew.id.eq(crewId))
                 .orderBy(
                         announce.fixed.desc(),
@@ -48,7 +45,7 @@ public class AnnounceQueryDslRepository {
                 .fetch();
     }
 
-    public List<AnnounceResult> fetchAllInDefaultByCrewId(Long crewId) {
+    public List<AnnounceResult> fetchAllInDefaultByCrewId(Long crewId, int limit) {
         return jpaQueryFactory
                 .select(new QAnnounceResult(
                         announce.id,
@@ -57,21 +54,22 @@ public class AnnounceQueryDslRepository {
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
-                        new QSimpleCrewMemberResult(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
-                                crewMember.role
+                                member.introduce,
+                                member.mbti
                         )
                 ))
                 .from(announce)
-                .innerJoin(announce.crewMember, crewMember).on(announce.crew.id.eq(crewId))
-                .innerJoin(crewMember.member, member)
+                .innerJoin(announce.member, member)
+                .where(announce.crew.id.eq(crewId))
                 .orderBy(
                         announce.fixed.desc(),
                         announce.fixedAt.desc(),
                         announce.createdAt.desc()
                 )
-                .limit(DEFAULT_FETCH_SIZE)
+                .limit(limit)
                 .fetch();
     }
 
@@ -84,19 +82,16 @@ public class AnnounceQueryDslRepository {
                         announce.createdAt,
                         announce.fixed,
                         announce.fixedAt,
-                        new QSimpleCrewMemberResult(
+                        new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
-                                crewMember.role
+                                member.introduce,
+                                member.mbti
                         )
                 ))
                 .from(announce)
-                .innerJoin(announce.crewMember, crewMember)
-                .on(
-                        announce.id.eq(announceId),
-                        announce.crew.id.eq(crewId)
-                )
-                .innerJoin(crewMember.member, member)
+                .innerJoin(announce.member, member)
+                .where(announce.id.eq(announceId), announce.crew.id.eq(crewId))
                 .fetchOne()
         );
     }

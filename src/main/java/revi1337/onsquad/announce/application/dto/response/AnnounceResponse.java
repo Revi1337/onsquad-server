@@ -3,7 +3,7 @@ package revi1337.onsquad.announce.application.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
-import revi1337.onsquad.crew_member.application.response.SimpleCrewMemberResponse;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record AnnounceResponse(
@@ -13,18 +13,18 @@ public record AnnounceResponse(
         LocalDateTime createdAt,
         boolean fixed,
         LocalDateTime fixedAt,
-        SimpleCrewMemberResponse writer
+        SimpleMemberResponse writer
 ) {
 
-    public static AnnounceResponse from(AnnounceResult domainDto) {
+    public static AnnounceResponse from(AnnounceResult result) {
         return new AnnounceResponse(
-                domainDto.id(),
-                domainDto.title().getValue(),
-                domainDto.content(),
-                domainDto.createdAt(),
-                domainDto.fixed(),
-                domainDto.fixedAt(),
-                SimpleCrewMemberResponse.from(domainDto.writer())
+                result.id(),
+                result.title().getValue(),
+                result.content(),
+                result.createdAt(),
+                result.fixed(),
+                result.fixedAt(),
+                SimpleMemberResponse.from(result.writer())
         );
     }
 }

@@ -33,7 +33,7 @@ public class AnnouncePolicy {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
-        if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getId())) {
+        if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getActualMemberId())) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
     }
@@ -42,7 +42,7 @@ public class AnnouncePolicy {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
-        if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getId())) {
+        if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getActualMemberId())) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
     }

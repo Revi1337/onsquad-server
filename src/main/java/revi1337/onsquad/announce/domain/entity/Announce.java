@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.announce.domain.entity.vo.Title;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.member.domain.entity.Member;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -46,14 +46,14 @@ public class Announce extends BaseEntity {
     private Crew crew;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "crew_member_id", nullable = false)
-    private CrewMember crewMember;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    public Announce(String title, String content, Crew crew, CrewMember crewMember) {
+    public Announce(String title, String content, Crew crew, Member member) {
         this.title = new Title(title);
         this.content = content;
         this.crew = crew;
-        this.crewMember = crewMember;
+        this.member = member;
     }
 
     public void update(String title, String content) {
@@ -75,12 +75,12 @@ public class Announce extends BaseEntity {
         return !crew.matchId(crewId);
     }
 
-    public boolean mismatchMemberId(Long crewMemberId) {
-        return !matchMemberId(crewMemberId);
+    public boolean mismatchMemberId(Long memberId) {
+        return !matchMemberId(memberId);
     }
 
-    public boolean matchMemberId(Long crewMemberId) {
-        return crewMember.getId().equals(crewMemberId);
+    public boolean matchMemberId(Long memberId) {
+        return member.matchId(memberId);
     }
 
     public boolean isUnfixed() {

@@ -98,6 +98,10 @@ public class CrewMember extends RequestEntity {
         return !isGreaterThenManager();
     }
 
+    public Long getActualMemberId() {
+        return member.getId();
+    }
+
     public boolean isGreaterThenManager() {
         return role == OWNER || role == MANAGER;
     }

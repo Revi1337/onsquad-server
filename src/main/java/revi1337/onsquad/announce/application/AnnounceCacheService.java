@@ -30,6 +30,7 @@ import revi1337.onsquad.announce.error.AnnounceErrorCode;
 @Service
 public class AnnounceCacheService {
 
+    private static final int DEFAULT_FETCH_SIZE = 4;
     private final AnnounceQueryDslRepository announceQueryDslRepository;
 
     @Cacheable(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId")
@@ -40,7 +41,7 @@ public class AnnounceCacheService {
 
     @Cacheable(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId")
     public List<AnnounceResult> getDefaultAnnounces(Long crewId) {
-        return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId);
+        return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 
     @CachePut(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId")
@@ -51,7 +52,7 @@ public class AnnounceCacheService {
 
     @CachePut(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId")
     public List<AnnounceResult> putDefaultAnnounceListCache(Long crewId) {
-        return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId);
+        return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 
     @CacheEvict(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId")

@@ -24,8 +24,9 @@ public class AnnounceQueryService {
     public AnnounceWithFixAndModifyStateResponse findAnnounce(Long memberId, Long crewId, Long announceId) {
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnounceResult announce = announceCacheService.getAnnounce(crewId, announceId);
+
         boolean canFix = AnnouncePolicy.canFixable(crewMember);
-        boolean canModify = AnnouncePolicy.canModify(announce.writer().id(), memberId);
+        boolean canModify = AnnouncePolicy.canModify(announce.getWriterId(), memberId);
 
         return AnnounceWithFixAndModifyStateResponse.from(canFix, canModify, announce);
     }

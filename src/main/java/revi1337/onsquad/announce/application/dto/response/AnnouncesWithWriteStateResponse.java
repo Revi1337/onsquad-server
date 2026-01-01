@@ -8,10 +8,10 @@ public record AnnouncesWithWriteStateResponse(
         List<AnnounceResponse> announces
 ) {
 
-    public static AnnouncesWithWriteStateResponse from(Boolean canWrite, List<AnnounceResult> announceDtos) {
+    public static AnnouncesWithWriteStateResponse from(Boolean canWrite, List<AnnounceResult> results) {
         return new AnnouncesWithWriteStateResponse(
                 canWrite,
-                announceDtos.stream()
+                results.stream()
                         .map(AnnounceResponse::from)
                         .toList()
         );
