@@ -20,6 +20,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberCommandService;
+import revi1337.onsquad.member.application.MemberImageService;
 import revi1337.onsquad.member.application.MemberImageUpdateCoordinator;
 import revi1337.onsquad.member.application.MemberQueryService;
 import revi1337.onsquad.member.application.dto.response.DuplicateResponse;
@@ -33,7 +34,8 @@ import revi1337.onsquad.member.presentation.request.MemberUpdateRequest;
 @RestController
 public class MemberController {
 
-    private final MemberImageUpdateCoordinator imageUpdateCoordinator;
+    private final MemberImageUpdateCoordinator memberImageUpdateCoordinator;
+    private final MemberImageService memberImageService;
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
 
@@ -98,7 +100,7 @@ public class MemberController {
             @RequestPart MultipartFile file,
             @Authenticate CurrentMember currentMember
     ) {
-        imageUpdateCoordinator.updateImage(currentMember.id(), file);
+        memberImageUpdateCoordinator.updateImage(currentMember.id(), file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -107,7 +109,7 @@ public class MemberController {
     public ResponseEntity<RestResponse<Void>> deleteImage(
             @Authenticate CurrentMember currentMember
     ) {
-        memberCommandService.deleteImage(currentMember.id());
+        memberImageService.deleteImage(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

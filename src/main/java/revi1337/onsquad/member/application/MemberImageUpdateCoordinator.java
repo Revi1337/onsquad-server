@@ -14,7 +14,7 @@ public class MemberImageUpdateCoordinator {
 
     private final FileStorageManager crewS3StorageManager;
     private final ApplicationEventPublisher eventPublisher;
-    private final MemberCommandService memberCommandService;
+    private final MemberImageService memberImageService;
 
     public void updateImage(Long memberId, MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -23,7 +23,7 @@ public class MemberImageUpdateCoordinator {
         String imageUrl = null;
         try {
             imageUrl = crewS3StorageManager.upload(file);
-            memberCommandService.updateImage(memberId, imageUrl);
+            memberImageService.updateImage(memberId, imageUrl);
         } catch (CrewBusinessException exception) {
             if (imageUrl != null) {
                 eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
