@@ -1,7 +1,6 @@
 package revi1337.onsquad.crew.application;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
@@ -11,22 +10,18 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
-import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.domain.entity.Member;
-import revi1337.onsquad.squad.domain.repository.SquadRepository;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class CrewCommandService { // TODO 의존성이 너무 많음.
+public class CrewCommandService {
 
     private final MemberAccessor memberAccessor;
     private final CrewAccessor crewAccessor;
     private final CrewHashtagRepository crewHashtagRepository;
-    private final SquadRepository squadRepository;
     private final CrewRepository crewRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     public Long newCrew(Long memberId, CrewCreateDto dto, String newImageUrl) {
         Member member = memberAccessor.getById(memberId);
@@ -42,33 +37,5 @@ public class CrewCommandService { // TODO 의존성이 너무 많음.
         crew.update(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
         crewHashtagRepository.deleteByCrewId(crew.getId());
         crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
-    }
-
-    public void deleteCrew(Long memberId, Long crewId) {
-        Crew crew = crewAccessor.getById(crewId);
-        CrewPolicy.ensureCrewDeletable(crew, memberId);
-        if (crew.hasImage()) {
-            eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
-        }
-        squadRepository.deleteByCrewId(crewId);
-        crewRepository.deleteById(crewId);
-    }
-
-    public void updateImage(Long memberId, Long crewId, String newImageUrl) {
-        Crew crew = crewAccessor.getById(crewId);
-        CrewPolicy.ensureCrewImageUpdatable(crew, memberId);
-        if (crew.hasImage()) {
-            eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
-        }
-        crew.updateImage(newImageUrl);
-    }
-
-    public void deleteImage(Long memberId, Long crewId) {
-        Crew crew = crewAccessor.getById(crewId);
-        CrewPolicy.ensureCrewImageDeletable(crew, memberId);
-        if (crew.hasImage()) {
-            eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
-            crew.deleteImage();
-        }
     }
 }

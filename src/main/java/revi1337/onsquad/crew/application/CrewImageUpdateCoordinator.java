@@ -13,8 +13,8 @@ import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 public class CrewImageUpdateCoordinator {
 
     private final FileStorageManager crewS3StorageManager;
+    private final CrewImageService crewImageService;
     private final ApplicationEventPublisher eventPublisher;
-    private final CrewCommandService crewCommandService;
 
     public void updateImage(Long memberId, Long crewId, MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -23,7 +23,7 @@ public class CrewImageUpdateCoordinator {
         String imageUrl = null;
         try {
             imageUrl = crewS3StorageManager.upload(file);
-            crewCommandService.updateImage(memberId, crewId, imageUrl);
+            crewImageService.updateImage(memberId, crewId, imageUrl);
         } catch (CrewBusinessException exception) {
             if (imageUrl != null) {
                 eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));

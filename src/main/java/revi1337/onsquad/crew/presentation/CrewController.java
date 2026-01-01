@@ -26,6 +26,8 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewCommandService;
 import revi1337.onsquad.crew.application.CrewCreationCoordinator;
+import revi1337.onsquad.crew.application.CrewDeleteService;
+import revi1337.onsquad.crew.application.CrewImageService;
 import revi1337.onsquad.crew.application.CrewImageUpdateCoordinator;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
@@ -41,7 +43,9 @@ public class CrewController {
 
     private final CrewCreationCoordinator crewCreationCoordinator;
     private final CrewImageUpdateCoordinator crewImageUpdateCoordinator;
+    private final CrewImageService crewImageService;
     private final CrewCommandService crewCommandService;
+    private final CrewDeleteService crewDeleteService;
     private final CrewQueryService crewQueryService;
 
     @GetMapping("/check")
@@ -102,7 +106,7 @@ public class CrewController {
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        crewCommandService.deleteCrew(currentMember.id(), crewId);
+        crewDeleteService.deleteCrew(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -123,7 +127,7 @@ public class CrewController {
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        crewCommandService.deleteImage(currentMember.id(), crewId);
+        crewImageService.deleteImage(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

@@ -36,11 +36,11 @@ import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
  */
 @RequiredArgsConstructor
 @Component
-public class CrewCreationCoordinator { // TODO CrewImageUpdateCoordinator 랑 추상화 가능할듯?
+public class CrewCreationCoordinator {
 
     private final FileStorageManager crewS3StorageManager;
-    private final ApplicationEventPublisher eventPublisher;
     private final CrewCommandService crewCommandService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void newCrew(Long memberId, CrewCreateDto dto, MultipartFile file) {
         if (file == null || file.isEmpty()) {
