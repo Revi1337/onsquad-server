@@ -24,7 +24,7 @@ public class S3ThreadPoolConfig {
     }
 
     /**
-     * Worker Thread Used For {@link revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEventListener}
+     * Worker Thread Used For {@link FileDeleteEventListener}
      */
     @Bean("fileDeleteEventExecutor")
     public Executor fileDeleteEventExecutor() {

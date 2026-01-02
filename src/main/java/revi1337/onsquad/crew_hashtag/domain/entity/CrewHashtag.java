@@ -3,6 +3,7 @@ package revi1337.onsquad.crew_hashtag.domain.entity;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 
@@ -24,6 +26,7 @@ public class CrewHashtag {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;

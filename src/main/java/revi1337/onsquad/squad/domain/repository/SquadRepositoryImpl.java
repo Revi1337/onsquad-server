@@ -63,11 +63,6 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public void deleteByCrewId(Long crewId) {
-        squadJpaRepository.deleteByCrewId(crewId);
-    }
-
-    @Override
     public void deleteById(Long id) {
         squadJpaRepository.deleteById(id);
     }

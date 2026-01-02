@@ -24,4 +24,6 @@ public interface MemberRepository {
 
     boolean existsByEmail(Email email);
 
+    void deleteById(Long id);
+
 }

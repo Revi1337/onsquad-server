@@ -23,4 +23,9 @@ public class HistoryRepositoryImpl implements HistoryRepository {
     public List<HistoryEntity> findHistoriesByMemberIdAndRecordedAtBetween(Long memberId, LocalDateTime from, LocalDateTime to, HistoryType type) {
         return historyQueryDslRepository.findHistoriesByMemberIdAndRecordedAtBetween(memberId, from, to, type);
     }
+
+    @Override
+    public void deleteByMemberId(Long memberId) {
+        historyJpaRepository.deleteByMemberId(memberId);
+    }
 }

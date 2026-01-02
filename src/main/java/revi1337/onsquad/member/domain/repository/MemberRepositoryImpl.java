@@ -53,4 +53,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     public boolean existsByEmail(Email email) {
         return memberJpaRepository.existsByEmail(email);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        memberJpaRepository.deleteById(id);
+    }
 }

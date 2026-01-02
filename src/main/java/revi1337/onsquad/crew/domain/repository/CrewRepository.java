@@ -26,6 +26,8 @@ public interface CrewRepository {
 
     Optional<CrewResult> fetchCrewWithDetailById(Long id);
 
+    List<Crew> findAllByMemberId(Long memberId);
+
     List<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable);
 
     List<CrewResult> fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable);

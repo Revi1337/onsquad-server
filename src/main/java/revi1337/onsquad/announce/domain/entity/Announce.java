@@ -3,6 +3,7 @@ package revi1337.onsquad.announce.domain.entity;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.announce.domain.entity.vo.Title;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
@@ -41,6 +43,7 @@ public class Announce extends BaseEntity {
     @Column(name = "fixed_at")
     private LocalDateTime fixedAt;
 
+    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;

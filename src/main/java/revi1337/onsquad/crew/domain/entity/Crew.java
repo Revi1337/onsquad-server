@@ -5,7 +5,6 @@ import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -22,8 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.vo.Detail;
 import revi1337.onsquad.crew.domain.entity.vo.Introduce;
@@ -31,18 +28,13 @@ import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew_hashtag.domain.entity.CrewHashtag;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
-import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.member.domain.entity.Member;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name = "uk_crew_name", columnNames = "name")
-})
+@Table(uniqueConstraints = {@UniqueConstraint(name = "uk_crew_name", columnNames = "name")})
 public class Crew extends BaseEntity {
-
-    private static final int HASHTAG_BATCH_SIZE = 20;
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -67,18 +59,11 @@ public class Crew extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OnDelete(action = CASCADE)
-    @BatchSize(size = HASHTAG_BATCH_SIZE)
     @OneToMany(mappedBy = "crew")
     private final List<CrewHashtag> hashtags = new ArrayList<>();
 
-    @OnDelete(action = CASCADE)
     @OneToMany(mappedBy = "crew", cascade = {PERSIST, MERGE})
     private final List<CrewMember> crewMembers = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "crew")
-    private final List<CrewRequest> participants = new ArrayList<>();
 
     public static Crew create(Member owner, String name, String introduce, String detail, String kakaoLink, String imageUrl) {
         Crew crew = new Crew(name, introduce, detail, kakaoLink, imageUrl);

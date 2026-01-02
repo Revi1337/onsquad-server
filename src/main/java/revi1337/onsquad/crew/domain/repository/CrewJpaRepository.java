@@ -1,6 +1,8 @@
 package revi1337.onsquad.crew.domain.repository;
 
-import jakarta.persistence.LockModeType;
+import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -17,8 +19,10 @@ public interface CrewJpaRepository extends JpaRepository<Crew, Long> {
     @Query("delete Crew as c where c.id = :id")
     void deleteById(Long id);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(PESSIMISTIC_WRITE)
     @Query("select c from Crew c where c.id = :id")
     Optional<Crew> findByIdForUpdate(Long id);
+
+    List<Crew> findAllByMemberId(Long memberId);
 
 }

@@ -33,7 +33,7 @@ public class SquadCommandService {
         return squad.getId();
     }
 
-    public void deleteSquad(Long memberId, Long squadId) { // TODO 과연.. Hard Delete 가 맞나..? DB 자체 OnDeleteCascade 로 지운다해도.. 연관된 테이블이 Lock 파티가 열릴텐데..? 이거 고민 필요.
+    public void deleteSquad(Long memberId, Long squadId) { // TODO OnDelete 기반 -> 테이블 별 batchDelete -> Soft Delete 순으로 발전한다.
         Squad squad = squadAccessor.getById(squadId);
         SquadPolicy.ensureDeletable(squad, memberId);
         squadRepository.deleteById(squadId);

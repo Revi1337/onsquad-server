@@ -55,7 +55,15 @@ public class AnnounceCacheService {
         return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 
+    @CacheEvict(cacheNames = {CREW_ANNOUNCE, CREW_ANNOUNCES}, key = "'crew:' + #crewId")
+    public void evictAnnounceCache(Long crewId) {
+    }
+
     @CacheEvict(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId")
     public void evictAnnounceCache(Long crewId, Long announceId) {
+    }
+
+    @CacheEvict(cacheNames = {CREW_ANNOUNCE, CREW_ANNOUNCES}, allEntries = true)
+    public void evictAllAnnounceCaches() {
     }
 }

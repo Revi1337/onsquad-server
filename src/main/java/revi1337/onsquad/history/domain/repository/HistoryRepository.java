@@ -11,4 +11,6 @@ public interface HistoryRepository {
 
     List<HistoryEntity> findHistoriesByMemberIdAndRecordedAtBetween(Long memberId, LocalDateTime from, LocalDateTime to, HistoryType type);
 
+    void deleteByMemberId(Long memberId);
+    
 }

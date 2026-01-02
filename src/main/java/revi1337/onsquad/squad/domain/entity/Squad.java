@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
@@ -34,10 +33,8 @@ import revi1337.onsquad.squad.domain.entity.vo.Content;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 import revi1337.onsquad.squad.error.SquadDomainException;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
-import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
-import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -46,7 +43,6 @@ public class Squad extends BaseEntity {
 
     private static final int MIN_CAPACITY = 2;
     private static final int MAX_CAPACITY = 1000;
-    private static final int CATEGORY_BATCH_SIZE = 20;
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -78,26 +74,16 @@ public class Squad extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;
 
-    @BatchSize(size = CATEGORY_BATCH_SIZE)
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "squad")
-    private final List<SquadCategory> categories = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
     @OneToMany(mappedBy = "squad", cascade = {PERSIST, MERGE})
     private final List<SquadMember> members = new ArrayList<>();
 
-    @OnDelete(action = CASCADE)
     @OneToMany(mappedBy = "squad")
-    private final List<SquadComment> comments = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "squad")
-    private final List<SquadRequest> participants = new ArrayList<>();
+    private final List<SquadCategory> categories = new ArrayList<>();
 
     public static Squad create(SquadMetadata metadata, Member member, Crew crew) {
         Squad squad = metadata.toEntity();

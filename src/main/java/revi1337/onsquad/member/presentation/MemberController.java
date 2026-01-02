@@ -20,6 +20,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.MemberCommandService;
+import revi1337.onsquad.member.application.MemberDeleteService;
 import revi1337.onsquad.member.application.MemberImageService;
 import revi1337.onsquad.member.application.MemberImageUpdateCoordinator;
 import revi1337.onsquad.member.application.MemberQueryService;
@@ -36,6 +37,7 @@ public class MemberController {
 
     private final MemberImageUpdateCoordinator memberImageUpdateCoordinator;
     private final MemberImageService memberImageService;
+    private final MemberDeleteService memberDeleteService;
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
 
@@ -81,6 +83,15 @@ public class MemberController {
             @Authenticate CurrentMember currentMember
     ) {
         memberCommandService.updateMember(currentMember.id(), request.toDto());
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<RestResponse<Void>> deleteMember(
+            @Authenticate CurrentMember currentMember
+    ) {
+        memberDeleteService.deleteMember(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

@@ -71,4 +71,9 @@ public class CrewRepositoryImpl implements CrewRepository {
     public List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId) {
         return crewQueryDslRepository.fetchCrewWithStateByIdsIn(ids, currentMemberId);
     }
+
+    @Override
+    public List<Crew> findAllByMemberId(Long memberId) {
+        return crewJpaRepository.findAllByMemberId(memberId);
+    }
 }

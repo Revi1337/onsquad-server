@@ -17,11 +17,21 @@ public class RecycleBinRepository {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    public void save(String path) {
+    public void insert(String path) {
         String sql = "INSERT INTO recycle_bin (path) VALUES (:path)";
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
                 .addValue("path", path);
+
         jdbcTemplate.update(sql, sqlParameterSource);
+    }
+
+    public void insertBatch(List<String> paths) {
+        String sql = "INSERT INTO recycle_bin (path) VALUES (:path)";
+        SqlParameterSource[] batchArgs = paths.stream()
+                .map(path -> new MapSqlParameterSource("path", path))
+                .toArray(SqlParameterSource[]::new);
+
+        jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
     public List<String> findAll() {

@@ -4,6 +4,7 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 import static revi1337.onsquad.crew_member.domain.entity.vo.CrewRole.GENERAL;
 import static revi1337.onsquad.crew_member.domain.entity.vo.CrewRole.MANAGER;
 import static revi1337.onsquad.crew_member.domain.entity.vo.CrewRole.OWNER;
@@ -26,6 +27,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
@@ -46,6 +48,7 @@ public class CrewMember extends RequestEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;
