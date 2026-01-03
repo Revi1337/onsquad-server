@@ -1,20 +1,45 @@
 package revi1337.onsquad.announce.domain;
 
-import lombok.RequiredArgsConstructor;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
-@RequiredArgsConstructor
 public class AnnouncePolicy {
 
-    public static boolean canFixable(CrewMember crewMember) {
-        return crewMember.isOwner();
+    /**
+     * Managers or higher can write new announcements.
+     */
+    public static boolean canWrite(CrewMember me) {
+        return me.isGreaterThenManager();
     }
 
-    public static boolean canModify(Long announceWriterId, Long currentMemberId) {
-        return announceWriterId.equals(currentMemberId);
+    /**
+     * Only the crew owner is authorized to pin announcements.
+     */
+    public static boolean canFixable(CrewMember me) {
+        return me.isOwner();
+    }
+
+    /**
+     * Determines if the user has permission to modify the announcement.
+     * <ol>
+     * <li>Crew Owners can modify any announcement.</li>
+     * <li>Managers or higher can modify their own announcements.</li>
+     * <li>Managers or higher can modify announcements whose authors have withdrawn (orphan posts). In this case, the first person to edit the post becomes the new author.</li>
+     * </ol>
+     */
+    public static boolean canModify(CrewMember me, Long announceWriterId) {
+        if (me.isOwner()) {
+            return true;
+        }
+        if (me.isGreaterThenManager() && announceWriterId == null) {
+            return true;
+        }
+        if (me.isGreaterThenManager() && me.getActualMemberId().equals(announceWriterId)) {
+            return true;
+        }
+        return false;
     }
 
     public static void ensureMatchCrew(Announce announce, Long crewId) {
@@ -23,13 +48,13 @@ public class AnnouncePolicy {
         }
     }
 
-    public static void ensureAnnounceCreatable(CrewMember crewMember) {
+    public static void ensureWritable(CrewMember crewMember) {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_CREATE_AUTHORITY);
         }
     }
 
-    public static void ensureAnnounceUpdatable(Announce announce, CrewMember crewMember) {
+    public static void ensureModifiable(Announce announce, CrewMember crewMember) {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
@@ -38,7 +63,7 @@ public class AnnouncePolicy {
         }
     }
 
-    public static void ensureAnnounceDeletable(Announce announce, CrewMember crewMember) {
+    public static void ensureDeletable(Announce announce, CrewMember crewMember) {
         if (crewMember.isLessThenManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
@@ -47,7 +72,7 @@ public class AnnouncePolicy {
         }
     }
 
-    public static void ensureAnnounceFixable(CrewMember crewMember) {
+    public static void ensureFixable(CrewMember crewMember) {
         if (crewMember.isNotOwner()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_FIX_AUTHORITY);
         }

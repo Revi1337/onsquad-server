@@ -12,8 +12,8 @@ import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class AnnounceQueryService {
 
@@ -22,19 +22,21 @@ public class AnnounceQueryService {
     private final AnnounceRepository announceRepository;
 
     public AnnounceWithFixAndModifyStateResponse findAnnounce(Long memberId, Long crewId, Long announceId) {
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnounceResult announce = announceCacheService.getAnnounce(crewId, announceId);
 
-        boolean canFix = AnnouncePolicy.canFixable(crewMember);
-        boolean canModify = AnnouncePolicy.canModify(announce.getWriterId(), memberId);
+        boolean canFix = AnnouncePolicy.canFixable(me);
+        boolean canModify = AnnouncePolicy.canModify(me, announce.writer().id());
 
         return AnnounceWithFixAndModifyStateResponse.from(canFix, canModify, announce);
     }
 
     public AnnouncesWithWriteStateResponse findAnnounces(Long memberId, Long crewId) {
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         List<AnnounceResult> announces = announceRepository.fetchAllByCrewId(crewId);
 
-        return AnnouncesWithWriteStateResponse.from(crewMember.isGreaterThenManager(), announces);
+        boolean canWrite = AnnouncePolicy.canWrite(me);
+
+        return AnnouncesWithWriteStateResponse.from(canWrite, announces);
     }
 }

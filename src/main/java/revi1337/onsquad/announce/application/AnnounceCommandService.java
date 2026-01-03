@@ -29,7 +29,7 @@ public class AnnounceCommandService {
 
     public void newAnnounce(Long memberId, Long crewId, AnnounceCreateDto dto) {
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureAnnounceCreatable(crewMember);
+        AnnouncePolicy.ensureWritable(crewMember);
         announceRepository.save(dto.toEntity(crewMember.getCrew(), crewMember.getMember()));
         applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crewId));
     }
@@ -38,7 +38,7 @@ public class AnnounceCommandService {
         Announce announce = announceAccessor.getById(announceId);
         AnnouncePolicy.ensureMatchCrew(announce, crewId);
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureAnnounceUpdatable(announce, crewMember);
+        AnnouncePolicy.ensureModifiable(announce, crewMember);
         announce.update(dto.title(), dto.content());
         applicationEventPublisher.publishEvent(new AnnounceUpdateEvent(crewId, announce.getId()));
     }
@@ -47,7 +47,7 @@ public class AnnounceCommandService {
         Announce announce = announceAccessor.getById(announceId);
         AnnouncePolicy.ensureMatchCrew(announce, crewId);
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureAnnounceDeletable(announce, crewMember);
+        AnnouncePolicy.ensureDeletable(announce, crewMember);
         announceRepository.delete(announce);
         applicationEventPublisher.publishEvent(new AnnounceDeleteEvent(crewId, announce.getId()));
     }
@@ -56,7 +56,7 @@ public class AnnounceCommandService {
         Announce announce = announceAccessor.getById(announceId);
         AnnouncePolicy.ensureMatchCrew(announce, crewId);
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureAnnounceFixable(crewMember);
+        AnnouncePolicy.ensureFixable(crewMember);
         if (state) {
             fixAnnounce(crewId, announce);
             return;
