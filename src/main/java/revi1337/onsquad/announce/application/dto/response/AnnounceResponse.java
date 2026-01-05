@@ -24,7 +24,7 @@ public record AnnounceResponse(
                 result.createdAt(),
                 result.fixed(),
                 result.fixedAt(),
-                SimpleMemberResponse.from(result.writer())
+                result.writer().id() != null ? SimpleMemberResponse.from(result.writer()) : SimpleMemberResponse.DELETED_MEMBER
         );
     }
 }

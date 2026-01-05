@@ -8,11 +8,11 @@ import revi1337.onsquad.crew_hashtag.domain.entity.CrewHashtag;
 
 public interface CrewHashtagJpaRepository extends JpaRepository<CrewHashtag, Long> {
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("delete CrewHashtag as ch where ch.crew.id = :crewId")
-    void deleteById(Long crewId);
-
     @Query("select ch from CrewHashtag ch inner join fetch ch.hashtag where ch.crew.id in :crewIds")
     List<CrewHashtag> fetchHashtagsByCrewIdIn(List<Long> crewIds);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete CrewHashtag ch where ch.crew.id in :crewIds")
+    int deleteByCrewId(List<Long> crewIds);
 
 }

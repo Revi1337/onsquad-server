@@ -21,4 +21,8 @@ public interface SquadCommentRepository {
 
     List<SquadCommentResult> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable);
 
+    int deleteByMemberId(Long memberId);
+
+    int deleteBySquadIdIn(List<Long> squadIds);
+    
 }

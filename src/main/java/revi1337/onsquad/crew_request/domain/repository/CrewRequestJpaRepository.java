@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_request.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -17,9 +18,17 @@ public interface CrewRequestJpaRepository extends JpaRepository<CrewRequest, Lon
     @Query("delete CrewRequest cp where cp.id = :id")
     void deleteById(Long id);
 
+    @Modifying
+    @Query("delete CrewRequest cp where cp.member.id = :memberId")
+    int deleteByMemberId(Long memberId);
+
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("delete CrewRequest cp where cp.crew.id = :crewId and  cp.member.id = :memberId")
-    void deleteByCrewIdAndMemberId(Long crewId, Long memberId);
+    int deleteByCrewIdAndMemberId(Long crewId, Long memberId);
+
+    @Modifying
+    @Query("delete CrewRequest cp where cp.crew.id in :crewIds")
+    int deleteByCrewId(List<Long> crewIds);
 
 }

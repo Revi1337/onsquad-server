@@ -4,7 +4,6 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static lombok.AccessLevel.PUBLIC;
-import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -12,22 +11,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.OnDelete;
-import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.common.domain.BaseEntity;
-import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.member.domain.entity.vo.Address;
 import revi1337.onsquad.member.domain.entity.vo.Email;
 import revi1337.onsquad.member.domain.entity.vo.Introduce;
@@ -35,10 +26,6 @@ import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
 import revi1337.onsquad.member.domain.entity.vo.Password;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
-import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
-import revi1337.onsquad.squad_member.domain.entity.SquadMember;
-import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 
 @DynamicUpdate
 @Getter
@@ -82,38 +69,6 @@ public class Member extends BaseEntity {
 
     @Enumerated(STRING)
     private Mbti mbti;
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<Crew> crews = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<Announce> announces = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<CrewRequest> crewRequests = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<CrewMember> crewParticipants = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<Squad> squads = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<SquadRequest> squadRequests = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<SquadMember> squadParticipants = new ArrayList<>();
-
-    @OnDelete(action = CASCADE)
-    @OneToMany(mappedBy = "member")
-    private final List<SquadComment> squadComments = new ArrayList<>();
 
     public static Member general(String email, String password, String nickname, String address, String addressDetail) {
         return Member.builder()

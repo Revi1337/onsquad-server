@@ -25,11 +25,6 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public void delete(SquadMember squadMember) {
-        squadMemberJpaRepository.delete(squadMember);
-    }
-
-    @Override
     public Optional<SquadMember> findBySquadIdAndMemberId(Long squadId, Long memberId) {
         return squadMemberJpaRepository.findBySquadIdAndMemberId(squadId, memberId);
     }
@@ -42,5 +37,20 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     @Override
     public List<MyParticipantSquadResult> fetchParticipantSquads(Long memberId) {
         return squadMemberQueryDslRepository.fetchParticipantSquads(memberId);
+    }
+
+    @Override
+    public void delete(SquadMember squadMember) {
+        squadMemberJpaRepository.delete(squadMember);
+    }
+
+    @Override
+    public int deleteByMemberId(Long memberId) {
+        return squadMemberJpaRepository.deleteByMemberId(memberId);
+    }
+
+    @Override
+    public int deleteBySquadIdIn(List<Long> squadIds) {
+        return squadMemberJpaRepository.deleteBySquadIdIn(squadIds);
     }
 }

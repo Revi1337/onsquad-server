@@ -107,7 +107,7 @@ values (1, 1),
 
 insert into crew_member(crew_id, member_id, role, participate_at)
 values (1, 1, 'OWNER', CURRENT_TIMESTAMP - INTERVAL 1 DAY),
-       (1, 2, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 2 DAY),
+       (1, 2, 'MANAGER', CURRENT_TIMESTAMP - INTERVAL 2 DAY),
        (1, 3, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 3 DAY),
        (1, 4, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 4 DAY),
        (1, 5, 'GENERAL', CURRENT_TIMESTAMP - INTERVAL 5 DAY),

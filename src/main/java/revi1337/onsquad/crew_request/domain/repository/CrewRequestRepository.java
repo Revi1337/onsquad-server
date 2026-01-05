@@ -16,14 +16,18 @@ public interface CrewRequestRepository {
 
     Optional<CrewRequest> findById(Long id);
 
-    void deleteById(Long id);
-
-    void deleteByCrewIdAndMemberId(Long crewId, Long memberId);
-
     Optional<CrewRequest> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
     List<CrewRequestWithCrewResult> fetchAllWithSimpleCrewByMemberId(Long memberId);
 
     Page<CrewRequestWithMemberResult> fetchCrewRequests(Long crewId, Pageable pageable);
+
+    void deleteById(Long id);
+
+    int deleteByMemberId(Long memberId);
+
+    int deleteByCrewIdAndMemberId(Long crewId, Long memberId);
+
+    int deleteByCrewIdIn(List<Long> crewIds);
 
 }

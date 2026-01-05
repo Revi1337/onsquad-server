@@ -48,6 +48,17 @@ public class CrewRankingManager {
         return rankedMembers;
     }
 
+    public void evictCrewsLeaderboard(List<Long> crewIds) {
+        List<String> namedSortedSets = generateZSetKeys(crewIds);
+        stringRedisTemplate.unlink(namedSortedSets);
+    }
+
+    private List<String> generateZSetKeys(List<Long> crewIds) {
+        return crewIds.stream()
+                .map(this::generateZSetKey)
+                .toList();
+    }
+
     private String generateZSetKey(Long crewId) {
         return String.format(CacheFormat.CREW_COMPLEX, crewId, CacheConst.RANK_MEMBERS);
     }

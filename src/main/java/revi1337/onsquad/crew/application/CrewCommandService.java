@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,8 @@ import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.squad.application.SquadContextDisposer;
+import revi1337.onsquad.squad.domain.repository.SquadRepository;
 
 @RequiredArgsConstructor
 @Transactional
@@ -20,8 +23,11 @@ public class CrewCommandService {
 
     private final MemberAccessor memberAccessor;
     private final CrewAccessor crewAccessor;
-    private final CrewHashtagRepository crewHashtagRepository;
     private final CrewRepository crewRepository;
+    private final CrewHashtagRepository crewHashtagRepository;
+    private final SquadRepository squadRepository;
+    private final CrewContextHandler crewContextHandler;
+    private final SquadContextDisposer squadContextDisposer;
 
     public Long newCrew(Long memberId, CrewCreateDto dto, String newImageUrl) {
         Member member = memberAccessor.getById(memberId);
@@ -35,7 +41,14 @@ public class CrewCommandService {
         Crew crew = crewAccessor.getById(crewId);
         CrewPolicy.ensureCrewUpdatable(crew, memberId);
         crew.update(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
-        crewHashtagRepository.deleteByCrewId(crew.getId());
+        crewHashtagRepository.deleteByCrewIdIn(List.of(crew.getId()));
         crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
+    }
+
+    public void deleteCrew(Long memberId, Long crewId) {
+        Crew crew = crewAccessor.getById(crewId);
+        CrewPolicy.ensureCrewDeletable(crew, memberId);
+        squadContextDisposer.disposeContexts(squadRepository.findIdsByCrewIdIn(List.of(crewId)));
+        crewContextHandler.disposeContext(crew);
     }
 }

@@ -119,7 +119,7 @@ values (1, 1),
 
 insert into crew_member(crew_id, member_id, role, participate_at)
 values (1, 1, 'OWNER', CURRENT_TIMESTAMP - 1),
-       (1, 2, 'GENERAL', CURRENT_TIMESTAMP - 2),
+       (1, 2, 'MANAGER', CURRENT_TIMESTAMP - 2),
        (1, 3, 'GENERAL', CURRENT_TIMESTAMP - 3),
        (1, 4, 'GENERAL', CURRENT_TIMESTAMP - 4),
        (1, 5, 'GENERAL', CURRENT_TIMESTAMP - 5),

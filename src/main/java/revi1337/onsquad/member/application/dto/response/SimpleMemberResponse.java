@@ -13,6 +13,8 @@ public record SimpleMemberResponse(
         String mbti
 ) {
 
+    public static final SimpleMemberResponse DELETED_MEMBER = new SimpleMemberResponse(null, null, "탈퇴한 회원입니다.", null, null);
+
     public static SimpleMemberResponse from(Member member) {
         return new SimpleMemberResponse(
                 member.getId(),

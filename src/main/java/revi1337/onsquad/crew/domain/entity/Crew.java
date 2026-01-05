@@ -76,6 +76,19 @@ public class Crew extends BaseEntity {
         return new Crew(name, introduce, detail, kakaoLink, imageUrl);
     }
 
+    public static List<Long> extractIds(List<Crew> crews) {
+        return crews.stream()
+                .map(Crew::getId)
+                .toList();
+    }
+
+    public static List<String> extractImageUrls(List<Crew> crews) {
+        return crews.stream()
+                .filter(Crew::hasImage)
+                .map(Crew::getImageUrl)
+                .toList();
+    }
+
     private Crew(String name, String introduce, String detail, String kakaoLink, String imageUrl) {
         this.name = new Name(name);
         this.introduce = new Introduce(introduce);

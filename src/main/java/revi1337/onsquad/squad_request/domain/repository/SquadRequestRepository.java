@@ -22,6 +22,10 @@ public interface SquadRequestRepository {
 
     void deleteById(Long id);
 
-    void deleteBySquadIdMemberId(Long squadId, Long memberId);
+    int deleteByMemberId(Long memberId);
+
+    int deleteBySquadIdMemberId(Long squadId, Long memberId);
+
+    int deleteBySquadIdIn(List<Long> squadIds);
 
 }

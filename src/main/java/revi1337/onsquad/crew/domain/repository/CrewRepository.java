@@ -16,13 +16,11 @@ public interface CrewRepository {
 
     Crew getReferenceById(Long id);
 
-    void deleteById(Long id);
+    boolean existsByName(Name name);
 
     Optional<Crew> findById(Long id);
 
     Optional<Crew> findByIdForUpdate(Long id);
-
-    boolean existsByName(Name name);
 
     Optional<CrewResult> fetchCrewWithDetailById(Long id);
 
@@ -34,4 +32,7 @@ public interface CrewRepository {
 
     List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId);
 
+    int deleteByIdIn(List<Long> ids);
+
+    int decrementCountByMemberId(Long memberId);
 }

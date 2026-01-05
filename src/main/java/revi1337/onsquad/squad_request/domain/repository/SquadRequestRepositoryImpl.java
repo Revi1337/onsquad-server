@@ -46,12 +46,22 @@ public class SquadRequestRepositoryImpl implements SquadRequestRepository {
     }
 
     @Override
-    public void deleteBySquadIdMemberId(Long squadId, Long memberId) {
-        squadRequestJpaRepository.deleteBySquadIdAndMemberId(squadId, memberId);
+    public void deleteById(Long id) {
+        squadRequestJpaRepository.deleteById(id);
     }
 
     @Override
-    public void deleteById(Long id) {
-        squadRequestJpaRepository.deleteById(id);
+    public int deleteByMemberId(Long memberId) {
+        return squadRequestJpaRepository.deleteByMemberId(memberId);
+    }
+
+    @Override
+    public int deleteBySquadIdMemberId(Long squadId, Long memberId) {
+        return squadRequestJpaRepository.deleteBySquadIdAndMemberId(squadId, memberId);
+    }
+
+    @Override
+    public int deleteBySquadIdIn(List<Long> squadIds) {
+        return squadRequestJpaRepository.deleteBySquadIdIn(squadIds);
     }
 }

@@ -25,8 +25,4 @@ public record AnnounceResult(
         this.fixedAt = fixedAt;
         this.writer = writer;
     }
-
-    public Long getWriterId() {
-        return writer.id();
-    }
 }

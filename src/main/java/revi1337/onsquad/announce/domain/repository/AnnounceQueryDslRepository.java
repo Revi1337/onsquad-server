@@ -35,7 +35,7 @@ public class AnnounceQueryDslRepository {
                         )
                 ))
                 .from(announce)
-                .innerJoin(announce.member, member)
+                .leftJoin(announce.member, member)
                 .where(announce.crew.id.eq(crewId))
                 .orderBy(
                         announce.fixed.desc(),
@@ -62,7 +62,7 @@ public class AnnounceQueryDslRepository {
                         )
                 ))
                 .from(announce)
-                .innerJoin(announce.member, member)
+                .leftJoin(announce.member, member)
                 .where(announce.crew.id.eq(crewId))
                 .orderBy(
                         announce.fixed.desc(),
@@ -90,7 +90,7 @@ public class AnnounceQueryDslRepository {
                         )
                 ))
                 .from(announce)
-                .innerJoin(announce.member, member)
+                .leftJoin(announce.member, member)
                 .where(announce.id.eq(announceId), announce.crew.id.eq(crewId))
                 .fetchOne()
         );

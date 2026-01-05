@@ -46,4 +46,14 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
     public List<SquadCommentResult> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
         return squadCommentQueryDslRepository.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
     }
+
+    @Override
+    public int deleteByMemberId(Long memberId) {
+        return squadCommentJpaRepository.deleteByMemberId(memberId);
+    }
+
+    @Override
+    public int deleteBySquadIdIn(List<Long> squadIds) {
+        return squadCommentJpaRepository.deleteBySquadIdIn(squadIds);
+    }
 }

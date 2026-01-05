@@ -23,6 +23,7 @@ public class SquadCommandService {
     private final SquadAccessor squadAccessor;
     private final SquadRepository squadRepository;
     private final SquadCategoryRepository squadCategoryRepository;
+    private final SquadContextDisposer squadContextDisposer;
     private final ApplicationEventPublisher eventPublisher;
 
     public Long newSquad(Long memberId, Long crewId, SquadCreateDto dto) {
@@ -33,9 +34,9 @@ public class SquadCommandService {
         return squad.getId();
     }
 
-    public void deleteSquad(Long memberId, Long squadId) { // TODO OnDelete 기반 -> 테이블 별 batchDelete -> Soft Delete 순으로 발전한다.
+    public void deleteSquad(Long memberId, Long squadId) {
         Squad squad = squadAccessor.getById(squadId);
         SquadPolicy.ensureDeletable(squad, memberId);
-        squadRepository.deleteById(squadId);
+        squadContextDisposer.disposeContext(squadId);
     }
 }

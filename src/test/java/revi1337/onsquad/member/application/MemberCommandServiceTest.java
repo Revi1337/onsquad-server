@@ -50,7 +50,7 @@ import revi1337.onsquad.member.domain.entity.vo.Introduce;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
 import revi1337.onsquad.member.domain.entity.vo.Password;
-import revi1337.onsquad.member.domain.event.MemberDeleteEvent;
+import revi1337.onsquad.member.domain.event.MemberDeleted;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
 import revi1337.onsquad.member.error.MemberBusinessException;
@@ -300,7 +300,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
             memberCommandService.deleteImage(REVI.getId());
 
-            assertThat(events.stream(MemberDeleteEvent.class)).hasSize(0);
+            assertThat(events.stream(MemberDeleted.class)).hasSize(0);
         }
 
         @Test
@@ -312,7 +312,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
             memberCommandService.deleteImage(REVI.getId());
 
             assertAll(() -> {
-                assertThat(events.stream(MemberDeleteEvent.class)).hasSize(1);
+                assertThat(events.stream(MemberDeleted.class)).hasSize(1);
                 verify(memberRepository, times(1)).saveAndFlush(any(Member.class));
                 assertThat(REVI.getProfileImage()).isEqualTo(PROFILE_IMAGE_LINK);
             });

@@ -26,11 +26,6 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     }
 
     @Override
-    public void delete(Announce announce) {
-        announceJpaRepository.delete(announce);
-    }
-
-    @Override
     public Optional<Announce> findById(Long id) {
         return announceJpaRepository.findById(id);
     }
@@ -43,5 +38,25 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     @Override
     public List<AnnounceResult> fetchAllByCrewId(Long crewId) {
         return announceQueryDslRepository.fetchAllByCrewId(crewId);
+    }
+
+    @Override
+    public void delete(Announce announce) {
+        announceJpaRepository.delete(announce);
+    }
+
+    @Override
+    public int deleteByMemberId(Long memberId) {
+        return announceJpaRepository.deleteByMemberId(memberId);
+    }
+
+    @Override
+    public int deleteByCrewIdIn(List<Long> crewIds) {
+        return announceJpaRepository.deleteByCrewId(crewIds);
+    }
+
+    @Override
+    public int markMemberAsNull(Long memberId) {
+        return announceJpaRepository.markMemberAsNull(memberId);
     }
 }

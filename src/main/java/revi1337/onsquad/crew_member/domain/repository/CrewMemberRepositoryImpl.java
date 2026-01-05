@@ -35,4 +35,14 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     public List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId) {
         return crewMemberQueryDslRepository.fetchParticipantCrews(memberId);
     }
+
+    @Override
+    public int deleteByMemberId(Long memberId) {
+        return crewMemberJpaRepository.deleteByMemberId(memberId);
+    }
+
+    @Override
+    public int deleteByCrewIdIn(List<Long> crewIds) {
+        return crewMemberJpaRepository.deleteByCrewId(crewIds);
+    }
 }

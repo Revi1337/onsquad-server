@@ -15,14 +15,20 @@ public interface CrewJpaRepository extends JpaRepository<Crew, Long> {
 
     boolean existsByName(Name name);
 
-    @Modifying(clearAutomatically = true)
-    @Query("delete Crew as c where c.id = :id")
-    void deleteById(Long id);
-
     @Lock(PESSIMISTIC_WRITE)
     @Query("select c from Crew c where c.id = :id")
     Optional<Crew> findByIdForUpdate(Long id);
 
     List<Crew> findAllByMemberId(Long memberId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("delete Crew c where c.id in :ids")
+    int deleteByIdIn(List<Long> ids);
+
+    @Modifying
+    @Query("update Crew c set c.currentSize = c.currentSize - 1 " +
+            "where c.id in (select cm.crew.id from CrewMember cm where cm.member.id = :memberId) " +
+            "and c.currentSize > 0")
+    int decrementCountByMemberId(Long memberId);
+    
 }

@@ -10,4 +10,6 @@ public interface SquadCategoryRepository {
 
     List<SquadCategory> fetchCategoriesBySquadIdIn(List<Long> squadIds);
 
+    int deleteBySquadIdIn(List<Long> squadIds);
+
 }

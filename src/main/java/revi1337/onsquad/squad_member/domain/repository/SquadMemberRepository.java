@@ -11,12 +11,16 @@ public interface SquadMemberRepository {
 
     void flush();
 
-    void delete(SquadMember squadMember);
-
     Optional<SquadMember> findBySquadIdAndMemberId(Long squadId, Long memberId);
 
     List<SquadMember> fetchParticipantsBySquadId(Long squadId);
 
     List<MyParticipantSquadResult> fetchParticipantSquads(Long memberId);
+
+    void delete(SquadMember squadMember);
+
+    int deleteByMemberId(Long memberId);
+
+    int deleteBySquadIdIn(List<Long> squadIds);
 
 }

@@ -33,8 +33,8 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-        crewJpaRepository.deleteById(id);
+    public boolean existsByName(Name name) {
+        return crewJpaRepository.existsByName(name);
     }
 
     @Override
@@ -45,11 +45,6 @@ public class CrewRepositoryImpl implements CrewRepository {
     @Override
     public Optional<Crew> findByIdForUpdate(Long id) {
         return crewJpaRepository.findByIdForUpdate(id);
-    }
-
-    @Override
-    public boolean existsByName(Name name) {
-        return crewJpaRepository.existsByName(name);
     }
 
     @Override
@@ -75,5 +70,15 @@ public class CrewRepositoryImpl implements CrewRepository {
     @Override
     public List<Crew> findAllByMemberId(Long memberId) {
         return crewJpaRepository.findAllByMemberId(memberId);
+    }
+
+    @Override
+    public int deleteByIdIn(List<Long> ids) {
+        return crewJpaRepository.deleteByIdIn(ids);
+    }
+
+    @Override
+    public int decrementCountByMemberId(Long memberId) {
+        return crewJpaRepository.decrementCountByMemberId(memberId);
     }
 }

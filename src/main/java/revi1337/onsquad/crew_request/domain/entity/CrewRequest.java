@@ -3,7 +3,6 @@ package revi1337.onsquad.crew_request.domain.entity;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -31,7 +29,6 @@ public class CrewRequest extends RequestEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;

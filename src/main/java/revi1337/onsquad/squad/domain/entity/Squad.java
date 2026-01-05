@@ -5,7 +5,6 @@ import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
 import static revi1337.onsquad.squad.error.SquadErrorCode.NOT_ENOUGH_LEFT;
 import static revi1337.onsquad.squad.error.SquadErrorCode.SQUAD_MEMBER_UNDERFLOW;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -74,7 +72,6 @@ public class Squad extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
     private Crew crew;

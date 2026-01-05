@@ -3,7 +3,6 @@ package revi1337.onsquad.squad_comment.domain.entity;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.INVALID_LENGTH;
 
 import jakarta.persistence.Column;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
@@ -44,7 +42,6 @@ public class SquadComment extends BaseEntity {
 
     private LocalDateTime deletedAt;
 
-    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "squad_id", nullable = false)
     private Squad squad;
@@ -53,7 +50,6 @@ public class SquadComment extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @OnDelete(action = CASCADE)
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private SquadComment parent;

@@ -24,7 +24,7 @@ public class CrewHashtagRepositoryImpl implements CrewHashtagRepository {
     }
 
     @Override
-    public void deleteByCrewId(Long crewId) {
-        crewHashtagJpaRepository.deleteById(crewId);
+    public int deleteByCrewIdIn(List<Long> crewIds) {
+        return crewHashtagJpaRepository.deleteByCrewId(crewIds);
     }
 }

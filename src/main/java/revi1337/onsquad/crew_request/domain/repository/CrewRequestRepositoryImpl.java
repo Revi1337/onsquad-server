@@ -33,16 +33,6 @@ public class CrewRequestRepositoryImpl implements CrewRequestRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-        crewRequestJpaRepository.deleteById(id);
-    }
-
-    @Override
-    public void deleteByCrewIdAndMemberId(Long crewId, Long memberId) {
-        crewRequestJpaRepository.deleteByCrewIdAndMemberId(crewId, memberId);
-    }
-
-    @Override
     public Optional<CrewRequest> findByCrewIdAndMemberId(Long crewId, Long memberId) {
         return crewRequestJpaRepository.findByCrewIdAndMemberId(crewId, memberId);
     }
@@ -55,5 +45,25 @@ public class CrewRequestRepositoryImpl implements CrewRequestRepository {
     @Override
     public Page<CrewRequestWithMemberResult> fetchCrewRequests(Long crewId, Pageable pageable) {
         return crewRequestQueryDslRepository.fetchCrewRequests(crewId, pageable);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        crewRequestJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public int deleteByMemberId(Long memberId) {
+        return crewRequestJpaRepository.deleteByMemberId(memberId);
+    }
+
+    @Override
+    public int deleteByCrewIdAndMemberId(Long crewId, Long memberId) {
+        return crewRequestJpaRepository.deleteByCrewIdAndMemberId(crewId, memberId);
+    }
+
+    @Override
+    public int deleteByCrewIdIn(List<Long> crewIds) {
+        return crewRequestJpaRepository.deleteByCrewId(crewIds);
     }
 }

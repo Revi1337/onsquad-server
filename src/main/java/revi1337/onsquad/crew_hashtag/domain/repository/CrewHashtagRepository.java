@@ -10,6 +10,6 @@ public interface CrewHashtagRepository {
 
     List<CrewHashtag> fetchHashtagsByCrewIdIn(List<Long> crewIds);
 
-    void deleteByCrewId(Long crewId);
+    int deleteByCrewIdIn(List<Long> crewIds);
 
 }

@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.history.domain.repository.HistoryRepository;
-import revi1337.onsquad.infrastructure.aws.s3.event.FilesDeleteEvent;
-import revi1337.onsquad.member.domain.event.MemberDeleteEvent;
+import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
+import revi1337.onsquad.member.domain.event.MemberDeleted;
 import revi1337.onsquad.notification.domain.repository.NotificationRepository;
 import revi1337.onsquad.token.application.RefreshTokenManager;
 
@@ -18,19 +17,15 @@ public class MemberDeleteEventListener {
     private final HistoryRepository historyRepository;
     private final NotificationRepository notificationRepository;
     private final RefreshTokenManager redisRefreshTokenManager;
-    private final AnnounceCacheService announceCacheService;
     private final ApplicationEventPublisher eventPublisher;
 
     @TransactionalEventListener
-    public void onDelete(MemberDeleteEvent event) {
-        redisRefreshTokenManager.deleteTokenBy(event.memberId());
-
-        historyRepository.deleteByMemberId(event.memberId());
-        notificationRepository.deleteByReceiverId(event.memberId());
-
-        announceCacheService.evictAllAnnounceCaches();
-        if (!event.imageUrls().isEmpty()) {
-            eventPublisher.publishEvent(new FilesDeleteEvent(event.imageUrls()));
+    public void onDeleted(MemberDeleted deleted) {
+        redisRefreshTokenManager.deleteTokenBy(deleted.memberId());
+        historyRepository.deleteByMemberId(deleted.memberId());
+        notificationRepository.deleteByReceiverId(deleted.memberId());
+        if (deleted.memberImageUrl() != null) {
+            eventPublisher.publishEvent(new FileDeleteEvent(deleted.memberImageUrl()));
         }
     }
 }
