@@ -1,8 +1,7 @@
 package revi1337.onsquad.crew.domain.repository;
 
 import static com.querydsl.jpa.JPAExpressions.select;
-import static revi1337.onsquad.crew_hashtag.domain.entity.QCrewHashtag.crewHashtag;
-import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
+import static revi1337.onsquad.crew.domain.entity.QCrew.crew;
 import static revi1337.onsquad.crew_request.domain.entity.QCrewRequest.crewRequest;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
 
@@ -18,7 +17,7 @@ public class CrewStatisticQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public CrewStatisticResult getStatisticById(Long crewId) { // TODO Count 쿼리 분리 필요.
+    public CrewStatisticResult getStatisticById(Long crewId) {
         return jpaQueryFactory
                 .select(new QCrewStatisticResult(
                         select(crewRequest.id.count())
@@ -27,11 +26,10 @@ public class CrewStatisticQueryDslRepository {
                         select(squad.id.count())
                                 .from(squad)
                                 .where(squad.crew.id.eq(crewId)),
-                        select(crewMember.id.count())
-                                .from(crewMember)
-                                .where(crewMember.crew.id.eq(crewId))
+                        crew.currentSize
                 ))
-                .from(crewHashtag) // Use Dummy Table. Cannot Omit From Operation
-                .fetchFirst();
+                .from(crew)
+                .where(crew.id.eq(crewId))
+                .fetchOne();
     }
 }
