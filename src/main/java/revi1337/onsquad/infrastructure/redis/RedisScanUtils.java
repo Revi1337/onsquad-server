@@ -1,10 +1,11 @@
 package revi1337.onsquad.infrastructure.redis;
 
+import static lombok.AccessLevel.PRIVATE;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.Cursor;
@@ -13,7 +14,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = PRIVATE)
 public final class RedisScanUtils {
 
     public static final long DEFAULT_SCAN_SIZE = 200;
@@ -30,6 +31,24 @@ public final class RedisScanUtils {
      */
     public static List<String> scanKeys(StringRedisTemplate stringRedisTemplate, String pattern) {
         return scanKeys(stringRedisTemplate, pattern, null);
+    }
+
+    /**
+     * Scans Redis for all keys matching multiple patterns and returns a consolidated list.
+     * <p>
+     * This method performs multiple scan operations and flattens the results into a single list with duplicates removed. Note that using multiple patterns may
+     * increase the total execution time proportional to the number of patterns provided.
+     *
+     * @param stringRedisTemplate the Redis template to use
+     * @param patterns            the list of key patterns to match (e.g., ["crew:*", "squad:*"])
+     * @return a list of unique matching keys from all provided patterns
+     * @see #scanKeys(StringRedisTemplate, String)
+     */
+    public static List<String> scanKeys(StringRedisTemplate stringRedisTemplate, List<String> patterns) {
+        return patterns.stream()
+                .flatMap(pattern -> scanKeys(stringRedisTemplate, pattern, null).stream())
+                .distinct()
+                .toList();
     }
 
     /**

@@ -35,27 +35,27 @@ public class AnnounceEventListener {
     @TransactionalEventListener
     public void onCreate(AnnounceCreateEvent event) {
         log.debug("[{}] Refreshing list cache for crew: {}", event.getEventName(), event.crewId());
-        announceCacheService.putDefaultAnnounceListCache(event.crewId());
+        announceCacheService.putDefaultAnnounceList(event.crewId());
     }
 
     @TransactionalEventListener
     public void onUpdate(AnnounceUpdateEvent event) {
         log.debug("[{}] Refreshing single & list cache for crew: {}", event.getEventName(), event.crewId());
-        announceCacheService.putAnnounceCache(event.crewId(), event.announceId());
-        announceCacheService.putDefaultAnnounceListCache(event.crewId());
+        announceCacheService.putAnnounce(event.crewId(), event.announceId());
+        announceCacheService.putDefaultAnnounceList(event.crewId());
     }
 
     @TransactionalEventListener
     public void onDelete(AnnounceDeleteEvent event) {
         log.debug("[{}] Evicting single and refreshing list cache for crew: {}", event.getEventName(), event.crewId());
-        announceCacheService.evictAnnounceCache(event.crewId(), event.announceId());
-        announceCacheService.putDefaultAnnounceListCache(event.crewId());
+        announceCacheService.evictAnnounce(event.crewId(), event.announceId());
+        announceCacheService.putDefaultAnnounceList(event.crewId());
     }
 
     @TransactionalEventListener
     public void onFixed(AnnounceFixedEvent event) {
         log.debug("[{}] Refreshing fixed state caches for crew: {}", event.getEventName(), event.crewId());
-        announceCacheService.putAnnounceCache(event.crewId(), event.announceId());
-        announceCacheService.putDefaultAnnounceListCache(event.crewId());
+        announceCacheService.evictAnnounce(event.crewId(), event.announceId());
+        announceCacheService.putDefaultAnnounceList(event.crewId());
     }
 }

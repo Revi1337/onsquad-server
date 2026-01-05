@@ -8,5 +8,6 @@ public abstract class Sign {
     public static final String ASTERISK = "*";
     public static final String SLASH = "/";
     public static final String DOT = ".";
+    public static final String PIPE = "|";
 
 }

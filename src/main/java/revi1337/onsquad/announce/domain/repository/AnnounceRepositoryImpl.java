@@ -5,6 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.announce.domain.entity.Announce;
+import revi1337.onsquad.announce.domain.result.AnnounceReference;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 
 @RequiredArgsConstructor
@@ -32,6 +33,11 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
     @Override
     public Optional<Announce> findById(Long id) {
         return announceJpaRepository.findById(id);
+    }
+
+    @Override
+    public List<AnnounceReference> findAnnounceReferencesByMemberId(Long memberId) {
+        return announceJpaRepository.findAnnounceReferencesByMemberId(memberId);
     }
 
     @Override
