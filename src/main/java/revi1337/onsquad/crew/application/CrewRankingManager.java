@@ -4,11 +4,14 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.util.CrewRankKeyMapper;
@@ -35,14 +38,35 @@ public class CrewRankingManager {
     }
 
     public List<CrewRankedMemberResult> getRankedMembers(int rankLimit) {
-        List<CrewRankedMemberResult> rankedMembers = new ArrayList<>();
-        RedisScanUtils.scan(
-                stringRedisTemplate,
-                CrewRankKeyMapper.getCrewRankPattern(),
-                crewKey -> processCrewRanking(crewKey, rankLimit, rankedMembers)
-        );
+        List<String> computedKeys = RedisScanUtils.scanKeys(stringRedisTemplate, CrewRankKeyMapper.getCrewRankPattern());
+        if (computedKeys.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-        return rankedMembers;
+        List<Object> pipelinedResults = stringRedisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            computedKeys.stream()
+                    .map(computedKey -> stringRedisTemplate.getStringSerializer().serialize(computedKey))
+                    .forEach(serializedKey -> connection.zSetCommands().zRevRangeWithScores(serializedKey, 0, rankLimit - 1));
+            return null;
+        });
+
+        List<CrewRankedMemberResult> results = new ArrayList<>(computedKeys.size() * rankLimit);
+        for (int i = 0; i < computedKeys.size(); i++) {
+            Object result = pipelinedResults.get(i);
+            if (!(result instanceof Set<?> rawSet)) {
+                continue;
+            }
+            Long crewId = CrewRankKeyMapper.parseCrewId(computedKeys.get(i));
+            int rank = 1;
+            for (Object element : rawSet) {
+                if (element instanceof ZSetOperations.TypedTuple<?> tuple) {
+                    TypedTuple<String> stringTuple = (TypedTuple<String>) tuple;
+                    results.add(convertToResult(crewId, rank++, stringTuple));
+                }
+            }
+        }
+
+        return results;
     }
 
     public void evictCrewsLeaderboard(List<Long> crewIds) {
@@ -60,18 +84,6 @@ public class CrewRankingManager {
         long nextPureScore = currentPureScore + weight;
 
         return ((double) nextPureScore * MULTIPLIER) + epochSecond;
-    }
-
-    private void processCrewRanking(String crewKey, int rankLimit, List<CrewRankedMemberResult> results) {
-        Set<TypedTuple<String>> rankings = stringRedisTemplate.opsForZSet().reverseRangeWithScores(crewKey, 0, rankLimit - 1);
-        if (rankings == null) {
-            return;
-        }
-        Long crewId = CrewRankKeyMapper.parseCrewId(crewKey);
-        int rank = 1;
-        for (TypedTuple<String> tuple : rankings) {
-            results.add(convertToResult(crewId, rank++, tuple));
-        }
     }
 
     private CrewRankedMemberResult convertToResult(Long crewId, int rank, TypedTuple<String> tuple) {
