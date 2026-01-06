@@ -15,6 +15,11 @@ public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepositor
     private final CrewRankedMemberJdbcRepository crewRankedMemberJdbcRepository;
 
     @Override
+    public List<CrewRankedMember> findAll() {
+        return crewRankedMemberJpaRepository.findAll();
+    }
+
+    @Override
     public List<CrewRankedMember> findAllByCrewId(Long crewId) {
         return crewRankedMemberJpaRepository.findAllByCrewId(crewId);
     }
@@ -32,6 +37,11 @@ public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepositor
     @Override
     public void deleteAllInBatch() {
         crewRankedMemberJpaRepository.deleteAllInBatch();
+    }
+
+    @Override
+    public void truncate() {
+        crewRankedMemberJdbcRepository.truncate();
     }
 
     @Override

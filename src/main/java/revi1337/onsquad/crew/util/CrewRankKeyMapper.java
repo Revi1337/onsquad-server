@@ -2,6 +2,7 @@ package revi1337.onsquad.crew.util;
 
 import static lombok.AccessLevel.PRIVATE;
 
+import java.util.Collection;
 import java.util.List;
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.constant.CacheConst;
@@ -27,6 +28,25 @@ public final class CrewRankKeyMapper {
     public static List<String> toCrewRankKeys(List<Long> crewIds) {
         return crewIds.stream()
                 .map(CrewRankKeyMapper::toCrewRankKey)
+                .toList();
+    }
+
+    /**
+     * @param crewId
+     * @return {@code String} onsquad:crew:{crewId}:rank-members:last-week
+     */
+    public static String toPreviousCrewRankKey(Long crewId) {
+        String key = String.join(Sign.COLON, "crew", crewId.toString(), CacheConst.RANK_MEMBERS, "last-week");
+        return String.format(CacheFormat.SIMPLE, key);
+    }
+
+    /**
+     * @param crewIds
+     * @return {@code List<String>} onsquad:crew:{crewId}:rank-members:last-week
+     */
+    public static List<String> toPreviousCrewRankKeys(Collection<Long> crewIds) {
+        return crewIds.stream()
+                .map(CrewRankKeyMapper::toPreviousCrewRankKey)
                 .toList();
     }
 

@@ -7,6 +7,8 @@ import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 
 public interface CrewRankedMemberRepository {
 
+    List<CrewRankedMember> findAll();
+
     List<CrewRankedMember> findAllByCrewId(Long crewId);
 
     List<CrewRankedMemberResult> fetchAggregatedRankedMembers(LocalDateTime from, LocalDateTime to, Integer rankLimit);
@@ -14,6 +16,8 @@ public interface CrewRankedMemberRepository {
     boolean exists();
 
     void deleteAllInBatch();
+
+    void truncate();
 
     void insertBatch(List<CrewRankedMember> rankedMembers);
 

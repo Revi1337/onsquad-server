@@ -39,7 +39,7 @@ public class CrewRankedMemberRefreshService {
                     .map(CrewRankedMemberResult::toEntity)
                     .toList();
 
-            crewRankedMemberRepository.deleteAllInBatch();
+            crewRankedMemberRepository.truncate();
             crewRankedMemberRepository.insertBatch(rankedMembers);
             log.info("[Successfully Renew CrewRankedMember In DataBase : {} ~ {}]", from, to);
         } catch (Exception exception) {
@@ -53,13 +53,20 @@ public class CrewRankedMemberRefreshService {
             List<Long> memberIds = collectRankedMemberIds(rankedMembers);
             Map<Long, Member> memberMapping = getMemberLookupTable(memberIds);
             List<CrewRankedMember> newRankedMembers = getNewCrewRankedMembers(rankedMembers, memberMapping);
-            crewRankedMemberRepository.deleteAllInBatch();
+
+            crewRankedMemberRepository.truncate();
             crewRankedMemberRepository.insertBatch(newRankedMembers);
             log.info("[Successfully Renew CrewRankedMember : {} members]", newRankedMembers.size());
         } catch (Exception exception) {
             log.error("[Fail to Renew CrewRankedMember In DataBase]", exception);
-            throw exception;
+            throw exception; // TODO 실패시 Retry -> DLQ(Rabbit or Kafka) 필요. (근데 굳이?)
         }
+    }
+
+    public List<CrewRankedMemberResult> getCurrentRankedMembers() {
+        return crewRankedMemberRepository.findAll().stream()
+                .map(CrewRankedMemberResult::from)
+                .toList();
     }
 
     private List<Long> collectRankedMemberIds(List<CrewRankedMemberResult> rankedMembers) {

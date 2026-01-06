@@ -3,7 +3,6 @@ package revi1337.onsquad.crew_member.domain.repository.rank;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,12 +15,11 @@ import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 @Repository
 public class CrewRankedMemberJdbcRepository {
 
-    private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     public void insertBatch(List<CrewRankedMember> crewRankedMembers) {
         String sql = "INSERT INTO crew_ranked_member(crew_id, member_id, nickname, mbti, last_activity_time, score, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.batchUpdate(
+        namedJdbcTemplate.getJdbcOperations().batchUpdate(
                 sql,
                 crewRankedMembers,
                 crewRankedMembers.size(),
@@ -35,6 +33,10 @@ public class CrewRankedMemberJdbcRepository {
                     ps.setInt(7, crewRankedMember.getRank());
                 }
         );
+    }
+
+    public void truncate() {
+        namedJdbcTemplate.getJdbcOperations().execute("TRUNCATE TABLE crew_ranked_member");
     }
 
     /**

@@ -28,8 +28,10 @@ public class CrewRankedMemberRefreshScheduler {
     @Scheduled(cron = "${onsquad.api.crew-rank-members.schedule.expression}")
     public void refreshRankedMembers() {
         redisLockExecutor.executeWithLock(LOCK_KEY, () -> {
-            List<CrewRankedMemberResult> rankedMembers = crewRankingManager.getRankedMembers(crewRankedMemberProperties.rankLimit());
-            crewRankedMemberRefreshService.refresh(rankedMembers);
+            List<CrewRankedMemberResult> previousRankedMembers = crewRankedMemberRefreshService.getCurrentRankedMembers();
+            crewRankingManager.backupPreviousRankedMembers(previousRankedMembers);
+            List<CrewRankedMemberResult> currentRankedMembers = crewRankingManager.getRankedMembers(crewRankedMemberProperties.rankLimit());
+            crewRankedMemberRefreshService.refresh(currentRankedMembers);
         });
     }
 
