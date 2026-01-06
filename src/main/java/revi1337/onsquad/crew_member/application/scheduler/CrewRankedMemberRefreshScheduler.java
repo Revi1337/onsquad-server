@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_member.application.scheduler;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +28,7 @@ public class CrewRankedMemberRefreshScheduler {
 
     @Scheduled(cron = "${onsquad.api.crew-rank-members.schedule.expression}")
     public void refreshRankedMembers() {
-        redisLockExecutor.executeWithLock(LOCK_KEY, () -> {
+        redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
             List<CrewRankedMemberResult> previousRankedMembers = crewRankedMemberRefreshService.getCurrentRankedMembers();
             crewRankingManager.backupPreviousRankedMembers(previousRankedMembers);
             List<CrewRankedMemberResult> currentRankedMembers = crewRankingManager.getRankedMembers(crewRankedMemberProperties.rankLimit());
@@ -37,7 +38,7 @@ public class CrewRankedMemberRefreshScheduler {
 
     @Deprecated
     public void deprecatedRefreshRankedMembers() {
-        redisLockExecutor.executeWithLock(LOCK_KEY, () -> {
+        redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
             LocalDate today = LocalDate.now();
             LocalDateTime from = today.minusDays(crewRankedMemberProperties.during().toDays()).atStartOfDay();
             LocalDateTime to = today.atStartOfDay().minusNanos(1);
