@@ -123,10 +123,6 @@ public class SquadComment extends BaseEntity {
         return member;
     }
 
-    public Long getWriterId() {
-        return member.getId();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

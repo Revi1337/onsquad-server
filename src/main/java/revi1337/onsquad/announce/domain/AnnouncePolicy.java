@@ -11,7 +11,7 @@ public class AnnouncePolicy {
      * Managers or higher can write new announcements.
      */
     public static boolean canWrite(CrewMember me) {
-        return me.isGreaterThenManager();
+        return me.isManagerOrHigher();
     }
 
     /**
@@ -33,10 +33,10 @@ public class AnnouncePolicy {
         if (me.isOwner()) {
             return true;
         }
-        if (me.isGreaterThenManager() && announceWriterId == null) {
+        if (me.isManagerOrHigher() && announceWriterId == null) {
             return true;
         }
-        if (me.isGreaterThenManager() && me.getActualMemberId().equals(announceWriterId)) {
+        if (me.isManagerOrHigher() && me.getActualMemberId().equals(announceWriterId)) {
             return true;
         }
         return false;
@@ -49,13 +49,13 @@ public class AnnouncePolicy {
     }
 
     public static void ensureWritable(CrewMember crewMember) {
-        if (crewMember.isLessThenManager()) {
+        if (crewMember.isLowerThanManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_CREATE_AUTHORITY);
         }
     }
 
     public static void ensureModifiable(Announce announce, CrewMember crewMember) {
-        if (crewMember.isLessThenManager()) {
+        if (crewMember.isLowerThanManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
         if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getActualMemberId())) {
@@ -64,7 +64,7 @@ public class AnnouncePolicy {
     }
 
     public static void ensureDeletable(Announce announce, CrewMember crewMember) {
-        if (crewMember.isLessThenManager()) {
+        if (crewMember.isLowerThanManager()) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
         if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getActualMemberId())) {

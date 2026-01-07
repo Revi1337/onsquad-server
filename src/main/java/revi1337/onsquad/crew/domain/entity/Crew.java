@@ -105,14 +105,6 @@ public class Crew extends BaseEntity {
         }
     }
 
-    public void increaseSize() {
-        this.currentSize = this.currentSize + 1;
-    }
-
-    public void decreaseSize() {
-        this.currentSize = this.currentSize - 1;
-    }
-
     public void delegateOwner(CrewMember currentOwner, CrewMember nextOwner) {
         if (currentOwner.isOwner()) {
             nextOwner.promoteToOwner();
@@ -126,6 +118,22 @@ public class Crew extends BaseEntity {
         this.introduce = this.introduce.updateIntroduce(introduce);
         this.detail = this.detail.updateDetail(detail);
         this.kakaoLink = kakaoLink;
+    }
+
+    public void increaseSize() {
+        this.currentSize = this.currentSize + 1;
+    }
+
+    public void decreaseSize() {
+        this.currentSize = this.currentSize - 1;
+    }
+
+    public void registerOwner(Member owner) {
+        this.member = owner;
+    }
+
+    private void updateOwner(Member member) {
+        this.member = member;
     }
 
     public void updateImage(String imageUrl) {
@@ -162,14 +170,6 @@ public class Crew extends BaseEntity {
 
     public long countMembers() {
         return currentSize;
-    }
-
-    public void registerOwner(Member owner) {
-        this.member = owner;
-    }
-
-    private void updateOwner(Member member) {
-        this.member = member;
     }
 
     @Override

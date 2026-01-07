@@ -24,19 +24,16 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.member.domain.entity.Member;
 
-@DynamicInsert
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 @Table(
-        uniqueConstraints = @UniqueConstraint(name = "uk_crewmember_squad_member", columnNames = {"crew_id", "member_id"}),
+        uniqueConstraints = @UniqueConstraint(name = "uk_crewmember_crew_member", columnNames = {"crew_id", "member_id"}),
         indexes = {@Index(name = "idx_crewmember_participate_at", columnList = "participate_at")}
 )
 @AttributeOverrides({@AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))})
@@ -54,7 +51,6 @@ public class CrewMember extends RequestEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @ColumnDefault("'GENERAL'")
     @Enumerated(STRING)
     @Column(nullable = false)
     private CrewRole role = GENERAL;
@@ -70,18 +66,18 @@ public class CrewMember extends RequestEntity {
         this.role = role == null ? GENERAL : role;
     }
 
+    public void leaveCrew() {
+        crew.decreaseSize();
+        releaseMember();
+        releaseCrew();
+    }
+
     public void addCrew(Crew crew) {
         this.crew = crew;
     }
 
     public void releaseCrew() {
         this.crew = null;
-    }
-
-    public void leaveCrew() {
-        crew.decreaseSize();
-        releaseMember();
-        releaseCrew();
     }
 
     public void promoteToOwner() {
@@ -112,16 +108,16 @@ public class CrewMember extends RequestEntity {
         return role == GENERAL;
     }
 
-    public boolean isLessThenManager() {
-        return !isGreaterThenManager();
+    public boolean isLowerThanManager() {
+        return !isManagerOrHigher();
+    }
+
+    public boolean isManagerOrHigher() {
+        return role == MANAGER || role == OWNER;
     }
 
     public Long getActualMemberId() {
         return member.getId();
-    }
-
-    public boolean isGreaterThenManager() {
-        return role == OWNER || role == MANAGER;
     }
 
     @Override

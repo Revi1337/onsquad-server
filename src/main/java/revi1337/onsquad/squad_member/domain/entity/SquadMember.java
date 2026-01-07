@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -51,12 +50,10 @@ public class SquadMember extends RequestEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @ColumnDefault("'GENERAL'")
     @Enumerated(STRING)
     @Column(nullable = false)
     private SquadRole role;
 
-    @ColumnDefault("'PENDING'")
     @Enumerated(STRING)
     @Column(nullable = false)
     private JoinStatus status;
@@ -87,10 +84,6 @@ public class SquadMember extends RequestEntity {
 
     public void demoteToGeneral() {
         this.role = SquadRole.GENERAL;
-    }
-
-    public boolean matchSquadId(Long squadId) {
-        return squad.matchId(squadId);
     }
 
     public boolean isNotLeader() {

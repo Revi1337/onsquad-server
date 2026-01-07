@@ -32,13 +32,7 @@ public class SquadMemberPolicy {
         return SquadMemberPolicy.isNotLeader(me) || SquadPolicy.isLastMemberRemaining(squad);
     }
 
-    public static void ensureNotSelfDelegation(Long currentMemberId, Long targetMemberId) {
-        if (currentMemberId.equals(targetMemberId)) {
-            throw new SquadMemberBusinessException.InvalidRequest(SquadMemberErrorCode.CANNOT_TARGET_SELF);
-        }
-    }
-
-    public static void ensureNotSelfKickOut(Long currentMemberId, Long targetMemberId) {
+    public static void ensureNotSelfTarget(Long currentMemberId, Long targetMemberId) {
         if (currentMemberId.equals(targetMemberId)) {
             throw new SquadMemberBusinessException.InvalidRequest(SquadMemberErrorCode.CANNOT_TARGET_SELF);
         }

@@ -47,20 +47,20 @@ public class SquadRequest extends RequestEntity {
         return new SquadRequest(squad, member, requestAt);
     }
 
-    public Long getRequesterId() {
-        return member.getId();
-    }
-
-    public Long getSquadId() {
-        return squad.getId();
-    }
-
     public boolean matchSquadId(Long squadId) {
         return squad.matchId(squadId);
     }
 
     public boolean mismatchSquadId(Long squadId) {
         return !matchSquadId(squadId);
+    }
+
+    public Long getRequesterId() {
+        return member.getId();
+    }
+
+    public Long getSquadId() {
+        return squad.getId();
     }
 
     @Override

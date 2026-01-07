@@ -24,8 +24,8 @@ public class SquadMemberCommandService {
     public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) {
         Squad squad = squadAccessor.getById(squadId);
         SquadMember currentLeader = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+        SquadMemberPolicy.ensureNotSelfTarget(memberId, targetMemberId);
         SquadMemberPolicy.ensureCanDelegateLeader(currentLeader);
-        SquadMemberPolicy.ensureNotSelfDelegation(memberId, targetMemberId);
         SquadMember nextLeader = squadMemberAccessor.getByMemberIdAndSquadId(targetMemberId, squadId);
         squad.delegateLeader(currentLeader, nextLeader);
     }
@@ -45,8 +45,8 @@ public class SquadMemberCommandService {
     public void kickOutMember(Long memberId, Long squadId, Long targetMemberId) {
         Squad ignored = squadAccessor.getByIdForUpdate(squadId);
         SquadMember leader = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+        SquadMemberPolicy.ensureNotSelfTarget(memberId, targetMemberId);
         SquadMemberPolicy.ensureCanKickOutMember(leader);
-        SquadMemberPolicy.ensureNotSelfKickOut(memberId, targetMemberId);
         SquadMember targetMember = squadMemberAccessor.getByMemberIdAndSquadId(targetMemberId, squadId);
         targetMember.leaveSquad();
         squadMemberRepository.delete(targetMember);
