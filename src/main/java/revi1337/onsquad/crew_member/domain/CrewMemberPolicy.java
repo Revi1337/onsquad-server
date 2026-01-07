@@ -68,4 +68,19 @@ public final class CrewMemberPolicy {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_CREW_STATISTIC_AUTHORITY);
         }
     }
+
+    public static void ensureCanKickOutMember(CrewMember me, CrewMember targetMember) {
+        if (me.isGeneral()) {
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_KICK_MEMBER_AUTHORITY);
+        }
+        if (me.isManager() && targetMember.isGreaterThenManager()) {
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.CANNOT_KICK_HIGHER_ROLE_MEMBER);
+        }
+    }
+
+    public static void ensureNotSelfKickOut(Long currentMemberId, Long targetMemberId) {
+        if (currentMemberId.equals(targetMemberId)) {
+            throw new CrewMemberBusinessException.InvalidRequest(CrewMemberErrorCode.CANNOT_TARGET_SELF);
+        }
+    }
 }

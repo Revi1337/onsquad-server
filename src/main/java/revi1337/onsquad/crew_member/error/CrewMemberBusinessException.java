@@ -42,4 +42,11 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class InvalidRequest extends CrewMemberBusinessException {
+
+        public InvalidRequest(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }
