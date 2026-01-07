@@ -16,7 +16,7 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
-import revi1337.onsquad.crew_member.application.CrewMemberService;
+import revi1337.onsquad.crew_member.application.CrewMemberQueryService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
 
@@ -26,7 +26,7 @@ import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
 public class CrewMemberController {
 
     private final CrewMemberCommandService crewMemberCommandService;
-    private final CrewMemberService crewMemberService;
+    private final CrewMemberQueryService crewMemberQueryService;
 
     @GetMapping("/crews/{crewId}/members")
     public ResponseEntity<RestResponse<PageResponse<CrewMemberResponse>>> fetchParticipants(
@@ -34,7 +34,7 @@ public class CrewMemberController {
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        PageResponse<CrewMemberResponse> response = crewMemberService.fetchParticipants(currentMember.id(), crewId, pageable);
+        PageResponse<CrewMemberResponse> response = crewMemberQueryService.fetchParticipants(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
@@ -75,7 +75,7 @@ public class CrewMemberController {
     public ResponseEntity<RestResponse<List<MyParticipantResponse>>> fetchMyParticipatingCrews(
             @Authenticate CurrentMember currentMember
     ) {
-        List<MyParticipantResponse> response = crewMemberService.fetchMyParticipatingCrews(currentMember.id());
+        List<MyParticipantResponse> response = crewMemberQueryService.fetchMyParticipatingCrews(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

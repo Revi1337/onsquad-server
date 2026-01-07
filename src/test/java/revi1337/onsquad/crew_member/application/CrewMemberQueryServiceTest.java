@@ -32,7 +32,7 @@ import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
-class CrewMemberServiceTest extends ApplicationLayerTestSupport {
+class CrewMemberQueryServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private MemberJpaRepository memberJpaRepository;
@@ -44,7 +44,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
     private CrewMemberRepository crewMemberRepository;
 
     @Autowired
-    private CrewMemberService crewMemberService;
+    private CrewMemberQueryService crewMemberQueryService;
 
     @Nested
     @DisplayName("Crew 에 속한 CrewMember 들 조회를 테스트한다.")
@@ -62,7 +62,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, KWANGWON, NOW.plusMinutes(1)));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            Page<CrewMemberResponse> DTOS = crewMemberService.fetchParticipants(REVI.getId(), CREW.getId(), PAGE_REQUEST);
+            Page<CrewMemberResponse> DTOS = crewMemberQueryService.fetchParticipants(REVI.getId(), CREW.getId(), PAGE_REQUEST);
 
             assertAll(() -> {
                 assertThat(DTOS).hasSize(3);
@@ -92,7 +92,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(CrewMemberFactory.general(CREW, ANDONG, NOW));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            assertThatThrownBy(() -> crewMemberService.fetchParticipants(KWANGWON.getId(), CREW.getId(), PAGE_REQUEST))
+            assertThatThrownBy(() -> crewMemberQueryService.fetchParticipants(KWANGWON.getId(), CREW.getId(), PAGE_REQUEST))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotParticipant.class);
         }
 
@@ -105,7 +105,7 @@ class CrewMemberServiceTest extends ApplicationLayerTestSupport {
             crewMemberRepository.save(GENERAL_CREW_MEMBER(CREW, ANDONG));
             PageRequest PAGE_REQUEST = PageRequest.of(0, 5);
 
-            assertThatThrownBy(() -> crewMemberService.fetchParticipants(ANDONG.getId(), CREW.getId(), PAGE_REQUEST))
+            assertThatThrownBy(() -> crewMemberQueryService.fetchParticipants(ANDONG.getId(), CREW.getId(), PAGE_REQUEST))
                     .isExactlyInstanceOf(CrewMemberBusinessException.NotOwner.class);
         }
     }

@@ -35,7 +35,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew_member.application.CrewMemberService;
+import revi1337.onsquad.crew_member.application.CrewMemberQueryService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
@@ -43,7 +43,7 @@ import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 class CrewMemberControllerTest extends PresentationLayerTestSupport {
 
     @MockBean
-    private CrewMemberService crewMemberService;
+    private CrewMemberQueryService crewMemberQueryService;
 
     @Nested
     @DisplayName("Crew 에 속한 CrewMember 관리 목록 조회를 문서화한다.")
@@ -65,7 +65,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
             );
             List<CrewMemberResponse> SERVICE_DTOS = List.of(SERVICE_DTO1, SERVICE_DTO2);
             Page<CrewMemberResponse> PAGE_DTOS = new PageImpl<>(SERVICE_DTOS, PAGE_REQUEST, SERVICE_DTOS.size());
-            when(crewMemberService.fetchParticipants(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST))).thenReturn(PAGE_DTOS);
+            when(crewMemberQueryService.fetchParticipants(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST))).thenReturn(PAGE_DTOS);
 
             mockMvc.perform(get("/api/crews/{crewId}/manage/members", DUMMY_CREW_ID)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -85,7 +85,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(crewMemberService).fetchParticipants(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST));
+            verify(crewMemberQueryService).fetchParticipants(any(), eq(DUMMY_CREW_ID), eq(PAGE_REQUEST));
         }
     }
 }

@@ -15,7 +15,7 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class CrewMemberService {
+public class CrewMemberQueryService {
 
     private final CrewMemberAccessor crewMemberAccessor;
 
