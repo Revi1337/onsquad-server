@@ -7,6 +7,7 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class CrewMemberPolicy {
@@ -51,12 +52,6 @@ public final class CrewMemberPolicy {
         return crewMember.isOwner();
     }
 
-    public static void ensureCanLeaveCrew(CrewMember me) {
-        if (me.isOwner()) {
-            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_LEAVE_CREW_AUTHORITY);
-        }
-    }
-
     public static void ensureReadParticipantsAccessible(CrewMember crewMember) {
         if (crewMember.isNotOwner()) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
@@ -69,18 +64,36 @@ public final class CrewMemberPolicy {
         }
     }
 
-    public static void ensureCanKickOutMember(CrewMember me, CrewMember targetMember) {
-        if (me.isGeneral()) {
-            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_KICK_MEMBER_AUTHORITY);
-        }
-        if (me.isManager() && targetMember.isGreaterThenManager()) {
-            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.CANNOT_KICK_HIGHER_ROLE_MEMBER);
+    public static void ensureNotSelfDelegation(Long currentMemberId, Long targetMemberId) {
+        if (currentMemberId.equals(targetMemberId)) {
+            throw new CrewMemberBusinessException.InvalidRequest(CrewMemberErrorCode.CANNOT_TARGET_SELF);
         }
     }
 
     public static void ensureNotSelfKickOut(Long currentMemberId, Long targetMemberId) {
         if (currentMemberId.equals(targetMemberId)) {
             throw new CrewMemberBusinessException.InvalidRequest(CrewMemberErrorCode.CANNOT_TARGET_SELF);
+        }
+    }
+
+    public static void ensureCanDelegateOwner(CrewMember me) {
+        if (me.isNotOwner()) {
+            throw new SquadMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_DELEGATE_OWNER_AUTHORITY);
+        }
+    }
+
+    public static void ensureCanLeaveCrew(CrewMember me) {
+        if (me.isOwner()) {
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_LEAVE_CREW_AUTHORITY);
+        }
+    }
+
+    public static void ensureCanKickOutMember(CrewMember me, CrewMember targetMember) {
+        if (me.isGeneral()) {
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_KICK_MEMBER_AUTHORITY);
+        }
+        if (me.isManager() && targetMember.isGreaterThenManager()) {
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.CANNOT_KICK_HIGHER_ROLE_MEMBER);
         }
     }
 }

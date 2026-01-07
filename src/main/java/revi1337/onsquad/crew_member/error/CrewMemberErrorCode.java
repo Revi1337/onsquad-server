@@ -17,7 +17,8 @@ public enum CrewMemberErrorCode implements ErrorCode {
     INSUFFICIENT_READ_CREW_STATISTIC_AUTHORITY(403, "CRM007", "크루 통계 정보 조회는 크루장만 가능합니다."),
     INSUFFICIENT_LEAVE_CREW_AUTHORITY(403, "CRM008", "크루장은 권한 위임 후 탈퇴 가능합니다."),
     INSUFFICIENT_KICK_MEMBER_AUTHORITY(403, "CRM009", "크루원 추방은 크루 매니저 이상만 가능합니다."),
-    CANNOT_KICK_HIGHER_ROLE_MEMBER(403, "CRM010", "자신보다 높은 등급의 멤버는 강퇴할 수 없습니다.");
+    CANNOT_KICK_HIGHER_ROLE_MEMBER(403, "CRM010", "자신보다 높은 등급의 멤버는 강퇴할 수 없습니다."),
+    INSUFFICIENT_DELEGATE_OWNER_AUTHORITY(403, "CRM011", "크루장 위임은 크루장만 가능합니다.");
 
     private final int status;
     private final String code;

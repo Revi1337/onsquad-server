@@ -113,6 +113,14 @@ public class Crew extends BaseEntity {
         this.currentSize = this.currentSize - 1;
     }
 
+    public void delegateOwner(CrewMember currentOwner, CrewMember nextOwner) {
+        if (currentOwner.isOwner()) {
+            nextOwner.promoteToOwner();
+            currentOwner.demoteToGeneral();
+            updateOwner(nextOwner.getMember());
+        }
+    }
+
     public void update(String name, String introduce, String detail, String kakaoLink) {
         this.name = this.name.updateName(name);
         this.introduce = this.introduce.updateIntroduce(introduce);
@@ -158,6 +166,10 @@ public class Crew extends BaseEntity {
 
     public void registerOwner(Member owner) {
         this.member = owner;
+    }
+
+    private void updateOwner(Member member) {
+        this.member = member;
     }
 
     @Override

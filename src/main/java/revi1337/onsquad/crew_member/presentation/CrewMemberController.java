@@ -7,6 +7,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +37,17 @@ public class CrewMemberController {
         PageResponse<CrewMemberResponse> response = crewMemberService.fetchParticipants(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
+    }
+
+    @PatchMapping("/crews/{crewId}/members/{targetMemberId}/owner")
+    public ResponseEntity<RestResponse<Void>> delegateOwner(
+            @PathVariable Long crewId,
+            @PathVariable Long targetMemberId,
+            @Authenticate CurrentMember currentMember
+    ) {
+        crewMemberCommandService.delegateOwner(currentMember.id(), crewId, targetMemberId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @DeleteMapping("/crews/{crewId}/members/me")

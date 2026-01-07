@@ -84,6 +84,14 @@ public class CrewMember extends RequestEntity {
         releaseCrew();
     }
 
+    public void promoteToOwner() {
+        this.role = OWNER;
+    }
+
+    public void demoteToGeneral() {
+        this.role = GENERAL;
+    }
+
     private void releaseMember() {
         this.member = null;
     }
