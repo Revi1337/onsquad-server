@@ -10,7 +10,7 @@ import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.domain.result.AnnounceReference;
 import revi1337.onsquad.crew.application.CrewRankingManager;
 import revi1337.onsquad.crew.domain.event.CrewContextDisposed;
-import revi1337.onsquad.infrastructure.aws.s3.event.FilesDeleteEvent;
+import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 
 @RequiredArgsConstructor
 @Component
@@ -26,7 +26,7 @@ public class CrewContextEventListener {
         announceCacheService.evictAnnounceListsByCrews(crewIds);
         announceCacheService.evictAnnouncesByReferences(contextDisposed.getAnnounceReferences());
         crewRankingManager.evictCrewsLeaderboard(contextDisposed.getDeletedCrewIds());
-        eventPublisher.publishEvent(new FilesDeleteEvent(contextDisposed.getCrewImageUrls()));
+        eventPublisher.publishEvent(new FileDeleteEvent(contextDisposed.getCrewImageUrls()));
     }
 
     private List<Long> collectUniqueCrewIds(CrewContextDisposed contextDisposed) {
