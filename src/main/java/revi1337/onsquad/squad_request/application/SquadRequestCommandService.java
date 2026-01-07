@@ -41,7 +41,7 @@ public class SquadRequestCommandService {
         }
     }
 
-    public void acceptRequest(Long memberId, Long squadId, Long requestId) {
+    public void acceptRequest(Long memberId, Long squadId, Long requestId) { // TODO 동시성 이슈 해결 필요.
         SquadRequest request = squadRequestAccessor.getById(requestId);
         SquadRequestPolicy.ensureMatchSquad(request, squadId);
         SquadMember squadMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);

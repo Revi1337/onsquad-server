@@ -21,7 +21,7 @@ public class SquadMemberCommandService {
     private final SquadCommandService squadCommandService;
     private final SquadMemberRepository squadMemberRepository;
 
-    public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) {
+    public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) { // TODO 동시성 이슈 해결 필요.
         Squad squad = squadAccessor.getById(squadId);
         SquadMember currentLeader = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadMemberPolicy.ensureNotSelfTarget(memberId, targetMemberId);
@@ -30,7 +30,7 @@ public class SquadMemberCommandService {
         squad.delegateLeader(currentLeader, nextLeader);
     }
 
-    public void leaveSquad(Long memberId, Long squadId) {
+    public void leaveSquad(Long memberId, Long squadId) { // TODO 굳이 비관적 락을?
         Squad squad = squadAccessor.getByIdForUpdate(squadId);
         SquadMember currentMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         if (SquadPolicy.isLastMemberRemaining(squad)) {
@@ -42,7 +42,7 @@ public class SquadMemberCommandService {
         squadMemberRepository.delete(currentMember);
     }
 
-    public void kickOutMember(Long memberId, Long squadId, Long targetMemberId) {
+    public void kickOutMember(Long memberId, Long squadId, Long targetMemberId) { // TODO 굳이 비관적 락을?
         Squad ignored = squadAccessor.getByIdForUpdate(squadId);
         SquadMember leader = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadMemberPolicy.ensureNotSelfTarget(memberId, targetMemberId);
