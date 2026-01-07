@@ -78,6 +78,16 @@ public class CrewMember extends RequestEntity {
         this.crew = null;
     }
 
+    public void leaveCrew() {
+        crew.decreaseSize();
+        releaseMember();
+        releaseCrew();
+    }
+
+    private void releaseMember() {
+        this.member = null;
+    }
+
     public boolean isNotOwner() {
         return !isOwner();
     }

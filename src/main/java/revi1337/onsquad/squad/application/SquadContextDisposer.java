@@ -26,7 +26,14 @@ public class SquadContextDisposer {
     }
 
     public void disposeContexts(List<Long> squadIds) {
-        deleteSquadRelatedData(squadIds);
+        if (!squadIds.isEmpty()) {
+            deleteSquadRelatedData(squadIds);
+        }
+    }
+
+    public void disposeMemberActivity(Long memberId, List<Long> squadIdsToRemove) {
+        disposeContexts(squadIdsToRemove);
+        cleanUpMemberData(memberId);
     }
 
     private void deleteSquadRelatedData(List<Long> squadIds) {
@@ -35,5 +42,12 @@ public class SquadContextDisposer {
         squadMemberRepository.deleteBySquadIdIn(squadIds);
         squadCommentRepository.deleteBySquadIdIn(squadIds);
         squadRepository.deleteByIdIn(squadIds);
+    }
+
+    private void cleanUpMemberData(Long memberId) {
+        squadRepository.decrementCountByMemberId(memberId);
+        squadRequestRepository.deleteByMemberId(memberId);
+        squadMemberRepository.deleteByMemberId(memberId);
+        squadCommentRepository.deleteByMemberId(memberId);
     }
 }

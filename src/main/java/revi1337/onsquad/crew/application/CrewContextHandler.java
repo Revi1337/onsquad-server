@@ -9,12 +9,14 @@ import revi1337.onsquad.announce.domain.result.AnnounceReference;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.event.CrewContextDisposed;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
+import revi1337.onsquad.squad.application.SquadContextHandler;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class CrewContextHandler {
 
+    private final SquadContextHandler squadContextHandler;
     private final CrewRepository crewRepository;
     private final CrewContextDisposer crewContextDisposer;
     private final ApplicationEventPublisher eventPublisher;
@@ -24,6 +26,7 @@ public class CrewContextHandler {
     }
 
     public void disposeContext(Crew crew) {
+        squadContextHandler.disposeContexts(squadContextHandler.findSquadIdsByCrewIdIn(List.of(crew.getId())));
         crewContextDisposer.disposeContext(crew.getId());
         String crewImage = crew.hasImage() ? crew.getImageUrl() : null;
 

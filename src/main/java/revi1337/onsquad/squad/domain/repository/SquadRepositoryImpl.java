@@ -78,6 +78,11 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
+    public int deleteByCrewIdIn(List<Long> crewIds) {
+        return squadJpaRepository.deleteByCrewIdIn(crewIds);
+    }
+
+    @Override
     public int decrementCountByMemberId(Long memberId) {
         return squadJpaRepository.decrementCountByMemberId(memberId);
     }

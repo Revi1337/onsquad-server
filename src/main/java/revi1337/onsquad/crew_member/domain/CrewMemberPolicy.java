@@ -1,11 +1,15 @@
 package revi1337.onsquad.crew_member.domain;
 
+import static lombok.AccessLevel.PRIVATE;
+
+import lombok.NoArgsConstructor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
-public class CrewMemberPolicy {
+@NoArgsConstructor(access = PRIVATE)
+public final class CrewMemberPolicy {
 
     public static boolean isOwner(CrewMember me) {
         return me != null && me.isOwner();
@@ -45,6 +49,12 @@ public class CrewMemberPolicy {
 
     public static boolean canMangeCrew(CrewMember crewMember) {
         return crewMember.isOwner();
+    }
+
+    public static void ensureCanLeaveCrew(CrewMember me) {
+        if (me.isOwner()) {
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_LEAVE_CREW_AUTHORITY);
+        }
     }
 
     public static void ensureReadParticipantsAccessible(CrewMember crewMember) {

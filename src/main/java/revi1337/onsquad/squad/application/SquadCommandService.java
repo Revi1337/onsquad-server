@@ -23,7 +23,7 @@ public class SquadCommandService {
     private final SquadAccessor squadAccessor;
     private final SquadRepository squadRepository;
     private final SquadCategoryRepository squadCategoryRepository;
-    private final SquadContextDisposer squadContextDisposer;
+    private final SquadContextHandler squadContextHandler;
     private final ApplicationEventPublisher eventPublisher;
 
     public Long newSquad(Long memberId, Long crewId, SquadCreateDto dto) {
@@ -37,6 +37,6 @@ public class SquadCommandService {
     public void deleteSquad(Long memberId, Long squadId) {
         Squad squad = squadAccessor.getById(squadId);
         SquadPolicy.ensureDeletable(squad, memberId);
-        squadContextDisposer.disposeContext(squadId);
+        squadContextHandler.disposeContext(squadId);
     }
 }

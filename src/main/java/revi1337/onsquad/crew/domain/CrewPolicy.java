@@ -1,12 +1,18 @@
 package revi1337.onsquad.crew.domain;
 
-import lombok.RequiredArgsConstructor;
+import static lombok.AccessLevel.PRIVATE;
+
+import lombok.NoArgsConstructor;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 
-@RequiredArgsConstructor
-public class CrewPolicy {
+@NoArgsConstructor(access = PRIVATE)
+public final class CrewPolicy {
+
+    public static boolean isLastMemberRemaining(Crew crew) {
+        return crew.getCurrentSize() == 1;
+    }
 
     public static void ensureCrewUpdatable(Crew crew, Long memberId) {
         if (crew.mismatchMemberId(memberId)) {

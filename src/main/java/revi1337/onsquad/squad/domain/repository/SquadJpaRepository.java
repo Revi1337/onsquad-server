@@ -31,9 +31,13 @@ public interface SquadJpaRepository extends JpaRepository<Squad, Long> {
     int deleteByIdIn(List<Long> ids);
 
     @Modifying
+    @Query("delete Squad s where s.crew.id in :crewIds")
+    int deleteByCrewIdIn(List<Long> crewIds);
+
+    @Modifying
     @Query("update Squad s set s.currentSize = s.currentSize - 1, s.remain = s.remain + 1 " +
             "where s.id in (select sm.squad.id from SquadMember sm where sm.member.id = :memberId) " +
             "and s.currentSize > 0")
     int decrementCountByMemberId(Long memberId);
-    
+
 }

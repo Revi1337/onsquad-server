@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
 import revi1337.onsquad.crew_member.application.CrewMemberService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
@@ -22,6 +24,7 @@ import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
 @RestController
 public class CrewMemberController {
 
+    private final CrewMemberCommandService crewMemberCommandService;
     private final CrewMemberService crewMemberService;
 
     @GetMapping("/crews/{crewId}/members")
@@ -33,6 +36,16 @@ public class CrewMemberController {
         PageResponse<CrewMemberResponse> response = crewMemberService.fetchParticipants(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
+    }
+
+    @DeleteMapping("/crews/{crewId}/members/me")
+    public ResponseEntity<RestResponse<Void>> leaveCrew(
+            @PathVariable Long crewId,
+            @Authenticate CurrentMember currentMember
+    ) {
+        crewMemberCommandService.leaveCrew(currentMember.id(), crewId);
+
+        return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
     @GetMapping("/members/me/crew-participants")

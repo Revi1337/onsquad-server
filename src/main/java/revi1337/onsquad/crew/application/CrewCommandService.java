@@ -13,8 +13,6 @@ import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.domain.entity.Member;
-import revi1337.onsquad.squad.application.SquadContextDisposer;
-import revi1337.onsquad.squad.domain.repository.SquadRepository;
 
 @RequiredArgsConstructor
 @Transactional
@@ -25,9 +23,7 @@ public class CrewCommandService {
     private final CrewAccessor crewAccessor;
     private final CrewRepository crewRepository;
     private final CrewHashtagRepository crewHashtagRepository;
-    private final SquadRepository squadRepository;
     private final CrewContextHandler crewContextHandler;
-    private final SquadContextDisposer squadContextDisposer;
 
     public Long newCrew(Long memberId, CrewCreateDto dto, String newImageUrl) {
         Member member = memberAccessor.getById(memberId);
@@ -48,7 +44,6 @@ public class CrewCommandService {
     public void deleteCrew(Long memberId, Long crewId) {
         Crew crew = crewAccessor.getById(crewId);
         CrewPolicy.ensureCrewDeletable(crew, memberId);
-        squadContextDisposer.disposeContexts(squadRepository.findIdsByCrewIdIn(List.of(crewId)));
         crewContextHandler.disposeContext(crew);
     }
 }

@@ -17,8 +17,10 @@ public interface CrewMemberRepository {
 
     List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId);
 
+    void delete(CrewMember me);
+
     int deleteByMemberId(Long memberId);
 
     int deleteByCrewIdIn(List<Long> crewIds);
-    
+
 }

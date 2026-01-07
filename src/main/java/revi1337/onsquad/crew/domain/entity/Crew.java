@@ -105,8 +105,12 @@ public class Crew extends BaseEntity {
         }
     }
 
-    private void increaseSize() {
+    public void increaseSize() {
         this.currentSize = this.currentSize + 1;
+    }
+
+    public void decreaseSize() {
+        this.currentSize = this.currentSize - 1;
     }
 
     public void update(String name, String introduce, String detail, String kakaoLink) {

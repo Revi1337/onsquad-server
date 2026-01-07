@@ -34,6 +34,8 @@ public interface SquadRepository {
 
     int deleteByIdIn(List<Long> ids);
 
+    int deleteByCrewIdIn(List<Long> crewIds);
+
     int decrementCountByMemberId(Long memberId);
 
 }
