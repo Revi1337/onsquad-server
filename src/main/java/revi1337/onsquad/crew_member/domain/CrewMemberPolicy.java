@@ -23,15 +23,24 @@ public final class CrewMemberPolicy {
         return me.getMember().matchId(participant.getMember().getId());
     }
 
-    public static boolean canKick(CrewMember me, CrewMember participant) {
-        return !isMe(me, participant) && me.isOwner() && participant.isNotOwner();
-    }
-
     public static boolean canKick(CrewMember me, SquadMember participant) {
         return !isMe(me, participant) && me.isOwner() && participant.isNotLeader();
     }
 
-    public static boolean canOwnerDelegate(CrewMember me, CrewMember participant) {
+    public static boolean canKick(CrewMember me, CrewMember participant) {
+        if (isMe(me, participant)) {
+            return false;
+        }
+        if (me.isManager() && participant.isGeneral()) {
+            return true;
+        }
+        if (me.isOwner() && participant.isLowerThanManager()) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean canDelegateOwner(CrewMember me, CrewMember participant) {
         return !isMe(me, participant) && me.isOwner() && participant.isNotOwner();
     }
 
@@ -66,7 +75,7 @@ public final class CrewMemberPolicy {
     }
 
     public static void ensureReadParticipantsAccessible(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
+        if (crewMember.isLowerThanManager()) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
         }
     }

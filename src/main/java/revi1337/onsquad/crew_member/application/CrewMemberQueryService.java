@@ -25,11 +25,11 @@ public class CrewMemberQueryService {
 
         Page<CrewMemberResponse> participants = crewMemberAccessor.fetchParticipantsByCrewId(crewId, pageable)
                 .map(participant -> {
-                    boolean isMe = CrewMemberPolicy.isMe(me, participant); // TODO canKick 과 canOwnerDelegate 는 아직 정의되지 않음. 일단 임의로 지정
+                    boolean isMe = CrewMemberPolicy.isMe(me, participant);
                     boolean canKick = CrewMemberPolicy.canKick(me, participant);
-                    boolean canOwnerDelegate = CrewMemberPolicy.canOwnerDelegate(me, participant);
+                    boolean canDelegateOwner = CrewMemberPolicy.canDelegateOwner(me, participant);
 
-                    return CrewMemberResponse.from(isMe, canKick, canOwnerDelegate, participant);
+                    return CrewMemberResponse.from(isMe, canKick, canDelegateOwner, participant);
                 });
 
         return PageResponse.from(participants);

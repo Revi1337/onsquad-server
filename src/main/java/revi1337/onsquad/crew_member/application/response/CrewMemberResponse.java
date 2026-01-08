@@ -7,16 +7,16 @@ import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 public record CrewMemberResponse(
         boolean isMe,
         boolean canKick,
-        boolean canOwnerDelegate,
+        boolean canDelegateOwner,
         LocalDateTime participantAt,
         SimpleMemberResponse member
 ) {
 
-    public static CrewMemberResponse from(boolean isMe, boolean canKick, boolean canOwnerDelegate, CrewMember participant) {
+    public static CrewMemberResponse from(boolean isMe, boolean canKick, boolean canDelegateOwner, CrewMember participant) {
         return new CrewMemberResponse(
                 isMe,
                 canKick,
-                canOwnerDelegate,
+                canDelegateOwner,
                 participant.getRequestAt(),
                 SimpleMemberResponse.from(participant.getMember())
         );
