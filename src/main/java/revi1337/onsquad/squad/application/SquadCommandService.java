@@ -13,6 +13,8 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.event.SquadCreated;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository;
+import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
+import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 @RequiredArgsConstructor
 @Transactional
@@ -20,9 +22,9 @@ import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository
 public class SquadCommandService {
 
     private final CrewMemberAccessor crewMemberAccessor;
-    private final SquadAccessor squadAccessor;
     private final SquadRepository squadRepository;
     private final SquadCategoryRepository squadCategoryRepository;
+    private final SquadMemberAccessor squadMemberAccessor;
     private final SquadContextHandler squadContextHandler;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -35,8 +37,9 @@ public class SquadCommandService {
     }
 
     public void deleteSquad(Long memberId, Long squadId) {
-        Squad squad = squadAccessor.getById(squadId);
-        SquadPolicy.ensureDeletable(squad, memberId);
+        SquadMember squadMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squadMember.getSquad().getCrewId());
+        SquadPolicy.ensureDeletable(squadMember, crewMember);
         squadContextHandler.disposeContext(squadId);
     }
 }

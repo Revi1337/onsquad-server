@@ -20,20 +20,8 @@ public class SquadPolicy {
         return squad.getCurrentSize() == 1;
     }
 
-    public static void ensureMatchCrew(Squad squad, Long crewId) {
-        if (squad.mismatchCrewId(crewId)) {
-            throw new SquadBusinessException.MismatchReference(SquadErrorCode.MISMATCH_CREW_REFERENCE);
-        }
-    }
-
-    public static void ensureDeletable(SquadMember squadMember) {
-        if (squadMember.isNotLeader()) {
-            throw new SquadBusinessException.InsufficientAuthority(SquadErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
-        }
-    }
-
-    public static void ensureDeletable(Squad squad, Long memberId) {
-        if (squad.mismatchMemberId(memberId)) {
+    public static void ensureDeletable(SquadMember squadMember, CrewMember crewMember) {
+        if (crewMember.isNotOwner() && squadMember.isNotLeader()) {
             throw new SquadBusinessException.InsufficientAuthority(SquadErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
     }
