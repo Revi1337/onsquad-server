@@ -47,8 +47,8 @@ public class CrewRequestCommandService {
         Crew crew = crewAccessor.getByIdForUpdate(crewId);
         CrewRequest request = crewRequestAccessor.getById(requestId);
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewRequestPolicy.ensureAcceptable(crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewRequestPolicy.ensureAcceptable(me);
         crew.addCrewMember(CrewMemberFactory.general(crew, request.getMember(), LocalDateTime.now()));
         crewRequestRepository.deleteById(requestId);
         eventPublisher.publishEvent(new RequestAccepted(crewId, memberId, request.getRequesterId()));
@@ -57,8 +57,8 @@ public class CrewRequestCommandService {
     public void rejectRequest(Long memberId, Long crewId, Long requestId) {
         CrewRequest request = crewRequestAccessor.getById(requestId);
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewRequestPolicy.ensureRejectable(crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewRequestPolicy.ensureRejectable(me);
         crewRequestRepository.deleteById(requestId);
         eventPublisher.publishEvent(new RequestRejected(crewId, memberId, request.getRequesterId()));
     }

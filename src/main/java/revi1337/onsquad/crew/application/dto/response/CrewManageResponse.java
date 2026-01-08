@@ -2,21 +2,21 @@ package revi1337.onsquad.crew.application.dto.response;
 
 import revi1337.onsquad.crew.domain.result.CrewStatisticResult;
 
-public record CrewStatisticResponse(
+public record CrewManageResponse(
         boolean canModify,
         boolean canDelete,
-        Data data
+        Statistic statistic
 ) {
 
-    public static CrewStatisticResponse from(boolean canModify, boolean canDelete, CrewStatisticResult result) {
-        return new CrewStatisticResponse(
+    public static CrewManageResponse from(boolean canModify, boolean canDelete, CrewStatisticResult result) {
+        return new CrewManageResponse(
                 canModify,
                 canDelete,
-                new Data(result.requestCnt(), result.squadCnt(), result.memberCnt())
+                new Statistic(result.requestCnt(), result.squadCnt(), result.memberCnt())
         );
     }
 
-    public record Data(
+    public record Statistic(
             long requestCnt,
             long squadCnt,
             long memberCnt

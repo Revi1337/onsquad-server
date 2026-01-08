@@ -15,21 +15,21 @@ public class CrewRequestPolicy {
         }
     }
 
-    public static void ensureAcceptable(CrewMember crewMember) {
-        if (!(crewMember.isOwner() || crewMember.isManager())) {
+    public static void ensureRequestListAccessible(CrewMember me) {
+        if (me.isLowerThanManager()) {
+            throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_READ_LIST_AUTHORITY);
+        }
+    }
+
+    public static void ensureAcceptable(CrewMember me) {
+        if (me.isLowerThanManager()) {
             throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_ACCEPT_AUTHORITY);
         }
     }
 
-    public static void ensureRejectable(CrewMember crewMember) {
-        if (!(crewMember.isOwner() || crewMember.isManager())) {
+    public static void ensureRejectable(CrewMember me) {
+        if (me.isLowerThanManager()) {
             throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_REJECT_AUTHORITY);
-        }
-    }
-
-    public static void ensureRequestListAccessible(CrewMember crewMember) {
-        if (!(crewMember.isOwner() || crewMember.isManager())) {
-            throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_READ_LIST_AUTHORITY);
         }
     }
 }

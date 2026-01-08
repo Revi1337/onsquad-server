@@ -13,7 +13,7 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewMainService;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
-import revi1337.onsquad.crew.application.dto.response.CrewStatisticResponse;
+import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/crews")
@@ -34,11 +34,11 @@ public class CrewMainController {
     }
 
     @GetMapping("/{crewId}/manage")
-    public ResponseEntity<RestResponse<CrewStatisticResponse>> fetchCrewStatistic(
+    public ResponseEntity<RestResponse<CrewManageResponse>> fetchManageInfo(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        CrewStatisticResponse response = crewMainService.calculateStatistic(currentMember.id(), crewId);
+        CrewManageResponse response = crewMainService.fetchManageInfo(currentMember.id(), crewId);
 
         return ResponseEntity.ok(RestResponse.success(response));
     }

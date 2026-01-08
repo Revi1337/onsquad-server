@@ -59,9 +59,9 @@ public final class CrewMemberPolicy {
         return crewMember.isNotOwner();
     }
 
-    public static void ensureReadCrewStatisticAccessible(CrewMember me) {
+    public static void ensureCanManagementCrew(CrewMember me) {
         if (me.isLowerThanManager()) {
-            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_CREW_STATISTIC_AUTHORITY);
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_MANAGE_CREW_AUTHORITY);
         }
     }
 

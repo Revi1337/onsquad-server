@@ -8,7 +8,7 @@ import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
-import revi1337.onsquad.crew.application.dto.response.CrewStatisticResponse;
+import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 import revi1337.onsquad.crew.domain.repository.CrewStatisticQueryDslRepository;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew.domain.result.CrewStatisticResult;
@@ -44,14 +44,14 @@ public class CrewMainService {
         return CrewMainResponse.from(canManage, result, announces, topMembers, squads.values());
     }
 
-    public CrewStatisticResponse calculateStatistic(Long memberId, Long crewId) {
+    public CrewManageResponse fetchManageInfo(Long memberId, Long crewId) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewMemberPolicy.ensureReadCrewStatisticAccessible(me);
+        CrewMemberPolicy.ensureCanManagementCrew(me);
 
         CrewStatisticResult result = crewStatisticQueryDslRepository.getStatisticById(crewId);
         boolean canModify = CrewMemberPolicy.canModifyCrew(me);
         boolean canDelete = CrewMemberPolicy.canDeleteCrew(me);
 
-        return CrewStatisticResponse.from(canModify, canDelete, result);
+        return CrewManageResponse.from(canModify, canDelete, result);
     }
 }
