@@ -16,13 +16,13 @@ import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/crews")
+@RequestMapping("/api")
 @RestController
 public class CrewMainController {
 
     private final CrewMainService crewMainService;
 
-    @GetMapping("/{crewId}/main")
+    @GetMapping("/crews/{crewId}/main")
     public ResponseEntity<RestResponse<CrewMainResponse>> fetchMain(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
@@ -33,7 +33,7 @@ public class CrewMainController {
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @GetMapping("/{crewId}/manage")
+    @GetMapping("/manage/crews/{crewId}")
     public ResponseEntity<RestResponse<CrewManageResponse>> fetchManageInfo(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
