@@ -9,15 +9,24 @@ public record SquadWithStatesResponse(
         Boolean isLeader,
         boolean canSeeParticipants,
         Boolean canLeave,
+        boolean canDelete,
         SquadResponse squad
 ) {
 
-    public static SquadWithStatesResponse from(boolean alreadyParticipant, Boolean isLeader, boolean canSeeParticipants, Boolean canLeave, Squad squad) {
+    public static SquadWithStatesResponse from(
+            boolean alreadyParticipant,
+            Boolean isLeader,
+            boolean canSeeParticipants,
+            Boolean canLeave,
+            boolean canDelete,
+            Squad squad
+    ) {
         return new SquadWithStatesResponse(
                 alreadyParticipant,
                 isLeader,
                 canSeeParticipants,
                 canLeave,
+                canDelete,
                 SquadResponse.from(squad)
         );
     }

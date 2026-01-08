@@ -37,7 +37,7 @@ public class SquadMemberCommandService {
             squadCommandService.deleteSquad(memberId, squadId);
             return;
         }
-        SquadMemberPolicy.ensureCanLeaveSquad(currentMember);
+        SquadMemberPolicy.ensureLeaderCannotLeaveWhileMembersRemain(currentMember);
         currentMember.leaveSquad();
         squadMemberRepository.delete(currentMember);
     }

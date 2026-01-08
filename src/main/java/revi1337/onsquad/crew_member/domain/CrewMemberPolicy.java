@@ -6,13 +6,34 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
+import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class CrewMemberPolicy {
 
     public static boolean isOwner(CrewMember me) {
-        return me != null && me.isOwner();
+        return me.isOwner();
+    }
+
+    public static boolean isManager(CrewMember me) {
+        return me.isManager();
+    }
+
+    public static boolean isGeneral(CrewMember me) {
+        return me.isGeneral();
+    }
+
+    public static boolean isManagerOrHigher(CrewMember me) {
+        return me.isManagerOrHigher();
+    }
+
+    public static boolean isLowerThanManager(CrewMember me) {
+        return me.isLowerThanManager();
+    }
+
+    public static boolean isNotOwner(CrewMember me) {
+        return !isOwner(me);
     }
 
     public static boolean isMe(CrewMember me, CrewMember participant) {
@@ -24,79 +45,79 @@ public final class CrewMemberPolicy {
     }
 
     public static boolean canKick(CrewMember me, SquadMember participant) {
-        return !isMe(me, participant) && me.isOwner() && participant.isNotLeader();
+        return !isMe(me, participant) && isOwner(me) && SquadMemberPolicy.isNotLeader(participant);
     }
 
     public static boolean canKick(CrewMember me, CrewMember participant) {
         if (isMe(me, participant)) {
             return false;
         }
-        if (me.isManager() && participant.isGeneral()) {
+        if (isManager(me) && isGeneral(participant)) {
             return true;
         }
-        if (me.isOwner() && participant.isLowerThanManager()) {
+        if (isOwner(me) && isLowerThanManager(participant)) {
             return true;
         }
         return false;
     }
 
     public static boolean canDelegateOwner(CrewMember me, CrewMember participant) {
-        return !isMe(me, participant) && me.isOwner() && participant.isNotOwner();
+        return !isMe(me, participant) && isOwner(me) && isNotOwner(participant);
     }
 
     public static boolean canLeaderDelegate(CrewMember me, SquadMember participant) {
-        return !isMe(me, participant) && me.isOwner() && participant.isNotLeader();
+        return !isMe(me, participant) && isOwner(me) && SquadMemberPolicy.isNotLeader(participant);
     }
 
     public static boolean canModifyCrew(CrewMember me) {
-        return me.isOwner();
+        return isOwner(me);
     }
 
     public static boolean canDeleteCrew(CrewMember me) {
-        return me.isOwner();
+        return isOwner(me);
     }
 
     public static boolean canMangeCrew(CrewMember me) {
-        return me.isManagerOrHigher();
+        return isManagerOrHigher(me);
     }
 
-    public static boolean canReadSquadParticipants(CrewMember crewMember) {
-        return crewMember.isOwner();
+    public static boolean canReadSquadParticipants(CrewMember me) {
+        return isOwner(me);
     }
 
-    public static boolean cannotReadSquadParticipants(CrewMember crewMember) {
-        return crewMember.isNotOwner();
+    public static boolean cannotReadSquadParticipants(CrewMember me) {
+        return isNotOwner(me);
     }
 
     public static void ensureCanManagementCrew(CrewMember me) {
-        if (me.isLowerThanManager()) {
+        if (isLowerThanManager(me)) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_MANAGE_CREW_AUTHORITY);
         }
     }
 
-    public static void ensureReadParticipantsAccessible(CrewMember crewMember) {
-        if (crewMember.isLowerThanManager()) {
+    public static void ensureReadParticipantsAccessible(CrewMember me) {
+        if (isLowerThanManager(me)) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
         }
     }
 
     public static void ensureCanDelegateOwner(CrewMember me) {
-        if (me.isNotOwner()) {
+        if (isNotOwner(me)) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_DELEGATE_OWNER_AUTHORITY);
         }
     }
 
     public static void ensureCanLeaveCrew(CrewMember me) {
-        if (me.isOwner()) {
+        if (isOwner(me)) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_LEAVE_CREW_AUTHORITY);
         }
     }
 
     public static void ensureCanKickOutMember(CrewMember me, CrewMember targetMember) {
-        if (me.isGeneral()) {
+        if (isGeneral(me)) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_KICK_MEMBER_AUTHORITY);
         }
-        if (me.isManager() && targetMember.isManagerOrHigher()) {
+        if (isManager(me) && isManagerOrHigher(targetMember)) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.CANNOT_KICK_HIGHER_ROLE_MEMBER);
         }
     }

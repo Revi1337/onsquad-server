@@ -37,23 +37,25 @@ public class SquadQueryService {
     public SquadWithStatesResponse fetchSquad(Long memberId, Long squadId) {
         Squad squad = squadAccessor.getWithDetailById(squadId);
         Optional<SquadMember> meOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
+        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
         if (meOpt.isPresent()) {
             SquadMember me = meOpt.get();
             boolean alreadyParticipant = true;
             boolean isLeader = SquadMemberPolicy.isLeader(me);
             boolean canSeeParticipants = true;
-            boolean canLeave = SquadMemberPolicy.canLeave(me, squad);
+            boolean canLeave = SquadMemberPolicy.canLeaveSquad(me, squad);
+            boolean canDelete = SquadPolicy.canDelete(me, meInCrew);
 
-            return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, squad);
+            return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, canDelete, squad);
         }
 
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
         boolean alreadyParticipant = false;
         Boolean isLeader = null;
-        boolean canSeeParticipants = CrewMemberPolicy.canReadSquadParticipants(crewMember);
+        boolean canSeeParticipants = CrewMemberPolicy.canReadSquadParticipants(meInCrew);
         Boolean canLeave = null;
+        boolean canDelete = SquadPolicy.canDelete(meInCrew);
 
-        return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, squad);
+        return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, canDelete, squad);
     }
 
     public List<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
@@ -70,8 +72,8 @@ public class SquadQueryService {
     }
 
     public List<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        SquadPolicy.ensureSquadManageListAccessible(crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        SquadPolicy.ensureSquadManageListAccessible(me);
         SquadLinkableGroup<SquadWithLeaderStateResult> squadGroup = squadAccessor.fetchManageList(memberId, crewId, pageable);
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
