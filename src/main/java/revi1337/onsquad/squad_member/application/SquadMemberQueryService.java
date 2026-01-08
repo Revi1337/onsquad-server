@@ -36,9 +36,9 @@ public class SquadMemberQueryService {
     private final SquadMemberAccessor squadMemberAccessor;
 
     public List<SquadMemberResponse> fetchParticipants(Long memberId, Long squadId) {
-        Optional<SquadMember> memberOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
-        if (memberOpt.isPresent()) {
-            SquadMember me = memberOpt.get();
+        Optional<SquadMember> meOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
+        if (meOpt.isPresent()) {
+            SquadMember me = meOpt.get();
 
             return squadMemberAccessor.fetchParticipantsBySquadId(squadId).stream()
                     .map(participant -> resolveParticipantStates(me, participant))
@@ -75,16 +75,16 @@ public class SquadMemberQueryService {
     private SquadMemberResponse resolveParticipantStates(SquadMember me, SquadMember participant) {
         boolean isMe = SquadMemberPolicy.isMe(me, participant);
         boolean canKick = SquadMemberPolicy.canKick(me, participant);
-        boolean canLeaderDelegate = SquadMemberPolicy.canLeaderDelegate(me, participant);
+        boolean canDelegateLeader = SquadMemberPolicy.DelegateLeader(me, participant);
 
-        return SquadMemberResponse.from(isMe, canKick, canLeaderDelegate, participant);
+        return SquadMemberResponse.from(isMe, canKick, canDelegateLeader, participant);
     }
 
     private SquadMemberResponse resolveParticipantStates(CrewMember me, SquadMember participant) {
         boolean isMe = CrewMemberPolicy.isMe(me, participant);
         boolean canKick = CrewMemberPolicy.canKick(me, participant);
-        boolean canLeaderDelegate = CrewMemberPolicy.canLeaderDelegate(me, participant);
+        boolean canDelegateLeader = CrewMemberPolicy.canLeaderDelegate(me, participant);
 
-        return SquadMemberResponse.from(isMe, canKick, canLeaderDelegate, participant);
+        return SquadMemberResponse.from(isMe, canKick, canDelegateLeader, participant);
     }
 }

@@ -28,7 +28,7 @@ public class SquadMemberPolicy {
         return !isMe(me, participant) && isLeader(me) && isNotLeader(participant);
     }
 
-    public static boolean canLeaderDelegate(SquadMember me, SquadMember participant) {
+    public static boolean DelegateLeader(SquadMember me, SquadMember participant) {
         return !isMe(me, participant) && isLeader(me) && isNotLeader(participant);
     }
 

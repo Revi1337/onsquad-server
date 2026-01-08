@@ -77,7 +77,7 @@ public final class CrewMemberPolicy {
         return isOwner(me);
     }
 
-    public static boolean canMangeCrew(CrewMember me) {
+    public static boolean canManageCrew(CrewMember me) {
         return isManagerOrHigher(me);
     }
 

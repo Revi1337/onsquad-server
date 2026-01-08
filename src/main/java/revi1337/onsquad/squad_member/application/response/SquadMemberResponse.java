@@ -6,15 +6,15 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 public record SquadMemberResponse(
         boolean isMe,
         boolean canKick,
-        boolean canLeaderDelegate,
+        boolean canDelegateLeader,
         SimpleMemberResponse member
 ) {
 
-    public static SquadMemberResponse from(boolean isMe, boolean canKick, boolean canLeaderDelegate, SquadMember participant) {
+    public static SquadMemberResponse from(boolean isMe, boolean canKick, boolean canDelegateLeader, SquadMember participant) {
         return new SquadMemberResponse(
                 isMe,
                 canKick,
-                canLeaderDelegate,
+                canDelegateLeader,
                 SimpleMemberResponse.from(participant.getMember())
         );
     }

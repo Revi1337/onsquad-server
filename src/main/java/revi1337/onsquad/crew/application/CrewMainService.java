@@ -39,7 +39,7 @@ public class CrewMainService {
         List<CrewRankedMember> topMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
         SquadLinkableGroup<SquadResult> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
-        boolean canManage = CrewMemberPolicy.canMangeCrew(crewMember);
+        boolean canManage = CrewMemberPolicy.canManageCrew(crewMember);
 
         return CrewMainResponse.from(canManage, result, announces, topMembers, squads.values());
     }
