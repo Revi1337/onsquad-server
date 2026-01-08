@@ -26,8 +26,8 @@ public class SquadRequestQueryService {
     private final SquadCategoryAccessor squadCategoryAccessor;
 
     public List<SquadRequestResponse> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
-        SquadMember squadMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
-        SquadRequestPolicy.ensureRequestListAccessible(squadMember);
+        SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+        SquadRequestPolicy.ensureRequestListAccessible(me);
 
         return squadRequestAccessor.fetchAllBySquadId(squadId, pageable).stream()
                 .map(SquadRequestResponse::from)
