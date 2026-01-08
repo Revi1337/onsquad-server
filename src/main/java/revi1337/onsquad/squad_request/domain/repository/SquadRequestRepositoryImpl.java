@@ -3,6 +3,7 @@ package revi1337.onsquad.squad_request.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
@@ -36,7 +37,7 @@ public class SquadRequestRepositoryImpl implements SquadRequestRepository {
     }
 
     @Override
-    public List<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
+    public Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
         return squadRequestQueryDslRepository.fetchAllBySquadId(squadId, pageable);
     }
 

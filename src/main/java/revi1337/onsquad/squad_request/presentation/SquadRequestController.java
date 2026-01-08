@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 import revi1337.onsquad.squad_request.application.SquadRequestQueryService;
@@ -71,12 +72,12 @@ public class SquadRequestController {
     }
 
     @GetMapping("/squads/{squadId}/requests")
-    public ResponseEntity<RestResponse<List<SquadRequestResponse>>> fetchAllRequests(
+    public ResponseEntity<RestResponse<PageResponse<SquadRequestResponse>>> fetchAllRequests(
             @PathVariable Long squadId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadRequestResponse> response = squadRequestQueryService.fetchAllRequests(currentMember.id(), squadId, pageable);
+        PageResponse<SquadRequestResponse> response = squadRequestQueryService.fetchAllRequests(currentMember.id(), squadId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

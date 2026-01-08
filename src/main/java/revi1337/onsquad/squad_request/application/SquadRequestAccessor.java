@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_request.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_request.domain.SquadRequests;
@@ -26,7 +26,7 @@ public class SquadRequestAccessor {
         return new SquadRequests(squadRequestRepository.fetchMyRequests(memberId));
     }
 
-    public List<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
+    public Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
         return squadRequestRepository.fetchAllBySquadId(squadId, pageable);
     }
 

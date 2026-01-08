@@ -119,10 +119,6 @@ public class SquadComment extends BaseEntity {
         }
     }
 
-    public Member getWriter() {
-        return member;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

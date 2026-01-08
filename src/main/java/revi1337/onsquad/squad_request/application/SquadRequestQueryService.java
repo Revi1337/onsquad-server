@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
@@ -25,13 +26,11 @@ public class SquadRequestQueryService {
     private final SquadMemberAccessor squadMemberAccessor;
     private final SquadCategoryAccessor squadCategoryAccessor;
 
-    public List<SquadRequestResponse> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
+    public PageResponse<SquadRequestResponse> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadRequestPolicy.ensureRequestListAccessible(me);
 
-        return squadRequestAccessor.fetchAllBySquadId(squadId, pageable).stream()
-                .map(SquadRequestResponse::from)
-                .toList();
+        return PageResponse.from(squadRequestAccessor.fetchAllBySquadId(squadId, pageable).map(SquadRequestResponse::from));
     }
 
     public List<MySquadRequestResponse> fetchMyRequests(Long memberId) {

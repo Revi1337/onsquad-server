@@ -13,7 +13,8 @@ public enum SquadCommentErrorCode implements ErrorCode {
     NOT_PARENT(400, "SC003", "대댓글은 부모댓글에서만 등록할 수 있습니다."),
     DELETED(400, "SC004", "삭제된 댓글입니다."),
     MISMATCH_SQUAD_REFERENCE(400, "SC005", "댓글이 속한 스쿼드가 일치하지 않습니다."),
-    MISMATCH_WRITER(403, "SC006", "댓글 작성자 정보가 일치하지 않습니다.");
+    MISMATCH_WRITER(403, "SC006", "댓글 작성자 정보가 일치하지 않습니다."),
+    INSUFFICIENT_DELETE_AUTHORITY(403, "SC007", "댓글 삭제는 작성자 또는 스쿼드 리더만 가능합니다.");
 
     private final int status;
     private final String code;
