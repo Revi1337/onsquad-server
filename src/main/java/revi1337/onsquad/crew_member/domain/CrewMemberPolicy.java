@@ -39,6 +39,18 @@ public final class CrewMemberPolicy {
         return !isMe(me, participant) && me.isOwner() && participant.isNotLeader();
     }
 
+    public static boolean canModifyCrew(CrewMember me) {
+        return me.isOwner();
+    }
+
+    public static boolean canDeleteCrew(CrewMember me) {
+        return me.isOwner();
+    }
+
+    public static boolean canMangeCrew(CrewMember me) {
+        return me.isManagerOrHigher();
+    }
+
     public static boolean canReadSquadParticipants(CrewMember crewMember) {
         return crewMember.isOwner();
     }
@@ -47,25 +59,15 @@ public final class CrewMemberPolicy {
         return crewMember.isNotOwner();
     }
 
-    public static boolean canMangeCrew(CrewMember crewMember) {
-        return crewMember.isOwner();
-    }
-
-    public static void ensureNotSelfTarget(Long currentMemberId, Long targetMemberId) {
-        if (currentMemberId.equals(targetMemberId)) {
-            throw new CrewMemberBusinessException.InvalidRequest(CrewMemberErrorCode.CANNOT_TARGET_SELF);
+    public static void ensureReadCrewStatisticAccessible(CrewMember me) {
+        if (me.isLowerThanManager()) {
+            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_CREW_STATISTIC_AUTHORITY);
         }
     }
 
     public static void ensureReadParticipantsAccessible(CrewMember crewMember) {
         if (crewMember.isNotOwner()) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
-        }
-    }
-
-    public static void ensureReadCrewStatisticAccessible(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
-            throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.INSUFFICIENT_READ_CREW_STATISTIC_AUTHORITY);
         }
     }
 
@@ -87,6 +89,12 @@ public final class CrewMemberPolicy {
         }
         if (me.isManager() && targetMember.isManagerOrHigher()) {
             throw new CrewMemberBusinessException.InsufficientAuthority(CrewMemberErrorCode.CANNOT_KICK_HIGHER_ROLE_MEMBER);
+        }
+    }
+
+    public static void ensureNotSelfTarget(Long currentMemberId, Long targetMemberId) {
+        if (currentMemberId.equals(targetMemberId)) {
+            throw new CrewMemberBusinessException.InvalidRequest(CrewMemberErrorCode.CANNOT_TARGET_SELF);
         }
     }
 }

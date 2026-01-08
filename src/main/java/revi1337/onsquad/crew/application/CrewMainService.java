@@ -11,6 +11,7 @@ import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewStatisticResponse;
 import revi1337.onsquad.crew.domain.repository.CrewStatisticQueryDslRepository;
 import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.result.CrewStatisticResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.application.CrewRankedMemberCacheService;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
@@ -38,13 +39,19 @@ public class CrewMainService {
         List<CrewRankedMember> topMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
         SquadLinkableGroup<SquadResult> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
-        return CrewMainResponse.from(CrewMemberPolicy.canMangeCrew(crewMember), result, announces, topMembers, squads.values());
+        boolean canManage = CrewMemberPolicy.canMangeCrew(crewMember);
+
+        return CrewMainResponse.from(canManage, result, announces, topMembers, squads.values());
     }
 
     public CrewStatisticResponse calculateStatistic(Long memberId, Long crewId) {
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewMemberPolicy.ensureReadCrewStatisticAccessible(crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewMemberPolicy.ensureReadCrewStatisticAccessible(me);
 
-        return CrewStatisticResponse.from(crewStatisticQueryDslRepository.getStatisticById(crewId));
+        CrewStatisticResult result = crewStatisticQueryDslRepository.getStatisticById(crewId);
+        boolean canModify = CrewMemberPolicy.canModifyCrew(me);
+        boolean canDelete = CrewMemberPolicy.canDeleteCrew(me);
+
+        return CrewStatisticResponse.from(canModify, canDelete, result);
     }
 }
