@@ -41,11 +41,8 @@ public class ApplicationLayerConfiguration {
 
     @Primary
     @Bean
-    public S3Client amazonS3(S3BucketProperties s3BucketProperties,
-                             @Value("${s3.endpoint:http://dummy-entry}") String endpoint) {
-        AwsBasicCredentials credentials = AwsBasicCredentials.create(
-                s3BucketProperties.accessKey(), s3BucketProperties.secretKey()
-        );
+    public S3Client amazonS3(S3BucketProperties s3BucketProperties, @Value("${s3.endpoint:http://dummy-entry}") String endpoint) {
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(s3BucketProperties.accessKey(), s3BucketProperties.secretKey());
 
         return S3Client.builder()
                 .endpointOverride(URI.create(endpoint))

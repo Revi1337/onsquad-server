@@ -29,9 +29,7 @@ public class TestAwsConfiguration {
 
     @Bean
     public S3Client testAmazonS3() {
-        AwsBasicCredentials credentials = AwsBasicCredentials.create(
-                s3BucketProperties.accessKey(), s3BucketProperties.secretKey()
-        );
+        AwsBasicCredentials credentials = AwsBasicCredentials.create(s3BucketProperties.accessKey(), s3BucketProperties.secretKey());
 
         return S3Client.builder()
                 .region(Region.of(s3BucketProperties.region()))

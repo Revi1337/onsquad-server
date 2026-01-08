@@ -21,7 +21,6 @@ import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator;
-import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
@@ -30,9 +29,6 @@ import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
 @Import({ApplicationLayerConfiguration.class})
 @Sql({"/h2-truncate.sql"})
 public abstract class ApplicationLayerWithTestContainerSupport extends TestContainerSupport {
-
-    @MockBean
-    protected RecycleBinLifeCycleManager recycleBinLifeCycleManager;
 
     @MockBean
     protected VerificationBackupProcessor verificationBackupProcessor;
