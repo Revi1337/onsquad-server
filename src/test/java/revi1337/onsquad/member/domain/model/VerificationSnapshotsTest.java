@@ -13,6 +13,9 @@ import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshot;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshots;
+import revi1337.onsquad.auth.verification.domain.VerificationState;
 
 class VerificationSnapshotsTest {
 

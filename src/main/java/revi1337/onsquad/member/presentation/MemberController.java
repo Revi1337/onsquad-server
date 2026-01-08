@@ -19,10 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.member.application.MemberCommandService;
-import revi1337.onsquad.member.application.MemberDeleteService;
-import revi1337.onsquad.member.application.MemberImageService;
-import revi1337.onsquad.member.application.MemberImageUpdateCoordinator;
+import revi1337.onsquad.member.application.MemberCommandServiceFacade;
 import revi1337.onsquad.member.application.MemberQueryService;
 import revi1337.onsquad.member.application.dto.response.DuplicateResponse;
 import revi1337.onsquad.member.application.dto.response.MemberResponse;
@@ -35,11 +32,8 @@ import revi1337.onsquad.member.presentation.request.MemberUpdateRequest;
 @RestController
 public class MemberController {
 
-    private final MemberImageUpdateCoordinator memberImageUpdateCoordinator;
-    private final MemberImageService memberImageService;
-    private final MemberDeleteService memberDeleteService;
+    private final MemberCommandServiceFacade memberCommandServiceFacade;
     private final MemberQueryService memberQueryService;
-    private final MemberCommandService memberCommandService;
 
     @GetMapping("/check-nickname")
     public ResponseEntity<RestResponse<DuplicateResponse>> checkDuplicateNickname(
@@ -63,7 +57,7 @@ public class MemberController {
     public ResponseEntity<RestResponse<Void>> newMember(
             @Valid @RequestBody MemberCreateRequest memberCreateRequest
     ) {
-        memberCommandService.newMember(memberCreateRequest.toDto());
+        memberCommandServiceFacade.newMember(memberCreateRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -82,7 +76,7 @@ public class MemberController {
             @Valid @RequestBody MemberUpdateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
-        memberCommandService.updateMember(currentMember.id(), request.toDto());
+        memberCommandServiceFacade.updateProfile(currentMember.id(), request.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -91,7 +85,7 @@ public class MemberController {
     public ResponseEntity<RestResponse<Void>> deleteMember(
             @Authenticate CurrentMember currentMember
     ) {
-        memberDeleteService.deleteMember(currentMember.id());
+        memberCommandServiceFacade.deleteMember(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -101,7 +95,7 @@ public class MemberController {
             @Valid @RequestBody MemberPasswordUpdateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
-        memberCommandService.updatePassword(currentMember.id(), request.toDto());
+        memberCommandServiceFacade.updatePassword(currentMember.id(), request.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -111,7 +105,7 @@ public class MemberController {
             @RequestPart MultipartFile file,
             @Authenticate CurrentMember currentMember
     ) {
-        memberImageUpdateCoordinator.updateImage(currentMember.id(), file);
+        memberCommandServiceFacade.updateImage(currentMember.id(), file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -120,7 +114,7 @@ public class MemberController {
     public ResponseEntity<RestResponse<Void>> deleteImage(
             @Authenticate CurrentMember currentMember
     ) {
-        memberImageService.deleteImage(currentMember.id());
+        memberCommandServiceFacade.deleteImage(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

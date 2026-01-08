@@ -21,14 +21,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import revi1337.onsquad.auth.verification.VerificationMailService;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.member.application.AuthMailService;
 
 @WebMvcTest(EmailVerificationCodeController.class)
 class EmailVerificationCodeControllerTest extends PresentationLayerTestSupport {
 
     @MockBean
-    private AuthMailService authMailService;
+    private VerificationMailService verificationMailService;
 
     @Nested
     @DisplayName("이메일 인증코드 발송을 문서화한다.")
@@ -37,7 +37,7 @@ class EmailVerificationCodeControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("이메일 인증코드 발송에 성공한다.")
         void success() throws Exception {
-            doNothing().when(authMailService).sendVerificationCode(REVI_EMAIL_VALUE);
+            doNothing().when(verificationMailService).sendVerificationCode(REVI_EMAIL_VALUE);
 
             mockMvc.perform(post("/api/auth/send")
                             .queryParam("email", REVI_EMAIL_VALUE)
@@ -59,7 +59,7 @@ class EmailVerificationCodeControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("이메일 인증코드 검증에 성공한다.")
         void success() throws Exception {
-            when(authMailService.validateVerificationCode(REVI_EMAIL_VALUE, TEST_VERIFICATION_CODE))
+            when(verificationMailService.validateVerificationCode(REVI_EMAIL_VALUE, TEST_VERIFICATION_CODE))
                     .thenReturn(true);
 
             mockMvc.perform(get("/api/auth/verify")

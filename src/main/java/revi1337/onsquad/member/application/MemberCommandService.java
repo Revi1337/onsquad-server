@@ -1,37 +1,74 @@
 package revi1337.onsquad.member.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.auth.verification.EmailVerificationValidator;
+import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
+import revi1337.onsquad.member.error.MemberBusinessException;
+import revi1337.onsquad.member.error.MemberErrorCode;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class MemberCommandService {
 
-    private final MemberAccessor memberAccessor;
-    private final MemberCreateService memberCreateService;
-    private final MemberPasswordUpdateService memberPasswordUpdateService;
     private final MemberRepository memberRepository;
+    private final EmailVerificationValidator emailVerificationValidator;
+    private final MemberAccessor memberAccessor;
+    private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public void newMember(MemberCreateDto dto) {
-        Member member = memberCreateService.attemptCreate(dto);
+        emailVerificationValidator.ensureEmailVerified(dto.email());
+        ensureNotDuplicate(dto);
+        Member member = dto.toEntity();
+        member.updatePassword(passwordEncoder.encode(dto.password()));
         memberRepository.save(member);
     }
 
-    public void updateMember(Long memberId, MemberUpdateDto dto) {
+    public void updateProfile(Long memberId, MemberUpdateDto dto) {
         Member member = memberAccessor.getById(memberId);
         member.updateProfile(dto.toMemberBase());
-        memberRepository.saveAndFlush(member);
     }
 
     public void updatePassword(Long memberId, MemberPasswordUpdateDto dto) {
-        Member member = memberPasswordUpdateService.attemptUpdate(memberId, dto);
-        memberRepository.saveAndFlush(member);
+        Member member = memberAccessor.getById(memberId);
+        if (!passwordEncoder.matches(dto.currentPassword(), member.getPassword().getValue())) {
+            throw new MemberBusinessException.WrongPassword(MemberErrorCode.WRONG_PASSWORD);
+        }
+        member.updatePassword(passwordEncoder.encode(dto.newPassword()));
+    }
+
+    public void updateImage(Long memberId, String newImageUrl) {
+        Member member = memberAccessor.getById(memberId);
+        if (member.hasImage()) {
+            applicationEventPublisher.publishEvent(new FileDeleteEvent(member.getProfileImage()));
+        }
+        member.updateImage(newImageUrl);
+    }
+
+    public void deleteImage(Long memberId) {
+        Member member = memberAccessor.getById(memberId);
+        if (member.hasImage()) {
+            applicationEventPublisher.publishEvent(new FileDeleteEvent(member.getProfileImage()));
+            member.deleteImage();
+        }
+    }
+
+    private void ensureNotDuplicate(MemberCreateDto dto) {
+        if (memberAccessor.checkNicknameDuplicate(dto.nickname())) {
+            throw new MemberBusinessException.DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
+        }
+        if (memberAccessor.checkEmailDuplicate(dto.email())) {
+            throw new MemberBusinessException.DuplicateEmail(MemberErrorCode.DUPLICATE_EMAIL);
+        }
     }
 }

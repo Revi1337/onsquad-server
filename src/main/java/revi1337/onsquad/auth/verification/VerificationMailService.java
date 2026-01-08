@@ -1,20 +1,20 @@
-package revi1337.onsquad.member.application;
+package revi1337.onsquad.auth.verification;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import revi1337.onsquad.auth.verification.domain.VerificationCode;
+import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.application.mail.EmailSender;
 import revi1337.onsquad.infrastructure.mail.EmailException;
-import revi1337.onsquad.member.domain.model.VerificationCode;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
-import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class AuthMailService {
+public class VerificationMailService {
 
     private static final String MAIL_SUBJECT = "[ONSQUAD] 회원가입 인증코드 발송 안내";
     private static final String SEND_VERIFICATION_CODE_SUCCESS_LOG_FORMAT = "[이메일 인증코드 발송 성공] - email : {}, code : {}";
@@ -24,14 +24,14 @@ public class AuthMailService {
     private static final Duration JOINING_TIMEOUT = Duration.ofMinutes(5);
 
     private final EmailSender emailSender;
-    private final VerificationCodeRepository redisCodeRepository;
+    private final VerificationCodeRepository verificationCodeRedisRepository;
     private final VerificationCodeGenerator verificationCodeGenerator;
 
     @Async("sending-verification-code-executor")
     public void sendVerificationCode(String email) {
         try {
             String authCode = verificationCodeGenerator.generate();
-            long expireMilli = redisCodeRepository.saveVerificationCode(email, authCode, VERIFICATION_CODE_TIMEOUT);
+            long expireMilli = verificationCodeRedisRepository.saveVerificationCode(email, authCode, VERIFICATION_CODE_TIMEOUT);
 
             emailSender.sendEmail(MAIL_SUBJECT, new VerificationCode(authCode, expireMilli), email);
             log.info(SEND_VERIFICATION_CODE_SUCCESS_LOG_FORMAT, email, authCode);
@@ -41,8 +41,8 @@ public class AuthMailService {
     }
 
     public boolean validateVerificationCode(String email, String authCode) {
-        if (redisCodeRepository.isValidVerificationCode(email, authCode)) {
-            boolean mark = redisCodeRepository.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
+        if (verificationCodeRedisRepository.isValidVerificationCode(email, authCode)) {
+            boolean mark = verificationCodeRedisRepository.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
             log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());
             return mark;
         }

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import revi1337.onsquad.auth.verification.domain.VerificationState;
 
 class VerificationStateTest {
 

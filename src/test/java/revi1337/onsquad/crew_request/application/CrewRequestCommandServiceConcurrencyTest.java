@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import revi1337.onsquad.auth.verification.VerificationBackupProcessor;
 import revi1337.onsquad.common.aspect.RequestCacheHandlerComposite;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.crew.domain.entity.Crew;
@@ -32,12 +33,11 @@ import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
 import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
-import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 //@SpringBootTest(properties = "spring.datasource.url=jdbc:h2:tcp://localhost/~/onsquad-test;MODE=MySQL")
-@MockBean({VerificationCacheLifeCycleManager.class, RecycleBinLifeCycleManager.class, RequestCacheHandlerComposite.class, ThrottlingAspect.class})
+@MockBean({VerificationBackupProcessor.class, RecycleBinLifeCycleManager.class, RequestCacheHandlerComposite.class, ThrottlingAspect.class})
 @SpringBootTest
 class CrewRequestCommandServiceConcurrencyTest {
 

@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import revi1337.onsquad.auth.verification.VerificationMailService;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.member.application.AuthMailService;
 import revi1337.onsquad.member.application.dto.response.EmailValidResponse;
 
 @RequiredArgsConstructor
@@ -16,13 +16,13 @@ import revi1337.onsquad.member.application.dto.response.EmailValidResponse;
 @RestController
 public class EmailVerificationCodeController {
 
-    private final AuthMailService authMailService;
+    private final VerificationMailService verificationMailService;
 
     @PostMapping("/auth/send")
     public ResponseEntity<RestResponse<String>> sendVerificationCode(
             @RequestParam String email
     ) {
-        authMailService.sendVerificationCode(email);
+        verificationMailService.sendVerificationCode(email);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -32,7 +32,7 @@ public class EmailVerificationCodeController {
             @RequestParam String email,
             @RequestParam String code
     ) {
-        boolean valid = authMailService.validateVerificationCode(email, code);
+        boolean valid = verificationMailService.validateVerificationCode(email, code);
         if (valid) {
             return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(true)));
         }

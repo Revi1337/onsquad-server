@@ -14,7 +14,10 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
+import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeExpiringMapRepository;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeRedisRepository;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeRepositoryComposite;
 
 class VerificationCodeRepositoryCompositeTest {
 

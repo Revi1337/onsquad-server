@@ -13,9 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.domain.model.VerificationSnapshots;
-import revi1337.onsquad.member.domain.model.VerificationState;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshots;
+import revi1337.onsquad.auth.verification.domain.VerificationState;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeExpiringMapRepository;
 
 class VerificationCodeExpiringMapRepositoryTest {
 

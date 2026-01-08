@@ -16,9 +16,10 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeRedisRepository;
 import revi1337.onsquad.common.TestContainerSupport;
 import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {

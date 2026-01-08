@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.infrastructure.repository;
+package revi1337.onsquad.auth.verification.infrastructure;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
-import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
+import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 
 @Slf4j
 @Component

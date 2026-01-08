@@ -218,7 +218,7 @@ public class MemberControllerTest extends PresentationLayerTestSupport {
                     REVI_ADDRESS_VALUE,
                     REVI_ADDRESS_DETAIL_VALUE
             );
-            doNothing().when(memberCommandService).updateMember(any(), any());
+            doNothing().when(memberCommandService).updateProfile(any(), any());
 
             mockMvc.perform(put("/api/members/me")
                             .content(objectMapper.writeValueAsString(UPDATE_REQUEST))

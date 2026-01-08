@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.application.initializer;
+package revi1337.onsquad.auth.verification;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -16,15 +16,15 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.member.domain.model.VerificationSnapshot;
-import revi1337.onsquad.member.domain.model.VerificationSnapshots;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
-import revi1337.onsquad.member.infrastructure.repository.VerificationCodeExpiringMapRepository;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshot;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshots;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeExpiringMapRepository;
 
 @Slf4j
 @Profile({"default", "local"})
 @Component
-public class VerificationCacheLifeCycleManager {
+public class VerificationBackupProcessor {
 
     private static final String RESTORE_ERROR_LOG = "Error Occur While Restoring Verification Code";
     private static final String RESTORE_LOG_FORMAT = "Restored Verification Code - path : {}";
@@ -35,7 +35,7 @@ public class VerificationCacheLifeCycleManager {
     private final VerificationCodeExpiringMapRepository repository;
     private final ObjectMapper objectMapper;
 
-    public VerificationCacheLifeCycleManager(
+    public VerificationBackupProcessor(
             @Value("${spring.mail.verification-code-backup-path}") String backupPath,
             VerificationCodeExpiringMapRepository repository,
             ObjectMapper objectMapper

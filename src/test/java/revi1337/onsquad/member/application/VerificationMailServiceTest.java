@@ -22,12 +22,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import revi1337.onsquad.member.domain.model.VerificationCode;
-import revi1337.onsquad.member.infrastructure.mail.VerificationCodeEmailSender;
-import revi1337.onsquad.member.infrastructure.repository.VerificationCodeRepositoryComposite;
+import revi1337.onsquad.auth.verification.VerificationCodeGenerator;
+import revi1337.onsquad.auth.verification.VerificationMailService;
+import revi1337.onsquad.auth.verification.domain.VerificationCode;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeEmailSender;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeRepositoryComposite;
 
 @ExtendWith(MockitoExtension.class)
-class AuthMailServiceTest {
+class VerificationMailServiceTest {
 
     @Mock
     private VerificationCodeEmailSender emailSender;
@@ -39,7 +41,7 @@ class AuthMailServiceTest {
     private VerificationCodeGenerator verificationCodeGenerator;
 
     @InjectMocks
-    private AuthMailService authMailService;
+    private VerificationMailService verificationMailService;
 
     @Nested
     @DisplayName("이메일 인증 코드 발송을 테스트한다.")
@@ -53,7 +55,7 @@ class AuthMailServiceTest {
                     .thenReturn(TEST_VERIFICATION_CODE_MILLI_TIMEOUT);
             doNothing().when(emailSender).sendEmail(anyString(), any(VerificationCode.class), eq(DUMMY_EMAIL_VALUE_1));
 
-            authMailService.sendVerificationCode(DUMMY_EMAIL_VALUE_1);
+            verificationMailService.sendVerificationCode(DUMMY_EMAIL_VALUE_1);
 
             verify(verificationCodeGenerator).generate();
             verify(emailSender).sendEmail(anyString(), any(VerificationCode.class), eq(DUMMY_EMAIL_VALUE_1));
@@ -70,7 +72,7 @@ class AuthMailServiceTest {
             when(repositoryChain.isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE)).thenReturn(true);
             when(repositoryChain.markVerificationStatus(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_SUCCESS, TEST_JOINING_TIMEOUT)).thenReturn(true);
 
-            boolean valid = authMailService.validateVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
+            boolean valid = verificationMailService.validateVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
 
             verify(repositoryChain).isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
             verify(repositoryChain).markVerificationStatus(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_SUCCESS, TEST_JOINING_TIMEOUT);
@@ -82,7 +84,7 @@ class AuthMailServiceTest {
         void fail() {
             when(repositoryChain.isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE)).thenReturn(false);
 
-            boolean valid = authMailService.validateVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
+            boolean valid = verificationMailService.validateVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
 
             verify(repositoryChain).isValidVerificationCode(DUMMY_EMAIL_VALUE_1, TEST_VERIFICATION_CODE);
             verify(repositoryChain, never()).markVerificationStatus(eq(DUMMY_EMAIL_VALUE_1), any(), any());

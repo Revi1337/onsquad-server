@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.infrastructure.repository;
+package revi1337.onsquad.auth.verification.infrastructure;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -12,17 +12,17 @@ import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshot;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshots;
+import revi1337.onsquad.auth.verification.domain.VerificationState;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
-import revi1337.onsquad.member.domain.model.VerificationSnapshot;
-import revi1337.onsquad.member.domain.model.VerificationSnapshots;
-import revi1337.onsquad.member.domain.model.VerificationState;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
-import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
 
 @RequiredArgsConstructor
 @Order(2)
-@Repository("expiringMapCodeRepository")
+@Repository
 public class VerificationCodeExpiringMapRepository implements VerificationCodeRepository {
 
     private static final int MAX_CACHE_SIZE = 10_000;

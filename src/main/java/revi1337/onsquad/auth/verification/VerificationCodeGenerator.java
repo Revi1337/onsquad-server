@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.application;
+package revi1337.onsquad.auth.verification;
 
 import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.beans.factory.annotation.Value;

@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeEmailSender;
 import revi1337.onsquad.infrastructure.mail.EmailException;
 
 @ExtendWith(MockitoExtension.class)

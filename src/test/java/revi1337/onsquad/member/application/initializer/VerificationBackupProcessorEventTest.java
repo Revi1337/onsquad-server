@@ -19,12 +19,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.member.infrastructure.repository.VerificationCodeExpiringMapRepository;
+import revi1337.onsquad.auth.verification.VerificationBackupProcessor;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeExpiringMapRepository;
 
-@ContextConfiguration(classes = {VerificationCacheLifeCycleManager.class, VerificationCodeExpiringMapRepository.class})
+@ContextConfiguration(classes = {VerificationBackupProcessor.class, VerificationCodeExpiringMapRepository.class})
 @ImportAutoConfiguration(JacksonAutoConfiguration.class)
 @ExtendWith(SpringExtension.class)
-class VerificationCacheLifeCycleManagerEventTest {
+class VerificationBackupProcessorEventTest {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -33,7 +34,7 @@ class VerificationCacheLifeCycleManagerEventTest {
     private ApplicationEventPublisher eventPublisher;
 
     @SpyBean
-    private VerificationCacheLifeCycleManager lifeCycleManager;
+    private VerificationBackupProcessor lifeCycleManager;
 
     @Test
     @DisplayName("스프링이 뜰 때, restore 가 실행되면 성공한다.")

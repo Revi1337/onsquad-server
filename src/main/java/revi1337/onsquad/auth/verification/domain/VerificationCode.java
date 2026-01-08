@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.domain.model;
+package revi1337.onsquad.auth.verification.domain;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

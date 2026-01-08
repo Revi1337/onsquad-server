@@ -33,14 +33,15 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import revi1337.onsquad.member.domain.model.VerificationSnapshots;
-import revi1337.onsquad.member.domain.model.VerificationState;
-import revi1337.onsquad.member.infrastructure.repository.VerificationCodeExpiringMapRepository;
+import revi1337.onsquad.auth.verification.VerificationBackupProcessor;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshots;
+import revi1337.onsquad.auth.verification.domain.VerificationState;
+import revi1337.onsquad.auth.verification.infrastructure.VerificationCodeExpiringMapRepository;
 
-@ContextConfiguration(classes = {VerificationCacheLifeCycleManager.class, VerificationCodeExpiringMapRepository.class})
+@ContextConfiguration(classes = {VerificationBackupProcessor.class, VerificationCodeExpiringMapRepository.class})
 @ImportAutoConfiguration(JacksonAutoConfiguration.class)
 @ExtendWith(SpringExtension.class)
-class VerificationCacheLifeCycleManagerMethodTest {
+class VerificationBackupProcessorMethodTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -49,7 +50,7 @@ class VerificationCacheLifeCycleManagerMethodTest {
     private VerificationCodeExpiringMapRepository verificationCodeExpiringMapRepository;
 
     @Autowired
-    private VerificationCacheLifeCycleManager lifeCycleManager;
+    private VerificationBackupProcessor lifeCycleManager;
 
     @Autowired
     private ApplicationContext applicationContext;

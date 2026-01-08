@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.auth.verification.VerificationBackupProcessor;
 import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.category.domain.repository.CategoryJpaRepository;
@@ -21,7 +22,6 @@ import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator;
 import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
-import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 
 @TestInstance(Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
@@ -35,7 +35,7 @@ public abstract class ApplicationLayerWithTestContainerSupport extends TestConta
     protected RecycleBinLifeCycleManager recycleBinLifeCycleManager;
 
     @MockBean
-    protected VerificationCacheLifeCycleManager verificationCacheLifeCycleManager;
+    protected VerificationBackupProcessor verificationBackupProcessor;
 
     @MockBean
     protected ThrottlingAspect throttlingAspect;

@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import revi1337.onsquad.auth.verification.VerificationCodeGenerator;
 
 @TestPropertySource(properties = "spring.mail.code-seed=abcdefghijklmnop")
 @ContextConfiguration(classes = VerificationCodeGenerator.class)

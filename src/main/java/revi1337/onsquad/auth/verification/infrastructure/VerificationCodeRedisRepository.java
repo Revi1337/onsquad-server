@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.infrastructure.repository;
+package revi1337.onsquad.auth.verification.infrastructure;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -9,15 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.infrastructure.redis.RedisSafeExecutor;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
-import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
 
 @RequiredArgsConstructor
 @Order(1)
-@Repository("redisCodeRepository")
+@Repository
 public class VerificationCodeRedisRepository implements VerificationCodeRepository {
 
     private final StringRedisTemplate stringRedisTemplate;

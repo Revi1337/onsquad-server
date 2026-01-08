@@ -39,6 +39,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.web.multipart.MultipartFile;
+import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.application.file.FileStorageManager;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
@@ -52,7 +53,6 @@ import revi1337.onsquad.member.domain.entity.vo.Nickname;
 import revi1337.onsquad.member.domain.entity.vo.Password;
 import revi1337.onsquad.member.domain.event.MemberDeleted;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
-import revi1337.onsquad.member.domain.repository.VerificationCodeRepository;
 import revi1337.onsquad.member.error.MemberBusinessException;
 import revi1337.onsquad.member.error.MemberBusinessException.WrongPassword;
 
@@ -143,7 +143,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
         void updateMemberTest1() {
             Long DUMMY_MEMBER_ID = 1L;
 
-            assertThatThrownBy(() -> memberCommandService.updateMember(DUMMY_MEMBER_ID, any()))
+            assertThatThrownBy(() -> memberCommandService.updateProfile(DUMMY_MEMBER_ID, any()))
                     .isExactlyInstanceOf(MemberBusinessException.NotFound.class);
         }
 
@@ -160,7 +160,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
                     KWANGWON_ADDRESS_DETAIL_VALUE
             );
 
-            memberCommandService.updateMember(REVI.getId(), UPDATE_DTO);
+            memberCommandService.updateProfile(REVI.getId(), UPDATE_DTO);
 
             assertAll(() -> {
                 verify(memberRepository, times(1)).saveAndFlush(REVI);

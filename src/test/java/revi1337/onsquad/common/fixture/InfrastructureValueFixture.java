@@ -11,13 +11,13 @@ import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_EMAIL_VAL
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import revi1337.onsquad.auth.verification.domain.VerificationCode;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshot;
+import revi1337.onsquad.auth.verification.domain.VerificationSnapshots;
+import revi1337.onsquad.auth.verification.domain.VerificationState;
+import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
-import revi1337.onsquad.member.domain.model.VerificationCode;
-import revi1337.onsquad.member.domain.model.VerificationSnapshot;
-import revi1337.onsquad.member.domain.model.VerificationSnapshots;
-import revi1337.onsquad.member.domain.model.VerificationState;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
 
 public abstract class InfrastructureValueFixture {
 

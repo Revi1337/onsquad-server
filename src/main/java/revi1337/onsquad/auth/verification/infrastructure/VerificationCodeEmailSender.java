@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.infrastructure.mail;
+package revi1337.onsquad.auth.verification.infrastructure;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -11,10 +11,10 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.auth.verification.domain.VerificationCode;
 import revi1337.onsquad.common.application.mail.EmailContent;
 import revi1337.onsquad.common.application.mail.EmailSender;
 import revi1337.onsquad.infrastructure.mail.EmailException;
-import revi1337.onsquad.member.domain.model.VerificationCode;
 
 @Slf4j
 @Component

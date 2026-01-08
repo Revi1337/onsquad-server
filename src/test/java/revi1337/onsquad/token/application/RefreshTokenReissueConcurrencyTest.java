@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.testcontainers.DockerClientFactory;
+import revi1337.onsquad.auth.verification.VerificationBackupProcessor;
 import revi1337.onsquad.common.TestContainerSupport;
 import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
@@ -29,7 +30,6 @@ import revi1337.onsquad.common.fixture.MemberFixture;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator;
 import revi1337.onsquad.infrastructure.recyclebin.RecycleBinLifeCycleManager;
 import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
-import revi1337.onsquad.member.application.initializer.VerificationCacheLifeCycleManager;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
@@ -40,7 +40,7 @@ import revi1337.onsquad.token.infrastructure.repository.ExpiringMapTokenReposito
 
 @MockBean({
         RecycleBinLifeCycleManager.class,
-        VerificationCacheLifeCycleManager.class,
+        VerificationBackupProcessor.class,
         ThrottlingAspect.class,
         RedisCacheAspect.class,
         CloudFrontCacheInvalidator.class

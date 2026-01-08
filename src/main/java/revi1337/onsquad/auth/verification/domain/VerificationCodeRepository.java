@@ -1,7 +1,6 @@
-package revi1337.onsquad.member.domain.repository;
+package revi1337.onsquad.auth.verification.domain;
 
 import java.time.Duration;
-import revi1337.onsquad.member.domain.model.VerificationStatus;
 
 public interface VerificationCodeRepository {
 

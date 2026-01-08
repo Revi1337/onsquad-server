@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.domain.model;
+package revi1337.onsquad.auth.verification.domain;
 
 public record VerificationSnapshot(
         String key,
