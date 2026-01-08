@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.squad.application.SquadAccessor;
-import revi1337.onsquad.squad.application.SquadCommandService;
+import revi1337.onsquad.squad.application.SquadContextHandler;
 import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
@@ -18,7 +18,7 @@ public class SquadMemberCommandService {
 
     private final SquadAccessor squadAccessor;
     private final SquadMemberAccessor squadMemberAccessor;
-    private final SquadCommandService squadCommandService;
+    private final SquadContextHandler squadContextHandler;
     private final SquadMemberRepository squadMemberRepository;
 
     public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) { // TODO 동시성 이슈 해결 필요.
@@ -34,7 +34,7 @@ public class SquadMemberCommandService {
         Squad squad = squadAccessor.getByIdForUpdate(squadId);
         SquadMember currentMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         if (SquadPolicy.isLastMemberRemaining(squad)) {
-            squadCommandService.deleteSquad(memberId, squadId);
+            squadContextHandler.disposeContext(squadId);
             return;
         }
         SquadMemberPolicy.ensureLeaderCannotLeaveWhileMembersRemain(currentMember);
