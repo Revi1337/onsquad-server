@@ -20,6 +20,7 @@ public class JpaConfig {
             pageableResolver.setPageParameterName("page");
             pageableResolver.setSizeParameterName("size");
             pageableResolver.setOneIndexedParameters(true);
+            pageableResolver.setMaxPageSize(100);
         };
     }
 
