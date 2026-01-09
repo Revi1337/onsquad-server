@@ -41,6 +41,8 @@ public class SquadCommentQueryService {
     }
 
     public PageResponse<SquadCommentWithStateResponse> fetchMoreChildren(Long memberId, Long squadId, Long parentId, Pageable pageable) {
+        SquadComment comment = squadCommentAccessor.getById(parentId);
+        SquadCommentPolicy.ensureMatchSquad(comment, squadId);
         Optional<SquadMember> meOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
         Page<SquadComment> replies = squadCommentAccessor.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
         if (meOpt.isPresent()) {

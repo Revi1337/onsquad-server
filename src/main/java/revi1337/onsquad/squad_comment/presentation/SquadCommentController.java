@@ -64,7 +64,7 @@ public class SquadCommentController {
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @GetMapping("/squads/{squadId}/replies/{parentId}")
+    @GetMapping("/squads/{squadId}/comments/{parentId}/replies")
     public ResponseEntity<RestResponse<PageResponse<SquadCommentWithStateResponse>>> fetchMoreChildren(
             @PathVariable Long squadId,
             @PathVariable Long parentId,
