@@ -1,17 +1,15 @@
 package revi1337.onsquad.squad_comment.application;
 
 import java.util.List;
-import org.springframework.stereotype.Component;
+import revi1337.onsquad.squad_comment.application.policy.DefaultCommentMaskPolicy;
+import revi1337.onsquad.squad_comment.application.strategy.StackBasedDfsCommentSanitizer;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
-@Component
+@Deprecated
 public class CommentSanitizer {
 
-    private final CommentSanitizeStrategy sanitizeStrategy;
-
-    public CommentSanitizer(CommentSanitizeStrategy stackBasedDfsCommentSanitizer) {
-        this.sanitizeStrategy = stackBasedDfsCommentSanitizer;
-    }
+    private final CommentMaskPolicy maskPolicy = new DefaultCommentMaskPolicy();
+    private final CommentSanitizeStrategy sanitizeStrategy = new StackBasedDfsCommentSanitizer(maskPolicy);
 
     public List<SquadCommentResult> sanitize(List<SquadCommentResult> comments) {
         return sanitizeStrategy.sanitize(comments);

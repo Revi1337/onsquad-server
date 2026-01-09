@@ -1,10 +1,9 @@
 package revi1337.onsquad.squad_comment.application.policy;
 
-import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.application.CommentMaskPolicy;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
-@Component
+@Deprecated
 public class DefaultCommentMaskPolicy implements CommentMaskPolicy {
 
     @Override

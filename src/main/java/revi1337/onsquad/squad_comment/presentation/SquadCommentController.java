@@ -3,7 +3,6 @@ package revi1337.onsquad.squad_comment.presentation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.squad_comment.application.SquadCommentCommandService;
 import revi1337.onsquad.squad_comment.application.SquadCommentQueryService;
-import revi1337.onsquad.squad_comment.application.response.SquadCommentResponse;
+import revi1337.onsquad.squad_comment.application.response.SquadCommentWithStateResponse;
 import revi1337.onsquad.squad_comment.presentation.request.CommentCreateRequest;
 
 @RequiredArgsConstructor
@@ -56,25 +54,24 @@ public class SquadCommentController {
     }
 
     @GetMapping("/squads/{squadId}/comments")
-    public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchInitialComments(
+    public ResponseEntity<RestResponse<List<SquadCommentWithStateResponse>>> fetchInitialComments(
             @PathVariable Long squadId,
             @PageableDefault Pageable pageable,
-            @RequestParam(required = false, defaultValue = "5") @Range(min = 0, max = 100) int childSize,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadCommentResponse> response = squadCommentQueryService.fetchInitialComments(currentMember.id(), squadId, pageable, childSize);
+        List<SquadCommentWithStateResponse> response = squadCommentQueryService.fetchInitialComments(currentMember.id(), squadId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
     @GetMapping("/squads/{squadId}/replies/{parentId}")
-    public ResponseEntity<RestResponse<List<SquadCommentResponse>>> fetchMoreChildren(
+    public ResponseEntity<RestResponse<List<SquadCommentWithStateResponse>>> fetchMoreChildren(
             @PathVariable Long squadId,
             @PathVariable Long parentId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<SquadCommentResponse> response = squadCommentQueryService.fetchMoreChildren(currentMember.id(), squadId, parentId, pageable);
+        List<SquadCommentWithStateResponse> response = squadCommentQueryService.fetchMoreChildren(currentMember.id(), squadId, parentId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

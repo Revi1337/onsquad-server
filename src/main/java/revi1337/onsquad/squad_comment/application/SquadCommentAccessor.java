@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
-import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 import revi1337.onsquad.squad_comment.error.SquadCommentBusinessException;
 import revi1337.onsquad.squad_comment.error.SquadCommentErrorCode;
 
@@ -26,15 +25,11 @@ public class SquadCommentAccessor {
                 .orElseThrow(() -> new SquadCommentBusinessException.NotFound(SquadCommentErrorCode.NOTFOUND_COMMENT));
     }
 
-    public List<SquadCommentResult> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
+    public List<SquadComment> fetchAllParentsBySquadId(Long squadId, Pageable pageable) {
         return squadCommentRepository.fetchAllParentsBySquadId(squadId, pageable);
     }
 
-    public List<SquadCommentResult> fetchAllChildrenByParentIdIn(List<Long> parentIds, int childSize) {
-        return squadCommentRepository.fetchAllChildrenByParentIdIn(parentIds, childSize);
-    }
-
-    public List<SquadCommentResult> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
+    public List<SquadComment> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable) {
         return squadCommentRepository.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
     }
 }

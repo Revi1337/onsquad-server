@@ -3,13 +3,12 @@ package revi1337.onsquad.squad_comment.application.strategy;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.application.CommentMaskPolicy;
 import revi1337.onsquad.squad_comment.application.CommentSanitizeStrategy;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
+@Deprecated
 @RequiredArgsConstructor
-@Component
 public class RecursiveCommentSanitizer implements CommentSanitizeStrategy {
 
     private final CommentMaskPolicy maskPolicy;

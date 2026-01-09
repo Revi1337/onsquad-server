@@ -56,6 +56,7 @@ public class SquadCommentCommandService {
     public void delete(Long memberId, Long squadId, Long commentId) {
         SquadComment comment = squadCommentAccessor.getById(commentId);
         SquadCommentPolicy.ensureMatchSquad(comment, squadId);
+        SquadCommentPolicy.ensureCommentIsAlive(comment);
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadCommentPolicy.ensureDeletable(me, comment);
         comment.delete();

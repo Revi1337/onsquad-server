@@ -15,6 +15,7 @@ import revi1337.onsquad.member.domain.entity.vo.Nickname;
 import revi1337.onsquad.member.domain.result.SimpleMemberResult;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
+@Deprecated
 @RequiredArgsConstructor
 @Repository
 public class SquadCommentJdbcRepository {

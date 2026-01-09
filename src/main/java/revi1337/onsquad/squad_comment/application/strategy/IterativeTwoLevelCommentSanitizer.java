@@ -3,7 +3,6 @@ package revi1337.onsquad.squad_comment.application.strategy;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.application.CommentMaskPolicy;
 import revi1337.onsquad.squad_comment.application.CommentSanitizeStrategy;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
@@ -21,8 +20,8 @@ import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
  * {@code StackBasedDfsCommentSanitizer} which are designed for arbitrary tree depth. This implementation may require significant refactoring to support deeper
  * nesting levels iteratively.
  */
+@Deprecated
 @RequiredArgsConstructor
-@Component
 public class IterativeTwoLevelCommentSanitizer implements CommentSanitizeStrategy {
 
     private final CommentMaskPolicy maskPolicy;

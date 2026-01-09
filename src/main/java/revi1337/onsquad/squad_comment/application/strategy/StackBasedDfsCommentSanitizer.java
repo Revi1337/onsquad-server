@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.application.CommentMaskPolicy;
 import revi1337.onsquad.squad_comment.application.CommentSanitizeStrategy;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
@@ -22,8 +21,8 @@ import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
  * The iterative approach with an explicit stack provides the same traversal order as recursive DFS but is safer for production environments where comment depth
  * is unbounded. This ensures reliable processing regardless of thread nesting depth while applying the masking policy to sanitize comments.
  */
+@Deprecated
 @RequiredArgsConstructor
-@Component
 public class StackBasedDfsCommentSanitizer implements CommentSanitizeStrategy {
 
     private final CommentMaskPolicy maskPolicy;

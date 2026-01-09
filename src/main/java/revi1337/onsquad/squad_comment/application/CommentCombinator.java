@@ -6,10 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
 
-@Component
+@Deprecated
 public class CommentCombinator {
 
     public List<SquadCommentResult> combine(List<SquadCommentResult> parents, List<SquadCommentResult> children) {
