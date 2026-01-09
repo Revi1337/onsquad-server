@@ -1,11 +1,12 @@
 package revi1337.onsquad.squad_comment.application;
 
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
@@ -27,9 +28,9 @@ public class SquadCommentQueryService {
     private final SquadMemberAccessor squadMemberAccessor;
     private final SquadCommentAccessor squadCommentAccessor;
 
-    public List<SquadCommentWithStateResponse> fetchInitialComments(Long memberId, Long squadId, Pageable pageable) {
+    public PageResponse<SquadCommentWithStateResponse> fetchInitialComments(Long memberId, Long squadId, Pageable pageable) {
         Optional<SquadMember> meOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
-        List<SquadComment> comments = squadCommentAccessor.fetchAllParentsBySquadId(squadId, pageable);
+        Page<SquadComment> comments = squadCommentAccessor.fetchAllParentsBySquadId(squadId, pageable);
         if (meOpt.isPresent()) {
             return mapToResponsesAsSquadMember(meOpt.get(), comments);
         }
@@ -39,9 +40,9 @@ public class SquadCommentQueryService {
         return mapToResponsesAsCrewMember(me, comments);
     }
 
-    public List<SquadCommentWithStateResponse> fetchMoreChildren(Long memberId, Long squadId, Long parentId, Pageable pageable) {
+    public PageResponse<SquadCommentWithStateResponse> fetchMoreChildren(Long memberId, Long squadId, Long parentId, Pageable pageable) {
         Optional<SquadMember> meOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
-        List<SquadComment> replies = squadCommentAccessor.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
+        Page<SquadComment> replies = squadCommentAccessor.fetchAllChildrenBySquadIdAndParentId(squadId, parentId, pageable);
         if (meOpt.isPresent()) {
             return mapToResponsesAsSquadMember(meOpt.get(), replies);
         }
@@ -51,21 +52,21 @@ public class SquadCommentQueryService {
         return mapToResponsesAsCrewMember(me, replies);
     }
 
-    private List<SquadCommentWithStateResponse> mapToResponsesAsSquadMember(SquadMember me, List<SquadComment> comments) {
-        return comments.stream()
-                .map(comment -> {
-                    boolean canDelete = SquadCommentPolicy.canDeleteComment(me, comment);
-                    return new SquadCommentWithStateResponse(canDelete, SquadCommentResponse.from(comment));
-                })
-                .toList();
+    private PageResponse<SquadCommentWithStateResponse> mapToResponsesAsSquadMember(SquadMember me, Page<SquadComment> comments) {
+        Page<SquadCommentWithStateResponse> response = comments.map(comment -> {
+            boolean canDelete = SquadCommentPolicy.canDeleteComment(me, comment);
+            return new SquadCommentWithStateResponse(canDelete, SquadCommentResponse.from(comment));
+        });
+
+        return PageResponse.from(response);
     }
 
-    private List<SquadCommentWithStateResponse> mapToResponsesAsCrewMember(CrewMember me, List<SquadComment> comments) {
-        return comments.stream()
-                .map(comment -> {
-                    boolean canDelete = false;
-                    return new SquadCommentWithStateResponse(canDelete, SquadCommentResponse.from(comment));
-                })
-                .toList();
+    private PageResponse<SquadCommentWithStateResponse> mapToResponsesAsCrewMember(CrewMember me, Page<SquadComment> comments) {
+        Page<SquadCommentWithStateResponse> response = comments.map(comment -> {
+            boolean canDelete = false;
+            return new SquadCommentWithStateResponse(canDelete, SquadCommentResponse.from(comment));
+        });
+
+        return PageResponse.from(response);
     }
 }

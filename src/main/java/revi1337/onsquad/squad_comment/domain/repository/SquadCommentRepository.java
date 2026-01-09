@@ -2,6 +2,7 @@ package revi1337.onsquad.squad_comment.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 
@@ -13,9 +14,9 @@ public interface SquadCommentRepository {
 
     Optional<SquadComment> findWithSquadById(Long id);
 
-    List<SquadComment> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
+    Page<SquadComment> fetchAllParentsBySquadId(Long squadId, Pageable pageable);
 
-    List<SquadComment> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable);
+    Page<SquadComment> fetchAllChildrenBySquadIdAndParentId(Long squadId, Long parentId, Pageable pageable);
 
     int deleteByMemberId(Long memberId);
 
