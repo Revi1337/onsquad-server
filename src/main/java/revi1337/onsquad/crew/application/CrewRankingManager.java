@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.util.CrewRankKeyMapper;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
+import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
 import revi1337.onsquad.infrastructure.redis.RedisScanUtils;
 
 @Slf4j
@@ -101,7 +102,7 @@ public class CrewRankingManager {
 
     public void evictCrewsLeaderboard(List<Long> crewIds) {
         List<String> namedSortedSets = CrewRankKeyMapper.toCrewRankKeys(crewIds);
-        stringRedisTemplate.unlink(namedSortedSets);
+        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, namedSortedSets);
     }
 
     private double getCurrentWeight(String namedSortedSet, String specificName) {

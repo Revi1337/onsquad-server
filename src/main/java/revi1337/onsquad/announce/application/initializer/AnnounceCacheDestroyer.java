@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
+import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class AnnounceCacheDestroyer {
     private void cleanAnnounceCaches(ContextClosedEvent event) {
         if (event.getApplicationContext().getParent() == null) {
             log.debug(DESTROY_KEY_START_LOG);
-            RedisCacheCleaner.cleanup(stringRedisTemplate, DESTROY_KEY_PATTERN);
+            RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, DESTROY_KEY_PATTERN);
         }
     }
 }

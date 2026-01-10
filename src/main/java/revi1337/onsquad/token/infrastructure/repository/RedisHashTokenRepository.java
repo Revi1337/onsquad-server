@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.infrastructure.redis.RedisCacheCleaner;
+import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 import revi1337.onsquad.token.domain.repository.TokenRepository;
 
@@ -51,12 +51,12 @@ public class RedisHashTokenRepository implements TokenRepository {
     @Override
     public void deleteBy(Long memberId) {
         String cacheName = getKey(PREFIX + memberId);
-        fastStringRedisTemplate.delete(cacheName);
+        RedisCacheEvictor.scanKeysAndUnlink(fastStringRedisTemplate, cacheName);
     }
 
     @Override
     public void deleteAll() {
-        RedisCacheCleaner.cleanup(fastStringRedisTemplate, getKey(Sign.ASTERISK));
+        RedisCacheEvictor.scanKeysAndUnlink(fastStringRedisTemplate, getKey(Sign.ASTERISK));
     }
 
     private String getKey(String identifier) {

@@ -15,7 +15,7 @@ import revi1337.onsquad.announce.application.AnnounceCacheEvictor;
 import revi1337.onsquad.announce.domain.result.AnnounceReference;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.infrastructure.redis.RedisScanUtils;
+import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
 
 /**
  * Redis-specific implementation of {@link AnnounceCacheEvictor}. This implementation optimizes eviction performance for distributed environments by:
@@ -58,7 +58,7 @@ public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
 
         String key = String.join(Sign.COLON, CREW_ANNOUNCE, "crew", crewId.toString(), "announce", announceId.toString());
         String computedKey = String.format(CacheFormat.SIMPLE, key);
-        stringRedisTemplate.delete(computedKey);
+        RedisCacheEvictor.unlinkKey(stringRedisTemplate, computedKey);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
             computedKeys.add(computedKey);
         }
 
-        stringRedisTemplate.unlink(computedKeys);
+        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
     }
 
     @Override
@@ -90,8 +90,7 @@ public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
         String key = String.join(Sign.COLON, CREW_ANNOUNCE, "crew", crewId.toString(), "announce", Sign.ASTERISK);
         String pattern = String.format(CacheFormat.SIMPLE, key);
 
-        List<String> computedKeys = RedisScanUtils.scanKeys(stringRedisTemplate, pattern);
-        stringRedisTemplate.unlink(computedKeys);
+        RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, pattern);
     }
 
     @Override
@@ -106,8 +105,7 @@ public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
                 .map(key -> String.format(CacheFormat.SIMPLE, key))
                 .toList();
 
-        List<String> computedKeys = RedisScanUtils.scanKeys(stringRedisTemplate, patterns);
-        stringRedisTemplate.unlink(computedKeys);
+        RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, patterns);
     }
 
     @Override
@@ -122,6 +120,6 @@ public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
                 .map(key -> String.format(CacheFormat.SIMPLE, key))
                 .toList();
 
-        stringRedisTemplate.unlink(computedKeys);
+        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
     }
 }
