@@ -4,13 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.RedisStringCommands.SetOption;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
@@ -23,6 +26,7 @@ import revi1337.onsquad.squad_category.domain.result.SquadCategoryResult;
 public class SquadCategoryCacheService {
 
     private static final String SQUAD_CATEGORY_KEY_FORMAT = "squad:%s:categories";
+    private static final Duration SQUAD_CATEGORY_TTL = Duration.ofHours(6);
 
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper defaultObjectMapper;
@@ -69,20 +73,22 @@ public class SquadCategoryCacheService {
         }
     }
 
-    private List<SquadCategoryResult> processCacheMiss(List<Long> missIds) {
-        SquadCategories missedCategories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(missIds);
+    private List<SquadCategoryResult> processCacheMiss(List<Long> missSquadIds) {
+        SquadCategories missedCategories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(missSquadIds);
         Map<Long, SquadCategories> splitGroup = missedCategories.splitBySquad();
+        stringRedisTemplate.executePipelined((RedisCallback<Void>) connection -> {
+            missSquadIds.forEach(missSquadId -> {
+                String key = generateCacheKey(missSquadId);
+                String value = serialize(splitGroup.getOrDefault(missSquadId, new SquadCategories(new ArrayList<>())));
+                byte[] serializedKey = stringRedisTemplate.getStringSerializer().serialize(key);
+                byte[] serializedValue = stringRedisTemplate.getStringSerializer().serialize(value);
 
-        Map<String, String> cacheData = new HashMap<>();
-        for (Long missSquadId : missIds) {
-            String key = generateCacheKey(missSquadId);
-            SquadCategories wrapper = splitGroup.getOrDefault(missSquadId, new SquadCategories(new ArrayList<>()));
-            cacheData.put(key, serialize(wrapper));
-        }
+                connection.stringCommands().set(serializedKey, serializedValue, Expiration.from(SQUAD_CATEGORY_TTL), SetOption.upsert());
+            });
+            return null;
+        });
 
-        stringRedisTemplate.opsForValue().multiSet(cacheData);
         return missedCategories.values();
-
     }
 
     private String serialize(SquadCategories categories) {
