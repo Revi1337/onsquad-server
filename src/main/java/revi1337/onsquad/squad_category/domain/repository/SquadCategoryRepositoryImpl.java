@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.Category;
-import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
+import revi1337.onsquad.squad_category.domain.result.SquadCategoryResult;
 
 @RequiredArgsConstructor
 @Repository
@@ -19,7 +19,7 @@ public class SquadCategoryRepositoryImpl implements SquadCategoryRepository {
     }
 
     @Override
-    public List<SquadCategory> fetchCategoriesBySquadIdIn(List<Long> squadIds) {
+    public List<SquadCategoryResult> fetchCategoriesBySquadIdIn(List<Long> squadIds) {
         return squadCategoryJpaRepository.fetchCategoriesBySquadIdIn(squadIds);
     }
 
