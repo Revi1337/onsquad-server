@@ -38,4 +38,9 @@ public class RecycleBinRepository {
         String sql = "SELECT path FROM recycle_bin";
         return jdbcTemplate.queryForList(sql, new MapSqlParameterSource(), String.class);
     }
+
+    public void deleteAllInBatch() {
+        jdbcTemplate.getJdbcOperations().execute("DELETE FROM recycle_bin");
+        jdbcTemplate.getJdbcOperations().execute("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'recycle_bin'");
+    }
 }

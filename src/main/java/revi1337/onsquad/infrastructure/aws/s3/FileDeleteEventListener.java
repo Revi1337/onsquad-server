@@ -20,9 +20,9 @@ public class FileDeleteEventListener {
     private final RecycleBinRepository recycleBinRepository;
     private final CloudFrontProperties cloudFrontProperties;
 
-    @Async("fileDeleteEventExecutor")
+    @Async("fileDeletionRecorder")
     @TransactionalEventListener(value = FileDeleteEvent.class, fallbackExecution = true)
-    public void onDeleteFiles(FileDeleteEvent event) {
+    public void recordFileDeletion(FileDeleteEvent event) {
         if (CollectionUtils.isEmpty(event.getFileUrls())) {
             return;
         }
