@@ -2,13 +2,15 @@ package revi1337.onsquad.infrastructure.aws.s3;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FilePaths {
 
-    private final List<String> filePaths;
+    private final List<FilePath> filePaths;
 
-    public FilePaths(List<String> filePaths) {
+    public FilePaths(List<FilePath> filePaths) {
         this.filePaths = Collections.unmodifiableList(filePaths);
     }
 
@@ -27,13 +29,34 @@ public class FilePaths {
     public List<FilePaths> partition(int size) {
         List<FilePaths> partitions = new ArrayList<>();
         for (int i = 0; i < filePaths.size(); i += size) {
-            List<String> partition = filePaths.subList(i, Math.min(i + size, filePaths.size()));
+            List<FilePath> partition = filePaths.subList(i, Math.min(i + size, filePaths.size()));
             partitions.add(new FilePaths(partition));
         }
         return partitions;
     }
 
-    public List<String> values() {
+    public FilePaths filterByPaths(List<String> paths) {
+        Set<String> pathSet = new HashSet<>(paths);
+        List<FilePath> filtered = filePaths.stream()
+                .filter(fp -> pathSet.contains(fp.getPath()))
+                .toList();
+
+        return new FilePaths(filtered);
+    }
+
+    public List<Long> getFileIds() {
+        return filePaths.stream()
+                .map(FilePath::getId)
+                .toList();
+    }
+
+    public List<String> pathValues() {
+        return filePaths.stream()
+                .map(FilePath::getPath)
+                .toList();
+    }
+
+    public List<FilePath> values() {
         return filePaths;
     }
 }

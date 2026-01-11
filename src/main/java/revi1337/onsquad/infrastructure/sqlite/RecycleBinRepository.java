@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.infrastructure.aws.s3.FilePath;
 
 @Repository
 public class RecycleBinRepository {
@@ -34,9 +35,20 @@ public class RecycleBinRepository {
         jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
-    public List<String> findAll() {
-        String sql = "SELECT path FROM recycle_bin";
-        return jdbcTemplate.queryForList(sql, new MapSqlParameterSource(), String.class);
+    public List<FilePath> findAll() {
+        String sql = "SELECT id, path FROM recycle_bin";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> new FilePath(rs.getLong("id"), rs.getString("path"))
+        );
+    }
+
+    public int deleteByIdIn(List<Long> ids) {
+        String sql = "DELETE FROM recycle_bin WHERE id IN (:ids)";
+        SqlParameterSource param = new MapSqlParameterSource("ids", ids);
+
+        return jdbcTemplate.update(sql, param);
     }
 
     public void deleteAllInBatch() {
