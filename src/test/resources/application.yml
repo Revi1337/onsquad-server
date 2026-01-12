@@ -125,6 +125,11 @@ onsquad:
           - email: https://www.googleapis.com/auth/userinfo.email
           - profile: https://www.googleapis.com/auth/userinfo.profile
 
+  discord:
+    webhook:
+      alert:
+        s3: https://discord.com/api/webhooks/web-hook-url
+
   aws:
     cloud-front:
       base-domain: https://cloudfront.net
