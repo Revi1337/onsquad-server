@@ -10,14 +10,14 @@ import org.springframework.util.CollectionUtils;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontProperties;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.infrastructure.aws.s3.util.UrlUtils;
-import revi1337.onsquad.infrastructure.sqlite.RecycleBinRepository;
+import revi1337.onsquad.infrastructure.sqlite.ImageRecycleBinRepository;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class FileDeleteEventListener {
 
-    private final RecycleBinRepository recycleBinRepository;
+    private final ImageRecycleBinRepository imageRecyclebinRepository;
     private final CloudFrontProperties cloudFrontProperties;
 
     @Async("fileDeletionRecorder")
@@ -27,7 +27,7 @@ public class FileDeleteEventListener {
             return;
         }
         List<String> filePaths = extractPaths(event.getFileUrls());
-        recycleBinRepository.insertBatch(filePaths);
+        imageRecyclebinRepository.insertBatch(filePaths);
         log.debug("{} file paths have been stored in SQLite for batch deletion", filePaths.size());
     }
 

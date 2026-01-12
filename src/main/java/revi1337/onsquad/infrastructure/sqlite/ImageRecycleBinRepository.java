@@ -10,16 +10,16 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.infrastructure.aws.s3.FilePath;
 
 @Repository
-public class RecycleBinRepository {
+public class ImageRecycleBinRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public RecycleBinRepository(@Qualifier("sqliteDataSource") DataSource dataSource) {
+    public ImageRecycleBinRepository(@Qualifier("sqliteDataSource") DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     public void insert(String path) {
-        String sql = "INSERT INTO recycle_bin (path) VALUES (:path)";
+        String sql = "INSERT INTO image_recycle_bin (path) VALUES (:path)";
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
                 .addValue("path", path);
 
@@ -27,7 +27,7 @@ public class RecycleBinRepository {
     }
 
     public void insertBatch(List<String> paths) {
-        String sql = "INSERT INTO recycle_bin (path) VALUES (:path)";
+        String sql = "INSERT INTO image_recycle_bin (path) VALUES (:path)";
         SqlParameterSource[] batchArgs = paths.stream()
                 .map(path -> new MapSqlParameterSource("path", path))
                 .toArray(SqlParameterSource[]::new);
@@ -36,7 +36,7 @@ public class RecycleBinRepository {
     }
 
     public List<FilePath> findAll() {
-        String sql = "SELECT id, path, retry_count FROM recycle_bin";
+        String sql = "SELECT id, path, retry_count FROM image_recycle_bin";
 
         return jdbcTemplate.query(
                 sql,
@@ -49,7 +49,7 @@ public class RecycleBinRepository {
     }
 
     public List<FilePath> findByRetryCountLargerThan(int retryCount) {
-        String sql = "SELECT id, path, retry_count FROM recycle_bin WHERE retry_count >= (:retryCount)";
+        String sql = "SELECT id, path, retry_count FROM image_recycle_bin WHERE retry_count >= (:retryCount)";
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource("retryCount", retryCount);
 
         return jdbcTemplate.query(
@@ -64,21 +64,21 @@ public class RecycleBinRepository {
     }
 
     public int incrementRetryCount(List<Long> ids) {
-        String sql = "UPDATE recycle_bin SET retry_count = retry_count + 1 WHERE id IN (:ids)";
+        String sql = "UPDATE image_recycle_bin SET retry_count = retry_count + 1 WHERE id IN (:ids)";
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource("ids", ids);
 
         return jdbcTemplate.update(sql, sqlParameterSource);
     }
 
     public int deleteByIdIn(List<Long> ids) {
-        String sql = "DELETE FROM recycle_bin WHERE id IN (:ids)";
+        String sql = "DELETE FROM image_recycle_bin WHERE id IN (:ids)";
         SqlParameterSource param = new MapSqlParameterSource("ids", ids);
 
         return jdbcTemplate.update(sql, param);
     }
 
     public void deleteAllInBatch() {
-        jdbcTemplate.getJdbcOperations().execute("DELETE FROM recycle_bin");
-        jdbcTemplate.getJdbcOperations().execute("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'recycle_bin'");
+        jdbcTemplate.getJdbcOperations().execute("DELETE FROM image_recycle_bin");
+        jdbcTemplate.getJdbcOperations().execute("UPDATE SQLITE_SEQUENCE SET seq = 0 WHERE name = 'image_recycle_bin'");
     }
 }

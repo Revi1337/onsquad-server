@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.infrastructure.aws.s3.S3StorageCleaner.DeletedResult;
-import revi1337.onsquad.infrastructure.sqlite.RecycleBinRepository;
+import revi1337.onsquad.infrastructure.sqlite.ImageRecycleBinRepository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -16,13 +16,13 @@ public class S3BatchDeletionScheduler {
 
     public static final int MAX_RETRY_COUNT = 5;
 
-    private final RecycleBinRepository recycleBinRepository;
+    private final ImageRecycleBinRepository imageRecyclebinRepository;
     private final S3StorageCleaner s3StorageCleaner;
     private final S3FailNotificationProvider notificationProvider;
 
     @Scheduled(cron = "${onsquad.aws.s3.delete-batch-cron}")
     public void deleteInBatch() {
-        FilePaths toBeRemove = new FilePaths(recycleBinRepository.findAll());
+        FilePaths toBeRemove = new FilePaths(imageRecyclebinRepository.findAll());
         if (toBeRemove.isEmpty()) {
             return;
         }
@@ -32,17 +32,17 @@ public class S3BatchDeletionScheduler {
         FilePaths failedPaths = getFailedPaths(toBeRemove, deletedResults);
         if (deletedPaths.isNotEmpty()) {
             log.debug("Success Cleanup S3 Objects - Total Objects : {}", deletedPaths.size());
-            recycleBinRepository.deleteByIdIn(deletedPaths.getFileIds());
+            imageRecyclebinRepository.deleteByIdIn(deletedPaths.getFileIds());
         }
         if (failedPaths.isNotEmpty()) {
             log.debug("Fail to Cleanup S3 Objects - Total Objects : {}", failedPaths.size());
-            recycleBinRepository.incrementRetryCount(failedPaths.getFileIds());
-            FilePaths exceedFilePaths = new FilePaths(recycleBinRepository.findByRetryCountLargerThan(MAX_RETRY_COUNT));
+            imageRecyclebinRepository.incrementRetryCount(failedPaths.getFileIds());
+            FilePaths exceedFilePaths = new FilePaths(imageRecyclebinRepository.findByRetryCountLargerThan(MAX_RETRY_COUNT));
             if (exceedFilePaths.isEmpty()) {
                 return;
             }
             notificationProvider.sendExceedRetryAlert(exceedFilePaths.pathValues());
-            recycleBinRepository.deleteByIdIn(exceedFilePaths.getFileIds());
+            imageRecyclebinRepository.deleteByIdIn(exceedFilePaths.getFileIds());
         }
     }
 
