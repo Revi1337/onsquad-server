@@ -17,8 +17,8 @@ public class NotificationThreadPoolConfig {
         executor.setQueueCapacity(1000);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(10);
+        executor.setThreadNamePrefix("notification-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.setThreadNamePrefix("noti-");
         executor.initialize();
         return executor;
     }
