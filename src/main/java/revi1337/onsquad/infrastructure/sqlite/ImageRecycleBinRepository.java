@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.infrastructure.aws.s3.FilePath;
 
 @Repository
 public class ImageRecycleBinRepository {
@@ -35,12 +34,12 @@ public class ImageRecycleBinRepository {
         jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
-    public List<FilePath> findAll() {
+    public List<DeletedImage> findAll() {
         String sql = "SELECT id, path, retry_count FROM image_recycle_bin";
 
         return jdbcTemplate.query(
                 sql,
-                (rs, rowNum) -> new FilePath(
+                (rs, rowNum) -> new DeletedImage(
                         rs.getLong("id"),
                         rs.getString("path"),
                         rs.getInt("retry_count")
@@ -48,14 +47,14 @@ public class ImageRecycleBinRepository {
         );
     }
 
-    public List<FilePath> findByRetryCountLargerThan(int retryCount) {
+    public List<DeletedImage> findByRetryCountLargerThan(int retryCount) {
         String sql = "SELECT id, path, retry_count FROM image_recycle_bin WHERE retry_count >= (:retryCount)";
         SqlParameterSource sqlParameterSource = new MapSqlParameterSource("retryCount", retryCount);
 
         return jdbcTemplate.query(
                 sql,
                 sqlParameterSource,
-                (rs, rowNum) -> new FilePath(
+                (rs, rowNum) -> new DeletedImage(
                         rs.getLong("id"),
                         rs.getString("path"),
                         rs.getInt("retry_count")

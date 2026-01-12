@@ -53,7 +53,7 @@ public class S3FailNotificationProvider {
                 **Manual deletion is required.** Please refer to the attached JSON file for the specific file paths.
                 
                 **S3 Batch Cleanup: Exceed Report:** `{1} Objects Exceeded`
-                """, S3BatchDeletionScheduler.MAX_RETRY_COUNT, paths.size()).translateEscapes();
+                """, S3ImageCleanupProcessor.MAX_RETRY_COUNT, paths.size()).translateEscapes();
 
         return DiscordMessage.builder()
                 .username(NOTIFICATION_PROVIDER_NAME)
@@ -69,7 +69,7 @@ public class S3FailNotificationProvider {
         String description = MessageFormat.format("""
                 Files scheduled for deletion are processed in a daily midnight batch.
                 Any object that fails the deletion process **{0} consecutive times** is classified as 'Exceed' and excluded from the automated system.
-                """, S3BatchDeletionScheduler.MAX_RETRY_COUNT).translateEscapes();
+                """, S3ImageCleanupProcessor.MAX_RETRY_COUNT).translateEscapes();
 
         return List.of(Embed.builder()
                 .color(Embed.COLOR_RED)
