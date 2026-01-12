@@ -8,31 +8,42 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.infrastructure.aws.s3.S3StorageCleaner.DeletedResult;
 import revi1337.onsquad.infrastructure.sqlite.RecycleBinRepository;
+import revi1337.onsquad.notification.infrastructure.s3.S3FailNotificationProvider;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class S3BatchDeletionScheduler {
 
+    public static final int MAX_RETRY_COUNT = 5;
+
     private final RecycleBinRepository recycleBinRepository;
     private final S3StorageCleaner s3StorageCleaner;
+    private final S3FailNotificationProvider notificationProvider;
 
     @Scheduled(cron = "${onsquad.aws.s3.delete-batch-cron}")
     public void deleteInBatch() {
-        FilePaths toRemove = new FilePaths(recycleBinRepository.findAll());
-        if (toRemove.isEmpty()) {
+        FilePaths toBeRemove = new FilePaths(recycleBinRepository.findAll());
+        if (toBeRemove.isEmpty()) {
             return;
         }
-        log.debug("Starting to Cleanup S3 Objects - Total Objects : {}", toRemove.size());
-        List<DeletedResult> deletedResults = getDeletedResults(toRemove);
-        FilePaths deletedPaths = getDeletedPaths(deletedResults, toRemove);
-        FilePaths failedPaths = getFailedPaths(deletedResults, toRemove);
+        log.debug("Starting to Cleanup S3 Objects - Total Objects : {}", toBeRemove.size());
+        List<DeletedResult> deletedResults = getDeletedResults(toBeRemove);
+        FilePaths deletedPaths = getDeletedPaths(toBeRemove, deletedResults);
+        FilePaths failedPaths = getFailedPaths(toBeRemove, deletedResults);
         if (deletedPaths.isNotEmpty()) {
             log.debug("Success Cleanup S3 Objects - Total Objects : {}", deletedPaths.size());
             recycleBinRepository.deleteByIdIn(deletedPaths.getFileIds());
         }
         if (failedPaths.isNotEmpty()) {
             log.debug("Fail to Cleanup S3 Objects - Total Objects : {}", failedPaths.size());
+            recycleBinRepository.incrementRetryCount(failedPaths.getFileIds());
+            FilePaths exceedFilePaths = new FilePaths(recycleBinRepository.findByRetryCountLargerThan(MAX_RETRY_COUNT));
+            if (exceedFilePaths.isEmpty()) {
+                return;
+            }
+            notificationProvider.sendExceedRetryAlert(exceedFilePaths.pathValues());
+            recycleBinRepository.deleteByIdIn(exceedFilePaths.getFileIds());
         }
     }
 
@@ -47,21 +58,21 @@ public class S3BatchDeletionScheduler {
                 .toList();
     }
 
-    private FilePaths getDeletedPaths(List<DeletedResult> deletedResults, FilePaths toRemove) {
-        List<String> allDeleted = deletedResults.stream()
+    private FilePaths getDeletedPaths(FilePaths toBeRemove, List<DeletedResult> deletedResults) {
+        List<String> allDeletedPaths = deletedResults.stream()
                 .map(DeletedResult::deletedPaths)
                 .flatMap(List::stream)
                 .toList();
 
-        return toRemove.filterByPaths(allDeleted);
+        return toBeRemove.filterByPaths(allDeletedPaths);
     }
 
-    private FilePaths getFailedPaths(List<DeletedResult> deletedResults, FilePaths toRemove) {
-        List<String> allFailed = deletedResults.stream()
+    private FilePaths getFailedPaths(FilePaths toBeRemove, List<DeletedResult> deletedResults) {
+        List<String> allFailedPaths = deletedResults.stream()
                 .map(DeletedResult::failedPaths)
                 .flatMap(List::stream)
                 .toList();
 
-        return toRemove.filterByPaths(allFailed);
+        return toBeRemove.filterByPaths(allFailedPaths);
     }
 }

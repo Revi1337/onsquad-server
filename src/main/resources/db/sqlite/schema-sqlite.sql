@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS recycle_bin;
 CREATE TABLE IF NOT EXISTS recycle_bin (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
-     path TEXT NOT NULL
+     path TEXT NOT NULL,
+     retry_count INTEGER NOT NULL DEFAULT 0
 );

@@ -36,12 +36,38 @@ public class RecycleBinRepository {
     }
 
     public List<FilePath> findAll() {
-        String sql = "SELECT id, path FROM recycle_bin";
+        String sql = "SELECT id, path, retry_count FROM recycle_bin";
 
         return jdbcTemplate.query(
                 sql,
-                (rs, rowNum) -> new FilePath(rs.getLong("id"), rs.getString("path"))
+                (rs, rowNum) -> new FilePath(
+                        rs.getLong("id"),
+                        rs.getString("path"),
+                        rs.getInt("retry_count")
+                )
         );
+    }
+
+    public List<FilePath> findByRetryCountLargerThan(int retryCount) {
+        String sql = "SELECT id, path, retry_count FROM recycle_bin WHERE retry_count >= (:retryCount)";
+        SqlParameterSource sqlParameterSource = new MapSqlParameterSource("retryCount", retryCount);
+
+        return jdbcTemplate.query(
+                sql,
+                sqlParameterSource,
+                (rs, rowNum) -> new FilePath(
+                        rs.getLong("id"),
+                        rs.getString("path"),
+                        rs.getInt("retry_count")
+                )
+        );
+    }
+
+    public int incrementRetryCount(List<Long> ids) {
+        String sql = "UPDATE recycle_bin SET retry_count = retry_count + 1 WHERE id IN (:ids)";
+        SqlParameterSource sqlParameterSource = new MapSqlParameterSource("ids", ids);
+
+        return jdbcTemplate.update(sql, sqlParameterSource);
     }
 
     public int deleteByIdIn(List<Long> ids) {
