@@ -1,4 +1,4 @@
-package revi1337.onsquad.notification.infrastructure.discord;
+package revi1337.onsquad.infrastructure.discord;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

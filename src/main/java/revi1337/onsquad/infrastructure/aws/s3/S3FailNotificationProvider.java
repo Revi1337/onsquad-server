@@ -1,4 +1,4 @@
-package revi1337.onsquad.notification.infrastructure.s3;
+package revi1337.onsquad.infrastructure.aws.s3;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,12 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.infrastructure.aws.s3.S3BatchDeletionScheduler;
-import revi1337.onsquad.notification.infrastructure.discord.DiscordMessage;
-import revi1337.onsquad.notification.infrastructure.discord.DiscordMessage.Embed;
-import revi1337.onsquad.notification.infrastructure.discord.DiscordMessage.Embed.Footer;
-import revi1337.onsquad.notification.infrastructure.discord.DiscordMessage.Embed.Thumbnail;
-import revi1337.onsquad.notification.infrastructure.discord.DiscordNotificationClient;
+import revi1337.onsquad.infrastructure.discord.DiscordMessage;
+import revi1337.onsquad.infrastructure.discord.DiscordMessage.Embed;
+import revi1337.onsquad.infrastructure.discord.DiscordMessage.Embed.Footer;
+import revi1337.onsquad.infrastructure.discord.DiscordMessage.Embed.Thumbnail;
+import revi1337.onsquad.infrastructure.discord.DiscordNotificationClient;
 
 @Slf4j
 @Component

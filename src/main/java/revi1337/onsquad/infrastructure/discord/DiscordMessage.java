@@ -1,4 +1,4 @@
-package revi1337.onsquad.notification.infrastructure.discord;
+package revi1337.onsquad.infrastructure.discord;
 
 import static lombok.AccessLevel.PACKAGE;
 import static lombok.AccessLevel.PRIVATE;

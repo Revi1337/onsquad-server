@@ -1,4 +1,4 @@
-package revi1337.onsquad.notification.infrastructure.s3;
+package revi1337.onsquad.infrastructure.aws.s3;
 
 import java.util.List;
 

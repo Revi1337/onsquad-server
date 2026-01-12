@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.infrastructure.aws.s3.S3StorageCleaner.DeletedResult;
 import revi1337.onsquad.infrastructure.sqlite.RecycleBinRepository;
-import revi1337.onsquad.notification.infrastructure.s3.S3FailNotificationProvider;
 
 @Slf4j
 @RequiredArgsConstructor
