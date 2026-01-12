@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import revi1337.onsquad.infrastructure.discord.DiscordNotificationClient;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class S3FailNotificationProvider {
 
     private static final String NOTIFICATION_PROVIDER_NAME = "Amazon Web Service";
@@ -26,31 +28,20 @@ public class S3FailNotificationProvider {
     private static final String S3_SERVICE_NAME = "S3 Lifecycle Management Service";
     private static final String S3_ICON_URL = "https://www.dmuth.org/wp-content/uploads/2019/09/aws-s3-icon.png";
 
-    private final String webhookEndpoint;
-    private final DiscordNotificationClient notificationClient;
+    private final DiscordNotificationClient discordNotificationClient;
     private final ObjectMapper defaultObjectMapper;
 
     @Value("${server.port:8080}")
     private String port;
 
-    public S3FailNotificationProvider(
-            @Value("${onsquad.discord.webhook.alert.aws}") String webhookEndpoint,
-            DiscordNotificationClient notificationClient,
-            ObjectMapper defaultObjectMapper
-    ) {
-        this.webhookEndpoint = webhookEndpoint;
-        this.notificationClient = notificationClient;
-        this.defaultObjectMapper = defaultObjectMapper;
-    }
-
     public void sendExceedRetryAlert(List<String> paths) {
         DiscordMessage message = createDiscordMessage(paths);
         try {
             byte[] fileBytes = defaultObjectMapper.writeValueAsBytes(new RetryExceedJson(paths));
-            notificationClient.sendNotification(webhookEndpoint, message, "ExceedFilePaths.json", fileBytes);
+            discordNotificationClient.sendNotification(message, "ExceedFilePaths.json", fileBytes);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize S3 exceed retry paths. Object count: {}, Error: {}", paths.size(), e.getMessage(), e);
-            notificationClient.sendNotification(webhookEndpoint, message);
+            discordNotificationClient.sendNotification(message);
         }
     }
 
