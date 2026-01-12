@@ -166,7 +166,7 @@ onsquad:
   discord:
     webhook:
       alert:
-        s3: https://discord.com/api/webhooks/web-hook-url
+        aws: https://discord.com/api/webhooks/web-hook-url
   
   aws:
     cloud-front:

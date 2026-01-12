@@ -34,7 +34,7 @@ public class S3FailNotificationProvider {
     private String port;
 
     public S3FailNotificationProvider(
-            @Value("${onsquad.discord.webhook.alert.s3}") String webhookEndpoint,
+            @Value("${onsquad.discord.webhook.alert.aws}") String webhookEndpoint,
             DiscordNotificationClient notificationClient,
             ObjectMapper defaultObjectMapper
     ) {
