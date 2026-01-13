@@ -1,4 +1,4 @@
-package revi1337.onsquad.history.config;
+package revi1337.onsquad.crew.config;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-public class HistoryThreadPoolConfig {
+public class CrewRankedThreadPoolConfig {
 
-    @Bean(name = "historyExecutor")
-    public Executor historyExecutor() {
+    @Bean(name = "activityExecutor")
+    public Executor activityExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setThreadNamePrefix("history-");
-        taskExecutor.setCorePoolSize(2);
+        taskExecutor.setThreadNamePrefix("activity-");
+        taskExecutor.setCorePoolSize(1);
         taskExecutor.setMaxPoolSize(2);
         taskExecutor.setQueueCapacity(100);
         taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());

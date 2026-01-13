@@ -11,15 +11,15 @@ public class NotificationThreadPoolConfig {
 
     @Bean(name = "notificationExecutor")
     public Executor notificationExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(8);
-        executor.setQueueCapacity(1000);
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(10);
-        executor.setThreadNamePrefix("notification-");
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.initialize();
-        return executor;
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setThreadNamePrefix("notification-");
+        taskExecutor.setCorePoolSize(3);
+        taskExecutor.setMaxPoolSize(5);
+        taskExecutor.setQueueCapacity(200);
+        taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        taskExecutor.setAwaitTerminationSeconds(15);
+        taskExecutor.initialize();
+        return taskExecutor;
     }
 }

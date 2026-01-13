@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.core.types.Expiration;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.util.CrewRankKeyMapper;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
@@ -38,6 +39,7 @@ public class CrewRankingManager {
     private final ObjectMapper defaultObjectMapper;
     private final StringRedisTemplate stringRedisTemplate;
 
+    @Async("activityExecutor") // TODO 작업이 원자성이 아니기 때문에 Redis 여도 동시성 우려가 있음.
     public void applyActivityScore(Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
         String namedSortedSet = CrewRankKeyMapper.toCrewRankKey(crewId);
         String specificName = CrewRankKeyMapper.toMemberKey(memberId);
@@ -46,6 +48,7 @@ public class CrewRankingManager {
         double nextWeight = calculateNextWeight(currentWeight, crewActivity.getScore(), applyAt.getEpochSecond());
 
         stringRedisTemplate.opsForZSet().add(namedSortedSet, specificName, nextWeight);
+        log.debug("Applying activity score for member in crew - member: {}, crew: {}", memberId, crewId);
     }
 
     public List<CrewRankedMemberResult> getRankedMembers(int rankLimit) {
