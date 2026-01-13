@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +34,10 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 @Component
 public class CrewRankingManager {
 
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+    private static final long BASE_EPOCH_TIME = LocalDate.of(2026, 1, 1)
+            .atStartOfDay(KST)
+            .toEpochSecond();
     private static final long MULTIPLIER = 10_000_000_000L;
 
     private final ObjectMapper defaultObjectMapper;
@@ -110,27 +114,34 @@ public class CrewRankingManager {
 
     private double getCurrentWeight(String namedSortedSet, String specificName) {
         Double score = stringRedisTemplate.opsForZSet().score(namedSortedSet, specificName);
-        return Objects.requireNonNullElse(score, 0).doubleValue();
+        if (score == null) {
+            return 0.0;
+        }
+
+        return (double) Math.round(score);
     }
 
     private double calculateNextWeight(double currentWeight, int weight, long epochSecond) {
-        long currentPureScore = (long) (currentWeight / MULTIPLIER);
+        long roundedWeight = Math.round(currentWeight);
+        long currentPureScore = roundedWeight / MULTIPLIER;
         long nextPureScore = currentPureScore + weight;
 
-        return ((double) nextPureScore * MULTIPLIER) + epochSecond;
+        return ((double) nextPureScore * MULTIPLIER) + (epochSecond - BASE_EPOCH_TIME);
     }
 
     private CrewRankedMemberResult convertToResult(Long crewId, int rank, TypedTuple<String> tuple) {
         double compositeScore = tuple.getScore();
-        long rawScore = (long) (compositeScore / MULTIPLIER);
-        long epochSecond = (long) (compositeScore - (rawScore * MULTIPLIER));
+        long roundedCompositeScore = Math.round(compositeScore);
+        long rawScore = roundedCompositeScore / MULTIPLIER;
+        long relativeEpochSecond = roundedCompositeScore % MULTIPLIER;
+        long originalEpochSecond = relativeEpochSecond + BASE_EPOCH_TIME;
 
         return CrewRankedMemberResult.from(
                 crewId,
                 CrewRankKeyMapper.parseMemberId(tuple.getValue()),
                 rank,
                 rawScore,
-                LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneId.systemDefault())
+                LocalDateTime.ofInstant(Instant.ofEpochSecond(originalEpochSecond), KST)
         );
     }
 }
