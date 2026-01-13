@@ -15,11 +15,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisStringCommands.SetOption;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -39,19 +41,26 @@ public class CrewRankingManager {
             .atStartOfDay(KST)
             .toEpochSecond();
     private static final long MULTIPLIER = 10_000_000_000L;
+    private static final RedisScript<Long> APPLY_SCORE_SCRIPT = RedisScript.of(new ClassPathResource("db/redis/apply_score.lua"), Long.class);
 
     private final ObjectMapper defaultObjectMapper;
     private final StringRedisTemplate stringRedisTemplate;
 
-    @Async("activityExecutor") // TODO 작업이 원자성이 아니기 때문에 Redis 여도 동시성 우려가 있음.
+    @Async("activityExecutor")
     public void applyActivityScore(Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
         String namedSortedSet = CrewRankKeyMapper.toCrewRankKey(crewId);
         String specificName = CrewRankKeyMapper.toMemberKey(memberId);
 
-        double currentWeight = getCurrentWeight(namedSortedSet, specificName);
-        double nextWeight = calculateNextWeight(currentWeight, crewActivity.getScore(), applyAt.getEpochSecond());
+        stringRedisTemplate.execute(
+                APPLY_SCORE_SCRIPT,
+                Collections.singletonList(namedSortedSet),
+                specificName,
+                String.valueOf(crewActivity.getScore()),
+                String.valueOf(applyAt.getEpochSecond()),
+                String.valueOf(MULTIPLIER),
+                String.valueOf(BASE_EPOCH_TIME)
+        );
 
-        stringRedisTemplate.opsForZSet().add(namedSortedSet, specificName, nextWeight);
         log.debug("Applying activity score for member in crew - member: {}, crew: {}", memberId, crewId);
     }
 
@@ -110,23 +119,6 @@ public class CrewRankingManager {
     public void evictCrewsLeaderboard(List<Long> crewIds) {
         List<String> namedSortedSets = CrewRankKeyMapper.toCrewRankKeys(crewIds);
         RedisCacheEvictor.unlinkKeys(stringRedisTemplate, namedSortedSets);
-    }
-
-    private double getCurrentWeight(String namedSortedSet, String specificName) {
-        Double score = stringRedisTemplate.opsForZSet().score(namedSortedSet, specificName);
-        if (score == null) {
-            return 0.0;
-        }
-
-        return (double) Math.round(score);
-    }
-
-    private double calculateNextWeight(double currentWeight, int weight, long epochSecond) {
-        long roundedWeight = Math.round(currentWeight);
-        long currentPureScore = roundedWeight / MULTIPLIER;
-        long nextPureScore = currentPureScore + weight;
-
-        return ((double) nextPureScore * MULTIPLIER) + (epochSecond - BASE_EPOCH_TIME);
     }
 
     private CrewRankedMemberResult convertToResult(Long crewId, int rank, TypedTuple<String> tuple) {
