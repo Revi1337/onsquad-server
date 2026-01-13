@@ -2,16 +2,13 @@ package revi1337.onsquad.infrastructure.aws.s3.notification;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.common.constant.Sign;
+import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
 import revi1337.onsquad.infrastructure.aws.s3.core.S3ImageCleanupProcessor;
 import revi1337.onsquad.infrastructure.aws.s3.model.RetryExceedJson;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage;
@@ -32,9 +29,7 @@ public class S3FailNotificationProvider {
 
     private final DiscordNotificationClient discordNotificationClient;
     private final ObjectMapper defaultObjectMapper;
-
-    @Value("${server.port:8080}")
-    private String port;
+    private final OnsquadProperties onsquadProperties;
 
     public void sendExceedRetryAlert(List<String> paths) {
         DiscordMessage message = createDiscordMessage(paths);
@@ -60,7 +55,7 @@ public class S3FailNotificationProvider {
         return DiscordMessage.builder()
                 .username(NOTIFICATION_PROVIDER_NAME)
                 .avatarUrl(NOTIFICATION_AVATAR_URL)
-                .threadName(String.format("[%s] S3 Cleanup Report (Instance: %s)", LocalDate.now(), getInstanceIdentifier()))
+                .threadName(String.format("[%s] S3 Cleanup Report (Instance: %s)", LocalDate.now(), onsquadProperties.getIdentifier()))
                 .content(content)
                 .embeds(buildEmbeds())
                 .build();
@@ -80,14 +75,5 @@ public class S3FailNotificationProvider {
                 .thumbnail(new Thumbnail(S3_ICON_URL))
                 .footer(new Footer(S3_SERVICE_NAME, S3_ICON_URL))
                 .build());
-    }
-
-    private String getInstanceIdentifier() {
-        try {
-            String ip = InetAddress.getLocalHost().getHostAddress();
-            return String.join(Sign.COLON, ip, port);
-        } catch (UnknownHostException e) {
-            return "Unknown-Host";
-        }
     }
 }
