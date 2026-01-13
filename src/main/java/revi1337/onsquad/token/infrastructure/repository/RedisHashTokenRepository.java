@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 import revi1337.onsquad.token.domain.repository.TokenRepository;
 

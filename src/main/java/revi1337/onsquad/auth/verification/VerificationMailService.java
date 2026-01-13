@@ -9,7 +9,7 @@ import revi1337.onsquad.auth.verification.domain.VerificationCode;
 import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.application.mail.EmailSender;
-import revi1337.onsquad.infrastructure.mail.EmailException;
+import revi1337.onsquad.infrastructure.network.mail.EmailException;
 
 @Slf4j
 @RequiredArgsConstructor

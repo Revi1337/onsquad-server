@@ -12,7 +12,7 @@ import revi1337.onsquad.crew.application.CrewRankingManager;
 import revi1337.onsquad.crew_member.application.CrewRankedMemberRefreshService;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
-import revi1337.onsquad.infrastructure.redis.RedisLockExecutor;
+import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
 
 @Slf4j
 @RequiredArgsConstructor

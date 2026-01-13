@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.util.CrewRankKeyMapper;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
-import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
-import revi1337.onsquad.infrastructure.redis.RedisScanUtils;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
+import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -15,7 +15,7 @@ import revi1337.onsquad.announce.application.AnnounceCacheEvictor;
 import revi1337.onsquad.announce.domain.result.AnnounceReference;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 
 /**
  * Redis-specific implementation of {@link AnnounceCacheEvictor}. This implementation optimizes eviction performance for distributed environments by:

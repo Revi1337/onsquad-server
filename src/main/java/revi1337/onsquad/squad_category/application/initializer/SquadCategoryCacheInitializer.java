@@ -8,7 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
-import revi1337.onsquad.infrastructure.redis.RedisCacheEvictor;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 
 @Slf4j
 @RequiredArgsConstructor

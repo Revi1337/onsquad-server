@@ -13,7 +13,7 @@ import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
-import revi1337.onsquad.infrastructure.redis.RedisSafeExecutor;
+import revi1337.onsquad.infrastructure.storage.redis.RedisSafeExecutor;
 
 @RequiredArgsConstructor
 @Order(1)
