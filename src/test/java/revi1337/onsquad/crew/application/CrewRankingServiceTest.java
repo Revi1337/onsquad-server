@@ -24,12 +24,12 @@ import revi1337.onsquad.crew_member.domain.CrewActivity;
 
 @Disabled
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
-@ContextConfiguration(classes = CrewRankingManager.class)
+@ContextConfiguration(classes = CrewRankingService.class)
 @ExtendWith(SpringExtension.class)
-class CrewRankingManagerTest {
+class CrewRankingServiceTest {
 
     @Autowired
-    private CrewRankingManager crewRankingManager;
+    private CrewRankingService crewRankingService;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -58,7 +58,7 @@ class CrewRankingManagerTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    crewRankingManager.applyActivityScore(crewId, memberId, applyAt, crewActivity);
+                    crewRankingService.applyActivityScore(crewId, memberId, applyAt, crewActivity);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

@@ -1,11 +1,10 @@
 package revi1337.onsquad.squad_comment.application.listener;
 
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import revi1337.onsquad.crew.application.CrewRankingManager;
+import revi1337.onsquad.crew.domain.event.ScoreIncreased;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.notification.domain.Notification;
 import revi1337.onsquad.squad_comment.application.history.CommentHistory;
@@ -16,11 +15,10 @@ import revi1337.onsquad.squad_comment.application.notification.CommentReplyNotif
 import revi1337.onsquad.squad_comment.domain.event.CommentAdded;
 import revi1337.onsquad.squad_comment.domain.event.CommentReplyAdded;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadCommentEventListener {
 
-    private final CrewRankingManager crewRankingManager;
     private final CommentContextReader commentNotificationRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -28,7 +26,7 @@ public class SquadCommentEventListener {
     public void onCommentAdded(CommentAdded added) {
         commentNotificationRepository.readAddedContext(added.writerId(), added.commentId())
                 .ifPresent(context -> {
-                    crewRankingManager.applyActivityScore(context.crewId(), context.commentWriterId(), Instant.now(), CrewActivity.SQUAD_COMMENT);
+                    eventPublisher.publishEvent(new ScoreIncreased(context.crewId(), context.commentWriterId(), CrewActivity.SQUAD_COMMENT));
                     eventPublisher.publishEvent(new CommentHistory(context));
                     sendNotificationIfPossible(new CommentNotification(context));
                 });
@@ -38,7 +36,7 @@ public class SquadCommentEventListener {
     public void onCommentReplyAdded(CommentReplyAdded replyAdded) {
         commentNotificationRepository.readReplyAddedContext(replyAdded.parentId(), replyAdded.writerId(), replyAdded.replyId())
                 .ifPresent(context -> {
-                    crewRankingManager.applyActivityScore(context.crewId(), context.replyCommentWriterId(), Instant.now(), CrewActivity.SQUAD_COMMENT_REPLY);
+                    eventPublisher.publishEvent(new ScoreIncreased(context.crewId(), context.replyCommentWriterId(), CrewActivity.SQUAD_COMMENT_REPLY));
                     eventPublisher.publishEvent(new CommentReplyHistory(context));
                     sendNotificationIfPossible(new CommentReplyNotification(context));
                 });

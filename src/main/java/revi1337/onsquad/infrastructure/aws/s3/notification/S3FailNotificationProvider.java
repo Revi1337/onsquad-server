@@ -27,7 +27,7 @@ public class S3FailNotificationProvider {
     private static final String S3_SERVICE_NAME = "S3 Lifecycle Management Service";
     private static final String S3_ICON_URL = "https://www.dmuth.org/wp-content/uploads/2019/09/aws-s3-icon.png";
 
-    private final DiscordNotificationClient discordNotificationClient;
+    private final DiscordNotificationClient s3DiscordNotificationClient;
     private final ObjectMapper defaultObjectMapper;
     private final OnsquadProperties onsquadProperties;
 
@@ -35,10 +35,10 @@ public class S3FailNotificationProvider {
         DiscordMessage message = createDiscordMessage(paths);
         try {
             byte[] fileBytes = defaultObjectMapper.writeValueAsBytes(new RetryExceedJson(paths));
-            discordNotificationClient.sendNotification(message, "ExceedFilePaths.json", fileBytes);
+            s3DiscordNotificationClient.sendNotification(message, "exceed_file_paths.json", fileBytes);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize S3 exceed retry paths. Object count: {}, Error: {}", paths.size(), e.getMessage(), e);
-            discordNotificationClient.sendNotification(message);
+            s3DiscordNotificationClient.sendNotification(message);
         }
     }
 

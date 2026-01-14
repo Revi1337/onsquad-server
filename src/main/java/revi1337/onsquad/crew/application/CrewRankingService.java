@@ -23,8 +23,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.core.types.Expiration;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import revi1337.onsquad.crew.util.CrewRankKeyMapper;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
@@ -32,21 +31,20 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 
 @Slf4j
+@Service
 @RequiredArgsConstructor
-@Component
-public class CrewRankingManager {
+public class CrewRankingService {
 
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+    private static final long MULTIPLIER = 10_000_000_000L;
     private static final long BASE_EPOCH_TIME = LocalDate.of(2026, 1, 1)
             .atStartOfDay(KST)
             .toEpochSecond();
-    private static final long MULTIPLIER = 10_000_000_000L;
     private static final RedisScript<Long> APPLY_SCORE_SCRIPT = RedisScript.of(new ClassPathResource("db/redis/apply_score.lua"), Long.class);
 
     private final ObjectMapper defaultObjectMapper;
     private final StringRedisTemplate stringRedisTemplate;
 
-    @Async("activityExecutor")
     public void applyActivityScore(Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
         String namedSortedSet = CrewRankKeyMapper.toCrewRankKey(crewId);
         String specificName = CrewRankKeyMapper.toMemberKey(memberId);

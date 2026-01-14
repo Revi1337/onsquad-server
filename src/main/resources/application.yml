@@ -167,6 +167,7 @@ onsquad:
     webhook:
       alert:
         aws: https://discord.com/api/webhooks/web-hook-url
+        apply-score: https://discord.com/api/webhooks/web-hook-url
   
   aws:
     cloud-front:

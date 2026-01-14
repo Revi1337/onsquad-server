@@ -1,10 +1,10 @@
 package revi1337.onsquad.squad.application.listener;
 
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import revi1337.onsquad.crew.application.CrewRankingManager;
+import revi1337.onsquad.crew.domain.event.ScoreIncreased;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.squad.domain.event.SquadCreated;
 
@@ -12,10 +12,10 @@ import revi1337.onsquad.squad.domain.event.SquadCreated;
 @Component
 public class SquadEventListener {
 
-    private final CrewRankingManager crewRankingManager;
+    private final ApplicationEventPublisher eventPublisher;
 
     @TransactionalEventListener
     public void onSquadCreated(SquadCreated created) {
-        crewRankingManager.applyActivityScore(created.crewId(), created.creatorId(), Instant.now(), CrewActivity.SQUAD_CREATE);
+        eventPublisher.publishEvent(new ScoreIncreased(created.crewId(), created.creatorId(), CrewActivity.SQUAD_CREATE));
     }
 }

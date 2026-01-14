@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.domain.result.AnnounceReference;
-import revi1337.onsquad.crew.application.CrewRankingManager;
+import revi1337.onsquad.crew.application.CrewRankingService;
 import revi1337.onsquad.crew.domain.event.CrewContextDisposed;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CrewContextEventListener {
 
     private final AnnounceCacheService announceCacheService;
-    private final CrewRankingManager crewRankingManager;
+    private final CrewRankingService crewRankingService;
     private final ApplicationEventPublisher eventPublisher;
 
     @TransactionalEventListener
@@ -25,7 +25,7 @@ public class CrewContextEventListener {
         List<Long> crewIds = collectUniqueCrewIds(contextDisposed);
         announceCacheService.evictAnnounceListsByCrews(crewIds);
         announceCacheService.evictAnnouncesByReferences(contextDisposed.getAnnounceReferences());
-        crewRankingManager.evictCrewsLeaderboard(contextDisposed.getDeletedCrewIds());
+        crewRankingService.evictCrewsLeaderboard(contextDisposed.getDeletedCrewIds());
         eventPublisher.publishEvent(new FileDeleteEvent(contextDisposed.getCrewImageUrls()));
     }
 

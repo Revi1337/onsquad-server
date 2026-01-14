@@ -8,15 +8,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew.application.CrewRankingManager;
+import revi1337.onsquad.crew.application.CrewRankingService;
 import revi1337.onsquad.crew_member.application.CrewRankedMemberRefreshService;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CrewRankedMemberRefreshScheduler {
 
     private static final String LOCK_KEY = "refresh-sch-lock";
@@ -24,14 +24,14 @@ public class CrewRankedMemberRefreshScheduler {
     private final CrewRankedMemberProperties crewRankedMemberProperties;
     private final CrewRankedMemberRefreshService crewRankedMemberRefreshService;
     private final RedisLockExecutor redisLockExecutor;
-    private final CrewRankingManager crewRankingManager;
+    private final CrewRankingService crewRankingService;
 
     @Scheduled(cron = "${onsquad.api.crew-rank-members.schedule.expression}")
     public void refreshRankedMembers() {
         redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
             List<CrewRankedMemberResult> previousRankedMembers = crewRankedMemberRefreshService.getCurrentRankedMembers();
-            crewRankingManager.backupPreviousRankedMembers(previousRankedMembers);
-            List<CrewRankedMemberResult> currentRankedMembers = crewRankingManager.getRankedMembers(crewRankedMemberProperties.rankLimit());
+            crewRankingService.backupPreviousRankedMembers(previousRankedMembers);
+            List<CrewRankedMemberResult> currentRankedMembers = crewRankingService.getRankedMembers(crewRankedMemberProperties.rankLimit());
             crewRankedMemberRefreshService.refresh(currentRankedMembers);
         });
     }
