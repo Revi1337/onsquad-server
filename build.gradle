@@ -45,32 +45,35 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     implementation 'com.blazebit:blaze-persistence-integration-querydsl-expressions-jakarta:1.6.11'
     implementation 'com.blazebit:blaze-persistence-integration-hibernate-6.2:1.6.11'
     implementation 'com.blazebit:blaze-persistence-core-impl-jakarta:1.6.11'
-
-    implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
-    implementation 'org.hibernate.orm:hibernate-community-dialects:6.6.2.Final'
 
     implementation platform('software.amazon.awssdk:bom:2.31.17')
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:cloudfront'
 
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    implementation 'net.jodah:expiringmap:0.5.10'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
+
+    implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
+    implementation 'org.hibernate.orm:hibernate-community-dialects:6.6.2.Final'
+
+    implementation 'org.springframework.retry:spring-retry'
 
     testImplementation 'com.redis.testcontainers:testcontainers-redis-junit:1.6.4'
     testImplementation "org.testcontainers:localstack:1.19.0"
 
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-    implementation 'net.jodah:expiringmap:0.5.10'
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
-
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 String ENABLE_PREVIEW = "--enable-preview"
