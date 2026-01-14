@@ -1,5 +1,6 @@
 package revi1337.onsquad.squad_request.application.history;
 
+import java.time.LocalDateTime;
 import lombok.Getter;
 import revi1337.onsquad.history.application.History;
 import revi1337.onsquad.history.domain.HistoryType;
@@ -16,12 +17,14 @@ public class RequestRejectHistory implements History {
     private final Long squadId;
     private final HistoryType type = HistoryType.SQUAD_REJECT;
     private final String message;
+    private final LocalDateTime timeStamp;
 
     public RequestRejectHistory(RequestRejectedContext context) {
         this.memberId = context.rejecterId();
         this.crewId = context.crewId();
         this.squadId = context.squadId();
         this.message = String.format(MESSAGE_FORMAT, context.crewName(), context.squadTitle(), context.requesterNickname());
+        this.timeStamp = LocalDateTime.now();
     }
 
     @Override
@@ -32,6 +35,7 @@ public class RequestRejectHistory implements History {
                 .squadId(squadId)
                 .type(type)
                 .message(message)
+                .recordedAt(timeStamp)
                 .build();
     }
 }

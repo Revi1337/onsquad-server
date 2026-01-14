@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import revi1337.onsquad.history.domain.HistoryType;
 
 @Getter
@@ -43,16 +42,16 @@ public class HistoryEntity {
 
     private String message;
 
-    @CreationTimestamp
     private LocalDateTime recordedAt;
 
     @Builder
-    public HistoryEntity(Long memberId, Long crewId, Long squadId, Long squadCommentId, HistoryType type, String message) {
+    private HistoryEntity(Long memberId, Long crewId, Long squadId, Long squadCommentId, HistoryType type, String message, LocalDateTime recordedAt) {
         this.memberId = memberId;
         this.crewId = crewId;
         this.squadId = squadId;
         this.squadCommentId = squadCommentId;
         this.type = type;
         this.message = message;
+        this.recordedAt = recordedAt == null ? LocalDateTime.now() : recordedAt;
     }
 }
