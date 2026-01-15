@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.util;
+package revi1337.onsquad.crew_member.application;
 
 import static lombok.AccessLevel.PRIVATE;
 

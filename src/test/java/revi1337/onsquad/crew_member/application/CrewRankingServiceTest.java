@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.application;
+package revi1337.onsquad.crew_member.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +19,6 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.crew.util.CrewRankKeyMapper;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 
 @Disabled

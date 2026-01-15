@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.application;
+package revi1337.onsquad.crew_member.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -24,7 +24,6 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.crew.util.CrewRankKeyMapper;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;

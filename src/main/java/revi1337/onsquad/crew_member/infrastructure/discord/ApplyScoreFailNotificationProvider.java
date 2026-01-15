@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.infrastructure.discord;
+package revi1337.onsquad.crew_member.infrastructure.discord;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
-import revi1337.onsquad.crew.application.RetryableCrewRankingService;
+import revi1337.onsquad.crew_member.application.RetryableCrewRankingService;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage.Embed;

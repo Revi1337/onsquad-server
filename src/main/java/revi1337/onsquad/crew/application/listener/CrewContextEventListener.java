@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.domain.result.AnnounceReference;
-import revi1337.onsquad.crew.application.CrewRankingService;
 import revi1337.onsquad.crew.domain.event.CrewContextDisposed;
+import revi1337.onsquad.crew_member.application.CrewRankingService;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 
 @Component

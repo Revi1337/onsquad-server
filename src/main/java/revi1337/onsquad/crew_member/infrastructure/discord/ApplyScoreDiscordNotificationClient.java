@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.infrastructure.discord;
+package revi1337.onsquad.crew_member.infrastructure.discord;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
