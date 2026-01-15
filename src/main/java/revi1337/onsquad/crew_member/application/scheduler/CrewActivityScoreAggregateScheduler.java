@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew_member.application.CrewRankedMemberRefreshService;
-import revi1337.onsquad.crew_member.application.CrewRankingService;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardSynchronizeService;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
@@ -17,22 +17,22 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CrewRankedMemberRefreshScheduler {
+public class CrewActivityScoreAggregateScheduler {
 
     private static final String LOCK_KEY = "refresh-sch-lock";
 
     private final CrewRankedMemberProperties crewRankedMemberProperties;
-    private final CrewRankedMemberRefreshService crewRankedMemberRefreshService;
+    private final CrewLeaderboardSynchronizeService leaderboardSynchronizeService;
     private final RedisLockExecutor redisLockExecutor;
-    private final CrewRankingService crewRankingService;
+    private final CrewLeaderboardManager leaderboardManager;
 
     @Scheduled(cron = "${onsquad.api.crew-rank-members.schedule.expression}")
     public void refreshRankedMembers() {
         redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
-            List<CrewRankedMemberResult> previousRankedMembers = crewRankedMemberRefreshService.getCurrentRankedMembers();
-            crewRankingService.backupPreviousRankedMembers(previousRankedMembers);
-            List<CrewRankedMemberResult> currentRankedMembers = crewRankingService.getRankedMembers(crewRankedMemberProperties.rankLimit());
-            crewRankedMemberRefreshService.refresh(currentRankedMembers);
+            List<CrewRankedMemberResult> previousRankedMembers = leaderboardSynchronizeService.getCurrentLeaderboard();
+            leaderboardManager.backupPreviousLeaderboard(previousRankedMembers);
+            List<CrewRankedMemberResult> currentRankedMembers = leaderboardManager.getLeaderboard(crewRankedMemberProperties.rankLimit());
+            leaderboardSynchronizeService.synchronize(currentRankedMembers);
         });
     }
 
@@ -43,7 +43,7 @@ public class CrewRankedMemberRefreshScheduler {
             LocalDateTime from = today.minusDays(crewRankedMemberProperties.during().toDays()).atStartOfDay();
             LocalDateTime to = today.atStartOfDay().minusNanos(1);
             log.info("Starting To Renew CrewRankedMember - {} ~ {}", from, to);
-            crewRankedMemberRefreshService.refresh(from, to, crewRankedMemberProperties.rankLimit());
+            leaderboardSynchronizeService.synchronize(from, to, crewRankedMemberProperties.rankLimit());
         });
     }
 }

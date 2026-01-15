@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.application;
+package revi1337.onsquad.crew_member.application.leaderboard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CrewRankingService {
+public class CrewLeaderboardManager {
 
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
     private static final long MULTIPLIER = 10_000_000_000L;
@@ -44,9 +44,9 @@ public class CrewRankingService {
     private final ObjectMapper defaultObjectMapper;
     private final StringRedisTemplate stringRedisTemplate;
 
-    public void applyActivityScore(Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
-        String namedSortedSet = CrewRankKeyMapper.toCrewRankKey(crewId);
-        String specificName = CrewRankKeyMapper.toMemberKey(memberId);
+    public void applyActivity(Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
+        String namedSortedSet = CrewLeaderboardKeyMapper.toLeaderboardKey(crewId);
+        String specificName = CrewLeaderboardKeyMapper.toMemberKey(memberId);
 
         stringRedisTemplate.execute(
                 APPLY_SCORE_SCRIPT,
@@ -61,8 +61,8 @@ public class CrewRankingService {
         log.debug("Applying activity score for member in crew - member: {}, crew: {}", memberId, crewId);
     }
 
-    public List<CrewRankedMemberResult> getRankedMembers(int rankLimit) {
-        List<String> computedKeys = RedisScanUtils.scanKeys(stringRedisTemplate, CrewRankKeyMapper.getCrewRankPattern());
+    public List<CrewRankedMemberResult> getLeaderboard(int rankLimit) {
+        List<String> computedKeys = RedisScanUtils.scanKeys(stringRedisTemplate, CrewLeaderboardKeyMapper.getLeaderboardPattern());
         if (computedKeys.isEmpty()) {
             return Collections.emptyList();
         }
@@ -80,7 +80,7 @@ public class CrewRankingService {
             if (!(result instanceof Set<?> rawSet)) {
                 continue;
             }
-            Long crewId = CrewRankKeyMapper.parseCrewId(computedKeys.get(i));
+            Long crewId = CrewLeaderboardKeyMapper.parseCrewId(computedKeys.get(i));
             int rank = 1;
             for (Object element : rawSet) {
                 if (element instanceof ZSetOperations.TypedTuple<?> tuple) {
@@ -93,14 +93,14 @@ public class CrewRankingService {
         return results;
     }
 
-    public void backupPreviousRankedMembers(List<CrewRankedMemberResult> previousRankedMembers) {
+    public void backupPreviousLeaderboard(List<CrewRankedMemberResult> previousRankedMembers) {
         Map<Long, List<CrewRankedMemberResult>> groupedMembers = previousRankedMembers.stream()
                 .collect(Collectors.groupingBy(CrewRankedMemberResult::crewId));
 
         stringRedisTemplate.executePipelined((RedisCallback<Void>) connection -> {
             groupedMembers.forEach((key, results) -> {
                 try {
-                    String previousCrewRankKey = CrewRankKeyMapper.toPreviousCrewRankKey(key);
+                    String previousCrewRankKey = CrewLeaderboardKeyMapper.toPreviousLeaderboardKey(key);
                     String jsonValue = defaultObjectMapper.writeValueAsString(results);
                     byte[] serializedKey = stringRedisTemplate.getStringSerializer().serialize(previousCrewRankKey);
                     byte[] serializedValue = stringRedisTemplate.getStringSerializer().serialize(jsonValue);
@@ -113,8 +113,8 @@ public class CrewRankingService {
         });
     }
 
-    public void evictCrewsLeaderboard(List<Long> crewIds) {
-        List<String> namedSortedSets = CrewRankKeyMapper.toCrewRankKeys(crewIds);
+    public void removeLeaderboards(List<Long> crewIds) {
+        List<String> namedSortedSets = CrewLeaderboardKeyMapper.toLeaderboardKeys(crewIds);
         RedisCacheEvictor.unlinkKeys(stringRedisTemplate, namedSortedSets);
     }
 
@@ -127,7 +127,7 @@ public class CrewRankingService {
 
         return CrewRankedMemberResult.from(
                 crewId,
-                CrewRankKeyMapper.parseMemberId(tuple.getValue()),
+                CrewLeaderboardKeyMapper.parseMemberId(tuple.getValue()),
                 rank,
                 rawScore,
                 LocalDateTime.ofInstant(Instant.ofEpochSecond(originalEpochSecond), KST)

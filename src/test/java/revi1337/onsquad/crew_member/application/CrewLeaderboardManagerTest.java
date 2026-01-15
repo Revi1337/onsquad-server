@@ -19,16 +19,18 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardKeyMapper;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 
 @Disabled
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
-@ContextConfiguration(classes = CrewRankingService.class)
+@ContextConfiguration(classes = CrewLeaderboardManager.class)
 @ExtendWith(SpringExtension.class)
-class CrewRankingServiceTest {
+class CrewLeaderboardManagerTest {
 
     @Autowired
-    private CrewRankingService crewRankingService;
+    private CrewLeaderboardManager crewLeaderboardManager;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -57,7 +59,7 @@ class CrewRankingServiceTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    crewRankingService.applyActivityScore(crewId, memberId, applyAt, crewActivity);
+                    crewLeaderboardManager.applyActivity(crewId, memberId, applyAt, crewActivity);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -68,8 +70,8 @@ class CrewRankingServiceTest {
         latch.await();
 
         // then
-        String namedSortedSet = CrewRankKeyMapper.toCrewRankKey(crewId);
-        String specificName = CrewRankKeyMapper.toMemberKey(memberId);
+        String namedSortedSet = CrewLeaderboardKeyMapper.toLeaderboardKey(crewId);
+        String specificName = CrewLeaderboardKeyMapper.toMemberKey(memberId);
         Double finalWeight = stringRedisTemplate.opsForZSet().score(namedSortedSet, specificName);
 
         long actualScore = Math.round(finalWeight) / 10_000_000_000L;

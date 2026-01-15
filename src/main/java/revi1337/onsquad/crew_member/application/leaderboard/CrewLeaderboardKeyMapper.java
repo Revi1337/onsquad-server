@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.application;
+package revi1337.onsquad.crew_member.application.leaderboard;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -10,13 +10,13 @@ import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
 
 @NoArgsConstructor(access = PRIVATE)
-public final class CrewRankKeyMapper {
+public final class CrewLeaderboardKeyMapper {
 
     /**
      * @param crewId
      * @return {@code String} onsquad:crew:{crewId}:rank-members:current
      */
-    public static String toCrewRankKey(Long crewId) {
+    public static String toLeaderboardKey(Long crewId) {
         String key = String.join(Sign.COLON, "crew", crewId.toString(), CacheConst.RANK_MEMBERS, "current");
         return String.format(CacheFormat.SIMPLE, key);
     }
@@ -25,9 +25,9 @@ public final class CrewRankKeyMapper {
      * @param crewIds
      * @return {@code List<String>} onsquad:crew:{crewId}:rank-members:current
      */
-    public static List<String> toCrewRankKeys(List<Long> crewIds) {
+    public static List<String> toLeaderboardKeys(List<Long> crewIds) {
         return crewIds.stream()
-                .map(CrewRankKeyMapper::toCrewRankKey)
+                .map(CrewLeaderboardKeyMapper::toLeaderboardKey)
                 .toList();
     }
 
@@ -35,7 +35,7 @@ public final class CrewRankKeyMapper {
      * @param crewId
      * @return {@code String} onsquad:crew:{crewId}:rank-members:last-week
      */
-    public static String toPreviousCrewRankKey(Long crewId) {
+    public static String toPreviousLeaderboardKey(Long crewId) {
         String key = String.join(Sign.COLON, "crew", crewId.toString(), CacheConst.RANK_MEMBERS, "last-week");
         return String.format(CacheFormat.SIMPLE, key);
     }
@@ -44,9 +44,9 @@ public final class CrewRankKeyMapper {
      * @param crewIds
      * @return {@code List<String>} onsquad:crew:{crewId}:rank-members:last-week
      */
-    public static List<String> toPreviousCrewRankKeys(Collection<Long> crewIds) {
+    public static List<String> toPreviousLeaderboardKeys(Collection<Long> crewIds) {
         return crewIds.stream()
-                .map(CrewRankKeyMapper::toPreviousCrewRankKey)
+                .map(CrewLeaderboardKeyMapper::toPreviousLeaderboardKey)
                 .toList();
     }
 
@@ -61,7 +61,7 @@ public final class CrewRankKeyMapper {
     /**
      * @return {@code String} onsquad:crew:*:rank-members:current
      */
-    public static String getCrewRankPattern() {
+    public static String getLeaderboardPattern() {
         String key = String.join(Sign.COLON, "crew", Sign.ASTERISK, CacheConst.RANK_MEMBERS, "current");
         return String.format(CacheFormat.SIMPLE, key);
     }

@@ -13,7 +13,7 @@ import revi1337.onsquad.crew.domain.repository.CrewStatisticQueryDslRepository;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew.domain.result.CrewStatisticResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.application.CrewRankedMemberCacheService;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberCacheService;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;

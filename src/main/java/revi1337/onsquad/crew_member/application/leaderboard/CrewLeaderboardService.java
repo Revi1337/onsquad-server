@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.application;
+package revi1337.onsquad.crew_member.application.leaderboard;
 
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
@@ -13,16 +13,16 @@ import revi1337.onsquad.crew_member.infrastructure.discord.ApplyScoreFailNotific
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RetryableCrewRankingService {
+public class CrewLeaderboardService {
 
     public static final int MAX_RETRY_COUNT = 3;
 
-    private final CrewRankingService delegate;
+    private final CrewLeaderboardManager delegate;
     private final ApplyScoreFailNotificationProvider notificationProvider;
 
     @Retryable(maxAttempts = MAX_RETRY_COUNT, backoff = @Backoff(delay = 1000, multiplier = 1.5, maxDelay = 5000))
-    public void applyActivityScore(Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
-        delegate.applyActivityScore(crewId, memberId, applyAt, crewActivity);
+    public void applyActivity(Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
+        delegate.applyActivity(crewId, memberId, applyAt, crewActivity);
     }
 
     @Recover

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
-import revi1337.onsquad.crew_member.application.RetryableCrewRankingService;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage.Embed;
@@ -43,7 +43,7 @@ public class ApplyScoreFailNotificationProvider {
                 **Target Crew ID:** `{1}`
                 **Target Member ID:** `{2}`
                 **Activity Type:** `{3}`
-                """, RetryableCrewRankingService.MAX_RETRY_COUNT, crewId, memberId, activity.name()).translateEscapes();
+                """, CrewLeaderboardService.MAX_RETRY_COUNT, crewId, memberId, activity.name()).translateEscapes();
 
         return DiscordMessage.builder()
                 .username(NOTIFICATION_PROVIDER_NAME)

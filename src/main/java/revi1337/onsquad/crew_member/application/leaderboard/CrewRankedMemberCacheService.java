@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.application;
+package revi1337.onsquad.crew_member.application.leaderboard;
 
 import static revi1337.onsquad.common.constant.CacheConst.CREW_RANK_MEMBERS;
 
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class CrewRankedMemberCacheService {
 
     private final CrewRankedMemberRepository crewRankedMemberRepository;
