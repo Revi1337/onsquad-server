@@ -5,80 +5,53 @@ import static lombok.AccessLevel.PRIVATE;
 import java.util.Collection;
 import java.util.List;
 import lombok.NoArgsConstructor;
-import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class CrewLeaderboardKeyMapper {
 
-    /**
-     * @param crewId
-     * @return {@code String} onsquad:crew:{crewId}:rank-members:current
-     */
+    private static final String CURRENT_LEADERBOARD_KEY_FORMAT = "crew:%s:leaderboard:current";
+    private static final String CURRENT_LEADERBOARD_PATTERN = "crew:*:leaderboard:current";
+    private static final String PREVIOUS_LEADERBOARD_KEY_FORMAT = "crew:%s:leaderboard:last-week";
+    private static final String MEMBER_KEY_FORMAT = "member:%s";
+
     public static String toLeaderboardKey(Long crewId) {
-        String key = String.join(Sign.COLON, "crew", crewId.toString(), CacheConst.RANK_MEMBERS, "current");
-        return String.format(CacheFormat.SIMPLE, key);
+        String leaderboardKey = String.format(CURRENT_LEADERBOARD_KEY_FORMAT, crewId);
+        return String.format(CacheFormat.PREFIX, leaderboardKey);
     }
 
-    /**
-     * @param crewIds
-     * @return {@code List<String>} onsquad:crew:{crewId}:rank-members:current
-     */
     public static List<String> toLeaderboardKeys(List<Long> crewIds) {
         return crewIds.stream()
                 .map(CrewLeaderboardKeyMapper::toLeaderboardKey)
                 .toList();
     }
 
-    /**
-     * @param crewId
-     * @return {@code String} onsquad:crew:{crewId}:rank-members:last-week
-     */
     public static String toPreviousLeaderboardKey(Long crewId) {
-        String key = String.join(Sign.COLON, "crew", crewId.toString(), CacheConst.RANK_MEMBERS, "last-week");
-        return String.format(CacheFormat.SIMPLE, key);
+        String leaderboardKey = String.format(PREVIOUS_LEADERBOARD_KEY_FORMAT, crewId);
+        return String.format(CacheFormat.PREFIX, leaderboardKey);
     }
 
-    /**
-     * @param crewIds
-     * @return {@code List<String>} onsquad:crew:{crewId}:rank-members:last-week
-     */
     public static List<String> toPreviousLeaderboardKeys(Collection<Long> crewIds) {
         return crewIds.stream()
                 .map(CrewLeaderboardKeyMapper::toPreviousLeaderboardKey)
                 .toList();
     }
 
-    /**
-     * @param crewKey onsquad:crew:{crewId}:rank-members:current
-     * @return {@code Long} crewId
-     */
-    public static Long parseCrewId(String crewKey) {
-        return Long.parseLong(crewKey.split(Sign.COLON)[2]);
-    }
-
-    /**
-     * @return {@code String} onsquad:crew:*:rank-members:current
-     */
     public static String getLeaderboardPattern() {
-        String key = String.join(Sign.COLON, "crew", Sign.ASTERISK, CacheConst.RANK_MEMBERS, "current");
-        return String.format(CacheFormat.SIMPLE, key);
+        return String.format(CacheFormat.PREFIX, CURRENT_LEADERBOARD_PATTERN);
     }
 
-    /**
-     * @param memberId
-     * @return {@code String} member:{memberId}
-     */
+    public static Long parseCrewIdFromKey(String computedLeaderboardKey) {
+        String leaderboardKey = computedLeaderboardKey.replaceFirst(CacheFormat.PREFIX, Sign.EMPTY);
+        return Long.parseLong(leaderboardKey.split(Sign.COLON)[1]);
+    }
+
     public static String toMemberKey(Long memberId) {
-        return String.join(Sign.COLON, "member", memberId.toString());
+        return String.format(MEMBER_KEY_FORMAT, memberId);
     }
 
-    /**
-     * @param memberKey member:{memberId}
-     * @return {@code Long} memberId
-     */
-    public static Long parseMemberId(String memberKey) {
+    public static Long parseMemberIdFromKey(String memberKey) {
         return Long.parseLong(memberKey.split(Sign.COLON)[1]);
     }
 }

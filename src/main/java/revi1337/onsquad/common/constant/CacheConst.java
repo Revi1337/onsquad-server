@@ -10,15 +10,11 @@ public abstract class CacheConst {
     public static final String CREW_STATISTIC = "crew-statistic";
     public static final String CREW_RANK_MEMBERS = "crew-rank-members";
 
-    public static final String RANK_MEMBERS = "rank-members";
-
     public static abstract class CacheFormat {
 
         public static final String PREFIX = "onsquad:%s:";
         public static final String SIMPLE = "onsquad:%s";
         public static final String COMPLEX = "onsquad:%s:%s";
-
-        public static final String CREW_COMPLEX = "onsquad:crew:%s:%s";
 
     }
 }

@@ -80,7 +80,7 @@ public class CrewLeaderboardManager {
             if (!(result instanceof Set<?> rawSet)) {
                 continue;
             }
-            Long crewId = CrewLeaderboardKeyMapper.parseCrewId(computedKeys.get(i));
+            Long crewId = CrewLeaderboardKeyMapper.parseCrewIdFromKey(computedKeys.get(i));
             int rank = 1;
             for (Object element : rawSet) {
                 if (element instanceof ZSetOperations.TypedTuple<?> tuple) {
@@ -127,7 +127,7 @@ public class CrewLeaderboardManager {
 
         return CrewRankedMemberResult.from(
                 crewId,
-                CrewLeaderboardKeyMapper.parseMemberId(tuple.getValue()),
+                CrewLeaderboardKeyMapper.parseMemberIdFromKey(tuple.getValue()),
                 rank,
                 rawScore,
                 LocalDateTime.ofInstant(Instant.ofEpochSecond(originalEpochSecond), KST)
