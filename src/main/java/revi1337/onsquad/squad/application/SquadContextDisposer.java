@@ -10,9 +10,9 @@ import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class SquadContextDisposer {
 
     private final SquadRepository squadRepository;

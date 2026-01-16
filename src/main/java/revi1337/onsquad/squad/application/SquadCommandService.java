@@ -16,9 +16,9 @@ import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class SquadCommandService {
 
     private final CrewMemberAccessor crewMemberAccessor;

@@ -8,8 +8,8 @@ import revi1337.onsquad.crew.domain.event.ScoreIncreased;
 import revi1337.onsquad.crew_member.domain.CrewActivity;
 import revi1337.onsquad.squad.domain.event.SquadCreated;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadEventListener {
 
     private final ApplicationEventPublisher eventPublisher;

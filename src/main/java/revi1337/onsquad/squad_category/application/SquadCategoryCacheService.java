@@ -17,12 +17,13 @@ import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
 import revi1337.onsquad.squad_category.domain.result.SquadCategoryResult;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class SquadCategoryCacheService {
 
     private static final String SQUAD_CATEGORY_KEY_FORMAT = "squad:%s:categories";
@@ -48,6 +49,15 @@ public class SquadCategoryCacheService {
             totalCategories.addAll(processCacheMiss(missSquadIds));
         }
         return new SquadCategories(totalCategories);
+    }
+
+    public void evictSquadCategories(List<Long> squadIds) {
+        if (CollectionUtils.isEmpty(squadIds)) {
+            return;
+        }
+
+        List<String> computedKeys = generateCacheKeys(squadIds);
+        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
     }
 
     private String generateCacheKey(Long squadId) {
