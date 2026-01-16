@@ -10,9 +10,9 @@ import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class CrewContextDisposer {
 
     private final CrewRepository crewRepository;

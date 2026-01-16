@@ -14,8 +14,8 @@ import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.crew.error.CrewBusinessException.NotFound;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CrewAccessor {
 
     private final CrewRepository crewRepository;

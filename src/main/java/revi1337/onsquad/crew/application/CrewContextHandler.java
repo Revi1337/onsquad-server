@@ -11,9 +11,9 @@ import revi1337.onsquad.crew.domain.event.CrewContextDisposed;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.squad.application.SquadContextHandler;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class CrewContextHandler {
 
     private final SquadContextHandler squadContextHandler;

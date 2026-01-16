@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.crew.application.CrewCommandService;
-import revi1337.onsquad.crew.application.CrewCreationCoordinator;
-import revi1337.onsquad.crew.application.CrewImageService;
-import revi1337.onsquad.crew.application.CrewImageUpdateCoordinator;
+import revi1337.onsquad.crew.application.CrewCommandServiceFacade;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewWithParticipantStateResponse;
@@ -35,15 +32,12 @@ import revi1337.onsquad.crew.application.dto.response.DuplicateCrewNameResponse;
 import revi1337.onsquad.crew.presentation.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
 
-@RequiredArgsConstructor
-@RequestMapping("/api/crews")
 @RestController
+@RequestMapping("/api/crews")
+@RequiredArgsConstructor
 public class CrewController {
 
-    private final CrewCreationCoordinator crewCreationCoordinator;
-    private final CrewImageUpdateCoordinator crewImageUpdateCoordinator;
-    private final CrewImageService crewImageService;
-    private final CrewCommandService crewCommandService;
+    private final CrewCommandServiceFacade crewCommandServiceFacade;
     private final CrewQueryService crewQueryService;
 
     @GetMapping("/check")
@@ -62,7 +56,7 @@ public class CrewController {
             @RequestPart(required = false) MultipartFile file,
             @Authenticate CurrentMember currentMember
     ) {
-        crewCreationCoordinator.newCrew(currentMember.id(), request.toDto(), file);
+        crewCommandServiceFacade.newCrew(currentMember.id(), request.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
@@ -94,7 +88,7 @@ public class CrewController {
             @Valid @RequestBody CrewUpdateRequest crewUpdateRequest,
             @Authenticate CurrentMember currentMember
     ) {
-        crewCommandService.updateCrew(currentMember.id(), crewId, crewUpdateRequest.toDto());
+        crewCommandServiceFacade.updateCrew(currentMember.id(), crewId, crewUpdateRequest.toDto());
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -104,7 +98,7 @@ public class CrewController {
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        crewCommandService.deleteCrew(currentMember.id(), crewId);
+        crewCommandServiceFacade.deleteCrew(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -115,7 +109,7 @@ public class CrewController {
             @RequestPart MultipartFile file,
             @Authenticate CurrentMember currentMember
     ) {
-        crewImageUpdateCoordinator.updateImage(currentMember.id(), crewId, file);
+        crewCommandServiceFacade.updateImage(currentMember.id(), crewId, file);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -125,7 +119,7 @@ public class CrewController {
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        crewImageService.deleteImage(currentMember.id(), crewId);
+        crewCommandServiceFacade.deleteImage(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

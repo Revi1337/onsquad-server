@@ -21,8 +21,8 @@ import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.SquadLinkableGroup;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class CrewMainService {
 
     private final CrewAccessor crewAccessor;

@@ -15,9 +15,9 @@ import revi1337.onsquad.crew_hashtag.application.CrewHashtagAccessor;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtags;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CrewQueryService {
 
     private final CrewAccessor crewAccessor;
