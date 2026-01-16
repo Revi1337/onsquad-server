@@ -18,7 +18,7 @@ public final class CrewLeaderboardKeyMapper {
 
     public static String toLeaderboardKey(Long crewId) {
         String leaderboardKey = String.format(CURRENT_LEADERBOARD_KEY_FORMAT, crewId);
-        return String.format(CacheFormat.PREFIX, leaderboardKey);
+        return String.format(CacheFormat.SIMPLE, leaderboardKey);
     }
 
     public static List<String> toLeaderboardKeys(List<Long> crewIds) {
@@ -29,7 +29,7 @@ public final class CrewLeaderboardKeyMapper {
 
     public static String toPreviousLeaderboardKey(Long crewId) {
         String leaderboardKey = String.format(PREVIOUS_LEADERBOARD_KEY_FORMAT, crewId);
-        return String.format(CacheFormat.PREFIX, leaderboardKey);
+        return String.format(CacheFormat.SIMPLE, leaderboardKey);
     }
 
     public static List<String> toPreviousLeaderboardKeys(Collection<Long> crewIds) {
@@ -39,12 +39,11 @@ public final class CrewLeaderboardKeyMapper {
     }
 
     public static String getLeaderboardPattern() {
-        return String.format(CacheFormat.PREFIX, CURRENT_LEADERBOARD_PATTERN);
+        return String.format(CacheFormat.SIMPLE, CURRENT_LEADERBOARD_PATTERN);
     }
 
     public static Long parseCrewIdFromKey(String computedLeaderboardKey) {
-        String leaderboardKey = computedLeaderboardKey.replaceFirst(CacheFormat.PREFIX, Sign.EMPTY);
-        return Long.parseLong(leaderboardKey.split(Sign.COLON)[1]);
+        return Long.parseLong(computedLeaderboardKey.split(Sign.COLON)[2]);
     }
 
     public static String toMemberKey(Long memberId) {
