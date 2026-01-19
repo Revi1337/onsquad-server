@@ -29,7 +29,7 @@ public class CrewRankedMemberJdbcRepository {
                     ps.setString(3, crewRankedMember.getNickname());
                     ps.setString(4, crewRankedMember.getMbti());
                     ps.setObject(5, crewRankedMember.getLastActivityTime());
-                    ps.setDouble(6, crewRankedMember.getScore());
+                    ps.setLong(6, crewRankedMember.getScore());
                     ps.setInt(7, crewRankedMember.getRank());
                 }
         );
@@ -172,7 +172,7 @@ public class CrewRankedMemberJdbcRepository {
         return (rs, rowNum) -> new CrewRankedMemberResult(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
-                rs.getDouble("score"),
+                rs.getLong("score"),
                 rs.getLong("mem_id"),
                 rs.getString("mem_nickname"),
                 rs.getString("mem_mbti"),

@@ -36,12 +36,12 @@ public class CrewRankedMember {
     private LocalDateTime lastActivityTime;
 
     @Column(nullable = false)
-    private double score;
+    private long score;
 
     @Column(name = "ranks", nullable = false)
     private int rank;
 
-    public CrewRankedMember(Long crewId, int rank, double score, Long memberId, String nickname, String mbti, LocalDateTime lastActivityTime) {
+    public CrewRankedMember(Long crewId, int rank, long score, Long memberId, String nickname, String mbti, LocalDateTime lastActivityTime) {
         this.crewId = crewId;
         this.memberId = memberId;
         this.nickname = nickname;

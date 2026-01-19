@@ -7,7 +7,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 public record CrewRankedMemberResult(
         Long crewId,
         int rank,
-        double score,
+        long score,
         Long memberId,
         String nickname,
         String mbti,
@@ -26,7 +26,7 @@ public record CrewRankedMemberResult(
         );
     }
 
-    public static CrewRankedMemberResult from(Long crewId, Long memberId, int rank, double score, LocalDateTime lastActivityTime) {
+    public static CrewRankedMemberResult from(Long crewId, Long memberId, int rank, long score, LocalDateTime lastActivityTime) {
         return new CrewRankedMemberResult(crewId, rank, score, memberId, null, null, lastActivityTime);
     }
 

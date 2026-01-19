@@ -9,7 +9,7 @@ public record CrewRankedMemberResponse(
         String nickname,
         String mbti,
         int rank,
-        double score,
+        long score,
         LocalDateTime lastActivityTime
 ) {
 
