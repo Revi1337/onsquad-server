@@ -1,19 +1,19 @@
 package revi1337.onsquad.crew_member.application.leaderboard;
 
-import static lombok.AccessLevel.PRIVATE;
-
 import java.util.Collection;
 import java.util.List;
-import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
 
-@NoArgsConstructor(access = PRIVATE)
-public final class CrewLeaderboardKeyMapper {
+public abstract class CrewLeaderboardKeyMapper {
+
+    private CrewLeaderboardKeyMapper() {
+    }
 
     private static final String CURRENT_LEADERBOARD_KEY_FORMAT = "crew:%s:leaderboard:current";
     private static final String CURRENT_LEADERBOARD_PATTERN = "crew:*:leaderboard:current";
     private static final String PREVIOUS_LEADERBOARD_KEY_FORMAT = "crew:%s:leaderboard:last-week";
+    private static final String PREVIOUS_LEADERBOARD_PATTERN = "crew:*:leaderboard:last-week";
     private static final String MEMBER_KEY_FORMAT = "member:%s";
 
     public static String toLeaderboardKey(Long crewId) {
@@ -40,6 +40,10 @@ public final class CrewLeaderboardKeyMapper {
 
     public static String getLeaderboardPattern() {
         return String.format(CacheFormat.SIMPLE, CURRENT_LEADERBOARD_PATTERN);
+    }
+
+    public static String getPreviousLeaderboardPattern() {
+        return String.format(CacheFormat.SIMPLE, PREVIOUS_LEADERBOARD_PATTERN);
     }
 
     public static Long parseCrewIdFromKey(String computedLeaderboardKey) {
