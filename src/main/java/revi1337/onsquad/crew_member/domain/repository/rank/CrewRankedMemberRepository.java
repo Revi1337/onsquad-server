@@ -15,10 +15,10 @@ public interface CrewRankedMemberRepository {
 
     boolean exists();
 
+    void insertBatch(List<CrewRankedMember> rankedMembers);
+
     void deleteAllInBatch();
 
     void truncate();
-
-    void insertBatch(List<CrewRankedMember> rankedMembers);
 
 }

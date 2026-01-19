@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewRankedMemberJdbcRepository {
 
     private final NamedParameterJdbcTemplate namedJdbcTemplate;

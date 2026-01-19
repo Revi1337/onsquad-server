@@ -4,13 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepository {
 
+    private final CrewRankedMemberProperties crewRankedMemberProperties;
     private final CrewRankedMemberJpaRepository crewRankedMemberJpaRepository;
     private final CrewRankedMemberJdbcRepository crewRankedMemberJdbcRepository;
 
@@ -21,7 +23,7 @@ public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepositor
 
     @Override
     public List<CrewRankedMember> findAllByCrewId(Long crewId) {
-        return crewRankedMemberJpaRepository.findAllByCrewId(crewId);
+        return crewRankedMemberJpaRepository.findAllByCrewIdAndRankLessThanEqualOrderByRankAsc(crewId, crewRankedMemberProperties.rankLimit());
     }
 
     @Override
@@ -31,7 +33,7 @@ public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepositor
 
     @Override
     public boolean exists() {
-        return crewRankedMemberJpaRepository.exists();
+        return crewRankedMemberJpaRepository.existsBy();
     }
 
     @Override
@@ -40,12 +42,12 @@ public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepositor
     }
 
     @Override
-    public void truncate() {
-        crewRankedMemberJdbcRepository.truncate();
+    public void insertBatch(List<CrewRankedMember> rankedMembers) {
+        crewRankedMemberJdbcRepository.insertBatch(rankedMembers);
     }
 
     @Override
-    public void insertBatch(List<CrewRankedMember> rankedMembers) {
-        crewRankedMemberJdbcRepository.insertBatch(rankedMembers);
+    public void truncate() {
+        crewRankedMemberJdbcRepository.truncate();
     }
 }
