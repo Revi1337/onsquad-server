@@ -16,7 +16,6 @@ import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 public class MemberCommandServiceFacade {
 
     private final MemberCommandService memberCommandService;
-    private final MemberDeleteService memberDeleteService;
     private final FileStorageManager memberS3StorageManager;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -26,10 +25,6 @@ public class MemberCommandServiceFacade {
 
     public void updateProfile(Long memberId, MemberUpdateDto dto) {
         memberCommandService.updateProfile(memberId, dto);
-    }
-
-    public void deleteMember(Long memberId) {
-        memberDeleteService.deleteMember(memberId);
     }
 
     public void updatePassword(Long memberId, MemberPasswordUpdateDto dto) {
@@ -54,5 +49,9 @@ public class MemberCommandServiceFacade {
 
     public void deleteImage(Long memberId) {
         memberCommandService.deleteImage(memberId);
+    }
+
+    public void deleteMember(Long memberId) {
+        memberCommandService.deleteMember(memberId);
     }
 }

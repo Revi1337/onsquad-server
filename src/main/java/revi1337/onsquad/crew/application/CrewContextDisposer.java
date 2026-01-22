@@ -31,23 +31,11 @@ public class CrewContextDisposer {
         }
     }
 
-    public void disposeMemberActivity(Long memberId, List<Long> ownedCrewIds) {
-        disposeContexts(ownedCrewIds);
-        cleanUpMemberData(memberId);
-    }
-
     private void deleteCrewRelatedData(List<Long> crewIds) {
         crewHashtagRepository.deleteByCrewIdIn(crewIds);
         crewRequestRepository.deleteByCrewIdIn(crewIds);
         crewMemberRepository.deleteByCrewIdIn(crewIds);
         announceRepository.deleteByCrewIdIn(crewIds);
         crewRepository.deleteByIdIn(crewIds);
-    }
-
-    private void cleanUpMemberData(Long memberId) {
-        crewRepository.decrementCountByMemberId(memberId);
-        crewRequestRepository.deleteByMemberId(memberId);
-        crewMemberRepository.deleteByMemberId(memberId);
-        announceRepository.markMemberAsNull(memberId);
     }
 }

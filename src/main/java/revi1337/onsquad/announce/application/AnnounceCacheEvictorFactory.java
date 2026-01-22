@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
  * @see revi1337.onsquad.announce.infrastructure.RedisAnnounceCacheEvictor
  * @see revi1337.onsquad.announce.infrastructure.CaffeineAnnounceCacheEvictor
  */
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class AnnounceCacheEvictorFactory {
 
     public static final String ERROR_MESSAGE_FORMAT = "No suitable AnnounceCacheEvictor found for the provided CacheManager: ";

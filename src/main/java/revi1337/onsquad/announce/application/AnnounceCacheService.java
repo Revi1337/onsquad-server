@@ -45,13 +45,15 @@ import revi1337.onsquad.announce.error.AnnounceErrorCode;
 @Service
 public class AnnounceCacheService {
 
+    private static final String CACHE_MANAGER_NAME = "redisCacheManager";
     private static final int DEFAULT_FETCH_SIZE = 4;
+
     private final AnnounceQueryDslRepository announceQueryDslRepository;
     private final AnnounceCacheEvictor announceCacheEvictor;
 
     public AnnounceCacheService(
             AnnounceQueryDslRepository announceQueryDslRepository,
-            @Qualifier("redisCacheManager") CacheManager cacheManager,
+            @Qualifier(CACHE_MANAGER_NAME) CacheManager cacheManager,
             AnnounceCacheEvictorFactory cacheEvictorFactory
     ) {
         this.announceQueryDslRepository = announceQueryDslRepository;
@@ -62,24 +64,24 @@ public class AnnounceCacheService {
         return cacheEvictorFactory.findAvailableEvictor(cacheManager);
     }
 
-    @Cacheable(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = "redisCacheManager")
+    @Cacheable(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = CACHE_MANAGER_NAME)
     public AnnounceResult getAnnounce(Long crewId, Long announceId) {
         return announceQueryDslRepository.fetchByCrewIdAndId(crewId, announceId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
     }
 
-    @Cacheable(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId", cacheManager = "redisCacheManager")
+    @Cacheable(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId", cacheManager = CACHE_MANAGER_NAME)
     public List<AnnounceResult> getDefaultAnnounces(Long crewId) {
         return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 
-    @CachePut(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = "redisCacheManager")
+    @CachePut(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = CACHE_MANAGER_NAME)
     public AnnounceResult putAnnounce(Long crewId, Long announceId) {
         return announceQueryDslRepository.fetchByCrewIdAndId(crewId, announceId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
     }
 
-    @CachePut(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId", cacheManager = "redisCacheManager")
+    @CachePut(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId", cacheManager = CACHE_MANAGER_NAME)
     public List<AnnounceResult> putDefaultAnnounceList(Long crewId) {
         return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
@@ -90,6 +92,10 @@ public class AnnounceCacheService {
 
     public void evictAnnouncesByReferences(List<AnnounceReference> references) {
         announceCacheEvictor.evictAnnouncesByReferences(references);
+    }
+
+    public void evictAnnouncesInCrews(List<Long> crewIds) {
+        announceCacheEvictor.evictAnnouncesInCrews(crewIds);
     }
 
     public void evictAnnounceListsByCrews(List<Long> crewIds) {

@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
 import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 
 @Slf4j
@@ -67,6 +68,11 @@ public class CrewRankerBackupManager {
         });
 
         return deserializeResults(pipelinedResults);
+    }
+
+    public void removeBackups(List<Long> crewIds) {
+        List<String> backupKeys = CrewLeaderboardKeyMapper.toPreviousLeaderboardKeys(crewIds);
+        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, backupKeys);
     }
 
     private void saveBackup(List<CrewRankedMemberResult> previousRankedMembers) {

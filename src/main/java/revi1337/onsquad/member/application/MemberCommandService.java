@@ -15,15 +15,16 @@ import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.member.error.MemberBusinessException;
 import revi1337.onsquad.member.error.MemberErrorCode;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class MemberCommandService {
 
     private final MemberRepository memberRepository;
     private final EmailVerificationValidator emailVerificationValidator;
     private final MemberAccessor memberAccessor;
     private final PasswordEncoder passwordEncoder;
+    private final MemberContextHandler memberContextHandler;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public void newMember(MemberCreateDto dto) {
@@ -61,6 +62,11 @@ public class MemberCommandService {
             applicationEventPublisher.publishEvent(new FileDeleteEvent(member.getProfileImage()));
             member.deleteImage();
         }
+    }
+
+    public void deleteMember(Long memberId) {
+        Member member = memberAccessor.getById(memberId);
+        memberContextHandler.disposeContext(member);
     }
 
     private void ensureNotDuplicate(MemberCreateDto dto) {
