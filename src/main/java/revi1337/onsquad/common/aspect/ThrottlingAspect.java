@@ -17,10 +17,10 @@ import revi1337.onsquad.common.constant.Sign;
 import revi1337.onsquad.common.error.CommonBusinessException;
 import revi1337.onsquad.common.error.CommonErrorCode;
 
-@RequiredArgsConstructor
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class ThrottlingAspect {
 
     private final SpelExpressionParser spelExpressionParser = new SpelExpressionParser();

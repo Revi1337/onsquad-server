@@ -12,8 +12,8 @@ import revi1337.onsquad.infrastructure.aws.s3.util.UrlUtils;
 import revi1337.onsquad.infrastructure.storage.sqlite.ImageRecycleBinRepository;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class FileDeleteEventListener {
 
     private final ImageRecycleBinRepository imageRecyclebinRepository;

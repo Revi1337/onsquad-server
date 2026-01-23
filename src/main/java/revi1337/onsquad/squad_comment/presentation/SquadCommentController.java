@@ -22,9 +22,9 @@ import revi1337.onsquad.squad_comment.application.SquadCommentQueryService;
 import revi1337.onsquad.squad_comment.application.response.SquadCommentWithStateResponse;
 import revi1337.onsquad.squad_comment.presentation.request.CommentCreateRequest;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class SquadCommentController {
 
     private final SquadCommentCommandService squadCommentCommandService;

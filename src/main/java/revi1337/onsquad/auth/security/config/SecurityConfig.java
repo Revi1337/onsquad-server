@@ -33,9 +33,9 @@ import revi1337.onsquad.auth.security.JsonWebTokenUserDetailsService;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.token.application.JsonWebTokenManager;
 
-@RequiredArgsConstructor
-@Configuration
 @EnableWebSecurity
+@Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final MemberRepository memberRepository;

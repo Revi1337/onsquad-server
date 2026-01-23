@@ -21,8 +21,8 @@ import revi1337.onsquad.token.config.TokenProperties.TokenAttributes;
 import revi1337.onsquad.token.domain.model.AccessToken;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class JsonWebTokenProvider {
 
     private final TokenProperties tokenProperties;

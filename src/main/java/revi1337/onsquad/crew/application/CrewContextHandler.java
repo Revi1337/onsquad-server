@@ -31,7 +31,7 @@ public class CrewContextHandler {
         return announceRepository.findAnnounceReferencesByMemberId(memberId);
     }
 
-    public void disposeContext(Crew crew) {
+    public void disposeContextWithSquads(Crew crew) {
         List<String> crewImages = Crew.extractImageUrls(List.of(crew));
         squadContextHandler.disposeContexts(squadContextHandler.findSquadIdsByCrews(List.of(crew)));
         crewContextDisposer.disposeContext(crew.getId());

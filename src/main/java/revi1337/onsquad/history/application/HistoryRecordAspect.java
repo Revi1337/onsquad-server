@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.history.config.HistoryCandidatesInspector;
 
 @Slf4j
-@RequiredArgsConstructor
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class HistoryRecordAspect {
 
     private final HistoryCandidatesInspector historyCandidatesInspector;

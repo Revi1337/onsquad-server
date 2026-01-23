@@ -15,9 +15,9 @@ import revi1337.onsquad.common.aspect.RequestCacheHandlerComposite;
  * @see RequestCacheHandlerComposite
  */
 @Slf4j
-@RequiredArgsConstructor
 @Order(1)
 @Component
+@RequiredArgsConstructor
 public class RedisRequestCacheHandler implements RequestCacheHandler {
 
     public static final String EXCEPTION_LOG_FORMAT = "[Exception 발생: {} - Message: {}] ";

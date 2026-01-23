@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class HistoryRepositoryImpl implements HistoryRepository {
 
     private final HistoryJpaRepository historyJpaRepository;

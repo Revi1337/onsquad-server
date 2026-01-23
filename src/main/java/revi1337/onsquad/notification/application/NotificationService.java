@@ -13,8 +13,8 @@ import revi1337.onsquad.notification.infrastructure.sse.SseEmitterManager;
 import revi1337.onsquad.notification.infrastructure.sse.SseTopic;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
 
     private final SseEmitterManager sseEmitterManager;

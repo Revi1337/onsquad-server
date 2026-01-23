@@ -17,9 +17,9 @@ import revi1337.onsquad.squad_member.application.SquadMemberQueryService;
 import revi1337.onsquad.squad_member.application.response.MyParticipantResponse;
 import revi1337.onsquad.squad_member.application.response.SquadMemberResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class SquadMemberController {
 
     private final SquadMemberCommandService squadMemberCommandService;

@@ -10,7 +10,7 @@ import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 @NoArgsConstructor(access = PRIVATE)
-public class SquadCommentPolicy {
+public final class SquadCommentPolicy {
 
     public static boolean isDeleted(SquadComment comment) {
         return comment.isDeleted();
@@ -20,7 +20,7 @@ public class SquadCommentPolicy {
         return comment.isNotParent();
     }
 
-    public static boolean canDeleteComment(SquadMember me, SquadComment comment) {
+    public static boolean canDelete(SquadComment comment, SquadMember me) {
         if (isDeleted(comment)) {
             return false;
         }
@@ -30,20 +30,23 @@ public class SquadCommentPolicy {
         return isWriter || isLeader;
     }
 
-    public static void ensureCommentIsParent(SquadComment comment) {
+    public static void ensureParent(SquadComment comment) {
         if (isNotParent(comment)) {
             throw new SquadCommentBusinessException.NotParent(SquadCommentErrorCode.NOT_PARENT);
         }
     }
 
-    public static void ensureCommentIsAlive(SquadComment comment) {
+    public static void ensureAlive(SquadComment comment) {
         if (isDeleted(comment)) {
             throw new SquadCommentBusinessException.Deleted(SquadCommentErrorCode.DELETED);
         }
     }
 
-    public static void ensureDeletable(SquadMember me, SquadComment comment) {
-        if (!canDeleteComment(me, comment)) {
+    public static void ensureDeletable(SquadComment comment, SquadMember me) {
+        if (mismatchSquad(comment, me)) {
+            throw new RuntimeException();
+        }
+        if (!canDelete(comment, me)) {
             throw new SquadCommentBusinessException.InsufficientAuthority(SquadCommentErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
     }
@@ -58,5 +61,9 @@ public class SquadCommentPolicy {
         if (comment.mismatchMemberId(memberId)) {
             throw new SquadCommentBusinessException.InsufficientAuthority(SquadCommentErrorCode.MISMATCH_WRITER);
         }
+    }
+
+    private static boolean mismatchSquad(SquadComment comment, SquadMember me) {
+        return !comment.getSquad().equals(me.getSquad());
     }
 }

@@ -18,8 +18,8 @@ import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.result.QSquadRequestResult;
 import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadRequestQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;

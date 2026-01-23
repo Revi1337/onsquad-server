@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.result.CrewStatisticResult;
 import revi1337.onsquad.crew.domain.result.QCrewStatisticResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewStatisticQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;

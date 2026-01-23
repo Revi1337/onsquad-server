@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.category.application.CategoryService;
 import revi1337.onsquad.common.dto.RestResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api/categories")
 @RestController
+@RequestMapping("/api/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService cachedCategoryService;

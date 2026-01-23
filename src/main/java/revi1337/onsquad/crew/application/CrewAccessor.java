@@ -2,16 +2,15 @@ package revi1337.onsquad.crew.application;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew.domain.CrewResults;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 import revi1337.onsquad.crew.error.CrewBusinessException;
-import revi1337.onsquad.crew.error.CrewBusinessException.NotFound;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 
 @Component
@@ -41,19 +40,15 @@ public class CrewAccessor {
 
     public CrewResult fetchCrewWithDetailById(Long crewId) {
         return crewRepository.fetchCrewWithDetailById(crewId)
-                .orElseThrow(() -> new NotFound(CrewErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
     }
 
-    public CrewResults fetchCrewsWithDetailByName(String crewName, Pageable pageable) {
-        return new CrewResults(crewRepository.fetchCrewsWithDetailByName(crewName, pageable));
-    }
-
-    public CrewResults fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable) {
-        return new CrewResults(crewRepository.fetchCrewsWithDetailByMemberId(memberId, pageable));
+    public Page<CrewResult> fetchCrewsWithDetailByName(String crewName, Pageable pageable) {
+        return crewRepository.fetchCrewsWithDetailByName(crewName, pageable);
     }
 
     public List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> crewIds, Long currentMemberId) {
-        return crewRepository.fetchCrewWithStateByIdsIn(crewIds, currentMemberId);
+        return crewRepository.fetchCrewsWithStateByIdIn(crewIds, currentMemberId);
     }
 
     public boolean checkCrewNameExists(String name) {

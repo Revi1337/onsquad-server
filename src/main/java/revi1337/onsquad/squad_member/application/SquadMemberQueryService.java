@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew.application.CrewAccessor;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.SquadLinkableGroup;
+import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
@@ -24,9 +24,9 @@ import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class SquadMemberQueryService {
 
     private final CrewAccessor crewAccessor;
@@ -47,7 +47,7 @@ public class SquadMemberQueryService {
 
         Squad squad = squadAccessor.getById(squadId);
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
-        if (CrewMemberPolicy.cannotReadSquadParticipants(me)) {
+        if (SquadPolicy.cannotReadParticipants(me)) {
             throw new SquadMemberBusinessException.InsufficientAuthority(SquadMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
         }
 
@@ -75,15 +75,15 @@ public class SquadMemberQueryService {
     private SquadMemberResponse resolveParticipantStates(SquadMember me, SquadMember participant) {
         boolean isMe = SquadMemberPolicy.isMe(me, participant);
         boolean canKick = SquadMemberPolicy.canKick(me, participant);
-        boolean canDelegateLeader = SquadMemberPolicy.DelegateLeader(me, participant);
+        boolean canDelegateLeader = SquadMemberPolicy.canDelegateLeader(me, participant);
 
         return SquadMemberResponse.from(isMe, canKick, canDelegateLeader, participant);
     }
 
     private SquadMemberResponse resolveParticipantStates(CrewMember me, SquadMember participant) {
-        boolean isMe = CrewMemberPolicy.isMe(me, participant);
-        boolean canKick = CrewMemberPolicy.canKick(me, participant);
-        boolean canDelegateLeader = CrewMemberPolicy.canLeaderDelegate(me, participant);
+        boolean isMe = SquadMemberPolicy.isMe(me, participant);
+        boolean canKick = SquadMemberPolicy.canKick(me, participant);
+        boolean canDelegateLeader = SquadMemberPolicy.canDelegateLeader(me, participant);
 
         return SquadMemberResponse.from(isMe, canKick, canDelegateLeader, participant);
     }

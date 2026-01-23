@@ -17,9 +17,9 @@ import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
 import revi1337.onsquad.squad_request.domain.SquadRequestPolicy;
 import revi1337.onsquad.squad_request.domain.SquadRequests;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class SquadRequestQueryService {
 
     private final SquadRequestAccessor squadRequestAccessor;
@@ -28,7 +28,7 @@ public class SquadRequestQueryService {
 
     public PageResponse<SquadRequestResponse> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
-        SquadRequestPolicy.ensureRequestListAccessible(me);
+        SquadRequestPolicy.ensureReadRequests(me);
 
         return PageResponse.from(squadRequestAccessor.fetchAllBySquadId(squadId, pageable).map(SquadRequestResponse::from));
     }

@@ -116,6 +116,10 @@ public class CrewMember extends RequestEntity {
         return role == MANAGER || role == OWNER;
     }
 
+    public boolean isManagerOrLower() {
+        return role == MANAGER || role == GENERAL;
+    }
+
     public Long getActualMemberId() {
         return member.getId();
     }

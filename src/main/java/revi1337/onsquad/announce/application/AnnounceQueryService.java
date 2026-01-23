@@ -12,9 +12,8 @@ import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@RequiredArgsConstructor
 public class AnnounceQueryService {
 
     private final CrewMemberAccessor crewMemberAccessor;
@@ -31,6 +30,7 @@ public class AnnounceQueryService {
         return AnnounceWithFixAndModifyStateResponse.from(canFix, canModify, announce);
     }
 
+    @Transactional(readOnly = true)
     public AnnouncesWithWriteStateResponse findAnnounces(Long memberId, Long crewId) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         List<AnnounceResult> announces = announceRepository.fetchAllByCrewId(crewId);

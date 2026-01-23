@@ -15,9 +15,9 @@ import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.infrastructure.storage.redis.RedisSafeExecutor;
 
-@RequiredArgsConstructor
 @Order(1)
 @Repository
+@RequiredArgsConstructor
 public class VerificationCodeRedisRepository implements VerificationCodeRepository {
 
     private final StringRedisTemplate stringRedisTemplate;

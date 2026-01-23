@@ -20,6 +20,6 @@ public interface CrewMemberJpaRepository extends JpaRepository<CrewMember, Long>
 
     @Modifying
     @Query("delete CrewMember cm where cm.crew.id in :crewIds")
-    int deleteByCrewId(List<Long> crewIds);
+    int deleteByCrewIdIn(List<Long> crewIds);
 
 }

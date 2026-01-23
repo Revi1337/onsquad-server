@@ -1,13 +1,16 @@
 package revi1337.onsquad.crew_request.domain;
 
-import lombok.RequiredArgsConstructor;
+import static lombok.AccessLevel.PRIVATE;
+
+import lombok.NoArgsConstructor;
+import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.error.CrewRequestBusinessException;
 import revi1337.onsquad.crew_request.error.CrewRequestErrorCode;
 
-@RequiredArgsConstructor
-public class CrewRequestPolicy {
+@NoArgsConstructor(access = PRIVATE)
+public final class CrewRequestPolicy {
 
     public static void ensureMatchCrew(CrewRequest request, Long crewId) {
         if (request.mismatchCrewId(crewId)) {
@@ -15,20 +18,20 @@ public class CrewRequestPolicy {
         }
     }
 
-    public static void ensureRequestListAccessible(CrewMember me) {
-        if (me.isLowerThanManager()) {
+    public static void ensureReadRequests(CrewMember me) {
+        if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_READ_LIST_AUTHORITY);
         }
     }
 
     public static void ensureAcceptable(CrewMember me) {
-        if (me.isLowerThanManager()) {
+        if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_ACCEPT_AUTHORITY);
         }
     }
 
     public static void ensureRejectable(CrewMember me) {
-        if (me.isLowerThanManager()) {
+        if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_REJECT_AUTHORITY);
         }
     }

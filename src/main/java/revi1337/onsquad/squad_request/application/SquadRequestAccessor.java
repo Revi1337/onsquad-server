@@ -11,8 +11,8 @@ import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
 import revi1337.onsquad.squad_request.error.SquadRequestBusinessException;
 import revi1337.onsquad.squad_request.error.SquadRequestErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadRequestAccessor {
 
     private final SquadRequestRepository squadRequestRepository;

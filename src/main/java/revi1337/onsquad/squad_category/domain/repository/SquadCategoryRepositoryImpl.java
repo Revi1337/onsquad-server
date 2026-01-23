@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.squad_category.domain.result.SquadCategoryResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadCategoryRepositoryImpl implements SquadCategoryRepository {
 
     private final SquadCategoryJdbcRepository squadCategoryJdbcRepository;

@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 
 @Getter
-@NoArgsConstructor(access = PROTECTED)
 @Entity
+@NoArgsConstructor(access = PROTECTED)
 public class Category {
 
     @Id

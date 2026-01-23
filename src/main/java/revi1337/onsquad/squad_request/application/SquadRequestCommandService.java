@@ -19,9 +19,9 @@ import revi1337.onsquad.squad_request.domain.event.RequestAdded;
 import revi1337.onsquad.squad_request.domain.event.RequestRejected;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class SquadRequestCommandService {
 
     private final MemberAccessor memberAccessor;

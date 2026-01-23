@@ -1,11 +1,11 @@
 package revi1337.onsquad.member.domain.entity.vo;
 
+import static lombok.AccessLevel.PROTECTED;
 import static revi1337.onsquad.member.error.MemberErrorCode.INVALID_EMAIL_FORMAT;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.regex.Pattern;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import revi1337.onsquad.member.error.MemberDomainException;
 
 @Getter
 @EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Embeddable
 public class Email {
 

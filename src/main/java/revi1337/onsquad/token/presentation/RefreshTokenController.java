@@ -12,9 +12,9 @@ import revi1337.onsquad.token.application.TokenReissueService;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 
-@RequiredArgsConstructor
-@RequestMapping("/api/auth")
 @RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class RefreshTokenController {
 
     private final TokenReissueService tokenReissueService;

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_hashtag.domain.entity.CrewHashtag;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewHashtagRepositoryImpl implements CrewHashtagRepository {
 
     private final CrewHashtagJdbcRepository crewHashtagJdbcRepository;

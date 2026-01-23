@@ -21,9 +21,9 @@ import revi1337.onsquad.squad_request.application.SquadRequestQueryService;
 import revi1337.onsquad.squad_request.application.response.MySquadRequestResponse;
 import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class SquadRequestController {
 
     private final SquadRequestCommandService squadRequestCommandService;

@@ -14,8 +14,8 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 import revi1337.onsquad.token.domain.repository.TokenRepository;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisHashTokenRepository implements TokenRepository {
 
     private static final String PREFIX = "user:";

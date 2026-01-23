@@ -1,11 +1,16 @@
 package revi1337.onsquad.announce.domain;
 
+import static lombok.AccessLevel.PRIVATE;
+
+import lombok.NoArgsConstructor;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
+import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
-public class AnnouncePolicy {
+@NoArgsConstructor(access = PRIVATE)
+public final class AnnouncePolicy {
 
     /**
      * Managers or higher can write new announcements.
@@ -48,33 +53,47 @@ public class AnnouncePolicy {
         }
     }
 
-    public static void ensureWritable(CrewMember crewMember) {
-        if (crewMember.isLowerThanManager()) {
+    public static void ensureWritable(CrewMember me) {
+        if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_CREATE_AUTHORITY);
         }
     }
 
-    public static void ensureModifiable(Announce announce, CrewMember crewMember) {
-        if (crewMember.isLowerThanManager()) {
+    public static void ensureModifiable(Announce announce, CrewMember me) {
+        if (mismatchCrew(announce, me)) {
+            throw new AnnounceBusinessException.MismatchReference(AnnounceErrorCode.MISMATCH_CREW_REFERENCE);
+        }
+        if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
-        if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getActualMemberId())) {
+        if (CrewMemberPolicy.isLowerThanManager(me) && mismatchWriter(announce, me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
     }
 
-    public static void ensureDeletable(Announce announce, CrewMember crewMember) {
-        if (crewMember.isLowerThanManager()) {
+    public static void ensureDeletable(Announce announce, CrewMember me) {
+        if (mismatchCrew(announce, me)) {
+            throw new AnnounceBusinessException.MismatchReference(AnnounceErrorCode.MISMATCH_CREW_REFERENCE);
+        }
+        if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
-        if (crewMember.isManager() && announce.mismatchMemberId(crewMember.getActualMemberId())) {
+        if (CrewMemberPolicy.isManager(me) && mismatchWriter(announce, me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
     }
 
-    public static void ensureFixable(CrewMember crewMember) {
-        if (crewMember.isNotOwner()) {
+    public static void ensureFixable(CrewMember me) {
+        if (CrewMemberPolicy.isNotOwner(me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_FIX_AUTHORITY);
         }
+    }
+
+    private static boolean mismatchWriter(Announce announce, CrewMember me) {
+        return !announce.getMember().equals(me.getMember());
+    }
+
+    private static boolean mismatchCrew(Announce announce, CrewMember me) {
+        return !announce.getCrew().equals(me.getCrew());
     }
 }

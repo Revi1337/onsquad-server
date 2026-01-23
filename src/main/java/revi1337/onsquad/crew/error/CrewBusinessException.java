@@ -35,4 +35,11 @@ public abstract class CrewBusinessException extends RuntimeException {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }
+
+    public static class MismatchReference extends CrewBusinessException {
+
+        public MismatchReference(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
 }

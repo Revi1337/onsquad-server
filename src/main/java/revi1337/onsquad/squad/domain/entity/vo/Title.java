@@ -1,15 +1,16 @@
 package revi1337.onsquad.squad.domain.entity.vo;
 
+import static lombok.AccessLevel.PROTECTED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Embeddable
 public class Title {
 

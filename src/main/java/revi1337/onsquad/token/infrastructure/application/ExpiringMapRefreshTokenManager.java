@@ -29,8 +29,8 @@ import revi1337.onsquad.token.infrastructure.repository.ExpiringMapTokenReposito
  * <p>For these reasons, a distributed and persistent token store such as Redis should be preferred.</p>
  */
 @Deprecated
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class ExpiringMapRefreshTokenManager implements RefreshTokenManager {
 
     private final TokenProperties tokenProperties;

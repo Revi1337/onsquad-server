@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtags;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CrewHashtagAccessor {
 
     private final CrewHashtagRepository crewHashtagRepository;

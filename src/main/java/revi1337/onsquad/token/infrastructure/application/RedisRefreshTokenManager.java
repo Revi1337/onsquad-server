@@ -9,8 +9,8 @@ import revi1337.onsquad.token.config.TokenProperties;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 import revi1337.onsquad.token.infrastructure.repository.RedisHashTokenRepository;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisRefreshTokenManager implements RefreshTokenManager {
 
     private final TokenProperties tokenProperties;

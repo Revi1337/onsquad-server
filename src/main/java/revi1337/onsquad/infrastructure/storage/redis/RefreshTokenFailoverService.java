@@ -12,8 +12,8 @@ import revi1337.onsquad.token.domain.model.RefreshTokenState;
 import revi1337.onsquad.token.infrastructure.repository.ExpiringMapTokenRepository;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RefreshTokenFailoverService {
 
     private final StringRedisTemplate stringRedisTemplate;

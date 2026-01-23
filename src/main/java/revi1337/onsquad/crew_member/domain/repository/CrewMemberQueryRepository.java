@@ -4,6 +4,4 @@ public interface CrewMemberQueryRepository {
 
     boolean existsCrewMember(Long memberId);
 
-    boolean existsParticipantCrewMember(Long memberId);
-
 }

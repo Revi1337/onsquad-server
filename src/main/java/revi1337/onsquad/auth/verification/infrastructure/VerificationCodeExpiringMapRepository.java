@@ -20,9 +20,9 @@ import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
-@RequiredArgsConstructor
 @Order(2)
 @Repository
+@RequiredArgsConstructor
 public class VerificationCodeExpiringMapRepository implements VerificationCodeRepository {
 
     private static final int MAX_CACHE_SIZE = 10_000;

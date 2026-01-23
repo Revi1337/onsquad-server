@@ -15,6 +15,13 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
+    public static class MismatchReference extends CrewMemberBusinessException {
+
+        public MismatchReference(ErrorCode errorCode) {
+            super(errorCode, errorCode.getDescription());
+        }
+    }
+
     public static class NotParticipant extends CrewMemberBusinessException {
 
         public NotParticipant(ErrorCode errorCode) {

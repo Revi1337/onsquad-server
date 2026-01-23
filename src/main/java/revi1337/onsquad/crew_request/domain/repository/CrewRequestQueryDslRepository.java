@@ -20,8 +20,8 @@ import revi1337.onsquad.crew_request.domain.result.QCrewRequestWithCrewResult;
 import revi1337.onsquad.crew_request.domain.result.QCrewRequestWithMemberResult;
 import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewRequestQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;

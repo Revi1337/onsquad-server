@@ -6,8 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Deprecated
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadRequestJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;

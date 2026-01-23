@@ -9,8 +9,8 @@ import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.member.error.MemberBusinessException;
 import revi1337.onsquad.member.error.MemberErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class MemberAccessor {
 
     private final MemberRepository memberRepository;

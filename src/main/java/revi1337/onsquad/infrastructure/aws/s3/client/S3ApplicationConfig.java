@@ -9,8 +9,8 @@ import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontProperties;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 public class S3ApplicationConfig {
 
     private final S3BucketProperties s3BucketProperties;

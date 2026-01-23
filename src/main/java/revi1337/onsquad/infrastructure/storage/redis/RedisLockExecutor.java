@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
  * (scale-out) environment.
  */
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisLockExecutor {
 
     private final StringRedisTemplate stringRedisTemplate;

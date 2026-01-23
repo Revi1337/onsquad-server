@@ -10,8 +10,8 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadRepositoryImpl implements SquadRepository {
 
     private final SquadJpaRepository squadJpaRepository;

@@ -13,8 +13,8 @@ import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component("squadRequestCancelHistoryStrategy")
+@RequiredArgsConstructor
 public class RequestCancelHistoryStrategy implements HistoryRecordStrategy {
 
     private static final String MESSAGE_FORMAT = "[%s | %s] 스쿼드 합류 요청을 취소했습니다.";

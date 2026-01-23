@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.domain.repository.CategoryRepository;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class DefaultCategoryService implements CategoryService {
 
     private final CategoryRepository categoryRepository;

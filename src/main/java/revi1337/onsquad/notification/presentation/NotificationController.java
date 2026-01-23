@@ -23,9 +23,9 @@ import revi1337.onsquad.notification.application.NotificationQueryService;
 import revi1337.onsquad.notification.application.NotificationService;
 import revi1337.onsquad.notification.application.response.NotificationResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class NotificationController {
 
     private static final String LAST_EVENT_ID = "Last-Event-ID";

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.history.application.History;
 import revi1337.onsquad.history.domain.repository.HistoryRepository;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class HistoryEventListener {
 
     private final HistoryRepository historyRepository;

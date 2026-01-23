@@ -8,8 +8,8 @@ import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.result.AnnounceReference;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class AnnounceRepositoryImpl implements AnnounceRepository {
 
     private final AnnounceJpaRepository announceJpaRepository;

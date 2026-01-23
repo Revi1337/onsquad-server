@@ -8,8 +8,8 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Email;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepository {
 
     private final MemberJpaRepository memberJpaRepository;

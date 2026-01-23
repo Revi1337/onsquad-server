@@ -10,8 +10,8 @@ import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadMemberAccessor {
 
     private final SquadMemberRepository squadMemberRepository;

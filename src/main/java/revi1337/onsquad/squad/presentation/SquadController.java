@@ -25,9 +25,9 @@ import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateRespo
 import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.presentation.request.SquadCreateRequest;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class SquadController {
 
     private final SquadCommandService squadCommandService;

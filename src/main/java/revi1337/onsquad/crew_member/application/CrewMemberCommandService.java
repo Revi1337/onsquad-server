@@ -11,9 +11,9 @@ import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class CrewMemberCommandService {
 
     private final CrewAccessor crewAccessor;
@@ -25,8 +25,8 @@ public class CrewMemberCommandService {
     public void delegateOwner(Long memberId, Long crewId, Long targetMemberId) {
         Crew crew = crewAccessor.getById(crewId);
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewMemberPolicy.ensureNotSelfTarget(memberId, targetMemberId);
-        CrewMemberPolicy.ensureCanDelegateOwner(me);
+        CrewMemberPolicy.ensureNotSelfTargeting(memberId, targetMemberId);
+        CrewMemberPolicy.ensureOwnerDelegatable(me);
         CrewMember nextOwner = crewMemberAccessor.getByMemberIdAndCrewId(targetMemberId, crewId);
         crew.delegateOwner(me, nextOwner);
     }
@@ -35,10 +35,10 @@ public class CrewMemberCommandService {
         Crew crew = crewAccessor.getById(crewId);
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         if (CrewPolicy.isLastMemberRemaining(crew)) {
-            crewContextHandler.disposeContext(crew);
+            crewContextHandler.disposeContextWithSquads(crew);
             return;
         }
-        CrewMemberPolicy.ensureCanLeaveCrew(me);
+        CrewPolicy.ensureLeavable(crew, me);
         me.leaveCrew();
         crewMemberRepository.delete(me);
     }
@@ -46,9 +46,9 @@ public class CrewMemberCommandService {
     public void kickOutMember(Long memberId, Long crewId, Long targetMemberId) {
         Crew ignored = crewAccessor.getById(crewId); // TODO 동시성 문제 해결 필요. (과연 Crew 조회가 필요할까? 그냥 Atomic Update Query로 한번에 날리면 될듯?)
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewMemberPolicy.ensureNotSelfTarget(memberId, targetMemberId);
+        CrewMemberPolicy.ensureNotSelfTargeting(memberId, targetMemberId);
         CrewMember targetMember = crewMemberAccessor.getByMemberIdAndCrewId(targetMemberId, crewId);
-        CrewMemberPolicy.ensureCanKickOutMember(me, targetMember);
+        CrewMemberPolicy.ensureKickable(me, targetMember);
         targetMember.leaveCrew();
         crewMemberRepository.delete(targetMember);
     }

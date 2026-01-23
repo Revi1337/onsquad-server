@@ -13,8 +13,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadCommentQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;

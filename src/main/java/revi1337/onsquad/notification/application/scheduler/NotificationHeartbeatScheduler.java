@@ -8,8 +8,8 @@ import revi1337.onsquad.notification.domain.HeartbeatNotification;
 import revi1337.onsquad.notification.infrastructure.NotificationMessage;
 import revi1337.onsquad.notification.infrastructure.sse.SseEmitterManager;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class NotificationHeartbeatScheduler {
 
     private final NotificationMessageMapper notificationMessageMapper;

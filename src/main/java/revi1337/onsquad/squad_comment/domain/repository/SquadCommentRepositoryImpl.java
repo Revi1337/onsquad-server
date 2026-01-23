@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadCommentRepositoryImpl implements SquadCommentRepository {
 
     private final SquadCommentJpaRepository squadCommentJpaRepository;

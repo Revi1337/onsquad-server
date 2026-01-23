@@ -20,9 +20,9 @@ import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
 import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.domain.entity.Member;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class CrewRequestCommandService {
 
     private final MemberAccessor memberAccessor;

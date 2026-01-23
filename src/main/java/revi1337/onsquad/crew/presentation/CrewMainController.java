@@ -15,9 +15,9 @@ import revi1337.onsquad.crew.application.CrewMainService;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class CrewMainController {
 
     private final CrewMainService crewMainService;

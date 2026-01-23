@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import revi1337.onsquad.hashtag.application.HashtagService;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 public class HashtagInitializer {
 
     private final HashtagService cachedHashtagService;

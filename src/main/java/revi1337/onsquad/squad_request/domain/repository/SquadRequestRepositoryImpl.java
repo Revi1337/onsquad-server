@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadRequestRepositoryImpl implements SquadRequestRepository {
 
     private final SquadRequestJpaRepository squadRequestJpaRepository;

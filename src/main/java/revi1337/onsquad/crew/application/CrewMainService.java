@@ -4,17 +4,18 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
+import revi1337.onsquad.crew.domain.CrewPolicy;
 import revi1337.onsquad.crew.domain.repository.CrewStatisticQueryDslRepository;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew.domain.result.CrewStatisticResult;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberCacheService;
-import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
@@ -39,18 +40,19 @@ public class CrewMainService {
         List<CrewRankedMember> topMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
         SquadLinkableGroup<SquadResult> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
-        boolean canManage = CrewMemberPolicy.canManageCrew(crewMember);
+        boolean canManage = CrewPolicy.canManage(crewMember);
 
         return CrewMainResponse.from(canManage, result, announces, topMembers, squads.values());
     }
 
+    @Transactional(readOnly = true)
     public CrewManageResponse fetchManageInfo(Long memberId, Long crewId) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewMemberPolicy.ensureCanManagementCrew(me);
+        CrewPolicy.ensureManageable(me);
 
         CrewStatisticResult result = crewStatisticQueryDslRepository.getStatisticById(crewId);
-        boolean canModify = CrewMemberPolicy.canModifyCrew(me);
-        boolean canDelete = CrewMemberPolicy.canDeleteCrew(me);
+        boolean canModify = CrewPolicy.canModify(me);
+        boolean canDelete = CrewPolicy.canDelete(me);
 
         return CrewManageResponse.from(canModify, canDelete, result);
     }

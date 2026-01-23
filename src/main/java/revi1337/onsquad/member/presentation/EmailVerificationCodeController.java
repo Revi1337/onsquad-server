@@ -11,9 +11,9 @@ import revi1337.onsquad.auth.verification.VerificationMailService;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.member.application.dto.response.EmailValidResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class EmailVerificationCodeController {
 
     private final VerificationMailService verificationMailService;

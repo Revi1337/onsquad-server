@@ -13,8 +13,8 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadCreateHistoryStrategy implements HistoryRecordStrategy {
 
     private static final String MESSAGE_FORMAT = "[%s | %s] 스쿼드를 생성했습니다.";

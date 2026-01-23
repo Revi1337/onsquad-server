@@ -6,8 +6,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class HistoryRecorderFactory {
 
     private final List<HistoryRecordStrategy> strategies;

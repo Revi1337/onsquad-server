@@ -24,8 +24,8 @@ import revi1337.onsquad.squad.domain.result.QSquadWithLeaderStateResult;
 import revi1337.onsquad.squad.domain.result.SquadResult;
 import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;

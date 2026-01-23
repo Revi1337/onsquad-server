@@ -15,9 +15,9 @@ import revi1337.onsquad.member.domain.entity.QMember;
 import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentAddedContext;
 import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentReplyAddedContext;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CommentContextReader {
 
     private final QMember writer = new QMember("writer");

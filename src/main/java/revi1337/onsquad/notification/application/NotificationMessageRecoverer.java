@@ -8,8 +8,8 @@ import revi1337.onsquad.notification.domain.repository.NotificationRepository;
 import revi1337.onsquad.notification.infrastructure.NotificationMessage;
 import revi1337.onsquad.notification.infrastructure.NotificationMessages;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class NotificationMessageRecoverer {
 
     private final NotificationRepository notificationRepository;

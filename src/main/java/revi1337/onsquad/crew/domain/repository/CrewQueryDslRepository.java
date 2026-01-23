@@ -12,12 +12,15 @@ import static revi1337.onsquad.member.domain.entity.QMember.member;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import revi1337.onsquad.crew.domain.result.CrewResult;
@@ -27,8 +30,8 @@ import revi1337.onsquad.crew.domain.result.QCrewWithOwnerStateResult;
 import revi1337.onsquad.crew.domain.result.QSimpleCrewResult;
 import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
@@ -62,58 +65,39 @@ public class CrewQueryDslRepository {
         return Optional.ofNullable(crewInfoDomainDtoMap.get(id));
     }
 
-    public List<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable) {
-        return jpaQueryFactory
+    public Page<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable) {
+        List<CrewResult> results = jpaQueryFactory
+                .select(new QCrewResult(
+                        crew.id,
+                        crew.name,
+                        crew.introduce,
+                        crew.imageUrl,
+                        crew.kakaoLink,
+                        crew.currentSize,
+                        new QSimpleMemberResult(
+                                member.id,
+                                member.nickname,
+                                member.introduce,
+                                member.mbti
+                        )
+                ))
                 .from(crew)
                 .innerJoin(crew.member, member)
                 .where(crewNameStartsWith(name))
                 .orderBy(crew.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .transform(groupBy(crew.id)
-                        .list(new QCrewResult(
-                                crew.id,
-                                crew.name,
-                                crew.introduce,
-                                crew.imageUrl,
-                                crew.kakaoLink,
-                                crew.currentSize,
-                                new QSimpleMemberResult(
-                                        member.id,
-                                        member.nickname,
-                                        member.introduce,
-                                        member.mbti
-                                )
-                        ))
-                );
-    }
+                .fetch();
 
-    public List<CrewResult> fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable) {
-        return jpaQueryFactory
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(crew.id.count())
                 .from(crew)
-                .innerJoin(crew.member, member).on(member.id.eq(memberId))
-                .orderBy(crew.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .transform(groupBy(crew.id)
-                        .list(new QCrewResult(
-                                crew.id,
-                                crew.name,
-                                crew.introduce,
-                                crew.imageUrl,
-                                crew.kakaoLink,
-                                crew.currentSize,
-                                new QSimpleMemberResult(
-                                        member.id,
-                                        member.nickname,
-                                        member.introduce,
-                                        member.mbti
-                                )
-                        ))
-                );
+                .where(crewNameStartsWith(name));
+
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
-    public List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId) {
+    public List<CrewWithOwnerStateResult> fetchCrewsWithStateByIdIn(List<Long> ids, Long currentMemberId) {
         ComparableExpression<Boolean> isCrewOwner = new CaseBuilder()
                 .when(member.id.eq(currentMemberId))
                 .then(TRUE)

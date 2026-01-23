@@ -15,8 +15,8 @@ import revi1337.onsquad.token.domain.model.RefreshToken;
 import revi1337.onsquad.token.error.TokenException;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class TokenReissueService {
 
     private static final String REISSUE_LOG_FORMAT = "[사용자 인증 토큰 재발급 완료] - id : {}, email : {}";

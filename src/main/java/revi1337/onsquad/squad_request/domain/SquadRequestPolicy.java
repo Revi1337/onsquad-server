@@ -10,11 +10,17 @@ import revi1337.onsquad.squad_request.error.SquadRequestBusinessException;
 import revi1337.onsquad.squad_request.error.SquadRequestErrorCode;
 
 @NoArgsConstructor(access = PRIVATE)
-public class SquadRequestPolicy {
+public final class SquadRequestPolicy {
 
     public static void ensureMatchSquad(SquadRequest request, Long squadId) {
         if (request.mismatchSquadId(squadId)) {
             throw new SquadRequestBusinessException.MismatchReference(SquadRequestErrorCode.MISMATCH_SQUAD_REFERENCE);
+        }
+    }
+
+    public static void ensureReadRequests(SquadMember me) {
+        if (SquadMemberPolicy.isNotLeader(me)) {
+            throw new SquadRequestBusinessException.InsufficientAuthority(SquadRequestErrorCode.INSUFFICIENT_READ_LIST_AUTHORITY);
         }
     }
 
@@ -27,12 +33,6 @@ public class SquadRequestPolicy {
     public static void ensureRejectable(SquadMember me) {
         if (SquadMemberPolicy.isNotLeader(me)) {
             throw new SquadRequestBusinessException.InsufficientAuthority(SquadRequestErrorCode.INSUFFICIENT_REJECT_AUTHORITY);
-        }
-    }
-
-    public static void ensureRequestListAccessible(SquadMember me) {
-        if (SquadMemberPolicy.isNotLeader(me)) {
-            throw new SquadRequestBusinessException.InsufficientAuthority(SquadRequestErrorCode.INSUFFICIENT_READ_LIST_AUTHORITY);
         }
     }
 }

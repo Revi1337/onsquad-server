@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.Category;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CategoryRepositoryImpl implements CategoryRepository {
 
     private final CategoryJpaRepository categoryJpaRepository;

@@ -14,8 +14,11 @@ public enum SquadErrorCode implements ErrorCode {
     SQUAD_MEMBER_UNDERFLOW(400, "SQD004", "삭제할 인원이 없습니다."),
     INVALID_CATEGORY(400, "SQ005", "유효하지 않은 카테고리가 존재합니다."),
     MISMATCH_CREW_REFERENCE(400, "SQ006", "스쿼드가 속한 크루가 일치하지 않습니다."),
-    MISMATCH_MEMBER_REFERENCE(403, "SQ007", "스쿼드 작성자 정보가 일치하지 않습니다."),
-    INSUFFICIENT_DELETE_AUTHORITY(403, "SQ008", "스쿼드 삭제는 크루장 또는 스쿼드 리더만 가능합니다.");
+    MISMATCH_SQUAD_REFERENCE(400, "SQ007", "참가자가 속한 스쿼드가 일치하지 않습니다."),
+    MISMATCH_MEMBER_REFERENCE(403, "SQ008", "스쿼드 작성자 정보가 일치하지 않습니다."),
+    INSUFFICIENT_DELETE_AUTHORITY(403, "SQ009", "스쿼드 삭제는 크루장 또는 스쿼드 리더만 가능합니다."),
+    INSUFFICIENT_MANAGE_SQUAD_AUTHORITY(403, "SQ010", "스쿼드 관리는 스쿼드 리더만 가능합니다."),
+    INSUFFICIENT_LEAVE_SQUAD_AUTHORITY(403, "SQ011", "스쿼드 리더는 권한 위임 후 탈퇴 가능합니다.");
 
     private final int status;
     private final String code;

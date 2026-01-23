@@ -22,8 +22,8 @@ import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 import revi1337.onsquad.crew_member.domain.result.QMyParticipantCrewResult;
 import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewMemberQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;

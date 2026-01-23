@@ -3,6 +3,8 @@ package revi1337.onsquad.crew.domain;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtags;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
@@ -37,5 +39,11 @@ public final class CrewResults {
                 result.addHashtagTypes(hashtagTypes);
             }
         });
+    }
+
+    public <U> List<U> map(Function<CrewResult, U> converter) {
+        return results.stream()
+                .map(converter)
+                .collect(Collectors.toList());
     }
 }

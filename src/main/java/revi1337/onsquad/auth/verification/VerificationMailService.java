@@ -12,8 +12,8 @@ import revi1337.onsquad.common.application.mail.EmailSender;
 import revi1337.onsquad.infrastructure.network.mail.EmailException;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class VerificationMailService {
 
     private static final String MAIL_SUBJECT = "[ONSQUAD] 회원가입 인증코드 발송 안내";

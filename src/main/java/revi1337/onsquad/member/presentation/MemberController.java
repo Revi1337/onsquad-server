@@ -27,9 +27,9 @@ import revi1337.onsquad.member.presentation.request.MemberCreateRequest;
 import revi1337.onsquad.member.presentation.request.MemberPasswordUpdateRequest;
 import revi1337.onsquad.member.presentation.request.MemberUpdateRequest;
 
-@RequiredArgsConstructor
-@RequestMapping("/api/members")
 @RestController
+@RequestMapping("/api/members")
+@RequiredArgsConstructor
 public class MemberController {
 
     private final MemberCommandServiceFacade memberCommandServiceFacade;

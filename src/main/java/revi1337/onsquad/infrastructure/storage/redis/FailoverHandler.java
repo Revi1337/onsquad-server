@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class FailoverHandler {
 
     private final RefreshTokenFailoverService refreshTokenFailoverService;

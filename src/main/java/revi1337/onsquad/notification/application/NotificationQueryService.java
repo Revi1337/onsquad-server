@@ -8,17 +8,17 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.notification.application.response.NotificationResponse;
 import revi1337.onsquad.notification.domain.repository.NotificationRepository;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class NotificationQueryService {
 
     private final NotificationRepository notificationRepository;
-    private final NotificationResponseAssembler assembler;
+    private final NotificationPayloadDeserializer deserializer;
 
     public List<NotificationResponse> fetchNotifications(Long memberId, Pageable pageable) {
         return notificationRepository.findAllByReceiverId(memberId, pageable).stream()
-                .map(assembler::assemble)
+                .map(entity -> NotificationResponse.from(entity, deserializer.deserialize(entity.getJson())))
                 .toList();
     }
 }

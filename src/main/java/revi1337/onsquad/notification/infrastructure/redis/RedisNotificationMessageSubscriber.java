@@ -11,8 +11,8 @@ import revi1337.onsquad.notification.infrastructure.NotificationMessage;
 import revi1337.onsquad.notification.infrastructure.sse.SseEmitterManager;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisNotificationMessageSubscriber implements MessageListener {
 
     private static final String CHANNEL_PREFIX = "channel:";

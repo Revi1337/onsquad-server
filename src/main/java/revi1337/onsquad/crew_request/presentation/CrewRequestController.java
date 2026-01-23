@@ -20,9 +20,9 @@ import revi1337.onsquad.crew_request.application.CrewRequestQueryService;
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class CrewRequestController {
 
     private final CrewRequestCommandService crewRequestCommandService;

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.presentation.request.CategoryCondition;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
@@ -24,9 +23,9 @@ import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class SquadQueryService {
 
     private final CrewMemberAccessor crewMemberAccessor;
@@ -43,7 +42,7 @@ public class SquadQueryService {
             boolean alreadyParticipant = true;
             boolean isLeader = SquadMemberPolicy.isLeader(me);
             boolean canSeeParticipants = true;
-            boolean canLeave = SquadMemberPolicy.canLeaveSquad(me, squad);
+            boolean canLeave = SquadPolicy.canLeave(me, squad);
             boolean canDelete = SquadPolicy.canDelete(me, meInCrew);
 
             return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, canDelete, squad);
@@ -51,7 +50,7 @@ public class SquadQueryService {
 
         boolean alreadyParticipant = false;
         Boolean isLeader = null;
-        boolean canSeeParticipants = CrewMemberPolicy.canReadSquadParticipants(meInCrew);
+        boolean canSeeParticipants = SquadPolicy.canReadParticipants(meInCrew);
         Boolean canLeave = null;
         boolean canDelete = SquadPolicy.canDelete(meInCrew);
 
@@ -73,7 +72,7 @@ public class SquadQueryService {
 
     public List<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        SquadPolicy.ensureSquadManageListAccessible(me);
+        SquadPolicy.ensureManageable(me);
         SquadLinkableGroup<SquadWithLeaderStateResult> squadGroup = squadAccessor.fetchManageList(memberId, crewId, pageable);
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());

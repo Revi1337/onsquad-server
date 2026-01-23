@@ -11,8 +11,8 @@ import revi1337.onsquad.notification.domain.Notification;
 import revi1337.onsquad.notification.domain.entity.NotificationEntity;
 import revi1337.onsquad.notification.infrastructure.NotificationMessage;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class NotificationEventListener {
 
     private final NotificationPersister notificationPersister;

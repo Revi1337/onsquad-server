@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.application.dto.response.DuplicateResponse;
 import revi1337.onsquad.member.application.dto.response.MemberResponse;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class MemberQueryService {
 
     private final MemberAccessor memberAccessor;

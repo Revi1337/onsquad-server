@@ -17,9 +17,9 @@ import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class AnnounceCommandService {
 
     private final CrewMemberAccessor crewMemberAccessor;
@@ -28,17 +28,17 @@ public class AnnounceCommandService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public void newAnnounce(Long memberId, Long crewId, AnnounceCreateDto dto) {
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureWritable(crewMember);
-        announceRepository.save(dto.toEntity(crewMember.getCrew(), crewMember.getMember()));
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureWritable(me);
+        announceRepository.save(dto.toEntity(me.getCrew(), me.getMember()));
         applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crewId));
     }
 
     public void updateAnnounce(Long memberId, Long crewId, Long announceId, AnnounceUpdateDto dto) {
         Announce announce = announceAccessor.getById(announceId);
         AnnouncePolicy.ensureMatchCrew(announce, crewId);
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureModifiable(announce, crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureModifiable(announce, me);
         announce.update(dto.title(), dto.content());
         applicationEventPublisher.publishEvent(new AnnounceUpdateEvent(crewId, announce.getId()));
     }
@@ -46,8 +46,8 @@ public class AnnounceCommandService {
     public void deleteAnnounce(Long memberId, Long crewId, Long announceId) {
         Announce announce = announceAccessor.getById(announceId);
         AnnouncePolicy.ensureMatchCrew(announce, crewId);
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureDeletable(announce, crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureDeletable(announce, me);
         announceRepository.delete(announce);
         applicationEventPublisher.publishEvent(new AnnounceDeleteEvent(crewId, announce.getId()));
     }
@@ -55,8 +55,8 @@ public class AnnounceCommandService {
     public void changeFixState(Long memberId, Long crewId, Long announceId, boolean state) {
         Announce announce = announceAccessor.getById(announceId);
         AnnouncePolicy.ensureMatchCrew(announce, crewId);
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureFixable(crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        AnnouncePolicy.ensureFixable(me);
         if (state) {
             fixAnnounce(crewId, announce);
             return;

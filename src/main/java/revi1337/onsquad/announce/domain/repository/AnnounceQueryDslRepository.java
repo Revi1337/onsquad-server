@@ -12,8 +12,8 @@ import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.announce.domain.result.QAnnounceResult;
 import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class AnnounceQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;

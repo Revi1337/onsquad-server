@@ -16,9 +16,9 @@ import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class SquadCommentCommandService {
 
     private final CrewMemberAccessor crewMemberAccessor;
@@ -38,8 +38,8 @@ public class SquadCommentCommandService {
     public void addReply(Long memberId, Long squadId, Long parentId, String content) {
         SquadComment parent = squadCommentAccessor.getWithSquadById(parentId);
         SquadCommentPolicy.ensureMatchSquad(parent, squadId);
-        SquadCommentPolicy.ensureCommentIsAlive(parent);
-        SquadCommentPolicy.ensureCommentIsParent(parent);
+        SquadCommentPolicy.ensureAlive(parent);
+        SquadCommentPolicy.ensureParent(parent);
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, parent.getSquad().getCrewId());
         SquadComment reply = squadCommentRepository.save(SquadComment.createReply(parent, content, parent.getSquad(), me.getMember()));
         eventPublisher.publishEvent(new CommentReplyAdded(parentId, memberId, reply.getId()));
@@ -48,7 +48,7 @@ public class SquadCommentCommandService {
     public void update(Long memberId, Long squadId, Long commentId, String content) {
         SquadComment comment = squadCommentAccessor.getById(commentId);
         SquadCommentPolicy.ensureMatchSquad(comment, squadId);
-        SquadCommentPolicy.ensureCommentIsAlive(comment);
+        SquadCommentPolicy.ensureAlive(comment);
         SquadCommentPolicy.ensureMatchWriter(comment, memberId);
         comment.update(content);
     }
@@ -56,9 +56,9 @@ public class SquadCommentCommandService {
     public void delete(Long memberId, Long squadId, Long commentId) {
         SquadComment comment = squadCommentAccessor.getById(commentId);
         SquadCommentPolicy.ensureMatchSquad(comment, squadId);
-        SquadCommentPolicy.ensureCommentIsAlive(comment);
+        SquadCommentPolicy.ensureAlive(comment);
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
-        SquadCommentPolicy.ensureDeletable(me, comment);
+        SquadCommentPolicy.ensureDeletable(comment, me);
         comment.delete();
     }
 }

@@ -38,7 +38,7 @@ public class CrewCommandService {
 
     public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto) {
         Crew crew = crewAccessor.getById(crewId);
-        CrewPolicy.ensureCrewUpdatable(crew, memberId);
+        CrewPolicy.ensureModifiable(crew, memberId);
         crew.update(dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink());
         crewHashtagRepository.deleteByCrewIdIn(List.of(crew.getId()));
         crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
@@ -46,7 +46,7 @@ public class CrewCommandService {
 
     public void updateImage(Long memberId, Long crewId, String newImageUrl) {
         Crew crew = crewAccessor.getById(crewId);
-        CrewPolicy.ensureCrewImageUpdatable(crew, memberId);
+        CrewPolicy.ensureImageModifiable(crew, memberId);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
         }
@@ -55,7 +55,7 @@ public class CrewCommandService {
 
     public void deleteImage(Long memberId, Long crewId) {
         Crew crew = crewAccessor.getById(crewId);
-        CrewPolicy.ensureCrewImageDeletable(crew, memberId);
+        CrewPolicy.ensureImageDeletable(crew, memberId);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
             crew.deleteImage();
@@ -64,7 +64,7 @@ public class CrewCommandService {
 
     public void deleteCrew(Long memberId, Long crewId) {
         Crew crew = crewAccessor.getById(crewId);
-        CrewPolicy.ensureCrewDeletable(crew, memberId);
-        crewContextHandler.disposeContext(crew);
+        CrewPolicy.ensureDeletable(crew, memberId);
+        crewContextHandler.disposeContextWithSquads(crew);
     }
 }

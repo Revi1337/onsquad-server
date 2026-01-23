@@ -2,6 +2,7 @@ package revi1337.onsquad.crew.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
@@ -26,11 +27,9 @@ public interface CrewRepository {
 
     List<Crew> findAllByMemberId(Long memberId);
 
-    List<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable);
+    Page<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable);
 
-    List<CrewResult> fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable);
-
-    List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId);
+    List<CrewWithOwnerStateResult> fetchCrewsWithStateByIdIn(List<Long> ids, Long currentMemberId);
 
     int deleteByIdIn(List<Long> ids);
 

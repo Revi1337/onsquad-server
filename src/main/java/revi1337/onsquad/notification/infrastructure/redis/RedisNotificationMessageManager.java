@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.notification.infrastructure.NotificationMessage;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisNotificationMessageManager {
 
     private final RedisMessageListenerContainer listenerContainer;

@@ -4,7 +4,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewCommandServiceFacade;
 import revi1337.onsquad.crew.application.CrewQueryService;
@@ -73,11 +73,11 @@ public class CrewController {
     }
 
     @GetMapping
-    public ResponseEntity<RestResponse<List<CrewResponse>>> fetchCrewsByName(
+    public ResponseEntity<RestResponse<PageResponse<CrewResponse>>> fetchCrewsByName(
             @RequestParam(required = false) String name,
             @PageableDefault Pageable pageable
     ) {
-        List<CrewResponse> response = crewQueryService.fetchCrewsByName(name, pageable);
+        PageResponse<CrewResponse> response = crewQueryService.fetchCrewsByName(name, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

@@ -10,8 +10,8 @@ import revi1337.onsquad.notification.domain.Notification;
 import revi1337.onsquad.notification.domain.entity.NotificationEntity;
 import revi1337.onsquad.notification.domain.repository.NotificationRepository;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class NotificationPersister {
 
     private final ObjectMapper defaultObjectMapper;

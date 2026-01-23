@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.aspect.Throttling;
 import revi1337.onsquad.notification.domain.repository.NotificationRepository;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class NotificationCommandService {
 
     private final NotificationRepository notificationRepository;

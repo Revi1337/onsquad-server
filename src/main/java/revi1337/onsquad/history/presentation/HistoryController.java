@@ -15,9 +15,9 @@ import revi1337.onsquad.history.application.HistoryQueryService;
 import revi1337.onsquad.history.application.response.HistoryResponse;
 import revi1337.onsquad.history.domain.HistoryType;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class HistoryController {
 
     private final HistoryQueryService historyQueryService;

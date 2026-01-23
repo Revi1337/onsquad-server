@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.hashtag.domain.repository.HashtagJpaRepository;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class DefaultHashtagService implements HashtagService {
 
     private final HashtagJpaRepository hashtagJpaRepository;

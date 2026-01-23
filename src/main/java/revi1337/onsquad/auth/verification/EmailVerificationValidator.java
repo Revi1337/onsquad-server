@@ -1,14 +1,14 @@
 package revi1337.onsquad.auth.verification;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.verification.domain.VerificationCodeRepository;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.member.error.MemberBusinessException;
 import revi1337.onsquad.member.error.MemberErrorCode;
 
+@Component
 @RequiredArgsConstructor
-@Service
 public class EmailVerificationValidator {
 
     private final VerificationCodeRepository verificationCodeRedisRepository;

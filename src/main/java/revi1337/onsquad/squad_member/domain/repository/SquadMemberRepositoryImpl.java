@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadMemberRepositoryImpl implements SquadMemberRepository {
 
     private final SquadMemberJpaRepository squadMemberJpaRepository;

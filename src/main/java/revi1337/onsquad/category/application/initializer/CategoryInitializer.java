@@ -6,8 +6,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.category.application.CategoryService;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CategoryInitializer {
 
     private final CategoryService cachedCategoryService;

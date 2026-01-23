@@ -12,8 +12,8 @@ import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
 import revi1337.onsquad.crew_request.error.CrewRequestBusinessException;
 import revi1337.onsquad.crew_request.error.CrewRequestErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CrewRequestAccessor {
 
     private final CrewRequestRepository crewRequestRepository;

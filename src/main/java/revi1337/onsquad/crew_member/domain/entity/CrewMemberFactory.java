@@ -11,19 +11,15 @@ import revi1337.onsquad.member.domain.entity.Member;
 public abstract class CrewMemberFactory {
 
     public static CrewMember general(Crew crew, Member member, LocalDateTime participantAt) {
-        CrewMember crewMember = general(member, participantAt);
+        CrewMember crewMember = new CrewMember(member, GENERAL, participantAt);
         crewMember.addCrew(crew);
         return crewMember;
     }
 
     public static CrewMember general(Crew crew, Member member) {
-        CrewMember crewMember = general(member, LocalDateTime.now());
+        CrewMember crewMember = new CrewMember(member, GENERAL, LocalDateTime.now());
         crewMember.addCrew(crew);
         return crewMember;
-    }
-
-    public static CrewMember general(Member member, LocalDateTime participantAt) {
-        return new CrewMember(member, GENERAL, participantAt);
     }
 
     public static CrewMember manager(Crew crew, Member member, LocalDateTime participantAt) {
@@ -32,13 +28,21 @@ public abstract class CrewMemberFactory {
         return crewMember;
     }
 
-    public static CrewMember owner(Crew crew, Member member, LocalDateTime participantAt) {
-        CrewMember crewMember = owner(member, participantAt);
+    public static CrewMember manager(Crew crew, Member member) {
+        CrewMember crewMember = new CrewMember(crew, member, MANAGER, LocalDateTime.now());
         crewMember.addCrew(crew);
         return crewMember;
     }
 
-    public static CrewMember owner(Member member, LocalDateTime participantAt) {
-        return new CrewMember(member, OWNER, participantAt);
+    public static CrewMember owner(Crew crew, Member member) {
+        CrewMember crewMember = new CrewMember(member, OWNER, LocalDateTime.now());
+        crewMember.addCrew(crew);
+        return crewMember;
+    }
+
+    public static CrewMember owner(Crew crew, Member member, LocalDateTime participantAt) {
+        CrewMember crewMember = new CrewMember(member, OWNER, participantAt);
+        crewMember.addCrew(crew);
+        return crewMember;
     }
 }

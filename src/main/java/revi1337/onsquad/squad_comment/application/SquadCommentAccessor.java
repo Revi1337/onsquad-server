@@ -9,8 +9,8 @@ import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
 import revi1337.onsquad.squad_comment.error.SquadCommentBusinessException;
 import revi1337.onsquad.squad_comment.error.SquadCommentErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadCommentAccessor {
 
     private final SquadCommentRepository squadCommentRepository;

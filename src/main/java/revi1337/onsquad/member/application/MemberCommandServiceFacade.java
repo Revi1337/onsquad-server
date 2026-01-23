@@ -11,8 +11,8 @@ import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class MemberCommandServiceFacade {
 
     private final MemberCommandService memberCommandService;

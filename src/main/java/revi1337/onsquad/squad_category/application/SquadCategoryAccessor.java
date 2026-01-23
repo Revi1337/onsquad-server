@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_category.domain.SquadCategories;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadCategoryAccessor {
 
     private final SquadCategoryRepository squadCategoryRepository;

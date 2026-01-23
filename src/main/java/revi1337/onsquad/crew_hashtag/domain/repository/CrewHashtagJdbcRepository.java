@@ -6,8 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewHashtagJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;

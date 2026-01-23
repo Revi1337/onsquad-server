@@ -3,9 +3,12 @@ package revi1337.onsquad.crew.application;
 import java.util.List;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewWithParticipantStateResponse;
 import revi1337.onsquad.crew.application.dto.response.DuplicateCrewNameResponse;
@@ -42,27 +45,15 @@ public class CrewQueryService {
         return CrewWithParticipantStateResponse.from(alreadyParticipant, result);
     }
 
-    public List<CrewResponse> fetchCrewsByName(String crewName, Pageable pageable) {
-        CrewResults results = crewAccessor.fetchCrewsWithDetailByName(crewName, pageable);
+    public PageResponse<CrewResponse> fetchCrewsByName(String crewName, Pageable pageable) {
+        Page<CrewResult> pageResults = crewAccessor.fetchCrewsWithDetailByName(crewName, pageable);
+        CrewResults results = new CrewResults(pageResults.getContent());
         if (results.isNotEmpty()) {
             CrewHashtags hashtags = crewHashtagAccessor.fetchHashtagsByCrewIdIn(results.getIds());
             results.linkHashtags(hashtags);
         }
 
-        return results.values().stream()
-                .map(CrewResponse::from)
-                .toList();
-    }
-
-    public List<CrewResponse> fetchOwnedCrews(Long memberId, Pageable pageable) {
-        CrewResults results = crewAccessor.fetchCrewsWithDetailByMemberId(memberId, pageable);
-        if (results.isNotEmpty()) {
-            CrewHashtags hashtags = crewHashtagAccessor.fetchHashtagsByCrewIdIn(results.getIds());
-            results.linkHashtags(hashtags);
-        }
-
-        return results.values().stream()
-                .map(CrewResponse::from)
-                .toList();
+        List<CrewResponse> response = results.map(CrewResponse::from);
+        return PageResponse.from(new PageImpl<>(response, pageResults.getPageable(), pageResults.getTotalElements()));
     }
 }

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewMemberRepositoryImpl implements CrewMemberRepository {
 
     private final CrewMemberQueryDslRepository crewMemberQueryDslRepository;
@@ -48,6 +48,6 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
 
     @Override
     public int deleteByCrewIdIn(List<Long> crewIds) {
-        return crewMemberJpaRepository.deleteByCrewId(crewIds);
+        return crewMemberJpaRepository.deleteByCrewIdIn(crewIds);
     }
 }

@@ -1,10 +1,10 @@
 package revi1337.onsquad.crew.domain.entity.vo;
 
+import static lombok.AccessLevel.PROTECTED;
 import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_NAME_LENGTH;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import revi1337.onsquad.crew.error.CrewDomainException;
 
 @Getter
 @EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Embeddable
 public class Name {
 
@@ -28,7 +28,11 @@ public class Name {
         this.value = value;
     }
 
-    public void validate(String value) {
+    public Name updateName(String crewName) {
+        return new Name(crewName);
+    }
+
+    private void validate(String value) {
         if (value == null) {
             throw new NullPointerException("크루명은 null 일 수 없습니다.");
         }
@@ -36,9 +40,5 @@ public class Name {
         if (value.length() > MAX_LENGTH || value.isEmpty()) {
             throw new CrewDomainException.InvalidNameLength(INVALID_NAME_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
-    }
-
-    public Name updateName(String crewName) {
-        return new Name(crewName);
     }
 }

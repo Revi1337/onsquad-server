@@ -13,8 +13,8 @@ import revi1337.onsquad.history.domain.entity.HistoryEntity;
 import revi1337.onsquad.history.domain.repository.HistoryRepository;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component("crewRequestCancelHistoryStrategy")
+@RequiredArgsConstructor
 public class RequestCancelHistoryStrategy implements HistoryRecordStrategy {
 
     private static final String MESSAGE_FORMAT = "[%s] 크루 합류 요청을 취소했습니다.";

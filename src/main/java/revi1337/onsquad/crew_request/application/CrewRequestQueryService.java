@@ -11,17 +11,17 @@ import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewRes
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 import revi1337.onsquad.crew_request.domain.CrewRequestPolicy;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CrewRequestQueryService {
 
     private final CrewRequestAccessor crewRequestAccessor;
     private final CrewMemberAccessor crewMemberAccessor;
 
     public List<CrewRequestWithMemberResponse> fetchAllRequests(Long memberId, Long crewId, Pageable pageable) {
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewRequestPolicy.ensureRequestListAccessible(crewMember);
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewRequestPolicy.ensureReadRequests(me);
 
         return crewRequestAccessor.fetchCrewRequests(crewId, pageable).stream()
                 .map(CrewRequestWithMemberResponse::from)

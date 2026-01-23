@@ -13,8 +13,8 @@ import revi1337.onsquad.history.domain.entity.HistoryEntity;
 import revi1337.onsquad.history.domain.repository.HistoryRepository;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class CrewCreateHistoryStrategy implements HistoryRecordStrategy {
 
     private static final String MESSAGE_FORMAT = "[%s] 크루를 생성했습니다.";

@@ -26,8 +26,8 @@ import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
  * </ul>
  */
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class AnnounceEventListener {
 
     private final AnnounceCacheService announceCacheService;

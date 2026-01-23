@@ -18,9 +18,9 @@ import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class SquadCommentQueryService {
 
     private final CrewMemberAccessor crewMemberAccessor;
@@ -56,7 +56,7 @@ public class SquadCommentQueryService {
 
     private PageResponse<SquadCommentWithStateResponse> mapToResponsesAsSquadMember(SquadMember me, Page<SquadComment> comments) {
         Page<SquadCommentWithStateResponse> response = comments.map(comment -> {
-            boolean canDelete = SquadCommentPolicy.canDeleteComment(me, comment);
+            boolean canDelete = SquadCommentPolicy.canDelete(comment, me);
             return new SquadCommentWithStateResponse(canDelete, SquadCommentResponse.from(comment));
         });
 

@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.hashtag.application.HashtagService;
 
-@RequiredArgsConstructor
-@RequestMapping("/api/hashtags")
 @RestController
+@RequestMapping("/api/hashtags")
+@RequiredArgsConstructor
 public class HashtagController {
 
     private final HashtagService cachedHashtagService;

@@ -67,13 +67,9 @@ public class Crew extends BaseEntity {
 
     public static Crew create(Member owner, String name, String introduce, String detail, String kakaoLink, String imageUrl) {
         Crew crew = new Crew(name, introduce, detail, kakaoLink, imageUrl);
-        crew.registerOwner(owner);
-        crew.addCrewMember(CrewMemberFactory.owner(owner, LocalDateTime.now()));
+        crew.updateOwner(owner);
+        crew.addCrewMember(CrewMemberFactory.owner(crew, owner, LocalDateTime.now()));
         return crew;
-    }
-
-    public static Crew of(String name, String introduce, String detail, String kakaoLink, String imageUrl) {
-        return new Crew(name, introduce, detail, kakaoLink, imageUrl);
     }
 
     public static List<Long> extractIds(List<Crew> crews) {
@@ -128,10 +124,6 @@ public class Crew extends BaseEntity {
         this.currentSize = this.currentSize - 1;
     }
 
-    public void registerOwner(Member owner) {
-        this.member = owner;
-    }
-
     private void updateOwner(Member member) {
         this.member = member;
     }
@@ -156,20 +148,12 @@ public class Crew extends BaseEntity {
         return member.mismatchId(memberId);
     }
 
-    public boolean isCreatedBy(Long memberId) {
-        return member.getId().equals(memberId);
-    }
-
     public boolean hasImage() {
         return !hasNotImage();
     }
 
     public boolean hasNotImage() {
         return imageUrl == null || imageUrl.isEmpty();
-    }
-
-    public long countMembers() {
-        return currentSize;
     }
 
     @Override

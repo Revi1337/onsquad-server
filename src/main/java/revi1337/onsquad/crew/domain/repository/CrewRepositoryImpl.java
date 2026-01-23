@@ -3,6 +3,7 @@ package revi1337.onsquad.crew.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.entity.Crew;
@@ -10,8 +11,8 @@ import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewRepositoryImpl implements CrewRepository {
 
     private final CrewJpaRepository crewJpaRepository;
@@ -53,18 +54,13 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public List<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable) {
+    public Page<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable) {
         return crewQueryDslRepository.fetchCrewsWithDetailByName(name, pageable);
     }
 
     @Override
-    public List<CrewResult> fetchCrewsWithDetailByMemberId(Long memberId, Pageable pageable) {
-        return crewQueryDslRepository.fetchCrewsWithDetailByMemberId(memberId, pageable);
-    }
-
-    @Override
-    public List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> ids, Long currentMemberId) {
-        return crewQueryDslRepository.fetchCrewWithStateByIdsIn(ids, currentMemberId);
+    public List<CrewWithOwnerStateResult> fetchCrewsWithStateByIdIn(List<Long> ids, Long currentMemberId) {
+        return crewQueryDslRepository.fetchCrewsWithStateByIdIn(ids, currentMemberId);
     }
 
     @Override

@@ -10,8 +10,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-@Configuration
 @EnableConfigurationProperties(MailProperties.class)
+@Configuration
 public class MailConfig {
 
     @Bean

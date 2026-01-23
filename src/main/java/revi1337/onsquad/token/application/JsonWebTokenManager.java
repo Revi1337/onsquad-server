@@ -9,8 +9,8 @@ import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.token.domain.model.AccessToken;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class JsonWebTokenManager {
 
     private final JsonWebTokenProvider jsonWebTokenProvider;

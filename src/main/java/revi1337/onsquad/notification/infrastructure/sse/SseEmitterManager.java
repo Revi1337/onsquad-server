@@ -12,8 +12,8 @@ import revi1337.onsquad.notification.infrastructure.NotificationMessage;
 import revi1337.onsquad.notification.infrastructure.NotificationMessages;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SseEmitterManager {
 
     private static final long TIME_OUT = 60 * 60 * 1000L;

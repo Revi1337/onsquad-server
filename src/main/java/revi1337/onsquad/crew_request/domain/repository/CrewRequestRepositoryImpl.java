@@ -10,8 +10,8 @@ import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.result.CrewRequestWithCrewResult;
 import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CrewRequestRepositoryImpl implements CrewRequestRepository {
 
     private final CrewRequestJpaRepository crewRequestJpaRepository;

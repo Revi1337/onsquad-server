@@ -7,8 +7,8 @@ import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class AnnounceAccessor {
 
     private final AnnounceRepository announceRepository;

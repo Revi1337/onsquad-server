@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.Category;
 
 @Deprecated
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class CategoryJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;

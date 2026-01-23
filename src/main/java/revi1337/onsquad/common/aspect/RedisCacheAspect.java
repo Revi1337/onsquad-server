@@ -18,10 +18,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
-@RequiredArgsConstructor
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class RedisCacheAspect {
 
     private final StringRedisTemplate stringRedisTemplate;

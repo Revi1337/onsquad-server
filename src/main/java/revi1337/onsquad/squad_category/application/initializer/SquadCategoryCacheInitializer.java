@@ -11,9 +11,9 @@ import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 
 @Slf4j
-@RequiredArgsConstructor
 @Profile({"local", "default"})
 @Component
+@RequiredArgsConstructor
 public class SquadCategoryCacheInitializer {
 
     private static final String SQUAD_CATEGORY_PATTERN = "squad:*:categories";

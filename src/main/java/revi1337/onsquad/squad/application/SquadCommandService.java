@@ -29,17 +29,17 @@ public class SquadCommandService {
     private final ApplicationEventPublisher eventPublisher;
 
     public Long newSquad(Long memberId, Long crewId, SquadCreateDto dto) {
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        Squad squad = squadRepository.save(Squad.create(dto.toEntityMetadata(), crewMember.getMember(), crewMember.getCrew()));
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        Squad squad = squadRepository.save(Squad.create(dto.toEntityMetadata(), me.getMember(), me.getCrew()));
         squadCategoryRepository.insertBatch(squad.getId(), Category.fromCategoryTypes(dto.categories()));
         eventPublisher.publishEvent(new SquadCreated(crewId, memberId));
         return squad.getId();
     }
 
     public void deleteSquad(Long memberId, Long squadId) {
-        SquadMember squadMember = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
-        CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squadMember.getSquad().getCrewId());
-        SquadPolicy.ensureDeletable(squadMember, crewMember);
+        SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, me.getSquad().getCrewId());
+        SquadPolicy.ensureDeletable(me, meInCrew);
         squadContextHandler.disposeContext(squadId);
     }
 }

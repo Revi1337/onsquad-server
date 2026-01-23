@@ -13,20 +13,19 @@ import revi1337.onsquad.common.constant.Sign;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 
 @Slf4j
-@RequiredArgsConstructor
 @Profile({"local", "default"})
 @Component
+@RequiredArgsConstructor
 public class AnnounceCacheDestroyer {
 
     private static final String DESTROY_KEY_PATTERN = String.format(CacheFormat.SIMPLE, CacheConst.CREW_ANNOUNCE + Sign.ASTERISK);
-    private static final String DESTROY_KEY_START_LOG = "Try to Destroy Crew Announce Cache";
 
     private final StringRedisTemplate stringRedisTemplate;
 
     @EventListener(ContextClosedEvent.class)
     private void cleanAnnounceCaches(ContextClosedEvent event) {
         if (event.getApplicationContext().getParent() == null) {
-            log.debug(DESTROY_KEY_START_LOG);
+            log.debug("Try to Destroy Crew Announce Cache");
             RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, DESTROY_KEY_PATTERN);
         }
     }

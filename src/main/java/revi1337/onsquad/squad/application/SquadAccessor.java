@@ -12,8 +12,8 @@ import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
 import revi1337.onsquad.squad.error.SquadBusinessException;
 import revi1337.onsquad.squad.error.SquadErrorCode;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class SquadAccessor {
 
     private final SquadRepository squadRepository;

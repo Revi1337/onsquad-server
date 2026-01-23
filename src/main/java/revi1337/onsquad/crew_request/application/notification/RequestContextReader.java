@@ -14,9 +14,9 @@ import revi1337.onsquad.crew_request.application.notification.RequestContext.Req
 import revi1337.onsquad.crew_request.application.notification.RequestContext.RequestRejectedContext;
 import revi1337.onsquad.member.domain.entity.QMember;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service("crewRequestContextReader")
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class RequestContextReader {
 
     private final QMember requester = new QMember("requester");

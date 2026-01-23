@@ -11,8 +11,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudfront.CloudFrontClient;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 public class S3ClientConfig {
 
     @Bean("s3Client")

@@ -8,8 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.Category;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 public class SquadCategoryJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;

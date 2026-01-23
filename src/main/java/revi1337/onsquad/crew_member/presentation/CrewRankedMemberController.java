@@ -13,9 +13,9 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberQueryService;
 import revi1337.onsquad.crew_member.application.response.CrewRankedMemberResponse;
 
-@RequiredArgsConstructor
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class CrewRankedMemberController {
 
     private final CrewRankedMemberQueryService crewRankedMemberQueryService;
