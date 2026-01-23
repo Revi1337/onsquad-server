@@ -7,15 +7,15 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
-import revi1337.onsquad.history.application.HistoryRecordStrategy;
+import revi1337.onsquad.history.application.HistoryRecorder;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
 import revi1337.onsquad.history.domain.repository.HistoryRepository;
 
 @Slf4j
-@Component("crewRequestCancelHistoryStrategy")
+@Component
 @RequiredArgsConstructor
-public class RequestCancelHistoryStrategy implements HistoryRecordStrategy {
+public class CrewRequestCancelHistoryRecorder implements HistoryRecorder {
 
     private static final String MESSAGE_FORMAT = "[%s] 크루 합류 요청을 취소했습니다.";
     private final CrewRepository crewRepository;

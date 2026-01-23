@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class HistoryRecorderFactory {
 
-    private final List<HistoryRecordStrategy> strategies;
+    private final List<HistoryRecorder> strategies;
 
-    public Optional<HistoryRecordStrategy> find(Class<?> clazz, Method method) {
+    public Optional<HistoryRecorder> find(Class<?> clazz, Method method) {
         return strategies.stream()
                 .filter(s -> s.supports(clazz, method))
                 .findFirst();

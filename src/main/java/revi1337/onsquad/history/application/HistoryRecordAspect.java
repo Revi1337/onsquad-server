@@ -33,13 +33,13 @@ public class HistoryRecordAspect {
     }
 
     private void recordHistory(Class<?> clazz, Method method, Object[] args, Object result) {
-        Optional<HistoryRecordStrategy> recordStrategy = historyRecorderFactory.find(clazz, method);
+        Optional<HistoryRecorder> recordStrategy = historyRecorderFactory.find(clazz, method);
         if (recordStrategy.isEmpty()) {
             return;
         }
-        HistoryRecordStrategy historyRecordStrategy = recordStrategy.get();
+        HistoryRecorder historyRecorder = recordStrategy.get();
         try {
-            historyRecordStrategy.record(args, result);
+            historyRecorder.record(args, result);
         } catch (Throwable throwable) {
             // This is a non-critical logging process any exceptions are logged and intentionally ignored.
             log.error("error while record history. cause: {}", throwable.getMessage());

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.application.CrewCommandService;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
-import revi1337.onsquad.history.application.HistoryRecordStrategy;
+import revi1337.onsquad.history.application.HistoryRecorder;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
 import revi1337.onsquad.history.domain.repository.HistoryRepository;
@@ -15,7 +15,7 @@ import revi1337.onsquad.history.domain.repository.HistoryRepository;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CrewCreateHistoryStrategy implements HistoryRecordStrategy {
+public class CrewCreateHistoryRecorder implements HistoryRecorder {
 
     private static final String MESSAGE_FORMAT = "[%s] 크루를 생성했습니다.";
     private final CrewRepository crewRepository;
