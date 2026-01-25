@@ -27,7 +27,7 @@ public class MemberContextEventListener {
         redisRefreshTokenManager.deleteTokenBy(contextDisposed.memberId());
         historyRepository.deleteByMemberId(contextDisposed.memberId());
         notificationRepository.deleteByReceiverId(contextDisposed.memberId());
-        announceCacheService.evictAnnounceListsByCrews(contextDisposed.announceReferences().stream().map(AnnounceReference::crewId).toList());
+        announceCacheService.evictAnnounceLists(contextDisposed.announceReferences().stream().map(AnnounceReference::crewId).toList());
         announceCacheService.evictAnnouncesByReferences(contextDisposed.announceReferences());
         if (contextDisposed.memberImageUrl() != null) {
             eventPublisher.publishEvent(new FileDeleteEvent(contextDisposed.memberImageUrl()));

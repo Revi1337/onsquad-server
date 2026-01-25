@@ -21,10 +21,10 @@ public class CrewContextEventListener {
 
     @TransactionalEventListener
     public void onContextDisposed(CrewContextDisposed contextDisposed) {
-        announceCacheService.evictAnnounceListsByCrews(contextDisposed.getDeletedCrewIds());
-        announceCacheService.evictAnnouncesInCrews(contextDisposed.getDeletedCrewIds());
+        eventPublisher.publishEvent(new FileDeleteEvent(contextDisposed.getCrewImageUrls()));
+        announceCacheService.evictAnnounceLists(contextDisposed.getDeletedCrewIds());
+        announceCacheService.evictAnnounces(contextDisposed.getDeletedCrewIds());
         crewLeaderboardManager.removeLeaderboards(contextDisposed.getDeletedCrewIds());
         crewRankerBackupManager.removeBackups(contextDisposed.getDeletedCrewIds());
-        eventPublisher.publishEvent(new FileDeleteEvent(contextDisposed.getCrewImageUrls()));
     }
 }

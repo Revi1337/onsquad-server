@@ -1,12 +1,7 @@
 package revi1337.onsquad.announce.infrastructure;
 
-import static revi1337.onsquad.common.constant.CacheConst.CREW_ANNOUNCE;
-import static revi1337.onsquad.common.constant.CacheConst.CREW_ANNOUNCES;
-
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,23 +13,35 @@ import revi1337.onsquad.common.constant.Sign;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 
 /**
- * Redis-specific implementation of {@link AnnounceCacheEvictor}. This implementation optimizes eviction performance for distributed environments by:
+ * Redis-specific implementation of {@link AnnounceCacheEvictor} designed for high-performance and non-blocking cache invalidation in distributed environments.
+ *
+ * <p>This implementation addresses common Redis performance pitfalls by employing the following strategies:
  * <ul>
- * <li><b>Bulk Deletion:</b> Aggregates multiple cache keys into a single request
- * to minimize network round-trips (RTT).</li>
- * <li><b>Asynchronous Invalidation:</b> Utilizes the {@code UNLINK} command for bulk and
- * pattern-based evictions. Unlike {@code DEL}, {@code UNLINK} reclaims memory in a
- * background thread, ensuring the Redis event loop remains non-blocking even when
- * processing large datasets.</li>
- * <li><b>Synchronous Precision:</b> Employs {@code DEL} for single-item evictions
- * where the payload is guaranteed to be small, ensuring immediate memory reclamation
- * with minimal overhead.</li>
+ * <li><b>Asynchronous Memory Reclamation:</b> Utilizes the {@code UNLINK} command instead of {@code DEL}.
+ * This offloads the heavy lifting of memory deallocation to a background thread, preventing the Redis
+ * main event loop from blocking—critical for large collection evictions.</li>
+ * <li><b>Safe Key Discovery:</b> For group-based evictions (e.g., all announcements in a crew),
+ * it uses a cursor-based {@code SCAN} approach via {@link revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils}. This avoids the
+ * "stop-the-world" effect of the {@code KEYS} command.</li>
+ * <li><b>Minimizing RTT:</b> Aggregates multiple keys into bulk {@code UNLINK} requests,
+ * significantly reducing network round-trip time (RTT) overhead.</li>
  * </ul>
  *
+ * <h2>Execution Context</h2>
+ * This evictor expects a {@link RedisCacheManager} and operates primarily through
+ * {@link StringRedisTemplate} to ensure consistent key serialization matching the
+ * {@link CacheFormat#SIMPLE} pattern.
+ *
  * @see AnnounceCacheEvictor
+ * @see RedisCacheEvictor
+ * @see revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils
  */
 @Component
 public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
+
+    private static final String CREW_ANNOUNCE_KEY_FORMAT = String.join(Sign.COLON, CREW_ANNOUNCE_CACHE_NAME, "crew:%s:announce:%s");
+    private static final String CREW_ANNOUNCES_KEY_FORMAT = String.join(Sign.COLON, CREW_ANNOUNCES_CACHE_NAME, "crew:%s:announces");
+    private static final String CREW_ANNOUNCE_KEY_PATTERN = String.join(Sign.COLON, CREW_ANNOUNCE_CACHE_NAME, "crew:%s:announce:*");
 
     private final CacheManager cacheManager;
     private final StringRedisTemplate stringRedisTemplate;
@@ -51,75 +58,55 @@ public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
 
     @Override
     public void evictAnnounce(Long crewId, Long announceId) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            String key = String.format(CREW_ANNOUNCE_KEY_FORMAT, crewId, announceId);
+            String computedKey = String.format(CacheFormat.SIMPLE, key);
+            RedisCacheEvictor.unlinkKey(stringRedisTemplate, computedKey);
+        });
+    }
 
-        String key = String.join(Sign.COLON, CREW_ANNOUNCE, "crew", crewId.toString(), "announce", announceId.toString());
-        String computedKey = String.format(CacheFormat.SIMPLE, key);
-        RedisCacheEvictor.unlinkKey(stringRedisTemplate, computedKey);
+    @Override
+    public void evictAnnounces(Long crewId) {
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            String pattern = String.format(CREW_ANNOUNCE_KEY_PATTERN, crewId);
+            String computedPattern = String.format(CacheFormat.SIMPLE, pattern);
+            RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, computedPattern);
+        });
+    }
+
+    @Override
+    public void evictAnnounces(List<Long> crewIds) {
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            List<String> computedPatterns = crewIds.stream()
+                    .map(crewId -> String.format(CREW_ANNOUNCE_KEY_PATTERN, crewId))
+                    .map(pattern -> String.format(CacheFormat.SIMPLE, pattern))
+                    .toList();
+
+            RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, computedPatterns);
+        });
     }
 
     @Override
     public void evictAnnouncesByReferences(List<AnnounceReference> references) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            List<String> computedKeys = references.stream()
+                    .map(reference -> String.format(CREW_ANNOUNCE_KEY_FORMAT, reference.crewId(), reference.announceId()))
+                    .map(key -> String.format(CacheFormat.SIMPLE, key))
+                    .toList();
 
-        List<String> computedKeys = new ArrayList<>();
-        for (AnnounceReference reference : references) {
-            String crewId = reference.crewId().toString();
-            String announceId = reference.announceId().toString();
-            String key = String.join(Sign.COLON, CREW_ANNOUNCE, "crew", crewId, "announce", announceId);
-            String computedKey = String.format(CacheFormat.SIMPLE, key);
-            computedKeys.add(computedKey);
-        }
-
-        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
+            RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
+        });
     }
 
     @Override
-    public void evictAnnouncesInCrew(Long crewId) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
+    public void evictAnnounceLists(List<Long> crewIds) {
+        getCache(cacheManager, CREW_ANNOUNCES_CACHE_NAME).ifPresent(cache -> {
+            List<String> computedKeys = crewIds.stream()
+                    .map(crewId -> String.format(CREW_ANNOUNCES_KEY_FORMAT, crewId))
+                    .map(key -> String.format(CacheFormat.SIMPLE, key))
+                    .toList();
 
-        String key = String.join(Sign.COLON, CREW_ANNOUNCE, "crew", crewId.toString(), "announce", Sign.ASTERISK);
-        String pattern = String.format(CacheFormat.SIMPLE, key);
-
-        RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, pattern);
-    }
-
-    @Override
-    public void evictAnnouncesInCrews(List<Long> crewIds) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
-
-        List<String> patterns = crewIds.stream()
-                .map(crewId -> String.join(Sign.COLON, CREW_ANNOUNCE, "crew", crewId.toString(), "announce", Sign.ASTERISK))
-                .map(key -> String.format(CacheFormat.SIMPLE, key))
-                .toList();
-
-        RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, patterns);
-    }
-
-    @Override
-    public void evictAnnounceListsByCrews(List<Long> crewIds) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCES);
-        if (cache == null) {
-            return;
-        }
-
-        List<String> computedKeys = crewIds.stream()
-                .map(crewId -> String.join(Sign.COLON, CREW_ANNOUNCES, "crew", crewId.toString()))
-                .map(key -> String.format(CacheFormat.SIMPLE, key))
-                .toList();
-
-        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
+            RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
+        });
     }
 }

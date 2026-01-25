@@ -1,8 +1,5 @@
 package revi1337.onsquad.announce.infrastructure;
 
-import static revi1337.onsquad.common.constant.CacheConst.CREW_ANNOUNCE;
-import static revi1337.onsquad.common.constant.CacheConst.CREW_ANNOUNCES;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,25 +14,38 @@ import revi1337.onsquad.announce.domain.result.AnnounceReference;
 import revi1337.onsquad.common.constant.Sign;
 
 /**
- * Caffeine-specific implementation of {@link AnnounceCacheEvictor}. This implementation handles local in-memory caching by:
+ * Caffeine-specific implementation of {@link AnnounceCacheEvictor} for local in-memory cache management. * <p>This implementation provides advanced eviction
+ * capabilities for Caffeine by bypassing the standard Spring Cache decorative layer to perform the following:
  * <ul>
- * <li><b>Direct Native Cache Access:</b> Unlike standard Spring Cache abstraction,
- * this implementation directly accesses the underlying {@code com.github.benmanes.caffeine.cache.Cache}
- * to perform key scanning and regex-based matching.</li>
- * <li><b>Regex-based Eviction:</b> Supports sophisticated pattern matching by iterating
- * over the native cache's key set and applying regular expressions.</li>
+ * <li><b>Native Cache Interoperability:</b> Directly interacts with the underlying
+ * {@code com.github.benmanes.caffeine.cache.Cache} to access the {@code asMap()} view
+ * for sophisticated key management.</li>
+ * <li><b>Regex-based Bulk Eviction:</b> Implements pattern-based removal by compiling
+ * Java Regular Expressions to match and filter the in-memory key set.</li>
+ * <li><b>Optimized Overloading:</b> Supports both single-crew and multi-crew bulk
+ * invalidation through optimized regex grouping.</li>
  * </ul>
- * <p>
- * <b>Performance Warning:</b>
- * As the number of entries in the {@code cacheName} increases, the overhead of scanning
- * the entire key set linearly increases (O(N)). This may impact application performance
- * if the cache size is extremely large. It is recommended to monitor the cache size
- * and use precise eviction (via {@link AnnounceReference}) whenever possible.
+ *
+ * <h2>Performance Considerations</h2>
+ * <ul>
+ * <li><b>Time Complexity:</b> Pattern-based methods ({@link #evictAnnounces(Long)} and
+ * {@link #evictAnnounces(List)}) operate with <b>O(N)</b> complexity, where N is the total
+ * number of entries in the specific cache.</li>
+ * <li><b>Memory Overhead:</b> Iterating over the key set is performed in-process. While faster
+ * than Redis network RTT, extremely large local caches may experience minor GC pressure during
+ * high-frequency pattern evictions.</li>
+ * <li><b>Best Practice:</b> Prefer {@link #evictAnnounce(Long, Long)} or
+ * {@link #evictAnnouncesByReferences(List)} for O(1) targeting when specific IDs are available.</li>
+ * </ul>
  *
  * @see AnnounceCacheEvictor
+ * @see com.github.benmanes.caffeine.cache.Cache
  */
 @Component
 public class CaffeineAnnounceCacheEvictor implements AnnounceCacheEvictor {
+
+    private static final String CREW_ANNOUNCE_KEY_FORMAT = "crew:%s:announce:%s";
+    private static final String CREW_ANNOUNCES_KEY_FORMAT = "crew:%s:announces";
 
     private final CacheManager cacheManager;
 
@@ -50,62 +60,45 @@ public class CaffeineAnnounceCacheEvictor implements AnnounceCacheEvictor {
 
     @Override
     public void evictAnnounce(Long crewId, Long announceId) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            String computedKey = String.format(CREW_ANNOUNCE_KEY_FORMAT, crewId, announceId);
+            cache.evictIfPresent(computedKey);
+        });
+    }
 
-        String key = String.join(Sign.COLON, "crew", crewId.toString(), "announce", announceId.toString());
-        cache.evictIfPresent(key);
+    @Override
+    public void evictAnnounces(Long crewId) {
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            List<String> computedKeys = getCaffeineCacheKeys(cache, List.of(crewId), "^crew:(%s):announce:.*");
+            computedKeys.forEach(cache::evictIfPresent);
+        });
+    }
+
+    @Override
+    public void evictAnnounces(List<Long> crewIds) {
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            List<String> computedKeys = getCaffeineCacheKeys(cache, crewIds, "^crew:(%s):announce:.*");
+            computedKeys.forEach(cache::evictIfPresent);
+        });
     }
 
     @Override
     public void evictAnnouncesByReferences(List<AnnounceReference> references) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
-
-        for (AnnounceReference reference : references) {
-            String crewId = reference.crewId().toString();
-            String announceId = reference.announceId().toString();
-            String key = String.join(Sign.COLON, "crew", crewId, "announce", announceId);
-            cache.evictIfPresent(key);
-        }
+        getCache(cacheManager, CREW_ANNOUNCE_CACHE_NAME).ifPresent(cache -> {
+            for (AnnounceReference reference : references) {
+                String computedKey = String.format(CREW_ANNOUNCE_KEY_FORMAT, reference.crewId(), reference.announceId());
+                cache.evictIfPresent(computedKey);
+            }
+        });
     }
 
     @Override
-    public void evictAnnouncesInCrew(Long crewId) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
-
-        List<String> computedKeys = getCaffeineCacheKeys(cache, List.of(crewId), "^crew:(%s):announce:.*");
-        computedKeys.forEach(cache::evictIfPresent);
-    }
-
-    @Override
-    public void evictAnnouncesInCrews(List<Long> crewIds) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCE);
-        if (cache == null) {
-            return;
-        }
-
-        List<String> computedKeys = getCaffeineCacheKeys(cache, crewIds, "^crew:(%s):announce:.*");
-        computedKeys.forEach(cache::evictIfPresent);
-    }
-
-    @Override
-    public void evictAnnounceListsByCrews(List<Long> crewIds) {
-        Cache cache = cacheManager.getCache(CREW_ANNOUNCES);
-        if (cache == null) {
-            return;
-        }
-
-        crewIds.stream()
-                .map(crewId -> String.join(Sign.COLON, CREW_ANNOUNCES, "crew", crewId.toString()))
-                .forEach(cache::evictIfPresent);
+    public void evictAnnounceLists(List<Long> crewIds) {
+        getCache(cacheManager, CREW_ANNOUNCES_CACHE_NAME).ifPresent(cache -> {
+            crewIds.stream()
+                    .map(crewId -> String.format(CREW_ANNOUNCES_KEY_FORMAT, crewId))
+                    .forEach(cache::evictIfPresent);
+        });
     }
 
     private List<String> getCaffeineCacheKeys(Cache cache, List<Long> crewIds, String regexPattern) {

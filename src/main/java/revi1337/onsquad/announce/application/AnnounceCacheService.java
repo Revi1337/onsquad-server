@@ -16,31 +16,34 @@ import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
 
 /**
- * Service responsible for managing announcement caches with different strategies.
+ * Service responsible for orchestrating announcement cache operations using diverse strategies.
  * <p>
- * This service provides methods for both passive caching (Cache-Aside) and active cache synchronization (Eager Refresh/Write-Through).
+ * This service integrates Spring's declarative caching abstractions ({@link Cacheable}, {@link CachePut}) with explicit invalidation logic to handle complex
+ * consistency requirements.
+ *
+ * <h2>Key Caching Patterns</h2>
  * <ul>
- * <li><b>getAnnounce / getDefaultAnnounces:</b> Implements the <i>Cache-Aside</i> pattern.
- * Fetches data from the cache first, or populates it from the database on a cache miss.</li>
- * <li><b>putAnnounce / putDefaultAnnounceList:</b> Implements <i>Active Refresh</i>.
- * Forces a database query and updates the cache with the latest data, typically used after data modifications.</li>
- * <li><b>evictAnnounce:</b> Explicitly removes an entry from the cache, primarily used during deletion.</li>
- * <li><b>evictAnnouncesByReferences / evictAnnounceListsByCrews:</b> Implements <i>Batch Eviction</i>.
- * Optimizes cache invalidation by grouping multiple keys, supporting O(1) targeting or pattern-based matching.</li>
+ * <li><b>Cache-Aside (Lazy Loading):</b> Utilized in {@code getAnnounce} and {@code getDefaultAnnounces}.
+ * Entries are loaded into the cache only after a cache miss occurs in the primary database.</li>
+ * <li><b>Active Refresh (Write-Through):</b> Utilized in {@code putAnnounce} and {@code putDefaultAnnounceList}.
+ * Forces a database fetch to update the cache with the latest state, ensuring immediate consistency after modifications.</li>
+ * <li><b>Explicit Eviction:</b> Delegated to {@link AnnounceCacheEvictor} to overcome the limitations of
+ * standard Spring Cache, supporting both pinpoint and broad-range invalidation.</li>
  * </ul>
- * <p>
- * <b>Important Constraint:</b>
- * The {@code cacheManager} value specified in {@link Cacheable} and {@link CachePut} annotations
- * <b>MUST</b> be consistent with the {@code CacheManager} instance injected via the constructor.
- * Since {@link AnnounceCacheEvictor} is resolved based on the injected {@code CacheManager},
- * any inconsistency will lead to eviction failures where the evictor attempts to clear
- * a different cache storage than the one being populated.
- * </p>
- * <p>
- * The eviction logic is delegated to {@link AnnounceCacheEvictor}, which is customized to overcome
- * the limitations of standard Spring Cache Managers. It provides high-performance bulk operations
- * (e.g., Redis UNLINK) and complex pattern matching (e.g., Regex scanning in Caffeine)
- * to ensure consistency across distributed and local environments.
+ *
+ * <h2>Architectural Constraints</h2>
+ * <ul>
+ * <li><b>Manager Consistency:</b> The {@code cacheManager} identifier {@value #CACHE_MANAGER_NAME} used in
+ * annotations <b>must</b> match the instance resolved by {@link AnnounceCacheEvictorFactory}.
+ * Discrepancies will result in "silent failures" where eviction occurs on a different storage provider
+ * than the one holding the active data.</li>
+ * <li><b>Performance-Aware Invalidation:</b> Methods are categorized into <i>Exact Match</i>
+ * (using specific references) and <i>Pattern Match</i> (scanning based on crew context).
+ * Users should prefer reference-based eviction for high-throughput scenarios to avoid O(N) scan overhead.</li>
+ * </ul>
+ *
+ * @see AnnounceCacheEvictor
+ * @see AnnounceCacheEvictorFactory
  */
 @Service
 public class AnnounceCacheService {
@@ -57,10 +60,10 @@ public class AnnounceCacheService {
             AnnounceCacheEvictorFactory cacheEvictorFactory
     ) {
         this.announceQueryDslRepository = announceQueryDslRepository;
-        this.announceCacheEvictor = initializeEvictor(cacheManager, cacheEvictorFactory);
+        this.announceCacheEvictor = selectCacheEvictor(cacheManager, cacheEvictorFactory);
     }
 
-    private AnnounceCacheEvictor initializeEvictor(CacheManager cacheManager, AnnounceCacheEvictorFactory cacheEvictorFactory) {
+    private AnnounceCacheEvictor selectCacheEvictor(CacheManager cacheManager, AnnounceCacheEvictorFactory cacheEvictorFactory) {
         return cacheEvictorFactory.findAvailableEvictor(cacheManager);
     }
 
@@ -90,15 +93,19 @@ public class AnnounceCacheService {
         announceCacheEvictor.evictAnnounce(crewId, announceId);
     }
 
+    public void evictAnnounces(Long crewId) {
+        announceCacheEvictor.evictAnnounces(crewId);
+    }
+
+    public void evictAnnounces(List<Long> crewIds) {
+        announceCacheEvictor.evictAnnounces(crewIds);
+    }
+
     public void evictAnnouncesByReferences(List<AnnounceReference> references) {
         announceCacheEvictor.evictAnnouncesByReferences(references);
     }
 
-    public void evictAnnouncesInCrews(List<Long> crewIds) {
-        announceCacheEvictor.evictAnnouncesInCrews(crewIds);
-    }
-
-    public void evictAnnounceListsByCrews(List<Long> crewIds) {
-        announceCacheEvictor.evictAnnounceListsByCrews(crewIds);
+    public void evictAnnounceLists(List<Long> crewIds) {
+        announceCacheEvictor.evictAnnounceLists(crewIds);
     }
 }
