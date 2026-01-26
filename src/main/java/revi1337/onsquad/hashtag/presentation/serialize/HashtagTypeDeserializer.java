@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
-import revi1337.onsquad.hashtag.util.HashtagTypeUtil;
 
 public class HashtagTypeDeserializer extends StdDeserializer<HashtagType> {
 
@@ -19,9 +18,7 @@ public class HashtagTypeDeserializer extends StdDeserializer<HashtagType> {
         try {
             TextNode textNode = p.getCodec().readTree(p);
             String hashtag = textNode.asText();
-            HashtagType hashtagType = HashtagType.fromText(hashtag);
-            HashtagTypeUtil.validateHashtag(hashtagType);
-            return hashtagType;
+            return HashtagType.fromText(hashtag);
         } catch (IOException e) {
             throw new IllegalArgumentException("해시태그 JSON 파싱 중 에러 발생", e);
         }

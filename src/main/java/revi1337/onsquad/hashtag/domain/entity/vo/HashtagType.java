@@ -1,12 +1,14 @@
 package revi1337.onsquad.hashtag.domain.entity.vo;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import revi1337.onsquad.hashtag.error.HashtagDomainException;
+import revi1337.onsquad.hashtag.error.HashtagErrorCode;
 
 @Getter
 @RequiredArgsConstructor
@@ -56,11 +58,10 @@ public enum HashtagType {
     private final String text;
     private final Long pk;
 
-    private static final Map<String, HashtagType> hashtagTypeStorage = Collections.unmodifiableMap(new HashMap<>() {
-        {
-            unmodifiableList().forEach(hashtag -> put(hashtag.getText(), hashtag));
-        }
-    });
+    private static final Map<String, HashtagType> hashtagTypeStorage = Stream.of(values()).collect(Collectors.toUnmodifiableMap(
+            h -> h.getText().toUpperCase(),
+            h -> h
+    ));
 
     public static List<HashtagType> unmodifiableList() {
         return List.of(HashtagType.values());
@@ -73,6 +74,10 @@ public enum HashtagType {
     }
 
     public static HashtagType fromText(String hashtagText) {
-        return hashtagTypeStorage.get(hashtagText.toUpperCase());
+        HashtagType hashtagType = hashtagTypeStorage.get(hashtagText.toUpperCase());
+        if (hashtagType == null) {
+            throw new HashtagDomainException.InvalidHashtag(HashtagErrorCode.INVALID_HASHTAG);
+        }
+        return hashtagType;
     }
 }
