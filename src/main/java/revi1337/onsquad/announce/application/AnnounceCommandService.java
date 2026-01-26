@@ -11,7 +11,7 @@ import revi1337.onsquad.announce.domain.AnnouncePolicy;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.event.AnnounceCreateEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceDeleteEvent;
-import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
+import revi1337.onsquad.announce.domain.event.AnnouncePinnedEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
@@ -52,29 +52,29 @@ public class AnnounceCommandService {
         eventPublisher.publishEvent(new AnnounceDeleteEvent(crewId, announce.getId()));
     }
 
-    public void changeFixState(Long memberId, Long crewId, Long announceId, boolean state) {
+    public void changePinState(Long memberId, Long crewId, Long announceId, boolean state) {
         Announce announce = announceAccessor.getById(announceId);
         AnnouncePolicy.ensureMatchCrew(announce, crewId);
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        AnnouncePolicy.ensureFixable(me);
+        AnnouncePolicy.ensurePinnable(me);
         if (state) {
-            fixAnnounce(crewId, announce);
+            pinAnnounce(crewId, announce);
             return;
         }
-        unfixAnnounce(crewId, announce);
+        unpinAnnounce(crewId, announce);
     }
 
-    private void fixAnnounce(Long crewId, Announce announce) {
-        if (announce.isUnfixed()) {
-            announce.fix(LocalDateTime.now());
-            eventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
+    private void pinAnnounce(Long crewId, Announce announce) {
+        if (announce.isUnpinned()) {
+            announce.pin(LocalDateTime.now());
+            eventPublisher.publishEvent(new AnnouncePinnedEvent(crewId, announce.getId()));
         }
     }
 
-    private void unfixAnnounce(Long crewId, Announce announce) {
-        if (announce.isFixed()) {
-            announce.unfix();
-            eventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
+    private void unpinAnnounce(Long crewId, Announce announce) {
+        if (announce.isPinned()) {
+            announce.unpin();
+            eventPublisher.publishEvent(new AnnouncePinnedEvent(crewId, announce.getId()));
         }
     }
 }

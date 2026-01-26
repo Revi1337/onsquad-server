@@ -7,7 +7,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.domain.event.AnnounceCreateEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceDeleteEvent;
-import revi1337.onsquad.announce.domain.event.AnnounceFixedEvent;
+import revi1337.onsquad.announce.domain.event.AnnouncePinnedEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
 
 /**
@@ -20,7 +20,7 @@ import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
  * <li><b>onUpdate:</b> Updates both the specific announcement cache and the overall default list cache
  * to reflect content changes.</li>
  * <li><b>onDelete:</b> Removes the specific announcement from the cache and refreshes the default list cache.</li>
- * <li><b>onFixed:</b> Updates both the specific announcement and the default list cache,
+ * <li><b>onPinned:</b> Updates both the specific announcement and the default list cache,
  * <p>
  * as the pinning state affects the display order.</li>
  * </ul>
@@ -53,8 +53,8 @@ public class AnnounceEventListener {
     }
 
     @TransactionalEventListener
-    public void onFixed(AnnounceFixedEvent event) {
-        log.debug("[{}] Refreshing fixed state caches for crew: {}", event.getEventName(), event.crewId());
+    public void onPinned(AnnouncePinnedEvent event) {
+        log.debug("[{}] Refreshing pinned state caches for crew: {}", event.getEventName(), event.crewId());
         announceCacheService.evictAnnounce(event.crewId(), event.announceId());
         announceCacheService.putDefaultAnnounceList(event.crewId());
     }

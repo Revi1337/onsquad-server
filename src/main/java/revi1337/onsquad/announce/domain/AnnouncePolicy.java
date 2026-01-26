@@ -22,7 +22,7 @@ public final class AnnouncePolicy {
     /**
      * Only the crew owner is authorized to pin announcements.
      */
-    public static boolean canFixable(CrewMember me) {
+    public static boolean canPin(CrewMember me) {
         return CrewMemberPolicy.isOwner(me);
     }
 
@@ -86,9 +86,9 @@ public final class AnnouncePolicy {
         }
     }
 
-    public static void ensureFixable(CrewMember me) {
+    public static void ensurePinnable(CrewMember me) {
         if (CrewMemberPolicy.isNotOwner(me)) {
-            throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_FIX_AUTHORITY);
+            throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_PIN_AUTHORITY);
         }
     }
 

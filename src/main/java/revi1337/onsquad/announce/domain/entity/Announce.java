@@ -35,11 +35,11 @@ public class Announce extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(name = "fixed", nullable = false)
-    private boolean fixed = false;
+    @Column(name = "pinned", nullable = false)
+    private boolean pinned = false;
 
-    @Column(name = "fixed_at")
-    private LocalDateTime fixedAt;
+    @Column(name = "pinned_at")
+    private LocalDateTime pinnedAt;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "crew_id", nullable = false)
@@ -61,26 +61,22 @@ public class Announce extends BaseEntity {
         this.content = content;
     }
 
-    public void fix(LocalDateTime fixedAt) {
-        this.fixed = true;
-        this.fixedAt = fixedAt;
+    public void pin(LocalDateTime pinnedAt) {
+        this.pinned = true;
+        this.pinnedAt = pinnedAt;
     }
 
-    public void unfix() {
-        this.fixed = false;
-        this.fixedAt = null;
+    public void unpin() {
+        this.pinned = false;
+        this.pinnedAt = null;
     }
 
     public boolean mismatchCrewId(Long crewId) {
         return !this.crew.getId().equals(crewId);
     }
 
-    public boolean isUnfixed() {
-        return !isFixed();
-    }
-
-    public boolean isFixed() {
-        return this.fixed;
+    public boolean isUnpinned() {
+        return !isPinned();
     }
 
     @Override

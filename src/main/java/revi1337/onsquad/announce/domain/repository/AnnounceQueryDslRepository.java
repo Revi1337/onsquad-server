@@ -25,8 +25,8 @@ public class AnnounceQueryDslRepository {
                         announce.title,
                         announce.content,
                         announce.createdAt,
-                        announce.fixed,
-                        announce.fixedAt,
+                        announce.pinned,
+                        announce.pinnedAt,
                         new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
@@ -38,8 +38,8 @@ public class AnnounceQueryDslRepository {
                 .leftJoin(announce.member, member)
                 .where(announce.crew.id.eq(crewId))
                 .orderBy(
-                        announce.fixed.desc(),
-                        announce.fixedAt.desc(),
+                        announce.pinned.desc(),
+                        announce.pinnedAt.desc(),
                         announce.createdAt.desc()
                 )
                 .fetch();
@@ -52,8 +52,8 @@ public class AnnounceQueryDslRepository {
                         announce.title,
                         announce.content,
                         announce.createdAt,
-                        announce.fixed,
-                        announce.fixedAt,
+                        announce.pinned,
+                        announce.pinnedAt,
                         new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,
@@ -65,8 +65,8 @@ public class AnnounceQueryDslRepository {
                 .leftJoin(announce.member, member)
                 .where(announce.crew.id.eq(crewId))
                 .orderBy(
-                        announce.fixed.desc(),
-                        announce.fixedAt.desc(),
+                        announce.pinned.desc(),
+                        announce.pinnedAt.desc(),
                         announce.createdAt.desc()
                 )
                 .limit(limit)
@@ -80,8 +80,8 @@ public class AnnounceQueryDslRepository {
                         announce.title,
                         announce.content,
                         announce.createdAt,
-                        announce.fixed,
-                        announce.fixedAt,
+                        announce.pinned,
+                        announce.pinnedAt,
                         new QSimpleMemberResult(
                                 member.id,
                                 member.nickname,

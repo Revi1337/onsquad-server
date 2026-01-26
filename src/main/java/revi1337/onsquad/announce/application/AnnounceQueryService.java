@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.announce.application.dto.response.AnnounceWithFixAndModifyStateResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnounceWithPinAndModifyStateResponse;
 import revi1337.onsquad.announce.application.dto.response.AnnouncesWithWriteStateResponse;
 import revi1337.onsquad.announce.domain.AnnouncePolicy;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
@@ -20,14 +20,14 @@ public class AnnounceQueryService {
     private final AnnounceCacheService announceCacheService;
     private final AnnounceRepository announceRepository;
 
-    public AnnounceWithFixAndModifyStateResponse findAnnounce(Long memberId, Long crewId, Long announceId) {
+    public AnnounceWithPinAndModifyStateResponse findAnnounce(Long memberId, Long crewId, Long announceId) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnounceResult announce = announceCacheService.getAnnounce(crewId, announceId);
 
-        boolean canFix = AnnouncePolicy.canFixable(me);
+        boolean canPin = AnnouncePolicy.canPin(me);
         boolean canModify = AnnouncePolicy.canModify(me, announce.writer().id());
 
-        return AnnounceWithFixAndModifyStateResponse.from(canFix, canModify, announce);
+        return AnnounceWithPinAndModifyStateResponse.from(canPin, canModify, announce);
     }
 
     @Transactional(readOnly = true)

@@ -1,6 +1,6 @@
 package revi1337.onsquad.announce.domain.event;
 
-public record AnnounceFixedEvent(
+public record AnnouncePinnedEvent(
         Long crewId,
         Long announceId
 ) {

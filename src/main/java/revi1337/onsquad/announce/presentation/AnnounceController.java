@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.AnnounceQueryService;
-import revi1337.onsquad.announce.application.dto.response.AnnounceWithFixAndModifyStateResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnounceWithPinAndModifyStateResponse;
 import revi1337.onsquad.announce.application.dto.response.AnnouncesWithWriteStateResponse;
 import revi1337.onsquad.announce.presentation.request.AnnounceCreateRequest;
 import revi1337.onsquad.announce.presentation.request.AnnounceUpdateRequest;
@@ -45,12 +45,12 @@ public class AnnounceController {
     }
 
     @GetMapping("/{crewId}/announces/{announceId}")
-    public ResponseEntity<RestResponse<AnnounceWithFixAndModifyStateResponse>> findAnnounce(
+    public ResponseEntity<RestResponse<AnnounceWithPinAndModifyStateResponse>> findAnnounce(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @Authenticate CurrentMember currentMember
     ) {
-        AnnounceWithFixAndModifyStateResponse response = announceQueryService.findAnnounce(currentMember.id(), crewId, announceId);
+        AnnounceWithPinAndModifyStateResponse response = announceQueryService.findAnnounce(currentMember.id(), crewId, announceId);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
@@ -77,14 +77,14 @@ public class AnnounceController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @PatchMapping("/{crewId}/announces/{announceId}/fix")
-    public ResponseEntity<RestResponse<Void>> updateAnnounceFixed(
+    @PatchMapping("/{crewId}/announces/{announceId}/pin")
+    public ResponseEntity<RestResponse<Void>> changeAnnouncePinned(
             @PathVariable Long crewId,
             @PathVariable Long announceId,
             @RequestParam boolean state,
             @Authenticate CurrentMember currentMember
     ) {
-        announceCommandService.changeFixState(currentMember.id(), crewId, announceId, state);
+        announceCommandService.changePinState(currentMember.id(), crewId, announceId, state);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }

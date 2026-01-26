@@ -2,15 +2,15 @@ package revi1337.onsquad.announce.application.dto.response;
 
 import revi1337.onsquad.announce.domain.result.AnnounceResult;
 
-public record AnnounceWithFixAndModifyStateResponse(
-        boolean canFix,
+public record AnnounceWithPinAndModifyStateResponse(
+        boolean canPin,
         boolean canModify,
         AnnounceResponse announce
 ) {
 
-    public static AnnounceWithFixAndModifyStateResponse from(boolean canFix, boolean canModify, AnnounceResult result) {
-        return new AnnounceWithFixAndModifyStateResponse(
-                canFix,
+    public static AnnounceWithPinAndModifyStateResponse from(boolean canPin, boolean canModify, AnnounceResult result) {
+        return new AnnounceWithPinAndModifyStateResponse(
+                canPin,
                 canModify,
                 AnnounceResponse.from(result)
         );

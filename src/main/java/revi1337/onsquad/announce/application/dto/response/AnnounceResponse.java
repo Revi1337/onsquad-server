@@ -11,8 +11,8 @@ public record AnnounceResponse(
         String title,
         String content,
         LocalDateTime createdAt,
-        boolean fixed,
-        LocalDateTime fixedAt,
+        boolean pinned,
+        LocalDateTime pinnedAt,
         SimpleMemberResponse writer
 ) {
 
@@ -22,8 +22,8 @@ public record AnnounceResponse(
                 result.title().getValue(),
                 result.content(),
                 result.createdAt(),
-                result.fixed(),
-                result.fixedAt(),
+                result.pinned(),
+                result.pinnedAt(),
                 result.writer().id() != null ? SimpleMemberResponse.from(result.writer()) : SimpleMemberResponse.DELETED_MEMBER
         );
     }

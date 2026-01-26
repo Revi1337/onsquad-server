@@ -10,19 +10,19 @@ public record AnnounceResult(
         Title title,
         String content,
         LocalDateTime createdAt,
-        boolean fixed,
-        LocalDateTime fixedAt,
+        boolean pinned,
+        LocalDateTime pinnedAt,
         SimpleMemberResult writer
 ) {
 
     @QueryProjection
-    public AnnounceResult(Long id, Title title, String content, LocalDateTime createdAt, boolean fixed, LocalDateTime fixedAt, SimpleMemberResult writer) {
+    public AnnounceResult(Long id, Title title, String content, LocalDateTime createdAt, boolean pinned, LocalDateTime pinnedAt, SimpleMemberResult writer) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
-        this.fixed = fixed;
-        this.fixedAt = fixedAt;
+        this.pinned = pinned;
+        this.pinnedAt = pinnedAt;
         this.writer = writer;
     }
 }
