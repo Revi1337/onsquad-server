@@ -90,10 +90,10 @@ public final class AnnouncePolicy {
     }
 
     private static boolean mismatchWriter(Announce announce, CrewMember me) {
-        return !announce.getMember().equals(me.getMember());
+        return !announce.getMember().getId().equals(me.getMember().getId());
     }
 
     private static boolean mismatchCrew(Announce announce, CrewMember me) {
-        return !announce.getCrew().equals(me.getCrew());
+        return !announce.getCrew().getId().equals(me.getCrew().getId());
     }
 }
