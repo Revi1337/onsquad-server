@@ -25,13 +25,13 @@ public class AnnounceCommandService {
     private final CrewMemberAccessor crewMemberAccessor;
     private final AnnounceAccessor announceAccessor;
     private final AnnounceRepository announceRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void newAnnounce(Long memberId, Long crewId, AnnounceCreateDto dto) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnouncePolicy.ensureWritable(me);
         announceRepository.save(dto.toEntity(me.getCrew(), me.getMember()));
-        applicationEventPublisher.publishEvent(new AnnounceCreateEvent(crewId));
+        eventPublisher.publishEvent(new AnnounceCreateEvent(crewId));
     }
 
     public void updateAnnounce(Long memberId, Long crewId, Long announceId, AnnounceUpdateDto dto) {
@@ -40,7 +40,7 @@ public class AnnounceCommandService {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnouncePolicy.ensureModifiable(announce, me);
         announce.update(dto.title(), dto.content());
-        applicationEventPublisher.publishEvent(new AnnounceUpdateEvent(crewId, announce.getId()));
+        eventPublisher.publishEvent(new AnnounceUpdateEvent(crewId, announce.getId()));
     }
 
     public void deleteAnnounce(Long memberId, Long crewId, Long announceId) {
@@ -49,7 +49,7 @@ public class AnnounceCommandService {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         AnnouncePolicy.ensureDeletable(announce, me);
         announceRepository.delete(announce);
-        applicationEventPublisher.publishEvent(new AnnounceDeleteEvent(crewId, announce.getId()));
+        eventPublisher.publishEvent(new AnnounceDeleteEvent(crewId, announce.getId()));
     }
 
     public void changeFixState(Long memberId, Long crewId, Long announceId, boolean state) {
@@ -67,14 +67,14 @@ public class AnnounceCommandService {
     private void fixAnnounce(Long crewId, Announce announce) {
         if (announce.isUnfixed()) {
             announce.fix(LocalDateTime.now());
-            applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
+            eventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
         }
     }
 
     private void unfixAnnounce(Long crewId, Announce announce) {
         if (announce.isFixed()) {
             announce.unfix();
-            applicationEventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
+            eventPublisher.publishEvent(new AnnounceFixedEvent(crewId, announce.getId()));
         }
     }
 }

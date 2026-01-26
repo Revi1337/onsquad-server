@@ -52,7 +52,7 @@ public class AnnounceRepositoryImpl implements AnnounceRepository {
 
     @Override
     public int deleteByCrewIdIn(List<Long> crewIds) {
-        return announceJpaRepository.deleteByCrewId(crewIds);
+        return announceJpaRepository.deleteByCrewIdIn(crewIds);
     }
 
     @Override

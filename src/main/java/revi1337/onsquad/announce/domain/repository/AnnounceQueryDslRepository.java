@@ -73,7 +73,7 @@ public class AnnounceQueryDslRepository {
                 .fetch();
     }
 
-    public Optional<AnnounceResult> fetchByCrewIdAndId(Long crewId, Long announceId) {
+    public Optional<AnnounceResult> fetchByIdAndCrewId(Long id, Long crewId) {
         return Optional.ofNullable(jpaQueryFactory
                 .select(new QAnnounceResult(
                         announce.id,
@@ -91,7 +91,7 @@ public class AnnounceQueryDslRepository {
                 ))
                 .from(announce)
                 .leftJoin(announce.member, member)
-                .where(announce.id.eq(announceId), announce.crew.id.eq(crewId))
+                .where(announce.id.eq(id), announce.crew.id.eq(crewId))
                 .fetchOne()
         );
     }

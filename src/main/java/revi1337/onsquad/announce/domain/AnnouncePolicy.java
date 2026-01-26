@@ -16,14 +16,14 @@ public final class AnnouncePolicy {
      * Managers or higher can write new announcements.
      */
     public static boolean canWrite(CrewMember me) {
-        return me.isManagerOrHigher();
+        return CrewMemberPolicy.isManagerOrHigher(me);
     }
 
     /**
      * Only the crew owner is authorized to pin announcements.
      */
     public static boolean canFixable(CrewMember me) {
-        return me.isOwner();
+        return CrewMemberPolicy.isOwner(me);
     }
 
     /**
@@ -35,13 +35,16 @@ public final class AnnouncePolicy {
      * </ol>
      */
     public static boolean canModify(CrewMember me, Long announceWriterId) {
-        if (me.isOwner()) {
+        if (CrewMemberPolicy.isOwner(me)) {
             return true;
         }
-        if (me.isManagerOrHigher() && announceWriterId == null) {
+        if (CrewMemberPolicy.isGeneral(me)) {
+            return false;
+        }
+        if (CrewMemberPolicy.isManagerOrHigher(me) && announceWriterId == null) {
             return true;
         }
-        if (me.isManagerOrHigher() && me.getActualMemberId().equals(announceWriterId)) {
+        if (CrewMemberPolicy.isManagerOrHigher(me) && me.getActualMemberId().equals(announceWriterId)) {
             return true;
         }
         return false;
@@ -66,7 +69,7 @@ public final class AnnouncePolicy {
         if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
-        if (CrewMemberPolicy.isLowerThanManager(me) && mismatchWriter(announce, me)) {
+        if (CrewMemberPolicy.isManager(me) && mismatchWriter(announce, me)) {
             throw new AnnounceBusinessException.InsufficientAuthority(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
     }

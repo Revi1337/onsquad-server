@@ -69,7 +69,7 @@ public class AnnounceCacheService {
 
     @Cacheable(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = CACHE_MANAGER_NAME)
     public AnnounceResult getAnnounce(Long crewId, Long announceId) {
-        return announceQueryDslRepository.fetchByCrewIdAndId(crewId, announceId)
+        return announceQueryDslRepository.fetchByIdAndCrewId(announceId, crewId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
     }
 
@@ -80,7 +80,7 @@ public class AnnounceCacheService {
 
     @CachePut(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = CACHE_MANAGER_NAME)
     public AnnounceResult putAnnounce(Long crewId, Long announceId) {
-        return announceQueryDslRepository.fetchByCrewIdAndId(crewId, announceId)
+        return announceQueryDslRepository.fetchByIdAndCrewId(announceId, crewId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
     }
 
