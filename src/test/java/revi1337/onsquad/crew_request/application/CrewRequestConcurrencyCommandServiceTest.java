@@ -79,11 +79,8 @@ class CrewRequestConcurrencyCommandServiceTest {
     @Autowired
     private CrewRequestCommandService commandService;
 
-    @Autowired
-    private CrewRequestCommandServiceFacade commandServiceFacade;
-
     @Test
-    @DisplayName("Optimistic Lock: 크루 owner 와 manager 가 동시에 서로 다른 참여자의 요청을 수락해도 crew 의 정합성은 보장된다.")
+    @DisplayName("Pessimistic Lock: 크루 owner 와 manager 가 동시에 서로 다른 참여자의 요청을 수락해도 crew 의 정합성은 보장된다.")
     void accept() {
         // given
         Member revi = memberRepository.save(createRevi());
@@ -101,11 +98,11 @@ class CrewRequestConcurrencyCommandServiceTest {
         CountDownLatch startLatch = new CountDownLatch(1);
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandServiceFacade.acceptRequest(revi.getId(), crew.getId(), request1.getId());
+            commandService.acceptRequest(revi.getId(), crew.getId(), request1.getId());
         }, executor);
         CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandServiceFacade.acceptRequest(andong.getId(), crew.getId(), request2.getId());
+            commandService.acceptRequest(andong.getId(), crew.getId(), request2.getId());
         }, executor);
         stopWatch(TimeUnit.MILLISECONDS, () -> {
             startLatch.countDown();
@@ -118,7 +115,7 @@ class CrewRequestConcurrencyCommandServiceTest {
     }
 
     @Test
-    @DisplayName("Optimistic Lock: 다수의 운영진이 수십 건의 가입 요청을 동시에 수락해도, 낙관적 락을 통해 크루 인원수의 정합성이 완벽히 보장된다.")
+    @DisplayName("Pessimistic Lock: 다수의 운영진이 수십 건의 가입 요청을 동시에 수락해도, 비관적 락을 통해 크루 인원수의 정합성이 완벽히 보장된다.")
     void accept2() {
         // given
         Member acceptor1 = memberRepository.save(createMember(1));
@@ -160,7 +157,7 @@ class CrewRequestConcurrencyCommandServiceTest {
             chunks.get(i).forEach(requestId -> {
                 futures.add(CompletableFuture.runAsync(() -> {
                     waitToStart(startLatch);
-                    commandServiceFacade.acceptRequest(acceptorId, crew.getId(), requestId);
+                    commandService.acceptRequest(acceptorId, crew.getId(), requestId);
                 }, executor));
             });
         }

@@ -43,11 +43,11 @@ public class CrewRequestCommandService {
         }
     }
 
-    public void acceptRequest(Long memberId, Long crewId, Long requestId) { // TODO 굳이 지금처럼 비관적 락을 걸 필요가 있을까? (Optimistic VS PESSIMISTIC VS Atomic Update Query)
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewRequestPolicy.ensureAcceptable(me);
+    public void acceptRequest(Long memberId, Long crewId, Long requestId) {
+        Crew crew = crewAccessor.getByIdForUpdate(crewId);
+        CrewMember acceptor = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewRequestPolicy.ensureAcceptable(acceptor);
         CrewRequest request = crewRequestAccessor.getById(requestId);
-        Crew crew = request.getCrew();
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
         crew.addCrewMember(CrewMemberFactory.general(crew, request.getMember(), LocalDateTime.now()));
         crewRequestRepository.deleteById(requestId);
@@ -55,10 +55,10 @@ public class CrewRequestCommandService {
     }
 
     public void rejectRequest(Long memberId, Long crewId, Long requestId) {
+        CrewMember rejecter = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewRequestPolicy.ensureRejectable(rejecter);
         CrewRequest request = crewRequestAccessor.getById(requestId);
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewRequestPolicy.ensureRejectable(me);
         crewRequestRepository.deleteById(requestId);
         eventPublisher.publishEvent(new RequestRejected(crewId, memberId, request.getRequesterId()));
     }
