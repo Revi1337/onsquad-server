@@ -13,7 +13,7 @@ import revi1337.onsquad.crew_request.error.CrewRequestErrorCode;
 public final class CrewRequestPolicy {
 
     public static void ensureMatchCrew(CrewRequest request, Long crewId) {
-        if (request.mismatchCrewId(crewId)) {
+        if (mismatchCrew(request, crewId)) {
             throw new CrewRequestBusinessException.MismatchReference(CrewRequestErrorCode.MISMATCH_CREW_REFERENCE);
         }
     }
@@ -34,5 +34,9 @@ public final class CrewRequestPolicy {
         if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new CrewRequestBusinessException.InsufficientAuthority(CrewRequestErrorCode.INSUFFICIENT_REJECT_AUTHORITY);
         }
+    }
+
+    private static boolean mismatchCrew(CrewRequest request, Long crewId) {
+        return !request.getCrew().getId().equals(crewId);
     }
 }

@@ -47,10 +47,6 @@ public class CrewRequest extends RequestEntity {
         this.member = member;
     }
 
-    public boolean mismatchCrewId(Long crewId) {
-        return !crew.matchId(crewId);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
