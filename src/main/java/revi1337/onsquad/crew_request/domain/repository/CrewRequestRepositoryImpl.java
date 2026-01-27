@@ -7,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
-import revi1337.onsquad.crew_request.domain.result.CrewRequestWithCrewResult;
-import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,12 +36,12 @@ public class CrewRequestRepositoryImpl implements CrewRequestRepository {
     }
 
     @Override
-    public List<CrewRequestWithCrewResult> fetchAllWithSimpleCrewByMemberId(Long memberId) {
+    public List<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId) {
         return crewRequestQueryDslRepository.fetchAllWithSimpleCrewByMemberId(memberId);
     }
 
     @Override
-    public Page<CrewRequestWithMemberResult> fetchCrewRequests(Long crewId, Pageable pageable) {
+    public Page<CrewRequest> fetchCrewRequests(Long crewId, Pageable pageable) {
         return crewRequestQueryDslRepository.fetchCrewRequests(crewId, pageable);
     }
 
@@ -64,6 +62,6 @@ public class CrewRequestRepositoryImpl implements CrewRequestRepository {
 
     @Override
     public int deleteByCrewIdIn(List<Long> crewIds) {
-        return crewRequestJpaRepository.deleteByCrewId(crewIds);
+        return crewRequestJpaRepository.deleteByCrewIdIn(crewIds);
     }
 }

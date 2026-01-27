@@ -5,8 +5,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
-import revi1337.onsquad.crew_request.domain.result.CrewRequestWithCrewResult;
-import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
 
 public interface CrewRequestRepository {
 
@@ -18,9 +16,9 @@ public interface CrewRequestRepository {
 
     Optional<CrewRequest> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    List<CrewRequestWithCrewResult> fetchAllWithSimpleCrewByMemberId(Long memberId);
+    List<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId);
 
-    Page<CrewRequestWithMemberResult> fetchCrewRequests(Long crewId, Pageable pageable);
+    Page<CrewRequest> fetchCrewRequests(Long crewId, Pageable pageable);
 
     void deleteById(Long id);
 

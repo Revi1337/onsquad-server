@@ -7,8 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
-import revi1337.onsquad.crew_request.domain.result.CrewRequestWithCrewResult;
-import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
 import revi1337.onsquad.crew_request.error.CrewRequestBusinessException;
 import revi1337.onsquad.crew_request.error.CrewRequestErrorCode;
 
@@ -23,11 +21,11 @@ public class CrewRequestAccessor {
                 .orElseThrow(() -> new CrewRequestBusinessException.NotFound(CrewRequestErrorCode.NOT_FOUND));
     }
 
-    public Page<CrewRequestWithMemberResult> fetchCrewRequests(Long crewId, Pageable pageable) {
+    public Page<CrewRequest> fetchCrewRequests(Long crewId, Pageable pageable) {
         return crewRequestRepository.fetchCrewRequests(crewId, pageable);
     }
 
-    public List<CrewRequestWithCrewResult> fetchAllWithSimpleCrewByMemberId(Long memberId) {
+    public List<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId) {
         return crewRequestRepository.fetchAllWithSimpleCrewByMemberId(memberId);
     }
 

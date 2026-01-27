@@ -1,17 +1,20 @@
 package revi1337.onsquad.crew_request.application.response;
 
-import revi1337.onsquad.crew_request.domain.result.CrewRequestWithMemberResult;
+import java.time.LocalDateTime;
+import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 public record CrewRequestWithMemberResponse(
-        CrewRequestResponse request,
-        SimpleMemberResponse member
+        Long id,
+        LocalDateTime requestAt,
+        SimpleMemberResponse requester
 ) {
 
-    public static CrewRequestWithMemberResponse from(CrewRequestWithMemberResult crewRequestWithMemberResult) {
+    public static CrewRequestWithMemberResponse from(CrewRequest request) {
         return new CrewRequestWithMemberResponse(
-                CrewRequestResponse.from(crewRequestWithMemberResult.request()),
-                SimpleMemberResponse.from(crewRequestWithMemberResult.memberInfo())
+                request.getId(),
+                request.getRequestAt(),
+                SimpleMemberResponse.from(request.getMember())
         );
     }
 }

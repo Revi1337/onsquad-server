@@ -29,6 +29,6 @@ public interface CrewRequestJpaRepository extends JpaRepository<CrewRequest, Lon
 
     @Modifying
     @Query("delete CrewRequest cp where cp.crew.id in :crewIds")
-    int deleteByCrewId(List<Long> crewIds);
+    int deleteByCrewIdIn(List<Long> crewIds);
 
 }
