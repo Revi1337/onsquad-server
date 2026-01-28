@@ -33,5 +33,8 @@ public interface CrewRepository {
 
     int deleteByIdIn(List<Long> ids);
 
+    int decrementCountById(Long id);
+
     int decrementCountByMemberId(Long memberId);
+
 }

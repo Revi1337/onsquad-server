@@ -26,9 +26,15 @@ public interface CrewJpaRepository extends JpaRepository<Crew, Long> {
     int deleteByIdIn(List<Long> ids);
 
     @Modifying
+    @Query("update Crew c " +
+            "set c.currentSize = c.currentSize - 1, c.version = c.version + 1 " +
+            "where c.id = :id and c.currentSize > 0")
+    int decrementCountById(Long id);
+
+    @Modifying
     @Query("update Crew c set c.currentSize = c.currentSize - 1 " +
             "where c.id in (select cm.crew.id from CrewMember cm where cm.member.id = :memberId) " +
             "and c.currentSize > 0")
     int decrementCountByMemberId(Long memberId);
-    
+
 }
