@@ -87,6 +87,6 @@ public final class CrewMemberPolicy {
     }
 
     private static boolean mismatchCrew(CrewMember me, CrewMember participant) {
-        return !me.getCrew().equals(participant.getCrew());
+        return !me.getCrew().getId().equals(participant.getCrew().getId());
     }
 }
