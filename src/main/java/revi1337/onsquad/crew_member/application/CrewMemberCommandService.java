@@ -45,7 +45,6 @@ public class CrewMemberCommandService {
     public void kickOutMember(Long memberId, Long crewId, Long targetMemberId) {
         CrewMember kicker = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewMemberPolicy.ensureNotSelfTargeting(memberId, targetMemberId);
-        Crew ignored = crewAccessor.getById(crewId);
         CrewMember targetMember = crewMemberAccessor.getByMemberIdAndCrewId(targetMemberId, crewId);
         CrewMemberPolicy.ensureKickable(kicker, targetMember);
         targetMember.leaveCrew();
