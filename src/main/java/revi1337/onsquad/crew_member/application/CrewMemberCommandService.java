@@ -43,11 +43,11 @@ public class CrewMemberCommandService {
     }
 
     public void kickOutMember(Long memberId, Long crewId, Long targetMemberId) {
-        Crew ignored = crewAccessor.getById(crewId); // TODO 동시성 문제 해결 필요. (과연 Crew 조회가 필요할까? 그냥 Atomic Update Query로 한번에 날리면 될듯?)
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewMember kicker = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewMemberPolicy.ensureNotSelfTargeting(memberId, targetMemberId);
+        Crew ignored = crewAccessor.getById(crewId);
         CrewMember targetMember = crewMemberAccessor.getByMemberIdAndCrewId(targetMemberId, crewId);
-        CrewMemberPolicy.ensureKickable(me, targetMember);
+        CrewMemberPolicy.ensureKickable(kicker, targetMember);
         targetMember.leaveCrew();
         crewMemberRepository.delete(targetMember);
     }
