@@ -39,7 +39,7 @@ public final class CrewMemberPolicy {
     }
 
     public static boolean isMe(CrewMember me, CrewMember participant) {
-        return me.getMember().equals(participant.getMember());
+        return me.getMember().getId().equals(participant.getMember().getId());
     }
 
     public static boolean canKick(CrewMember me, CrewMember participant) {
