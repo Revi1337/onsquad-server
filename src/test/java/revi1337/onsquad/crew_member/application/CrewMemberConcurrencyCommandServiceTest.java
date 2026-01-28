@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.util.StopWatch;
 import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
@@ -33,7 +31,6 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
-import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Address;
 import revi1337.onsquad.member.domain.entity.vo.Email;
@@ -70,10 +67,10 @@ class CrewMemberConcurrencyCommandServiceTest {
     private CrewMemberJpaRepository crewMemberRepository;
 
     @Autowired
-    private CrewMemberCommandService commandService;
+    private CrewMemberCommandServiceFacade commandServiceFacade;
 
     @Test
-    @DisplayName("방장 위임 시 동시성 제어가 없으면, 중복 방장이 발생하고 데이터 불일치가 일어난다")
+    @DisplayName("방장 위임 동시 요청 시, 낙관적 락과 재시도를 통해 중복 방장 발생을 방지하고 정합성을 유지한다")
     void delegateOwner() {
         // given
         Member owner = memberRepository.save(createMember(1));
@@ -88,11 +85,11 @@ class CrewMemberConcurrencyCommandServiceTest {
         CountDownLatch startLatch = new CountDownLatch(1);
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandService.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
+            commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
         }, executor);
         CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandService.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
+            commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
         }, executor);
         startLatch.countDown();
         CompletableFuture.allOf(future1, future2).join();
@@ -105,14 +102,11 @@ class CrewMemberConcurrencyCommandServiceTest {
             CrewMember delegatedOwner2 = crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), nextOwnerCandidate2.getId()).get();
 
             softly.assertThat(delegatedOwner1.getRole())
-                    .as("동시성으로 인해 Owner 가 두명이 된다.")
-                    .isSameAs(CrewRole.OWNER);
-            softly.assertThat(delegatedOwner2.getRole())
-                    .as("동시성으로 인해 Owner 가 두명이 된다.")
-                    .isSameAs(CrewRole.OWNER);
+                    .as("owner 위임 대상이었던 두명의 role 은 다를 수 밖에 없다.")
+                    .isNotSameAs(delegatedOwner2.getRole());
             softly.assertThat(finalCrew.getMember().getId())
-                    .as("마지막 update 를 치는 주체가 crew 의 실제 owner 가 된다.")
-                    .isIn(nextOwnerCandidate1.getId(), nextOwnerCandidate2.getId());
+                    .as("crew 의 실제 member 와 crewmember 의 member 는 같을 수 밖에 없다.")
+                    .isSameAs((delegatedOwner1.getRole() == CrewRole.OWNER ? delegatedOwner1 : delegatedOwner2).getId());
 
             System.out.printf("Actual Crew Owner: %d\n", finalCrew.getMember().getId());
             System.out.printf("nextOwnerCandidate1: %d role: %s%n", nextOwnerCandidate1.getId(), delegatedOwner1.getRole());
@@ -144,36 +138,4 @@ class CrewMemberConcurrencyCommandServiceTest {
     private CrewMember createManagerCrewMember(Crew crew, Member member) {
         return CrewMemberFactory.manager(crew, member, LocalDateTime.now());
     }
-
-    private CrewMember createGeneralCrewMember(Crew crew, Member member) {
-        return CrewMemberFactory.general(crew, member, LocalDateTime.now());
-    }
-
-    private CrewRequest createCrewRequest(Crew crew, Member andong) {
-        return CrewRequest.of(crew, andong, LocalDateTime.now());
-    }
-
-    public void stopWatch(TimeUnit timeUnit, Runnable task) {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        try {
-            task.run();
-        } finally {
-            stopWatch.stop();
-            double totalTime = stopWatch.getTotalTime(timeUnit);
-            System.out.printf("Total Time: %d%s%n", (long) totalTime, getAbbreviation(timeUnit));
-        }
-    }
-
-    private String getAbbreviation(TimeUnit unit) {
-        return switch (unit) {
-            case NANOSECONDS -> "ns";
-            case MICROSECONDS -> "µs";
-            case MILLISECONDS -> "ms";
-            case SECONDS -> "s";
-            case MINUTES -> "m";
-            default -> unit.name().toLowerCase();
-        };
-    }
-
 }

@@ -21,7 +21,6 @@ public class CrewMemberCommandService {
     private final CrewContextHandler crewContextHandler;
     private final CrewMemberRepository crewMemberRepository;
 
-    // TODO 비교적 동시성 문제에 안전하지만, 데이터 불일치(Data Inconsistency) 가능. Crew 에 명시된 크루장이 member1 인데, member1 에 해당하는 crewmember 의 권한이 general 일 수 있음.
     public void delegateOwner(Long memberId, Long crewId, Long targetMemberId) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewMemberPolicy.ensureNotSelfTargeting(memberId, targetMemberId);
