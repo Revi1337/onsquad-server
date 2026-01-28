@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_member.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_ADDRESS_DETAIL_VALUE;
@@ -14,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,6 +28,7 @@ import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
@@ -43,7 +44,7 @@ import revi1337.onsquad.member.domain.entity.vo.Password;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
-@Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
+//@Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
 @Import({ApplicationLayerConfiguration.class})
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 class CrewMemberConcurrencyCommandServiceTest {
@@ -68,6 +69,9 @@ class CrewMemberConcurrencyCommandServiceTest {
 
     @Autowired
     private CrewMemberJpaRepository crewMemberRepository;
+
+    @Autowired
+    private CrewMemberCommandService commandService;
 
     @Autowired
     private CrewMemberCommandServiceFacade commandServiceFacade;
@@ -117,6 +121,108 @@ class CrewMemberConcurrencyCommandServiceTest {
                 System.out.printf("Actual Crew Owner: %d\n", finalCrew.getMember().getId());
                 System.out.printf("nextOwnerCandidate1: %d role: %s%n", nextOwnerCandidate1.getId(), delegatedOwner1.getRole());
                 System.out.printf("nextOwnerCandidate2: %d role: %s%n", nextOwnerCandidate2.getId(), delegatedOwner2.getRole());
+            });
+        }
+    }
+
+    @Nested
+    class leaveCrew {
+
+        @Test
+        @DisplayName("크루원 동시 탈퇴 시 동시성 제어가 없으면, Lost Update가 발생하여 잔류 인원수 정합성이 깨진다")
+        void leaveCrew() {
+            // given
+            Member owner = memberRepository.save(createMember(1));
+            Member manager = memberRepository.save(createMember(2));
+            Member general = memberRepository.save(createMember(3));
+            Crew crew = createCrew(owner);
+            crew.addCrewMember(createManagerCrewMember(crew, manager), createManagerCrewMember(crew, general));
+            Crew savedCrew = crewRepository.save(crew);
+
+            // when
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                commandService.leaveCrew(manager.getId(), savedCrew.getId());
+            }, executor);
+            CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                commandService.leaveCrew(general.getId(), savedCrew.getId());
+            }, executor);
+            startLatch.countDown();
+            CompletableFuture.allOf(future1, future2).join();
+            executor.shutdown();
+
+            // then
+            assertSoftly(softly -> {
+                Crew finalCrew = crewRepository.findById(savedCrew.getId()).get();
+                softly.assertThat(finalCrew.getCurrentSize())
+                        .as("3명에서 2명이 나가 1명이 남아야 하는데, Lost Update 으로 인해 1명만 추방되어서 2명이 남게 된다.")
+                        .isEqualTo(2);
+            });
+        }
+
+        @Test
+        @DisplayName("""
+                    owner와 manager 동시 탈퇴 시, 조회 시점과 실제 상태 불일치로 도메인 분기 로직이 잘못 선택된다
+                        aka
+                    owner–manager 동시 탈퇴 시, stale read로 인해 owner가 해체 조건을 오판하고 위임 예외를 발생시킨다
+                """)
+        void leaveCrew2() {
+            // given
+            Member owner = memberRepository.save(createMember(1));
+            Member manager = memberRepository.save(createMember(2));
+            Crew crew = createCrew(owner);
+            crew.addCrewMember(createManagerCrewMember(crew, manager));
+            Crew savedCrew = crewRepository.save(crew);
+
+            // when
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                commandService.leaveCrew(manager.getId(), savedCrew.getId());
+            }, executor);
+            CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                assertThatThrownBy(() -> commandService
+                        .leaveCrew(owner.getId(), savedCrew.getId()))
+                        .isExactlyInstanceOf(CrewBusinessException.InsufficientAuthority.class);
+            }, executor);
+            startLatch.countDown();
+            CompletableFuture.allOf(future1, future2).join();
+            executor.shutdown();
+
+            // then
+            assertSoftly(softly -> {
+                Crew finalCrew = crewRepository.findById(savedCrew.getId()).get();
+
+                boolean managerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), manager.getId()).isPresent();
+                boolean ownerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).isPresent();
+                System.out.println("=== Write Skew Output ===");
+                System.out.println("manager exists: " + managerExists);
+                System.out.println("owner exists: " + ownerExists);
+                System.out.println("currentSize: " + finalCrew.getCurrentSize());
+
+                softly.assertThat(managerExists)
+                        .as("manager는 탈퇴에 성공했다")
+                        .isFalse();
+                softly.assertThat(ownerExists)
+                        .as("owner는 예외로 인해 탈퇴하지 못했다")
+                        .isTrue();
+                softly.assertThat(finalCrew.getCurrentSize())
+                        .as("실제로는 owner만 남았다 (해체 가능 상태)")
+                        .isEqualTo(1);
+
+                softly.assertThat(finalCrew.getCurrentSize())
+                        .as("""
+                                모순 상태 발생.
+                                - DB: owner만 남음 (해체 가능)
+                                - 도메인: owner가 "권한 없음" 예외 받음
+                                ---> 직렬화 불가능한 상태 (Write Skew)
+                                """)
+                        .isEqualTo(1);
             });
         }
     }
@@ -174,7 +280,7 @@ class CrewMemberConcurrencyCommandServiceTest {
             Crew crew = createCrew(owner);
             crew.addCrewMember(createGeneralCrewMember(crew, general), createManagerCrewMember(crew, nextOwnerCandidate));
             Crew savedCrew = crewRepository.save(crew);
-            System.out.println(savedCrew.getVersion());
+//            System.out.println(savedCrew.getVersion());
 
             // when
             ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -203,9 +309,9 @@ class CrewMemberConcurrencyCommandServiceTest {
                 softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), general.getId()))
                         .as("general 은 추방되어 삭제된다.")
                         .isEmpty();
-                softly.assertThat(finalCrew.getVersion())
-                        .as("초기(0) + 추방 성공(+1) + 위임 재시도 성공(+1) = 최종 버전은 2여야 함 (실패한 위임 1차 시도는 반영되지 않음)")
-                        .isGreaterThanOrEqualTo(2);
+//                softly.assertThat(finalCrew.getVersion())
+//                        .as("초기(0) + 추방 성공(+1) + 위임 재시도 성공(+1) = 최종 버전은 2여야 함 (실패한 위임 1차 시도는 반영되지 않음)")
+//                        .isGreaterThanOrEqualTo(2);
             });
         }
     }

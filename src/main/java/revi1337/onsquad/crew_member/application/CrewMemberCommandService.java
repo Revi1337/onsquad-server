@@ -34,14 +34,14 @@ public class CrewMemberCommandService {
 
     public void leaveCrew(Long memberId, Long crewId) { // TODO 동시성 문제 해결 필요. (Optimistic VS Pessimistic VS Atomic Update Query)
         Crew crew = crewAccessor.getById(crewId);
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
+        CrewMember leaver = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         if (CrewPolicy.isLastMemberRemaining(crew)) {
             crewContextHandler.disposeContextWithSquads(crew);
             return;
         }
-        CrewPolicy.ensureLeavable(crew, me);
-        me.leaveCrew();
-        crewMemberRepository.delete(me);
+        CrewPolicy.ensureLeavable(crew, leaver);
+        leaver.leaveCrew();
+        crewMemberRepository.delete(leaver);
     }
 
     public void kickOutMember(Long memberId, Long crewId, Long targetMemberId) {
