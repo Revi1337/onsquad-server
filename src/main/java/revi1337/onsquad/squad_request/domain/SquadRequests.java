@@ -14,7 +14,7 @@ public class SquadRequests {
 
     public List<Long> getSquadIds() {
         return requests.stream()
-                .map(SquadRequest::getSquadId)
+                .map(squadRequest -> squadRequest.getSquad().getId())
                 .toList();
     }
 

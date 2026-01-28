@@ -71,10 +71,6 @@ public class Announce extends BaseEntity {
         this.pinnedAt = null;
     }
 
-    public boolean mismatchCrewId(Long crewId) {
-        return !this.crew.getId().equals(crewId);
-    }
-
     public boolean isUnpinned() {
         return !isPinned();
     }

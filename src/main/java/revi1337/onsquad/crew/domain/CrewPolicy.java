@@ -29,25 +29,25 @@ public final class CrewPolicy {
     }
 
     public static void ensureModifiable(Crew crew, Long memberId) {
-        if (crew.mismatchMemberId(memberId)) {
+        if (mismatchMember(crew, memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_UPDATE_AUTHORITY);
         }
     }
 
     public static void ensureDeletable(Crew crew, Long memberId) {
-        if (crew.mismatchMemberId(memberId)) {
+        if (mismatchMember(crew, memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_DELETE_AUTHORITY);
         }
     }
 
     public static void ensureImageModifiable(Crew crew, Long memberId) {
-        if (crew.mismatchMemberId(memberId)) {
+        if (mismatchMember(crew, memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_IMAGE_UPDATE_AUTHORITY);
         }
     }
 
     public static void ensureImageDeletable(Crew crew, Long memberId) {
-        if (crew.mismatchMemberId(memberId)) {
+        if (mismatchMember(crew, memberId)) {
             throw new CrewBusinessException.InsufficientAuthority(CrewErrorCode.INSUFFICIENT_IMAGE_DELETE_AUTHORITY);
         }
     }
@@ -74,6 +74,10 @@ public final class CrewPolicy {
     }
 
     private static boolean mismatchCrew(Crew crew, CrewMember me) {
-        return !crew.equals(me.getCrew());
+        return !crew.getId().equals(me.getCrew().getId());
+    }
+
+    private static boolean mismatchMember(Crew crew, Long memberId) {
+        return !crew.getMember().getId().equals(memberId);
     }
 }

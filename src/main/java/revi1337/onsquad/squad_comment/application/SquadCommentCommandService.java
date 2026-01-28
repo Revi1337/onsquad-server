@@ -30,7 +30,7 @@ public class SquadCommentCommandService {
 
     public void add(Long memberId, Long squadId, String content) {
         Squad squad = squadAccessor.getById(squadId);
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrew().getId());
         SquadComment comment = squadCommentRepository.save(SquadComment.create(content, squad, me.getMember()));
         eventPublisher.publishEvent(new CommentAdded(memberId, comment.getId()));
     }
@@ -40,7 +40,7 @@ public class SquadCommentCommandService {
         SquadCommentPolicy.ensureMatchSquad(parent, squadId);
         SquadCommentPolicy.ensureAlive(parent);
         SquadCommentPolicy.ensureParent(parent);
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, parent.getSquad().getCrewId());
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, parent.getSquad().getCrew().getId());
         SquadComment reply = squadCommentRepository.save(SquadComment.createReply(parent, content, parent.getSquad(), me.getMember()));
         eventPublisher.publishEvent(new CommentReplyAdded(parentId, memberId, reply.getId()));
     }

@@ -145,30 +145,6 @@ public class Squad extends BaseEntity {
         this.crew = crew;
     }
 
-    public boolean matchId(Long squadId) {
-        return id.equals(squadId);
-    }
-
-    public boolean matchCrewId(Long crewId) {
-        return getCrewId().equals(crewId);
-    }
-
-    public boolean mismatchCrewId(Long crewId) {
-        return !matchCrewId(crewId);
-    }
-
-    public boolean mismatchMemberId(Long memberId) {
-        return !member.getId().equals(memberId);
-    }
-
-    public Long getCrewId() {
-        return crew.getId();
-    }
-
-    public Member getOwner() {
-        return member;
-    }
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {

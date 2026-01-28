@@ -36,7 +36,7 @@ public class SquadCommentQueryService {
         }
 
         Squad squad = squadAccessor.getById(squadId);
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrew().getId());
         return mapToResponsesAsCrewMember(me, comments);
     }
 
@@ -50,7 +50,7 @@ public class SquadCommentQueryService {
         }
 
         Squad squad = squadAccessor.getById(squadId);
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrew().getId());
         return mapToResponsesAsCrewMember(me, replies);
     }
 

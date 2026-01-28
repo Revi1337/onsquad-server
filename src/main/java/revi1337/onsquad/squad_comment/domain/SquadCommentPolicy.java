@@ -24,7 +24,7 @@ public final class SquadCommentPolicy {
         if (isDeleted(comment)) {
             return false;
         }
-        boolean isWriter = me.getMember().equals(comment.getMember());
+        boolean isWriter = me.getMember().getId().equals(comment.getMember().getId());
         boolean isLeader = SquadMemberPolicy.isLeader(me);
 
         return isWriter || isLeader;
@@ -52,18 +52,26 @@ public final class SquadCommentPolicy {
     }
 
     public static void ensureMatchSquad(SquadComment comment, Long squadId) {
-        if (comment.mismatchSquadId(squadId)) {
+        if (mismatchSquad(comment, squadId)) {
             throw new SquadCommentBusinessException.MismatchReference(SquadCommentErrorCode.MISMATCH_SQUAD_REFERENCE);
         }
     }
 
     public static void ensureMatchWriter(SquadComment comment, Long memberId) {
-        if (comment.mismatchMemberId(memberId)) {
+        if (mismatchWriter(comment, memberId)) {
             throw new SquadCommentBusinessException.InsufficientAuthority(SquadCommentErrorCode.MISMATCH_WRITER);
         }
     }
 
+    private static boolean mismatchWriter(SquadComment comment, Long memberId) {
+        return !comment.getMember().getId().equals(memberId);
+    }
+
     private static boolean mismatchSquad(SquadComment comment, SquadMember me) {
-        return !comment.getSquad().equals(me.getSquad());
+        return !comment.getSquad().getId().equals(me.getSquad().getId());
+    }
+
+    private static boolean mismatchSquad(SquadComment comment, Long squadId) {
+        return !comment.getSquad().getId().equals(squadId);
     }
 }

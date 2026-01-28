@@ -44,14 +44,14 @@ public final class AnnouncePolicy {
         if (CrewMemberPolicy.isManagerOrHigher(me) && announceWriterId == null) {
             return true;
         }
-        if (CrewMemberPolicy.isManagerOrHigher(me) && me.getActualMemberId().equals(announceWriterId)) {
+        if (CrewMemberPolicy.isManagerOrHigher(me) && matchWriter(me, announceWriterId)) {
             return true;
         }
         return false;
     }
 
     public static void ensureMatchCrew(Announce announce, Long crewId) {
-        if (announce.mismatchCrewId(crewId)) {
+        if (mismatchCrew(announce, crewId)) {
             throw new AnnounceBusinessException.MismatchReference(AnnounceErrorCode.MISMATCH_CREW_REFERENCE);
         }
     }
@@ -92,11 +92,19 @@ public final class AnnouncePolicy {
         }
     }
 
+    private static boolean matchWriter(CrewMember me, Long announceWriterId) {
+        return me.getMember().getId().equals(announceWriterId);
+    }
+
     private static boolean mismatchWriter(Announce announce, CrewMember me) {
         return !announce.getMember().getId().equals(me.getMember().getId());
     }
 
     private static boolean mismatchCrew(Announce announce, CrewMember me) {
         return !announce.getCrew().getId().equals(me.getCrew().getId());
+    }
+
+    private static boolean mismatchCrew(Announce announce, Long crewId) {
+        return !announce.getCrew().getId().equals(crewId);
     }
 }

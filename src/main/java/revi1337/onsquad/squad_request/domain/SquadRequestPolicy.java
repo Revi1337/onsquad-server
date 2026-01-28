@@ -13,7 +13,7 @@ import revi1337.onsquad.squad_request.error.SquadRequestErrorCode;
 public final class SquadRequestPolicy {
 
     public static void ensureMatchSquad(SquadRequest request, Long squadId) {
-        if (request.mismatchSquadId(squadId)) {
+        if (mismatchSquad(request, squadId)) {
             throw new SquadRequestBusinessException.MismatchReference(SquadRequestErrorCode.MISMATCH_SQUAD_REFERENCE);
         }
     }
@@ -34,5 +34,9 @@ public final class SquadRequestPolicy {
         if (SquadMemberPolicy.isNotLeader(me)) {
             throw new SquadRequestBusinessException.InsufficientAuthority(SquadRequestErrorCode.INSUFFICIENT_REJECT_AUTHORITY);
         }
+    }
+
+    private static boolean mismatchSquad(SquadRequest request, Long squadId) {
+        return !request.getSquad().getId().equals(squadId);
     }
 }

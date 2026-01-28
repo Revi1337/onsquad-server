@@ -120,10 +120,6 @@ public class CrewMember extends RequestEntity {
         return role == MANAGER || role == GENERAL;
     }
 
-    public Long getActualMemberId() {
-        return member.getId();
-    }
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {

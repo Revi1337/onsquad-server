@@ -131,14 +131,6 @@ public class Member extends BaseEntity {
         this.password = this.password.update(password);
     }
 
-    public boolean matchId(Long id) {
-        return this.id.equals(id);
-    }
-
-    public boolean mismatchId(Long id) {
-        return !matchId(id);
-    }
-
     public boolean hasImage() {
         return hasNotDefaultImage();
     }

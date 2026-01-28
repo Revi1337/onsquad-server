@@ -21,11 +21,11 @@ public final class SquadMemberPolicy {
     }
 
     public static boolean isMe(CrewMember me, SquadMember participant) {
-        return me.getMember().equals(participant.getMember());
+        return me.getMember().getId().equals(participant.getMember().getId());
     }
 
     public static boolean isMe(SquadMember me, SquadMember participant) {
-        return me.getMember().equals(participant.getMember());
+        return me.getMember().getId().equals(participant.getMember().getId());
     }
 
     public static boolean canKick(CrewMember me, SquadMember participant) {

@@ -61,6 +61,6 @@ public final class SquadPolicy {
     }
 
     private static boolean mismatchSquad(Squad squad, SquadMember me) {
-        return !squad.equals(me.getSquad());
+        return !squad.getId().equals(me.getSquad().getId());
     }
 }

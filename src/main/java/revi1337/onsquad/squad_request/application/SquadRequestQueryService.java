@@ -39,7 +39,7 @@ public class SquadRequestQueryService {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(requests.getSquadIds());
             Map<Long, List<CategoryType>> categoryMap = categories.groupBySquadId();
             return requests.values().stream()
-                    .map(request -> MySquadRequestResponse.from(request, categoryMap.get(request.getSquadId())))
+                    .map(request -> MySquadRequestResponse.from(request, categoryMap.get(request.getSquad().getId())))
                     .toList();
         }
 

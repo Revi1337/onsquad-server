@@ -46,7 +46,7 @@ public class SquadMemberQueryService {
         }
 
         Squad squad = squadAccessor.getById(squadId);
-        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
+        CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrew().getId());
         if (SquadPolicy.cannotReadParticipants(me)) {
             throw new SquadMemberBusinessException.InsufficientAuthority(SquadMemberErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
         }

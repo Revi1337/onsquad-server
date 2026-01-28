@@ -38,7 +38,7 @@ public class SquadCommandService {
 
     public void deleteSquad(Long memberId, Long squadId) {
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
-        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, me.getSquad().getCrewId());
+        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, me.getSquad().getCrew().getId());
         SquadPolicy.ensureDeletable(me, meInCrew);
         squadContextHandler.disposeContext(squadId);
     }

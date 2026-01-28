@@ -49,7 +49,7 @@ public class SquadRequestCommandService {
         Squad squad = request.getSquad();
         squad.addMembers(SquadMemberFactory.general(request.getMember(), LocalDateTime.now()));
         squadRequestRepository.deleteById(requestId);
-        eventPublisher.publishEvent(new RequestAccepted(squadId, request.getRequesterId(), memberId));
+        eventPublisher.publishEvent(new RequestAccepted(squadId, request.getMember().getId(), memberId));
     }
 
     public void rejectRequest(Long memberId, Long squadId, Long requestId) {
@@ -58,7 +58,7 @@ public class SquadRequestCommandService {
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadRequestPolicy.ensureRejectable(me);
         squadRequestRepository.deleteById(requestId);
-        eventPublisher.publishEvent(new RequestRejected(squadId, request.getRequesterId(), memberId));
+        eventPublisher.publishEvent(new RequestRejected(squadId, request.getMember().getId(), memberId));
     }
 
     public void cancelMyRequest(Long memberId, Long squadId) {

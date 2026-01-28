@@ -144,14 +144,6 @@ public class Crew extends BaseEntity {
         }
     }
 
-    public boolean matchId(Long id) {
-        return this.id.equals(id);
-    }
-
-    public boolean mismatchMemberId(Long memberId) {
-        return member.mismatchId(memberId);
-    }
-
     public boolean hasImage() {
         return !hasNotImage();
     }

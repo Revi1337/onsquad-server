@@ -36,7 +36,7 @@ public class SquadQueryService {
     public SquadWithStatesResponse fetchSquad(Long memberId, Long squadId) {
         Squad squad = squadAccessor.getWithDetailById(squadId);
         Optional<SquadMember> meOpt = squadMemberAccessor.findByMemberIdAndSquadId(memberId, squadId);
-        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrewId());
+        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrew().getId());
         if (meOpt.isPresent()) {
             SquadMember me = meOpt.get();
             boolean alreadyParticipant = true;

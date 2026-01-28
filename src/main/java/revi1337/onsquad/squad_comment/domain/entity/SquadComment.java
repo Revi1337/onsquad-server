@@ -97,18 +97,6 @@ public class SquadComment extends BaseEntity {
         return parent == null;
     }
 
-    public boolean matchWriterId(Long memberId) {
-        return member.matchId(memberId);
-    }
-
-    public boolean mismatchMemberId(Long memberId) {
-        return !matchWriterId(memberId);
-    }
-
-    public boolean mismatchSquadId(Long squadId) {
-        return !squad.matchId(squadId);
-    }
-
     private void validate(String content) {
         if (content == null) {
             throw new NullPointerException("댓글은 null 일 수 없습니다.");
