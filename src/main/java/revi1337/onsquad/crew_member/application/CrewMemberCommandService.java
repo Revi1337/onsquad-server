@@ -32,7 +32,7 @@ public class CrewMemberCommandService {
         crew.delegateOwner(me, nextOwner);
     }
 
-    public void leaveCrew(Long memberId, Long crewId) { // TODO 동시성 문제 해결 필요. (Optimistic VS Pessimistic VS Atomic Update Query)
+    public void leaveCrew(Long memberId, Long crewId) {
         Crew crew = crewAccessor.getByIdForUpdate(crewId);
         CrewMember leaver = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         if (CrewPolicy.isLastMemberRemaining(crew)) {
