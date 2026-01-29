@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew_member.application;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_ADDRESS_DETAIL_VALUE;
@@ -28,6 +29,7 @@ import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
@@ -68,6 +70,9 @@ class CrewMemberConcurrencyCommandServiceTest {
 
     @Autowired
     private CrewMemberJpaRepository crewMemberRepository;
+
+    @Autowired
+    private CrewMemberCommandService commandService;
 
     @Autowired
     private CrewMemberCommandServiceFacade commandServiceFacade;
@@ -125,7 +130,7 @@ class CrewMemberConcurrencyCommandServiceTest {
     class leaveCrew {
 
         @Test
-        @DisplayName("크루원 탈퇴 시 동시 요청이 발생해도, Optimistic Lock을 통해 잔류 인원수 정합성을 보장한다.")
+        @DisplayName("크루원 탈퇴 시 동시 요청이 발생해도, Pessimistic Lock을 통해 잔류 인원수 정합성을 보장한다.")
         void leaveCrew() {
             // given
             Member owner = memberRepository.save(createMember(1));
@@ -140,11 +145,11 @@ class CrewMemberConcurrencyCommandServiceTest {
             CountDownLatch startLatch = new CountDownLatch(1);
             CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.leaveCrew(manager.getId(), savedCrew.getId());
+                commandService.leaveCrew(manager.getId(), savedCrew.getId());
             }, executor);
             CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.leaveCrew(general.getId(), savedCrew.getId());
+                commandService.leaveCrew(general.getId(), savedCrew.getId());
             }, executor);
             startLatch.countDown();
             CompletableFuture.allOf(future1, future2).join();
@@ -166,14 +171,7 @@ class CrewMemberConcurrencyCommandServiceTest {
         }
 
         @Test
-        @DisplayName("""
-                owner–manager 동시 탈퇴 시 Optimistic Lock 은 수치 정합성은 보장하지만, 도메인 분기 정합성까지는 보장하지 못한다.
-                    why
-                낙관적 락은 쓰기시점에만 동작. 근데 지금 문제는 읽기 직후의 판단 단계(도메인 분기)에서 터짐.
-                    conclusion
-                데이터가 오염되는 것(Lost Update) 은 막아주지만, 잘못된 정보를 보고 헛발질하는 것(Write Skew/Stale Read)은 못막는다.
-                따라서 애초에 Crew 를 읽었을때 row 잠금이 필요함. (Pessimistic Lock)
-                """)
+        @DisplayName("[Write Skew 방지] 앞선 멤버의 탈퇴로 인한 상태 변화를 인지하여, Owner가 낡은 정보로 헛발질하지 않고 정상 해체한다.")
         void leaveCrew2() {
             // given
             Member owner = memberRepository.save(createMember(1));
@@ -185,13 +183,17 @@ class CrewMemberConcurrencyCommandServiceTest {
             // when
             ExecutorService executor = Executors.newFixedThreadPool(2);
             CountDownLatch startLatch = new CountDownLatch(1);
+            CountDownLatch managerStarted = new CountDownLatch(1);
             CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.leaveCrew(manager.getId(), savedCrew.getId());
+                managerStarted.countDown();
+                commandService.leaveCrew(manager.getId(), savedCrew.getId());
             }, executor);
             CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.leaveCrew(owner.getId(), savedCrew.getId());
+                waitToStart(managerStarted);
+                sleep(100);
+                commandService.leaveCrew(owner.getId(), savedCrew.getId());
             }, executor);
             startLatch.countDown();
             CompletableFuture.allOf(future1, future2).join();
@@ -204,15 +206,63 @@ class CrewMemberConcurrencyCommandServiceTest {
                 boolean ownerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).isPresent();
 
                 softly.assertThat(managerExists)
-                        .as("manager는 탈퇴에 성공했다")
+                        .as("manager 는 가장 먼저 탈퇴했다.")
                         .isFalse();
                 softly.assertThat(ownerExists)
-                        .as("owner 도 탈퇴에 성공했다.")
+                        .as("owner 도 manager 탈퇴 후(잔류 인원1) 탈퇴했기 때문에 탈퇴에 성공했다.")
                         .isFalse();
                 softly.assertThat(crewOpt)
-                        .as("crew 도 삭제되었다.")
+                        .as("owner 가 탈퇴했기 때문에, crew 도 삭제되었다.")
                         .isEmpty();
-                // 결과적으로 수치 정합성은 보장함.
+            });
+        }
+
+        @Test
+        @DisplayName("[Stale Read 방지] Owner가 먼저 선점한 경우, 최신 인원 상태를 고정하여 도메인 정책(위임 필요)에 따른 정당한 거절을 수행한다.")
+        void leaveCrew3() {
+            // given
+            Member owner = memberRepository.save(createMember(1));
+            Member manager = memberRepository.save(createMember(2));
+            Crew crew = createCrew(owner);
+            crew.addCrewMember(createManagerCrewMember(crew, manager));
+            Crew savedCrew = crewRepository.save(crew);
+
+            // when
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CountDownLatch ownerStarted = new CountDownLatch(1);
+            CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                ownerStarted.countDown();
+                assertThatThrownBy(() -> commandService
+                        .leaveCrew(owner.getId(), savedCrew.getId()))
+                        .isExactlyInstanceOf(CrewBusinessException.InsufficientAuthority.class);
+            }, executor);
+            CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                waitToStart(ownerStarted);
+                sleep(100);
+                commandService.leaveCrew(manager.getId(), savedCrew.getId());
+            }, executor);
+            startLatch.countDown();
+            CompletableFuture.allOf(future2, future1).join();
+            executor.shutdown();
+
+            // then
+            assertSoftly(softly -> {
+                Optional<Crew> crewOpt = crewRepository.findById(savedCrew.getId());
+                boolean ownerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).isPresent();
+                boolean managerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), manager.getId()).isPresent();
+
+                softly.assertThat(ownerExists)
+                        .as("owner 는 manager 보다 먼저 탈퇴하려 했기 때문에 탈퇴하지 못했다.")
+                        .isTrue();
+                softly.assertThat(managerExists)
+                        .as("manager 는 크루 잔류인원 수에 상관없이 탈퇴에 성공했다.")
+                        .isFalse();
+                softly.assertThat(crewOpt)
+                        .as("owner 가 탈퇴하지 못했기 떄문에 crew 도 삭제되지 않았다.")
+                        .isPresent();
             });
         }
     }
@@ -311,6 +361,14 @@ class CrewMemberConcurrencyCommandServiceTest {
             start.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

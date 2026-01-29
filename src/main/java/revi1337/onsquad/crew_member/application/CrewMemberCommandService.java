@@ -33,7 +33,7 @@ public class CrewMemberCommandService {
     }
 
     public void leaveCrew(Long memberId, Long crewId) { // TODO 동시성 문제 해결 필요. (Optimistic VS Pessimistic VS Atomic Update Query)
-        Crew crew = crewAccessor.getById(crewId);
+        Crew crew = crewAccessor.getByIdForUpdate(crewId);
         CrewMember leaver = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         if (CrewPolicy.isLastMemberRemaining(crew)) {
             crewContextHandler.disposeContextWithSquads(crew);
