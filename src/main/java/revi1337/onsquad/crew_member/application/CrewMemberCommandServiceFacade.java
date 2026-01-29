@@ -9,6 +9,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import revi1337.onsquad.crew.error.CrewBusinessException;
 
 @Slf4j
 @Service
@@ -29,6 +30,21 @@ public class CrewMemberCommandServiceFacade {
     )
     public void delegateOwner(Long memberId, Long crewId, Long targetMemberId) {
         commandService.delegateOwner(memberId, crewId, targetMemberId);
+    }
+
+    @Retryable(
+            retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class, StaleObjectStateException.class,
+                    CrewBusinessException.InsufficientAuthority.class},
+            maxAttempts = 4,
+            backoff = @Backoff(
+                    delay = 20,
+                    maxDelay = 100,
+                    random = true
+            ),
+            recover = "recoverLeaveCrew"
+    )
+    public void leaveCrew(Long memberId, Long crewId) {
+        commandService.leaveCrew(memberId, crewId);
     }
 
     @Retryable(
@@ -54,6 +70,12 @@ public class CrewMemberCommandServiceFacade {
     @Recover
     public void recoverKickOutMember(Throwable throwable, Long memberId, Long crewId, Long targetMemberId) {
         log.error("[KickOutMember-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
+                throwable.getMessage(), crewId, memberId, targetMemberId);
+    }
+
+    @Recover
+    public void recoverLeaveCrew(Throwable throwable, Long memberId, Long crewId, Long targetMemberId) {
+        log.error("[LeaveCrew-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
                 throwable.getMessage(), crewId, memberId, targetMemberId);
     }
 }
