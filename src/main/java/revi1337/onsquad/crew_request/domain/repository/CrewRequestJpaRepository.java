@@ -13,11 +13,6 @@ public interface CrewRequestJpaRepository extends JpaRepository<CrewRequest, Lon
     @Query("select cp from CrewRequest cp where cp.crew.id = :crewId and cp.member.id = :memberId")
     Optional<CrewRequest> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    @Transactional
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete CrewRequest cp where cp.id = :id")
-    void deleteById(Long id);
-
     @Modifying
     @Query("delete CrewRequest cp where cp.member.id = :memberId")
     int deleteByMemberId(Long memberId);

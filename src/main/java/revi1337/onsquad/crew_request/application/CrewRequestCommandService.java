@@ -50,7 +50,7 @@ public class CrewRequestCommandService {
         CrewRequest request = crewRequestAccessor.getById(requestId);
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
         crew.addCrewMember(CrewMemberFactory.general(crew, request.getMember(), LocalDateTime.now()));
-        crewRequestRepository.deleteById(requestId);
+        crewRequestRepository.delete(request);
         eventPublisher.publishEvent(new RequestAccepted(crewId, memberId, request.getRequesterId()));
     }
 
@@ -59,7 +59,7 @@ public class CrewRequestCommandService {
         CrewRequestPolicy.ensureRejectable(rejecter);
         CrewRequest request = crewRequestAccessor.getById(requestId);
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
-        crewRequestRepository.deleteById(requestId);
+        crewRequestRepository.delete(request);
         eventPublisher.publishEvent(new RequestRejected(crewId, memberId, request.getRequesterId()));
     }
 

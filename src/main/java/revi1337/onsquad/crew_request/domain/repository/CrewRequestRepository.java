@@ -20,7 +20,7 @@ public interface CrewRequestRepository {
 
     Page<CrewRequest> fetchCrewRequests(Long crewId, Pageable pageable);
 
-    void deleteById(Long id);
+    void delete(CrewRequest request);
 
     int deleteByMemberId(Long memberId);
 
