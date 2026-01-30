@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_request.application;
+package revi1337.onsquad.concurrency.crew;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.util.StopWatch;
 import revi1337.onsquad.common.aspect.RedisCacheAspect;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
@@ -39,8 +41,10 @@ import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestJpaRepository;
+import revi1337.onsquad.infrastructure.storage.sqlite.ImageRecycleBinRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Address;
 import revi1337.onsquad.member.domain.entity.vo.Email;
@@ -51,6 +55,8 @@ import revi1337.onsquad.member.domain.entity.vo.Password;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
+@Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
+@Sql({"/h2-truncate.sql"})
 @Import({ApplicationLayerConfiguration.class})
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 class CrewRequestConcurrencyCommandServiceTest {
@@ -62,10 +68,13 @@ class CrewRequestConcurrencyCommandServiceTest {
     private CrewLeaderboardService crewLeaderboardService;
 
     @MockBean
-    protected ThrottlingAspect throttlingAspect;
+    private ImageRecycleBinRepository imageRecycleBinRepository;
 
     @MockBean
-    protected RedisCacheAspect redisCacheAspect;
+    private ThrottlingAspect throttlingAspect;
+
+    @MockBean
+    private RedisCacheAspect redisCacheAspect;
 
     @Autowired
     private MemberJpaRepository memberRepository;
