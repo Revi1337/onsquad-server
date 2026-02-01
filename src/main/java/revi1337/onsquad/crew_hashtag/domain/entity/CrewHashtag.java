@@ -32,6 +32,11 @@ public class CrewHashtag {
     @JoinColumn(name = "hashtag_id", nullable = false)
     private Hashtag hashtag;
 
+    public CrewHashtag(Crew crew, Hashtag hashtag) {
+        this.crew = crew;
+        this.hashtag = hashtag;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

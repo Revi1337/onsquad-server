@@ -13,6 +13,6 @@ public interface CrewHashtagJpaRepository extends JpaRepository<CrewHashtag, Lon
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("delete CrewHashtag ch where ch.crew.id in :crewIds")
-    int deleteByCrewId(List<Long> crewIds);
+    int deleteByCrewIdIn(List<Long> crewIds);
 
 }
