@@ -1,6 +1,6 @@
 package revi1337.onsquad.history.domain.repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -19,9 +19,8 @@ public class HistoryRepositoryImpl implements HistoryRepository {
         return historyJpaRepository.save(history);
     }
 
-    @Override
-    public List<HistoryEntity> findHistoriesByMemberIdAndRecordedAtBetween(Long memberId, LocalDateTime from, LocalDateTime to, HistoryType type) {
-        return historyQueryDslRepository.findHistoriesByMemberIdAndRecordedAtBetween(memberId, from, to, type);
+    public List<HistoryEntity> findAllByMemberIdAndDateRange(Long memberId, LocalDate from, LocalDate to, HistoryType type) {
+        return historyQueryDslRepository.findAllByMemberIdAndDateRange(memberId, from, to, type);
     }
 
     @Override

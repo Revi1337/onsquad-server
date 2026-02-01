@@ -4,6 +4,7 @@ import static revi1337.onsquad.history.domain.entity.QHistoryEntity.historyEntit
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +18,23 @@ public class HistoryQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<HistoryEntity> findHistoriesByMemberIdAndRecordedAtBetween(Long memberId, LocalDateTime from, LocalDateTime to, HistoryType type) {
+    public List<HistoryEntity> findAllByMemberIdAndDateRange(Long memberId, LocalDate from, LocalDate to, HistoryType type) {
+        LocalDateTime fromDateTime = from.atStartOfDay();
+        LocalDateTime toDateTime = to.plusDays(1).atStartOfDay();
+
         return jpaQueryFactory
                 .selectFrom(historyEntity)
                 .where(
                         historyEntity.memberId.eq(memberId),
-                        historyEntity.recordedAt.between(from, to),
-                        eqType(type)
+                        historyEntity.recordedAt.goe(fromDateTime),
+                        historyEntity.recordedAt.lt(toDateTime),
+                        historyTypeEq(type)
                 )
                 .orderBy(historyEntity.recordedAt.desc())
                 .fetch();
     }
 
-    private BooleanExpression eqType(HistoryType type) {
+    private BooleanExpression historyTypeEq(HistoryType type) {
         if (type == null) {
             return null;
         }

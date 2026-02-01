@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,6 +47,8 @@ public class HistoryEntity {
 
     @Builder
     private HistoryEntity(Long memberId, Long crewId, Long squadId, Long squadCommentId, HistoryType type, String message, LocalDateTime recordedAt) {
+        Objects.requireNonNull(memberId, "memberId cannot be null");
+        Objects.requireNonNull(crewId, "crewId cannot be null");
         this.memberId = memberId;
         this.crewId = crewId;
         this.squadId = squadId;

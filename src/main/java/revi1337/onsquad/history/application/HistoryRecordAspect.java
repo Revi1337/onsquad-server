@@ -33,11 +33,11 @@ public class HistoryRecordAspect {
     }
 
     private void recordHistory(Class<?> clazz, Method method, Object[] args, Object result) {
-        Optional<HistoryRecorder> recordStrategy = historyRecorderFactory.find(clazz, method);
-        if (recordStrategy.isEmpty()) {
+        Optional<HistoryRecorder> historyRecorderOpt = historyRecorderFactory.find(clazz, method);
+        if (historyRecorderOpt.isEmpty()) {
             return;
         }
-        HistoryRecorder historyRecorder = recordStrategy.get();
+        HistoryRecorder historyRecorder = historyRecorderOpt.get();
         try {
             historyRecorder.record(args, result);
         } catch (Throwable throwable) {

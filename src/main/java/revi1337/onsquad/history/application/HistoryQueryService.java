@@ -1,8 +1,6 @@
 package revi1337.onsquad.history.application;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,10 +17,7 @@ public class HistoryQueryService {
     private final HistoryRepository historyRepository;
 
     public List<HistoryResponse> fetchHistories(Long memberId, LocalDate from, LocalDate to, HistoryType type) {
-        LocalDateTime start = from.atStartOfDay();
-        LocalDateTime end = to == null ? LocalDateTime.of(LocalDate.now(), LocalTime.MAX) : LocalDateTime.of(to, LocalTime.MAX);
-
-        return historyRepository.findHistoriesByMemberIdAndRecordedAtBetween(memberId, start, end, type).stream()
+        return historyRepository.findAllByMemberIdAndDateRange(memberId, from, to, type).stream()
                 .map(HistoryResponse::from)
                 .toList();
     }
