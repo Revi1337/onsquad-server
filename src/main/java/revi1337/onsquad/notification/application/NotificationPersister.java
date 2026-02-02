@@ -3,6 +3,7 @@ package revi1337.onsquad.notification.application;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class NotificationPersister {
                     .topic(notification.getTopic())
                     .detail(notification.getDetail())
                     .json(defaultObjectMapper.writeValueAsString(notification.getPayload()))
+                    .occurredAt(LocalDateTime.now())
                     .build());
         } catch (Exception e) {
             throw new RuntimeException("cannot persist notification", e);

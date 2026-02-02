@@ -27,9 +27,9 @@ public class RedisNotificationMessageManager {
         listenerContainer.removeMessageListener(messageSubscriber, channelTopic);
     }
 
-    public void publish(Long id, RedisTopic topic, NotificationMessage message) {
+    public Long publish(Long id, RedisTopic topic, NotificationMessage message) {
         String channel = computeChannel(id, topic);
-        redisTemplate.convertAndSend(channel, message);
+        return redisTemplate.convertAndSend(channel, message);
     }
 
     private String computeChannel(Long id, RedisTopic topic) {

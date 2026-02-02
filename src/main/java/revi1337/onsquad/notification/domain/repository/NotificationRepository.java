@@ -1,7 +1,5 @@
 package revi1337.onsquad.notification.domain.repository;
 
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
-
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,8 +12,9 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     List<NotificationEntity> findAllByReceiverId(Long receiverId, Pageable pageable);
 
-    List<NotificationEntity> findAllByReceiverIdAndIdAfter(Long receiverId, Long lastEventId);
+    List<NotificationEntity> findAllByReceiverIdAndIdAfterOrderByIdAsc(Long receiverId, Long lastEventId);
 
+    @Transactional
     @Modifying
     @Query("update NotificationEntity ne set ne.read = true where ne.receiverId = :receiverId and ne.read = false")
     int markAllAsRead(Long receiverId);
@@ -24,9 +23,9 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
     @Query("update NotificationEntity ne set ne.read = true where ne.receiverId = :receiverId and ne.id = :id and ne.read = false")
     int markAsRead(Long receiverId, Long id);
 
-    @Transactional(propagation = REQUIRES_NEW)
+    @Transactional
     @Modifying
     @Query("delete NotificationEntity n where n.receiverId = :receiverId")
-    void deleteByReceiverId(Long receiverId);
+    int deleteByReceiverId(Long receiverId);
 
 }

@@ -2,17 +2,20 @@ package revi1337.onsquad.notification.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.notification.domain.Notification;
 import revi1337.onsquad.notification.domain.entity.NotificationEntity;
 import revi1337.onsquad.notification.infrastructure.NotificationMessage;
 
 @Component
-@RequiredArgsConstructor
 public class NotificationMessageMapper {
 
-    private final ObjectMapper defaultObjectMapper;
+    private final ObjectMapper objectMapper;
+
+    public NotificationMessageMapper(@Qualifier("defaultObjectMapper") ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     public NotificationMessage from(Notification notification) {
         return new NotificationMessage(
@@ -40,18 +43,18 @@ public class NotificationMessageMapper {
 
     private JsonNode toJsonNode(Object payload) {
         if (payload == null) {
-            return defaultObjectMapper.createObjectNode();
+            return objectMapper.createObjectNode();
         }
         if (payload instanceof JsonNode jsonNode) {
             return jsonNode;
         }
         if (payload instanceof String json) {
             try {
-                return defaultObjectMapper.readTree(json);
+                return objectMapper.readTree(json);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Invalid JSON payload string", e);
             }
         }
-        return defaultObjectMapper.valueToTree(payload);
+        return objectMapper.valueToTree(payload);
     }
 }

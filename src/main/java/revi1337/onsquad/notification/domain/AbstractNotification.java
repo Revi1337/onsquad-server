@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public abstract class AbstractNotification implements Notification {
 
-    private final Long publisherId;
-    private final Long receiverId;
-    private final NotificationTopic topic;
-    private final NotificationDetail detail;
+    protected final Long publisherId;
+    protected final Long receiverId;
+    protected final NotificationTopic topic;
+    protected final NotificationDetail detail;
 
     protected AbstractNotification(Long publisherId, Long receiverId, NotificationTopic topic, NotificationDetail detail) {
         this.publisherId = publisherId;

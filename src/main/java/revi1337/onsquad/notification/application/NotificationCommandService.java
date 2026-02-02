@@ -7,12 +7,12 @@ import revi1337.onsquad.common.aspect.Throttling;
 import revi1337.onsquad.notification.domain.repository.NotificationRepository;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class NotificationCommandService {
 
     private final NotificationRepository notificationRepository;
 
+    @Transactional
     public void read(Long memberId, Long notificationId) {
         notificationRepository.markAsRead(memberId, notificationId);
     }

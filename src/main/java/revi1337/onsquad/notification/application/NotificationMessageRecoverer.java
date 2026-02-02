@@ -16,8 +16,9 @@ public class NotificationMessageRecoverer {
     private final NotificationMessageMapper notificationMessageMapper;
 
     public NotificationMessages recover(Long userId, Long lastEventId) {
-        List<NotificationEntity> missedNotifications = notificationRepository.findAllByReceiverIdAndIdAfter(userId, lastEventId);
+        List<NotificationEntity> missedNotifications = notificationRepository.findAllByReceiverIdAndIdAfterOrderByIdAsc(userId, lastEventId);
         List<NotificationMessage> messages = convertToMessages(missedNotifications);
+
         return new NotificationMessages(messages);
     }
 
