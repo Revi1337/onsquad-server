@@ -23,10 +23,6 @@ public class Address {
     @Column(name = "address_detail", nullable = false)
     private String detail;
 
-    public static Address defaultValue() {
-        return new Address(DEFAULT_VALUE, DEFAULT_VALUE_DETAIL);
-    }
-
     public Address(String value, String detail) {
         validate(value, detail);
         this.value = value;
@@ -41,9 +37,5 @@ public class Address {
         if (detail == null) {
             throw new IllegalArgumentException("상세 주소는 null 일 수 없습니다.");
         }
-    }
-
-    public Address update(String value, String detail) {
-        return new Address(value, detail);
     }
 }

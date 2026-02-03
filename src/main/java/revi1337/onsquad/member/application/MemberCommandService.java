@@ -11,6 +11,7 @@ import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.entity.vo.PasswordPolicy;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.member.error.MemberBusinessException;
 import revi1337.onsquad.member.error.MemberErrorCode;
@@ -28,10 +29,9 @@ public class MemberCommandService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public void newMember(MemberCreateDto dto) {
-        emailVerificationValidator.ensureEmailVerified(dto.email());
-        ensureNotDuplicate(dto);
+        ensureRequirements(dto);
         Member member = dto.toEntity();
-        member.updatePassword(passwordEncoder.encode(dto.password()));
+        member.updatePassword(passwordEncoder.encode(dto.password()), PasswordPolicy.BCRYPT);
         memberRepository.save(member);
     }
 
@@ -45,7 +45,7 @@ public class MemberCommandService {
         if (!passwordEncoder.matches(dto.currentPassword(), member.getPassword().getValue())) {
             throw new MemberBusinessException.WrongPassword(MemberErrorCode.WRONG_PASSWORD);
         }
-        member.updatePassword(passwordEncoder.encode(dto.newPassword()));
+        member.updatePassword(passwordEncoder.encode(dto.newPassword()), PasswordPolicy.BCRYPT);
     }
 
     public void updateImage(Long memberId, String newImageUrl) {
@@ -69,7 +69,8 @@ public class MemberCommandService {
         memberContextHandler.disposeContext(member);
     }
 
-    private void ensureNotDuplicate(MemberCreateDto dto) {
+    private void ensureRequirements(MemberCreateDto dto) {
+        emailVerificationValidator.ensureEmailVerified(dto.email());
         if (memberAccessor.checkNicknameDuplicate(dto.nickname())) {
             throw new MemberBusinessException.DuplicateNickname(MemberErrorCode.DUPLICATE_NICKNAME);
         }

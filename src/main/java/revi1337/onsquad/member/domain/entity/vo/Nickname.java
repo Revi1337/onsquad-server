@@ -28,7 +28,7 @@ public class Nickname {
         this.value = value;
     }
 
-    public void validate(String value) {
+    private void validate(String value) {
         if (value == null) {
             throw new NullPointerException("닉네임은 null 일 수 없습니다.");
         }
@@ -36,9 +36,5 @@ public class Nickname {
         if (value.length() > MAX_LENGTH || value.length() < MIN_LENGTH) {
             throw new MemberDomainException.InvalidNicknameLength(INVALID_NICKNAME_LENGTH);
         }
-    }
-
-    public Nickname update(String value) {
-        return new Nickname(value);
     }
 }

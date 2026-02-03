@@ -19,7 +19,6 @@ public class Introduce {
     private static final int MIN_LENGTH = 1;
     private static final int MAX_LENGTH = 200;
     private static final int PERSIST_MAX_LENGTH = MAX_LENGTH * 3;
-    private static final String DEFAULT_VALUE = "소개 없음";
 
     @Column(name = "introduce", length = PERSIST_MAX_LENGTH)
     private String value;
@@ -30,23 +29,15 @@ public class Introduce {
         this.value = value;
     }
 
-    public static Introduce defaultValue() {
-        return new Introduce(DEFAULT_VALUE);
-    }
-
-    public void validateNull(String value) {
+    private void validateNull(String value) {
         if (value == null) {
             throw new NullPointerException("자기소개는 null 일 수 없습니다");
         }
     }
 
-    public void validateSize(String value) {
-        if (value.length() > MAX_LENGTH || value.isEmpty()) {
+    private void validateSize(String value) {
+        if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
             throw new MemberDomainException.InvalidIntroduceLength(INVALID_INTRODUCE_LENGTH);
         }
-    }
-
-    public Introduce update(String value) {
-        return new Introduce(value);
     }
 }
