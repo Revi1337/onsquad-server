@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.presentation;
+package revi1337.onsquad.auth.verification.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import revi1337.onsquad.auth.verification.VerificationMailService;
+import revi1337.onsquad.auth.verification.application.VerificationMailService;
+import revi1337.onsquad.auth.verification.application.response.EmailValidResponse;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.member.application.dto.response.EmailValidResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -24,7 +24,7 @@ public class EmailVerificationCodeController {
     ) {
         verificationMailService.sendVerificationCode(email);
 
-        return ResponseEntity.ok().body(RestResponse.created());
+        return ResponseEntity.ok(RestResponse.created());
     }
 
     @GetMapping("/auth/verify")
@@ -32,8 +32,7 @@ public class EmailVerificationCodeController {
             @RequestParam String email,
             @RequestParam String code
     ) {
-        boolean valid = verificationMailService.validateVerificationCode(email, code);
-        if (valid) {
+        if (verificationMailService.validateVerificationCode(email, code)) {
             return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(true)));
         }
 

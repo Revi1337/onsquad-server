@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.auth.verification.VerificationBackupProcessor;
+import revi1337.onsquad.auth.verification.application.VerificationCodeReloader;
 import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.category.domain.repository.CategoryJpaRepository;
@@ -31,7 +31,7 @@ import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator
 public abstract class ApplicationLayerWithTestContainerSupport extends TestContainerSupport {
 
     @MockBean
-    protected VerificationBackupProcessor verificationBackupProcessor;
+    protected VerificationCodeReloader verificationCodeReloader;
 
     @MockBean
     protected ThrottlingAspect throttlingAspect;

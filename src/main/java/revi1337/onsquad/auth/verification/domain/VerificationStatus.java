@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 public enum VerificationStatus {
 
-    SUCCESS, FAIL;
+    PENDING, SUCCESS, FAIL;
 
     public static Stream<VerificationStatus> stream() {
         return Arrays.stream(VerificationStatus.values());

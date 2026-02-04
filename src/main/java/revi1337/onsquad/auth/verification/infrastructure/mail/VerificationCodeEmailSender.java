@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.verification.infrastructure;
+package revi1337.onsquad.auth.verification.infrastructure.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
