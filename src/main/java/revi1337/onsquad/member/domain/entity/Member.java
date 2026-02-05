@@ -26,6 +26,7 @@ import revi1337.onsquad.member.domain.entity.vo.Nickname;
 import revi1337.onsquad.member.domain.entity.vo.Password;
 import revi1337.onsquad.member.domain.entity.vo.PasswordPolicy;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
+import revi1337.onsquad.member.domain.model.ProfileSpec;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -97,12 +98,12 @@ public class Member extends BaseEntity {
         this.mbti = mbti;
     }
 
-    public void updateProfile(MemberBase memberBase) {
-        this.nickname = new Nickname(memberBase.nickname());
-        this.introduce = new Introduce(memberBase.introduce());
-        this.mbti = Mbti.parse(memberBase.mbti());
-        this.kakaoLink = memberBase.kakaoLink();
-        this.address = new Address(memberBase.address(), memberBase.addressDetail());
+    public void updateProfile(ProfileSpec spec) {
+        this.nickname = new Nickname(spec.getNickname());
+        this.introduce = new Introduce(spec.getIntroduce());
+        this.mbti = Mbti.parse(spec.getMbti());
+        this.kakaoLink = spec.getKakaoLink();
+        this.address = new Address(spec.getAddress(), spec.getAddressDetail());
     }
 
     public void updateImage(String profileImage) {
@@ -135,16 +136,5 @@ public class Member extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
-    }
-
-    public record MemberBase(
-            String nickname,
-            String introduce,
-            String mbti,
-            String address,
-            String addressDetail,
-            String kakaoLink
-    ) {
-
     }
 }

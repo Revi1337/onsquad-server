@@ -1,6 +1,6 @@
 package revi1337.onsquad.member.application.dto;
 
-import revi1337.onsquad.member.domain.entity.Member.MemberBase;
+import revi1337.onsquad.member.domain.model.ProfileSpec;
 
 public record MemberUpdateDto(
         String nickname,
@@ -11,7 +11,7 @@ public record MemberUpdateDto(
         String addressDetail
 ) {
 
-    public MemberBase toMemberBase() {
-        return new MemberBase(nickname, introduce, mbti, address, addressDetail, kakaoLink);
+    public ProfileSpec toSpec() {
+        return new ProfileSpec(nickname, introduce, mbti, address, addressDetail, kakaoLink);
     }
 }

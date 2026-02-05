@@ -37,7 +37,7 @@ public class MemberCommandService {
 
     public void updateProfile(Long memberId, MemberUpdateDto dto) {
         Member member = memberAccessor.getById(memberId);
-        member.updateProfile(dto.toMemberBase());
+        member.updateProfile(dto.toSpec());
     }
 
     public void updatePassword(Long memberId, MemberPasswordUpdateDto dto) {

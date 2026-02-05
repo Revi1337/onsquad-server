@@ -1,5 +1,6 @@
 package revi1337.onsquad.member.presentation.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.Map;
 import revi1337.onsquad.common.presentation.validator.StringComparator;
@@ -20,6 +21,7 @@ public record MemberCreateRequest(
         return new MemberCreateDto(email, password, passwordConfirm, nickname, address, addressDetail);
     }
 
+    @JsonIgnore
     @Override
     public Map<String, String> getComparedFields() {
         return Map.of("password", password, "passwordConfirm", passwordConfirm);
