@@ -2,15 +2,20 @@ package revi1337.onsquad.auth.verification.infrastructure.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import revi1337.onsquad.auth.verification.domain.VerificationCode;
 import revi1337.onsquad.common.application.mail.EmailContent;
 import revi1337.onsquad.common.application.mail.EmailSender;
@@ -20,6 +25,7 @@ import revi1337.onsquad.infrastructure.network.mail.EmailException;
 @Component
 public class VerificationCodeEmailSender implements EmailSender {
 
+    private static final String CLASSPATH_MAIL_TEMPLATE = "template/mail/verification-code.html";
     private static final String MIME_SETTING_ERROR_LOG = "MimeMessage 설정 중 예외 발생 - 메일 발송 중단";
     private static final String SEND_VERIFICATION_CODE_ERROR_LOG = "이메일 인증코드 발송 중 예외 발생";
     private static final String ONSQUAD_MAIL_BACKGROUND = "/onsquad/mail/background.jpg";
@@ -29,6 +35,7 @@ public class VerificationCodeEmailSender implements EmailSender {
 
     private final JavaMailSender javaMailSender;
     private final String cloudfrontBaseDomain;
+    private final String emailTemplate;
 
     public VerificationCodeEmailSender(
             JavaMailSender javaMailSender,
@@ -36,6 +43,7 @@ public class VerificationCodeEmailSender implements EmailSender {
     ) {
         this.javaMailSender = javaMailSender;
         this.cloudfrontBaseDomain = cloudfrontBaseDomain;
+        this.emailTemplate = loadTemplate();
     }
 
     @Override
@@ -64,16 +72,25 @@ public class VerificationCodeEmailSender implements EmailSender {
         return mimeMessage;
     }
 
-    @Override
-    public String buildEmailBody(EmailContent content) {
+    private String buildEmailBody(EmailContent content) {
         VerificationCode verificationCode = (VerificationCode) content;
         return MessageFormat.format(
-                PATTERN,
+                emailTemplate,
                 cloudfrontBaseDomain + ONSQUAD_MAIL_BACKGROUND,
                 cloudfrontBaseDomain + ONSQUAD_PRIMARY_LOGO,
                 verificationCode.getContent(),
                 verificationCode.getExpiredAt().format(VERIFICATION_CODE_DATETIME_FORMATTER),
                 cloudfrontBaseDomain + ONSQUAD_SQUARE_LOGO
         );
+    }
+
+    private String loadTemplate() {
+        try {
+            Resource resource = new ClassPathResource(CLASSPATH_MAIL_TEMPLATE);
+            return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error("[EmailSender] 메일 템플릿 로드 실패", e);
+            throw new UncheckedIOException(e);
+        }
     }
 }
