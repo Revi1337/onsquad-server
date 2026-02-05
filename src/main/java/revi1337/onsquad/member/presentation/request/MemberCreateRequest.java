@@ -1,13 +1,12 @@
 package revi1337.onsquad.member.presentation.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import java.util.HashMap;
 import java.util.Map;
+import revi1337.onsquad.common.presentation.validator.StringComparator;
+import revi1337.onsquad.common.presentation.validator.StringCompare;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
-import revi1337.onsquad.member.presentation.validator.StringComparator;
-import revi1337.onsquad.member.presentation.validator.StringValidator;
 
-@StringValidator
+@StringCompare
 public record MemberCreateRequest(
         @NotEmpty String email,
         @NotEmpty String password,
@@ -22,12 +21,7 @@ public record MemberCreateRequest(
     }
 
     @Override
-    public Map<String, String> inspectStrings() {
-        return new HashMap<>() {
-            {
-                put("password", password);
-                put("passwordConfirm", passwordConfirm);
-            }
-        };
+    public Map<String, String> getComparedFields() {
+        return Map.of("password", password, "passwordConfirm", passwordConfirm);
     }
 }

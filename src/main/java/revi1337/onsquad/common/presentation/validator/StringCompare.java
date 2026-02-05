@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.presentation.validator;
+package revi1337.onsquad.common.presentation.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-@Constraint(validatedBy = ConstraintStringValidator.class)
-public @interface StringValidator {
+@Constraint(validatedBy = StringCompareValidator.class)
+public @interface StringCompare {
 
     String message() default "";
 

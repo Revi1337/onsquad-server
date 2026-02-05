@@ -1,4 +1,4 @@
-package revi1337.onsquad.member.presentation.validator;
+package revi1337.onsquad.common.presentation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import org.springframework.util.ReflectionUtils;
 
-public class ConstraintStringValidator implements ConstraintValidator<StringValidator, StringComparator> {
+public class StringCompareValidator implements ConstraintValidator<StringCompare, StringComparator> {
 
     private static final String MESSAGE_TEMPLATE = "string does not match";
     private static final String UNSUPPORTED_CLASS = "unsupported class for validation";
@@ -29,32 +29,35 @@ public class ConstraintStringValidator implements ConstraintValidator<StringVali
         context.disableDefaultConstraintViolation();
         Class<? extends StringComparator> comparatorClass = comparator.getClass();
         if (comparatorClass.isRecord()) {
-            modifyClassMetadataIfRecord(comparator, context);
+            addViolationsForRecord(comparator, context);
         } else if (!comparatorClass.isInterface() && !Modifier.isAbstract(comparatorClass.getModifiers())) {
-            modifyClassMetadataIfGeneralClass(comparator, context);
+            addViolationsForClass(comparator, context);
         } else {
             throw new IllegalArgumentException(UNSUPPORTED_CLASS);
         }
     }
 
-    private void modifyClassMetadataIfRecord(StringComparator comparator, ConstraintValidatorContext context) {
-        Map<String, String> entries = comparator.inspectStrings();
+    private void addViolationsForRecord(StringComparator comparator, ConstraintValidatorContext context) {
+        Map<String, String> entries = comparator.getComparedFields();
         for (RecordComponent recordComponent : comparator.getClass().getRecordComponents()) {
             try {
                 String recordFieldName = recordComponent.getAccessor().getName();
                 Object recordFieldValue = recordComponent.getAccessor().invoke(comparator);
-                if (entries.get(recordFieldName) == recordFieldValue) {
+                if (Objects.equals(entries.get(recordFieldName), recordFieldValue)) {
                     addAdditionalConstraintViolation(recordFieldName, context);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalArgumentException(UNEXPECTED_FIELD);
+                throw new IllegalArgumentException(UNEXPECTED_FIELD, e);
             }
         }
     }
 
-    private void modifyClassMetadataIfGeneralClass(StringComparator comparator, ConstraintValidatorContext context) {
-        Map<String, String> entries = comparator.inspectStrings();
+    private void addViolationsForClass(StringComparator comparator, ConstraintValidatorContext context) {
+        Map<String, String> entries = comparator.getComparedFields();
         for (Field declaredField : comparator.getClass().getDeclaredFields()) {
+            if (shouldSkipFields(declaredField)) {
+                continue;
+            }
             declaredField.setAccessible(true);
             String declaredFieldName = declaredField.getName();
             Object declaredFieldValue = ReflectionUtils.getField(declaredField, comparator);
@@ -62,6 +65,11 @@ public class ConstraintStringValidator implements ConstraintValidator<StringVali
                 addAdditionalConstraintViolation(declaredFieldName, context);
             }
         }
+    }
+
+    private boolean shouldSkipFields(Field field) {
+        int modifiers = field.getModifiers();
+        return Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers) || field.isSynthetic();
     }
 
     private void addAdditionalConstraintViolation(String fieldName, ConstraintValidatorContext context) {

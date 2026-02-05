@@ -1,16 +1,16 @@
 package revi1337.onsquad.member.presentation.request;
 
-import java.util.HashMap;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.Map;
+import revi1337.onsquad.common.presentation.validator.StringComparator;
+import revi1337.onsquad.common.presentation.validator.StringCompare;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
-import revi1337.onsquad.member.presentation.validator.StringComparator;
-import revi1337.onsquad.member.presentation.validator.StringValidator;
 
-@StringValidator
+@StringCompare
 public record MemberPasswordUpdateRequest(
-        String currentPassword,
-        String newPassword,
-        String newPasswordConfirm
+        @NotEmpty String currentPassword,
+        @NotEmpty String newPassword,
+        @NotEmpty String newPasswordConfirm
 ) implements StringComparator {
 
     public MemberPasswordUpdateDto toDto() {
@@ -18,12 +18,7 @@ public record MemberPasswordUpdateRequest(
     }
 
     @Override
-    public Map<String, String> inspectStrings() {
-        return new HashMap<>() {
-            {
-                put("newPassword", newPassword);
-                put("newPasswordConfirm", newPasswordConfirm);
-            }
-        };
+    public Map<String, String> getComparedFields() {
+        return Map.of("newPassword", newPassword, "newPasswordConfirm", newPasswordConfirm);
     }
 }
