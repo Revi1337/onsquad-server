@@ -48,6 +48,12 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
+  sqlite-datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:file:test-mem?mode=memory&cache=shared&foreign_keys=on&busy_timeout=3000
+    username: admin
+    password: admin
+
   mail:
     code-seed: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
     host: smtp.gmail.com
@@ -128,7 +134,8 @@ onsquad:
   discord:
     webhook:
       alert:
-        s3: https://discord.com/api/webhooks/web-hook-url
+        aws: https://discord.com/api/webhooks/web-hook-url
+        apply-score: https://discord.com/api/webhooks/web-hook-url
 
   aws:
     cloud-front:
