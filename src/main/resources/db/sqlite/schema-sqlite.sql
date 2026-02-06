@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS recycle_bin;
+DROP TABLE IF EXISTS image_recycle_bin;
 CREATE TABLE IF NOT EXISTS image_recycle_bin (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      path TEXT NOT NULL,
