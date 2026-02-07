@@ -1,4 +1,4 @@
-package revi1337.onsquad.notification.infrastructure;
+package revi1337.onsquad.notification.domain.model;
 
 import java.util.List;
 

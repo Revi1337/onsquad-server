@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
 
 @Configuration
 public class RedisNotificationConfig {

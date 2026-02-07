@@ -4,9 +4,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.notification.domain.entity.NotificationEntity;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessages;
 import revi1337.onsquad.notification.domain.repository.NotificationRepository;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
-import revi1337.onsquad.notification.infrastructure.NotificationMessages;
 
 @Component
 @RequiredArgsConstructor

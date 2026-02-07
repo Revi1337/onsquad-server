@@ -9,7 +9,6 @@ import revi1337.onsquad.notification.domain.NotificationTopic;
 @Getter
 public class RequestAcceptNotification extends AbstractNotification {
 
-    private static final String MESSAGE = "크루에 합류하였습니다. 지금 활동을 시작해보세요!";
     private final RequestAcceptPayload payload;
 
     public RequestAcceptNotification(RequestAcceptedContext context) {
@@ -17,7 +16,7 @@ public class RequestAcceptNotification extends AbstractNotification {
         this.payload = new RequestAcceptPayload(
                 context.crewId(),
                 context.crewName(),
-                MESSAGE
+                NotificationDetail.CREW_ACCEPT.formatMessage()
         );
     }
 

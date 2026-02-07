@@ -36,9 +36,11 @@ public class NotificationEntity {
     private Long publisherId;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private NotificationTopic topic;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private NotificationDetail detail;
 
     private String json;
@@ -53,6 +55,8 @@ public class NotificationEntity {
                                LocalDateTime occurredAt) {
         Objects.requireNonNull(receiverId, "receiverId cannot be null");
         Objects.requireNonNull(publisherId, "publisherId cannot be null");
+        Objects.requireNonNull(topic, "topic cannot be null");
+        Objects.requireNonNull(detail, "detail cannot be null");
         this.receiverId = receiverId;
         this.publisherId = publisherId;
         this.topic = topic;

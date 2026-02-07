@@ -6,7 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
 
 @Slf4j
 @Component

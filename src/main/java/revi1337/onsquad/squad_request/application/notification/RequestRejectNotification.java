@@ -9,7 +9,6 @@ import revi1337.onsquad.squad_request.application.notification.RequestContext.Re
 @Getter
 public class RequestRejectNotification extends AbstractNotification {
 
-    private static final String MESSAGE = "스쿼드 합류가 거절되었습니다.";
     private final RequestRejectPayload payload;
 
     public RequestRejectNotification(RequestRejectedContext context) {
@@ -19,7 +18,7 @@ public class RequestRejectNotification extends AbstractNotification {
                 context.crewName(),
                 context.squadId(),
                 context.squadTitle(),
-                MESSAGE
+                NotificationDetail.SQUAD_REJECT.formatMessage()
         );
     }
 

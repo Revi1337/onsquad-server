@@ -9,7 +9,6 @@ import revi1337.onsquad.squad_comment.application.notification.CommentContext.Co
 @Getter
 public class CommentNotification extends AbstractNotification {
 
-    private static final String MESSAGE_FORMAT = "%s 님이 스쿼드에 댓글을 남겼습니다.";
     private final CommentPayload payload;
 
     public CommentNotification(CommentAddedContext context) {
@@ -20,7 +19,7 @@ public class CommentNotification extends AbstractNotification {
                 context.squadId(),
                 context.squadTitle(),
                 context.commentId(),
-                String.format(MESSAGE_FORMAT, context.commentWriterNickname())
+                NotificationDetail.COMMENT.formatMessage(context.commentWriterNickname())
         );
     }
 

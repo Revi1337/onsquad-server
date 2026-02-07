@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
 import revi1337.onsquad.notification.infrastructure.sse.SseEmitterManager;
 
 @Slf4j

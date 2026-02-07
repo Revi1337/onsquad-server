@@ -9,7 +9,7 @@ import revi1337.onsquad.notification.application.NotificationPersister;
 import revi1337.onsquad.notification.application.NotificationService;
 import revi1337.onsquad.notification.domain.Notification;
 import revi1337.onsquad.notification.domain.entity.NotificationEntity;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
 
 @Component
 @RequiredArgsConstructor

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.notification.domain.ConnectionNotification;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
 import revi1337.onsquad.notification.infrastructure.redis.RedisNotificationMessageManager;
 import revi1337.onsquad.notification.infrastructure.redis.RedisTopic;
 import revi1337.onsquad.notification.infrastructure.sse.NamedSseEmitter;

@@ -1,6 +1,7 @@
 package revi1337.onsquad.notification.domain.repository;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,7 +11,7 @@ import revi1337.onsquad.notification.domain.entity.NotificationEntity;
 
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
 
-    List<NotificationEntity> findAllByReceiverId(Long receiverId, Pageable pageable);
+    Page<NotificationEntity> findAllByReceiverId(Long receiverId, Pageable pageable);
 
     List<NotificationEntity> findAllByReceiverIdAndIdAfterOrderByIdAsc(Long receiverId, Long lastEventId);
 

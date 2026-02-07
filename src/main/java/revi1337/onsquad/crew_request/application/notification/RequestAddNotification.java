@@ -9,7 +9,6 @@ import revi1337.onsquad.notification.domain.NotificationTopic;
 @Getter
 public class RequestAddNotification extends AbstractNotification {
 
-    private static final String MESSAGE_FORMAT = "%s 님이 크루 합류를 요청하였습니다.";
     private final RequestPayload payload;
 
     public RequestAddNotification(RequestAddedContext context) {
@@ -18,7 +17,7 @@ public class RequestAddNotification extends AbstractNotification {
                 context.crewId(),
                 context.crewName(),
                 context.requestId(),
-                String.format(MESSAGE_FORMAT, context.requesterNickname())
+                NotificationDetail.CREW_REQUEST.formatMessage(context.requesterNickname())
         );
     }
 

@@ -9,7 +9,6 @@ import revi1337.onsquad.notification.domain.NotificationTopic;
 @Getter
 public class RequestRejectNotification extends AbstractNotification {
 
-    private static final String MESSAGE = "크루 합류가 거절되었습니다.";
     private final RequestRejectPayload payload;
 
     public RequestRejectNotification(RequestRejectedContext context) {
@@ -17,7 +16,7 @@ public class RequestRejectNotification extends AbstractNotification {
         this.payload = new RequestRejectPayload(
                 context.crewId(),
                 context.crewName(),
-                MESSAGE
+                NotificationDetail.CREW_REJECT.formatMessage()
         );
     }
 

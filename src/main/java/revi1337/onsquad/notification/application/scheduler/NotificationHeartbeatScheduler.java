@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.notification.application.NotificationMessageMapper;
 import revi1337.onsquad.notification.domain.HeartbeatNotification;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
 import revi1337.onsquad.notification.infrastructure.sse.SseEmitterManager;
 
 @Component

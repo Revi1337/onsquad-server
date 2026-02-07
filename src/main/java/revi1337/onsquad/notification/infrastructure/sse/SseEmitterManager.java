@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEventBuilder;
-import revi1337.onsquad.notification.infrastructure.NotificationMessage;
-import revi1337.onsquad.notification.infrastructure.NotificationMessages;
+import revi1337.onsquad.notification.domain.model.NotificationMessage;
+import revi1337.onsquad.notification.domain.model.NotificationMessages;
 
 @Slf4j
 @Component
