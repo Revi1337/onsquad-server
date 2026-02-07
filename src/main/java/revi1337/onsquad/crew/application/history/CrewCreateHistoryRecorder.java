@@ -17,7 +17,6 @@ import revi1337.onsquad.history.domain.repository.HistoryRepository;
 @RequiredArgsConstructor
 public class CrewCreateHistoryRecorder implements HistoryRecorder {
 
-    private static final String MESSAGE_FORMAT = "[%s] 크루를 생성했습니다.";
     private final CrewRepository crewRepository;
     private final HistoryRepository historyRepository;
 
@@ -33,7 +32,7 @@ public class CrewCreateHistoryRecorder implements HistoryRecorder {
                 .memberId((Long) args[0])
                 .crewId(crew.getId())
                 .type(HistoryType.CREW_CREATE)
-                .message(String.format(MESSAGE_FORMAT, crew.getName().getValue()))
+                .message(HistoryType.CREW_CREATE.formatMessage(crew.getName().getValue()))
                 .build());
     }
 }

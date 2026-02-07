@@ -10,8 +10,6 @@ import revi1337.onsquad.squad_request.application.notification.RequestContext.Re
 @Getter
 public class RequestAcceptHistory implements History {
 
-    private static final String MESSAGE_FORMAT = "[%s | %s] %s 님의 스쿼드 합류를 수락했습니다.";
-
     private final Long memberId;
     private final Long crewId;
     private final Long squadId;
@@ -23,7 +21,7 @@ public class RequestAcceptHistory implements History {
         this.memberId = context.accepterId();
         this.crewId = context.crewId();
         this.squadId = context.squadId();
-        this.message = String.format(MESSAGE_FORMAT, context.crewName(), context.squadTitle(), context.requesterNickname());
+        this.message = type.formatMessage(context.crewName(), context.squadTitle(), context.requesterNickname());
         this.timeStamp = LocalDateTime.now();
     }
 

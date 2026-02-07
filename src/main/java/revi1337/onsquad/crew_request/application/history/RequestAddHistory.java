@@ -10,8 +10,6 @@ import revi1337.onsquad.history.domain.entity.HistoryEntity;
 @Getter
 public class RequestAddHistory implements History {
 
-    private static final String MESSAGE_FORMAT = "[%s] 크루 합류를 요청했습니다.";
-
     private final Long memberId;
     private final Long crewId;
     private final HistoryType type = HistoryType.CREW_REQUEST;
@@ -21,7 +19,7 @@ public class RequestAddHistory implements History {
     public RequestAddHistory(RequestAddedContext context) {
         this.memberId = context.requesterId();
         this.crewId = context.crewId();
-        this.message = String.format(MESSAGE_FORMAT, context.crewName());
+        this.message = type.formatMessage(context.crewName());
         this.timeStamp = LocalDateTime.now();
     }
 

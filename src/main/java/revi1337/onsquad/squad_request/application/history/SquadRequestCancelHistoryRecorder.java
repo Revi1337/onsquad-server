@@ -17,7 +17,6 @@ import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 @RequiredArgsConstructor
 public class SquadRequestCancelHistoryRecorder implements HistoryRecorder {
 
-    private static final String MESSAGE_FORMAT = "[%s | %s] 스쿼드 합류 요청을 취소했습니다.";
     private final SquadRepository squadRepository;
     private final HistoryRepository historyRepository;
 
@@ -33,7 +32,7 @@ public class SquadRequestCancelHistoryRecorder implements HistoryRecorder {
                 .memberId((Long) args[0])
                 .crewId(squad.getId())
                 .type(HistoryType.SQUAD_CANCEL)
-                .message(String.format(MESSAGE_FORMAT, squad.getCrew().getName().getValue(), squad.getTitle().getValue()))
+                .message(HistoryType.SQUAD_CANCEL.formatMessage(squad.getCrew().getName().getValue(), squad.getTitle().getValue()))
                 .build());
     }
 }

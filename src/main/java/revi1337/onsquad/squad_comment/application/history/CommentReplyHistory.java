@@ -10,8 +10,6 @@ import revi1337.onsquad.squad_comment.application.notification.CommentContext.Co
 @Getter
 public class CommentReplyHistory implements History {
 
-    private static final String MESSAGE_FORMAT = "[%s | %s] 스쿼드에 대댓글을 남겼습니다.";
-
     private final Long memberId;
     private final Long crewId;
     private final Long squadId;
@@ -25,7 +23,7 @@ public class CommentReplyHistory implements History {
         this.crewId = context.crewId();
         this.squadId = context.squadId();
         this.squadCommentId = context.replyCommentId();
-        this.message = String.format(MESSAGE_FORMAT, context.crewName(), context.squadTitle());
+        this.message = type.formatMessage(context.crewName(), context.squadTitle());
         this.timeStamp = LocalDateTime.now();
     }
 

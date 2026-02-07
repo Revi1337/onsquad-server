@@ -17,7 +17,6 @@ import revi1337.onsquad.squad.domain.repository.SquadRepository;
 @RequiredArgsConstructor
 public class SquadCreateHistoryRecorder implements HistoryRecorder {
 
-    private static final String MESSAGE_FORMAT = "[%s | %s] 스쿼드를 생성했습니다.";
     private final SquadRepository squadRepository;
     private final HistoryRepository historyRepository;
 
@@ -33,7 +32,7 @@ public class SquadCreateHistoryRecorder implements HistoryRecorder {
                 .memberId((Long) args[0])
                 .crewId(squad.getId())
                 .type(HistoryType.SQUAD_CREATE)
-                .message(String.format(MESSAGE_FORMAT, squad.getCrew().getName().getValue(), squad.getTitle().getValue()))
+                .message(HistoryType.SQUAD_CREATE.formatMessage(squad.getCrew().getName().getValue(), squad.getTitle().getValue()))
                 .build());
     }
 }
