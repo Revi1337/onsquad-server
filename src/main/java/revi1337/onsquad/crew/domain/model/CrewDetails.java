@@ -1,29 +1,28 @@
-package revi1337.onsquad.crew.domain;
+package revi1337.onsquad.crew.domain.model;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import revi1337.onsquad.crew.domain.result.CrewResult;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtags;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 
-public final class CrewResults {
+public class CrewDetails {
 
-    private final List<CrewResult> results;
+    private final List<CrewDetail> results;
 
-    public CrewResults(List<CrewResult> results) {
+    public CrewDetails(List<CrewDetail> results) {
         this.results = Collections.unmodifiableList(results);
     }
 
     public List<Long> getIds() {
         return results.stream()
-                .map(CrewResult::getId)
+                .map(CrewDetail::getId)
                 .toList();
     }
 
-    public List<CrewResult> values() {
+    public List<CrewDetail> values() {
         return results;
     }
 
@@ -41,7 +40,7 @@ public final class CrewResults {
         });
     }
 
-    public <U> List<U> map(Function<CrewResult, U> converter) {
+    public <U> List<U> map(Function<CrewDetail, U> converter) {
         return results.stream()
                 .map(converter)
                 .collect(Collectors.toList());

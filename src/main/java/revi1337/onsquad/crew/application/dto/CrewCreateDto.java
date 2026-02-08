@@ -1,7 +1,9 @@
 package revi1337.onsquad.crew.application.dto;
 
 import java.util.List;
+import revi1337.onsquad.crew.domain.model.CrewCreateSpec;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
+import revi1337.onsquad.member.domain.entity.Member;
 
 public record CrewCreateDto(
         String name,
@@ -11,4 +13,15 @@ public record CrewCreateDto(
         String kakaoLink
 ) {
 
+    public CrewCreateSpec toSpec(Member owner, String imageUrl) {
+        return new CrewCreateSpec(
+                owner,
+                name,
+                introduce,
+                detail,
+                hashtags,
+                kakaoLink,
+                imageUrl
+        );
+    }
 }

@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew.config;
+package revi1337.onsquad.crew_member.config;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;

@@ -3,15 +3,9 @@ package revi1337.onsquad.concurrency.crew;
 import static org.assertj.core.api.Assertions.assertThat;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberFixture.createAndong;
-import static revi1337.onsquad.common.fixture.MemberFixture.createDummy1;
 import static revi1337.onsquad.common.fixture.MemberFixture.createKwangwon;
+import static revi1337.onsquad.common.fixture.MemberFixture.createMember;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_ADDRESS_DETAIL_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_ADDRESS_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_INTRODUCE_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.DUMMY_KAKAO_LINK;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.ENCRYPTED_PASSWORD_VALUE;
-import static revi1337.onsquad.common.fixture.MemberValueFixture.PROFILE_IMAGE_LINK;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,12 +40,6 @@ import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestJpaRepository;
 import revi1337.onsquad.infrastructure.storage.sqlite.ImageRecycleBinRepository;
 import revi1337.onsquad.member.domain.entity.Member;
-import revi1337.onsquad.member.domain.entity.vo.Address;
-import revi1337.onsquad.member.domain.entity.vo.Email;
-import revi1337.onsquad.member.domain.entity.vo.Introduce;
-import revi1337.onsquad.member.domain.entity.vo.Mbti;
-import revi1337.onsquad.member.domain.entity.vo.Nickname;
-import revi1337.onsquad.member.domain.entity.vo.Password;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
@@ -95,7 +83,7 @@ class CrewRequestConcurrencyCommandServiceTest {
         Member revi = memberRepository.save(createRevi());
         Member andong = memberRepository.save(createAndong());
         Member kwangwon = memberRepository.save(createKwangwon());
-        Member dummy = memberRepository.save(createDummy1());
+        Member dummy = memberRepository.save(createMember(1));
         Crew crew = createCrew(revi);
         crew.addCrewMember(createManagerCrewMember(crew, andong));
         Crew savedCrew = crewRepository.save(crew);
@@ -190,25 +178,8 @@ class CrewRequestConcurrencyCommandServiceTest {
         }
     }
 
-    public static Member createMember(int sequence) {
-        return Member.builder()
-                .email(new Email(String.format("test-%d@email.com", sequence)))
-                .nickname(new Nickname("s" + sequence))
-                .introduce(new Introduce(DUMMY_INTRODUCE_VALUE))
-                .address(new Address(DUMMY_ADDRESS_VALUE, DUMMY_ADDRESS_DETAIL_VALUE))
-                .password(Password.encrypted(ENCRYPTED_PASSWORD_VALUE))
-                .image(PROFILE_IMAGE_LINK)
-                .kakaoLink(DUMMY_KAKAO_LINK)
-                .mbti(Mbti.ISFP)
-                .build();
-    }
-
     private CrewMember createManagerCrewMember(Crew crew, Member member) {
         return CrewMemberFactory.manager(crew, member, LocalDateTime.now());
-    }
-
-    private CrewMember createGeneralCrewMember(Crew crew, Member member) {
-        return CrewMemberFactory.general(crew, member, LocalDateTime.now());
     }
 
     private CrewRequest createCrewRequest(Crew crew, Member andong) {

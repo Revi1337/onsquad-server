@@ -3,7 +3,7 @@ package revi1337.onsquad.member.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.member.application.dto.response.DuplicateResponse;
+import revi1337.onsquad.common.dto.DuplicateResponse;
 import revi1337.onsquad.member.application.dto.response.MemberResponse;
 
 @Service

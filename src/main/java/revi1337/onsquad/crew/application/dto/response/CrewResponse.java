@@ -3,7 +3,7 @@ package revi1337.onsquad.crew.application.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew.domain.result.CrewResult;
+import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.crew_hashtag.domain.entity.CrewHashtag;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
@@ -22,19 +22,19 @@ public record CrewResponse(
         SimpleMemberResponse owner
 ) {
 
-    public static CrewResponse from(CrewResult crewResult) {
+    public static CrewResponse from(CrewDetail crewDetail) {
         return new CrewResponse(
-                crewResult.getId(),
-                crewResult.getName().getValue(),
-                crewResult.getIntroduce().getValue(),
-                crewResult.getDetail() != null ? crewResult.getDetail().getValue() : null,
-                crewResult.getImageUrl() != null ? crewResult.getImageUrl() : "",
-                crewResult.getKakaoLink(),
-                crewResult.getHashtagTypes().stream()
+                crewDetail.getId(),
+                crewDetail.getName().getValue(),
+                crewDetail.getIntroduce().getValue(),
+                crewDetail.getDetail() != null ? crewDetail.getDetail().getValue() : null,
+                crewDetail.getImageUrl() != null ? crewDetail.getImageUrl() : "",
+                crewDetail.getKakaoLink(),
+                crewDetail.getHashtagTypes().stream()
                         .map(HashtagType::getText)
                         .toList(),
-                crewResult.getMemberCnt(),
-                SimpleMemberResponse.from(crewResult.getCrewOwner())
+                crewDetail.getMemberCnt(),
+                SimpleMemberResponse.from(crewDetail.getCrewOwner())
         );
     }
 

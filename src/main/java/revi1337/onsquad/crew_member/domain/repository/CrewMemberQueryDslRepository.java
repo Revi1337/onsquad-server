@@ -6,6 +6,7 @@ import static revi1337.onsquad.crew.domain.entity.QCrew.crew;
 import static revi1337.onsquad.crew_member.domain.entity.QCrewMember.crewMember;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -16,7 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew.domain.result.QSimpleCrewResult;
+import revi1337.onsquad.crew.domain.model.SimpleCrew;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 import revi1337.onsquad.crew_member.domain.result.QMyParticipantCrewResult;
@@ -33,7 +34,7 @@ public class CrewMemberQueryDslRepository {
                 .selectFrom(crewMember)
                 .innerJoin(crewMember.member, member).fetchJoin()
                 .where(crewMember.crew.id.eq(crewId))
-                .orderBy(crewMember.requestAt.desc())
+                .orderBy(crewMember.participateAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -55,7 +56,7 @@ public class CrewMemberQueryDslRepository {
         return jpaQueryFactory
                 .select(new QMyParticipantCrewResult(
                         isCrewOwner,
-                        new QSimpleCrewResult(
+                        Projections.constructor(SimpleCrew.class,
                                 crew.id,
                                 crew.name.value,
                                 crew.introduce.value,
@@ -73,7 +74,7 @@ public class CrewMemberQueryDslRepository {
                 .innerJoin(crewMember.crew, crew)
                 .innerJoin(crew.member, member)
                 .where(crewMember.member.id.eq(memberId))
-                .orderBy(isCrewOwner.desc(), crewMember.requestAt.desc())
+                .orderBy(isCrewOwner.desc(), crewMember.participateAt.desc())
                 .fetch();
     }
 }

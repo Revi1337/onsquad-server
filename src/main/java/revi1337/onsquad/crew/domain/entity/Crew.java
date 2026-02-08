@@ -26,6 +26,7 @@ import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.vo.Detail;
 import revi1337.onsquad.crew.domain.entity.vo.Introduce;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.crew.domain.model.CrewCreateSpec;
 import revi1337.onsquad.crew_hashtag.domain.entity.CrewHashtag;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
@@ -69,10 +70,20 @@ public class Crew extends BaseEntity {
     @OneToMany(mappedBy = "crew", cascade = {PERSIST, MERGE})
     private final List<CrewMember> crewMembers = new ArrayList<>();
 
-    public static Crew create(Member owner, String name, String introduce, String detail, String kakaoLink, String imageUrl) {
-        Crew crew = new Crew(name, introduce, detail, kakaoLink, imageUrl);
-        crew.updateOwner(owner);
-        crew.addCrewMember(CrewMemberFactory.owner(crew, owner, LocalDateTime.now()));
+    public static Crew create(CrewCreateSpec spec, LocalDateTime ownerParticipateAt) {
+        Objects.requireNonNull(spec, "CrewCreateSpec must not be null");
+        Objects.requireNonNull(ownerParticipateAt, "ownerParticipateAt must not be null");
+
+        Crew crew = new Crew(
+                spec.getName(),
+                spec.getIntroduce(),
+                spec.getDetail(),
+                spec.getKakaoLink(),
+                spec.getImageUrl()
+        );
+
+        crew.updateOwner(spec.getOwner());
+        crew.addCrewMember(CrewMemberFactory.owner(crew, spec.getOwner(), ownerParticipateAt));
         return crew;
     }
 
@@ -106,6 +117,8 @@ public class Crew extends BaseEntity {
     }
 
     public void delegateOwner(CrewMember currentOwner, CrewMember nextOwner) {
+        Objects.requireNonNull(currentOwner, "currentOwner must not be null");
+        Objects.requireNonNull(nextOwner, "nextOwner must not be null");
         if (currentOwner.isOwner()) {
             nextOwner.promoteToOwner();
             currentOwner.demoteToGeneral();
@@ -114,9 +127,9 @@ public class Crew extends BaseEntity {
     }
 
     public void update(String name, String introduce, String detail, String kakaoLink) {
-        this.name = this.name.updateName(name);
-        this.introduce = this.introduce.updateIntroduce(introduce);
-        this.detail = this.detail.updateDetail(detail);
+        this.name = new Name(name);
+        this.introduce = new Introduce(introduce);
+        this.detail = new Detail(detail);
         this.kakaoLink = kakaoLink;
     }
 

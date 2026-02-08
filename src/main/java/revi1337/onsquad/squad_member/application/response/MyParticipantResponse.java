@@ -1,7 +1,7 @@
 package revi1337.onsquad.squad_member.application.response;
 
 import java.util.List;
-import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
+import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
 import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
@@ -11,7 +11,7 @@ public record MyParticipantResponse(
         CrewWithSquadsResponse crew
 ) {
 
-    public static MyParticipantResponse from(CrewWithOwnerStateResult crewResult, List<MyParticipantSquadResult> squadResults) {
+    public static MyParticipantResponse from(CrewWithOwnerState crewResult, List<MyParticipantSquadResult> squadResults) {
         return new MyParticipantResponse(
                 crewResult.isOwner(),
                 CrewWithSquadsResponse.from(crewResult, squadResults)
@@ -26,7 +26,7 @@ public record MyParticipantResponse(
             List<MySquadParticipantResponse> squads
     ) {
 
-        public static CrewWithSquadsResponse from(CrewWithOwnerStateResult crewResult, List<MyParticipantSquadResult> squadResults) {
+        public static CrewWithSquadsResponse from(CrewWithOwnerState crewResult, List<MyParticipantSquadResult> squadResults) {
             return new CrewWithSquadsResponse(
                     crewResult.crew().id(),
                     crewResult.crew().name(),

@@ -5,6 +5,7 @@ import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_DETAIL_LENGTH;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,16 +29,9 @@ public class Detail {
         this.value = value;
     }
 
-    public Detail updateDetail(String detail) {
-        return new Detail(detail);
-    }
-
     private void validate(String value) {
-        if (value == null) {
-            throw new NullPointerException("크루 상세정보는 null 일 수 없습니다.");
-        }
-
-        if (value.length() > MAX_LENGTH || value.isEmpty()) {
+        Objects.requireNonNull(value, "크루 상세정보는 null 일 수 없습니다.");
+        if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
             throw new CrewDomainException.InvalidDetailLength(INVALID_DETAIL_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
     }

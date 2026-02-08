@@ -11,9 +11,8 @@ import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 import revi1337.onsquad.crew.domain.CrewPolicy;
-import revi1337.onsquad.crew.domain.repository.CrewStatisticQueryDslRepository;
-import revi1337.onsquad.crew.domain.result.CrewResult;
-import revi1337.onsquad.crew.domain.result.CrewStatisticResult;
+import revi1337.onsquad.crew.domain.model.CrewDetail;
+import revi1337.onsquad.crew.domain.model.CrewStatistic;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberCacheService;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
@@ -31,11 +30,10 @@ public class CrewMainService {
     private final CrewRankedMemberCacheService crewRankedMemberCacheService;
     private final AnnounceCacheService announceCacheService;
     private final SquadAccessor squadAccessor;
-    private final CrewStatisticQueryDslRepository crewStatisticQueryDslRepository;
 
     public CrewMainResponse fetchMain(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewResult result = crewAccessor.getCrewWithDetailById(crewId);
+        CrewDetail result = crewAccessor.getCrewWithDetailById(crewId);
         List<AnnounceResult> announces = announceCacheService.getDefaultAnnounces(crewId);
         List<CrewRankedMember> topMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
         SquadLinkableGroup<SquadResult> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
@@ -50,10 +48,10 @@ public class CrewMainService {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewPolicy.ensureManageable(me);
 
-        CrewStatisticResult result = crewStatisticQueryDslRepository.getStatisticById(crewId);
+        CrewStatistic statistic = crewAccessor.getStatisticById(crewId);
         boolean canModify = CrewPolicy.canModify(me);
         boolean canDelete = CrewPolicy.canDelete(me);
 
-        return CrewManageResponse.from(canModify, canDelete, result);
+        return CrewManageResponse.from(canModify, canDelete, statistic);
     }
 }

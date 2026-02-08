@@ -9,8 +9,9 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
-import revi1337.onsquad.crew.domain.result.CrewResult;
-import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
+import revi1337.onsquad.crew.domain.model.CrewDetail;
+import revi1337.onsquad.crew.domain.model.CrewStatistic;
+import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 
 @Repository
 @RequiredArgsConstructor
@@ -50,18 +51,23 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
-    public Optional<CrewResult> fetchCrewWithDetailById(Long id) {
+    public Optional<CrewDetail> fetchCrewWithDetailById(Long id) {
         return crewQueryDslRepository.fetchCrewWithDetailById(id);
     }
 
     @Override
-    public Page<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable) {
+    public Page<CrewDetail> fetchCrewsWithDetailByName(String name, Pageable pageable) {
         return crewQueryDslRepository.fetchCrewsWithDetailByName(name, pageable);
     }
 
     @Override
-    public List<CrewWithOwnerStateResult> fetchCrewsWithStateByIdIn(List<Long> ids, Long currentMemberId) {
+    public List<CrewWithOwnerState> fetchCrewsWithStateByIdIn(List<Long> ids, Long currentMemberId) {
         return crewQueryDslRepository.fetchCrewsWithStateByIdIn(ids, currentMemberId);
+    }
+
+    @Override
+    public CrewStatistic getStatisticById(Long crewId) {
+        return crewQueryDslRepository.getStatisticById(crewId);
     }
 
     @Override

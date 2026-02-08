@@ -1,7 +1,7 @@
 package revi1337.onsquad.crew.application.dto.response;
 
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew.domain.result.SimpleCrewResult;
+import revi1337.onsquad.crew.domain.model.SimpleCrew;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 public record SimpleCrewResponse(
@@ -24,14 +24,14 @@ public record SimpleCrewResponse(
         );
     }
 
-    public static SimpleCrewResponse from(SimpleCrewResult simpleCrewResult) {
+    public static SimpleCrewResponse from(SimpleCrew simpleCrew) {
         return new SimpleCrewResponse(
-                simpleCrewResult.id(),
-                simpleCrewResult.name(),
-                simpleCrewResult.introduce() != null ? simpleCrewResult.introduce() : "",
-                simpleCrewResult.kakaoLink() != null ? simpleCrewResult.kakaoLink() : "",
-                simpleCrewResult.imageUrl() != null ? simpleCrewResult.imageUrl() : "",
-                SimpleMemberResponse.from(simpleCrewResult.owner())
+                simpleCrew.id(),
+                simpleCrew.name(),
+                simpleCrew.introduce() != null ? simpleCrew.introduce() : "",
+                simpleCrew.kakaoLink() != null ? simpleCrew.kakaoLink() : "",
+                simpleCrew.imageUrl() != null ? simpleCrew.imageUrl() : "",
+                SimpleMemberResponse.from(simpleCrew.owner())
         );
     }
 }

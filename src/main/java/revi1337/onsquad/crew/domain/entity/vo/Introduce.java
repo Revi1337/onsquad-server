@@ -5,6 +5,7 @@ import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_INTRODUCE_LENGTH
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,16 +29,9 @@ public class Introduce {
         this.value = value;
     }
 
-    public Introduce updateIntroduce(String introduce) {
-        return new Introduce(introduce);
-    }
-
     private void validate(String value) {
-        if (value == null) {
-            throw new NullPointerException("크루 소개는 null 일 수 없습니다.");
-        }
-
-        if (value.length() > MAX_LENGTH || value.isEmpty()) {
+        Objects.requireNonNull(value, "크루 소개는 null 일 수 없습니다.");
+        if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
             throw new CrewDomainException.InvalidIntroduceLength(INVALID_INTRODUCE_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
     }

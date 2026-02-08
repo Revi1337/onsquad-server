@@ -1,5 +1,6 @@
 package revi1337.onsquad.crew.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,6 +10,7 @@ import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.domain.CrewPolicy;
 import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.model.CrewCreateSpec;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
@@ -28,11 +30,12 @@ public class CrewCommandService {
     private final CrewContextHandler crewContextHandler;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Long newCrew(Long memberId, CrewCreateDto dto, String newImageUrl) {
-        Member member = memberAccessor.getById(memberId);
+    public Long newCrew(Long memberId, CrewCreateDto dto, String imageUrl) {
+        Member owner = memberAccessor.getById(memberId);
         crewAccessor.validateCrewNameIsDuplicate(dto.name());
-        Crew crew = crewRepository.save(Crew.create(member, dto.name(), dto.introduce(), dto.detail(), dto.kakaoLink(), newImageUrl));
-        crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
+        CrewCreateSpec spec = dto.toSpec(owner, imageUrl);
+        Crew crew = crewRepository.save(Crew.create(spec, LocalDateTime.now()));
+        crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(spec.getHashtags()));
         return crew.getId();
     }
 
@@ -44,13 +47,13 @@ public class CrewCommandService {
         crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(dto.hashtags()));
     }
 
-    public void updateImage(Long memberId, Long crewId, String newImageUrl) {
+    public void updateImage(Long memberId, Long crewId, String imageUrl) {
         Crew crew = crewAccessor.getById(crewId);
         CrewPolicy.ensureImageModifiable(crew, memberId);
         if (crew.hasImage()) {
             eventPublisher.publishEvent(new FileDeleteEvent(crew.getImageUrl()));
         }
-        crew.updateImage(newImageUrl);
+        crew.updateImage(imageUrl);
     }
 
     public void deleteImage(Long memberId, Long crewId) {

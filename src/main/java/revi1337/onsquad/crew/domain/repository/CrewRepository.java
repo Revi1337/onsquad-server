@@ -6,8 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
-import revi1337.onsquad.crew.domain.result.CrewResult;
-import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
+import revi1337.onsquad.crew.domain.model.CrewDetail;
+import revi1337.onsquad.crew.domain.model.CrewStatistic;
+import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 
 public interface CrewRepository {
 
@@ -23,13 +24,15 @@ public interface CrewRepository {
 
     Optional<Crew> findByIdForUpdate(Long id);
 
-    Optional<CrewResult> fetchCrewWithDetailById(Long id);
+    Optional<CrewDetail> fetchCrewWithDetailById(Long id);
 
     List<Crew> findAllByMemberId(Long memberId);
 
-    Page<CrewResult> fetchCrewsWithDetailByName(String name, Pageable pageable);
+    Page<CrewDetail> fetchCrewsWithDetailByName(String name, Pageable pageable);
 
-    List<CrewWithOwnerStateResult> fetchCrewsWithStateByIdIn(List<Long> ids, Long currentMemberId);
+    List<CrewWithOwnerState> fetchCrewsWithStateByIdIn(List<Long> ids, Long currentMemberId);
+
+    CrewStatistic getStatisticById(Long crewId);
 
     int deleteByIdIn(List<Long> ids);
 

@@ -7,9 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.crew.domain.model.CrewDetail;
+import revi1337.onsquad.crew.domain.model.CrewStatistic;
+import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
-import revi1337.onsquad.crew.domain.result.CrewResult;
-import revi1337.onsquad.crew.domain.result.CrewWithOwnerStateResult;
 import revi1337.onsquad.crew.error.CrewBusinessException;
 import revi1337.onsquad.crew.error.CrewErrorCode;
 
@@ -33,21 +34,25 @@ public class CrewAccessor {
         return crewRepository.getReferenceById(crewId);
     }
 
-    public CrewResult getCrewWithDetailById(Long crewId) {
+    public CrewDetail getCrewWithDetailById(Long crewId) {
         return crewRepository.fetchCrewWithDetailById(crewId)
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
     }
 
-    public CrewResult fetchCrewWithDetailById(Long crewId) {
+    public CrewStatistic getStatisticById(Long crewId) {
+        return crewRepository.getStatisticById(crewId);
+    }
+
+    public CrewDetail fetchCrewWithDetailById(Long crewId) {
         return crewRepository.fetchCrewWithDetailById(crewId)
                 .orElseThrow(() -> new CrewBusinessException.NotFound(CrewErrorCode.NOT_FOUND));
     }
 
-    public Page<CrewResult> fetchCrewsWithDetailByName(String crewName, Pageable pageable) {
+    public Page<CrewDetail> fetchCrewsWithDetailByName(String crewName, Pageable pageable) {
         return crewRepository.fetchCrewsWithDetailByName(crewName, pageable);
     }
 
-    public List<CrewWithOwnerStateResult> fetchCrewWithStateByIdsIn(List<Long> crewIds, Long currentMemberId) {
+    public List<CrewWithOwnerState> fetchCrewWithStateByIdsIn(List<Long> crewIds, Long currentMemberId) {
         return crewRepository.fetchCrewsWithStateByIdIn(crewIds, currentMemberId);
     }
 

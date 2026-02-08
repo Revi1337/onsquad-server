@@ -9,7 +9,7 @@ import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
 
 @Configuration
-class CrewRankedMemberInitializerSelector {
+public class CrewRankedMemberInitializerSelector {
 
     @Bean
     @Profile({"local", "default"})

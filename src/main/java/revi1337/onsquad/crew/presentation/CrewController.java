@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.common.dto.DuplicateResponse;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew.application.CrewCommandServiceFacade;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewWithParticipantStateResponse;
-import revi1337.onsquad.crew.application.dto.response.DuplicateCrewNameResponse;
 import revi1337.onsquad.crew.presentation.request.CrewCreateRequest;
 import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
 
@@ -41,11 +41,11 @@ public class CrewController {
     private final CrewQueryService crewQueryService;
 
     @GetMapping("/check")
-    public ResponseEntity<RestResponse<DuplicateCrewNameResponse>> checkNameDuplicate(
+    public ResponseEntity<RestResponse<DuplicateResponse>> checkNameDuplicate(
             @RequestParam String name,
             @Authenticate CurrentMember ignored
     ) {
-        DuplicateCrewNameResponse response = crewQueryService.checkNameDuplicate(name);
+        DuplicateResponse response = crewQueryService.checkNameDuplicate(name);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

@@ -17,7 +17,7 @@ public record CrewMemberResponse(
                 isMe,
                 canKick,
                 canDelegateOwner,
-                participant.getRequestAt(),
+                participant.getParticipateAt(),
                 SimpleMemberResponse.from(participant.getMember())
         );
     }

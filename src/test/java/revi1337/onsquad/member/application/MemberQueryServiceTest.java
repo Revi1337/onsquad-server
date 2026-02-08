@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.member.application.dto.response.DuplicateResponse;
+import revi1337.onsquad.common.dto.DuplicateResponse;
 import revi1337.onsquad.member.application.dto.response.MemberResponse;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;

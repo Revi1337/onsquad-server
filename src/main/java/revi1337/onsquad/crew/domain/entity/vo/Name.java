@@ -5,6 +5,7 @@ import static revi1337.onsquad.crew.error.CrewErrorCode.INVALID_NAME_LENGTH;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,16 +29,9 @@ public class Name {
         this.value = value;
     }
 
-    public Name updateName(String crewName) {
-        return new Name(crewName);
-    }
-
     private void validate(String value) {
-        if (value == null) {
-            throw new NullPointerException("크루명은 null 일 수 없습니다.");
-        }
-
-        if (value.length() > MAX_LENGTH || value.isEmpty()) {
+        Objects.requireNonNull(value, "크루명은 null 일 수 없습니다.");
+        if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
             throw new CrewDomainException.InvalidNameLength(INVALID_NAME_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
     }
