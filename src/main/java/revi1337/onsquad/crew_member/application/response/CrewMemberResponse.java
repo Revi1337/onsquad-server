@@ -5,18 +5,14 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 public record CrewMemberResponse(
-        boolean isMe,
-        boolean canKick,
-        boolean canDelegateOwner,
+        CrewMemberStates states,
         LocalDateTime participantAt,
         SimpleMemberResponse member
 ) {
 
     public static CrewMemberResponse from(boolean isMe, boolean canKick, boolean canDelegateOwner, CrewMember participant) {
         return new CrewMemberResponse(
-                isMe,
-                canKick,
-                canDelegateOwner,
+                new CrewMemberStates(isMe, canKick, canDelegateOwner),
                 participant.getParticipateAt(),
                 SimpleMemberResponse.from(participant.getMember())
         );

@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.squad_request.domain.SquadRequests;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestDetail;
+import revi1337.onsquad.squad_request.domain.model.SquadRequests;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
-import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
 import revi1337.onsquad.squad_request.error.SquadRequestBusinessException;
 import revi1337.onsquad.squad_request.error.SquadRequestErrorCode;
 
@@ -26,7 +26,7 @@ public class SquadRequestAccessor {
         return new SquadRequests(squadRequestRepository.fetchMyRequests(memberId));
     }
 
-    public Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
+    public Page<SquadRequestDetail> fetchAllBySquadId(Long squadId, Pageable pageable) {
         return squadRequestRepository.fetchAllBySquadId(squadId, pageable);
     }
 

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
-import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestDetail;
 
 @Repository
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class SquadRequestRepositoryImpl implements SquadRequestRepository {
     }
 
     @Override
-    public Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
+    public Page<SquadRequestDetail> fetchAllBySquadId(Long squadId, Pageable pageable) {
         return squadRequestQueryDslRepository.fetchAllBySquadId(squadId, pageable);
     }
 

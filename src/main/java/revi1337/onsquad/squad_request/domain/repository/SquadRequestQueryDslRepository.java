@@ -5,6 +5,7 @@ import static revi1337.onsquad.member.domain.entity.QMember.member;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
 import static revi1337.onsquad.squad_request.domain.entity.QSquadRequest.squadRequest;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -13,10 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
+import revi1337.onsquad.member.domain.model.SimpleMember;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
-import revi1337.onsquad.squad_request.domain.result.QSquadRequestResult;
-import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestDetail;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,12 +24,12 @@ public class SquadRequestQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable) {
-        List<SquadRequestResult> results = jpaQueryFactory
-                .select(new QSquadRequestResult(
+    public Page<SquadRequestDetail> fetchAllBySquadId(Long squadId, Pageable pageable) {
+        List<SquadRequestDetail> results = jpaQueryFactory
+                .select(Projections.constructor(SquadRequestDetail.class,
                         squadRequest.id,
                         squadRequest.requestAt,
-                        new QSimpleMemberResult(
+                        Projections.constructor(SimpleMember.class,
                                 member.id,
                                 member.nickname,
                                 member.introduce,

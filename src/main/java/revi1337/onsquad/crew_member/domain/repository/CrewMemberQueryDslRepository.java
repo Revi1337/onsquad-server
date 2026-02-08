@@ -19,9 +19,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.model.SimpleCrew;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
-import revi1337.onsquad.crew_member.domain.result.QMyParticipantCrewResult;
-import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
+import revi1337.onsquad.crew_member.domain.model.MyParticipantCrew;
+import revi1337.onsquad.member.domain.model.SimpleMember;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,14 +46,14 @@ public class CrewMemberQueryDslRepository {
         return PageableExecutionUtils.getPage(participants, pageable, countQuery::fetchOne);
     }
 
-    public List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId) {
+    public List<MyParticipantCrew> fetchParticipantCrews(Long memberId) {
         ComparableExpression<Boolean> isCrewOwner = new CaseBuilder()
                 .when(member.id.eq(memberId))
                 .then(TRUE)
                 .otherwise(FALSE);
 
         return jpaQueryFactory
-                .select(new QMyParticipantCrewResult(
+                .select(Projections.constructor(MyParticipantCrew.class,
                         isCrewOwner,
                         Projections.constructor(SimpleCrew.class,
                                 crew.id,
@@ -62,7 +61,7 @@ public class CrewMemberQueryDslRepository {
                                 crew.introduce.value,
                                 crew.kakaoLink,
                                 crew.imageUrl,
-                                new QSimpleMemberResult(
+                                Projections.constructor(SimpleMember.class,
                                         member.id,
                                         member.nickname,
                                         member.introduce,

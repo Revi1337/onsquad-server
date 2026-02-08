@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
-import revi1337.onsquad.crew_member.domain.CrewActivity;
+import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage.Embed;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage.Embed.Footer;

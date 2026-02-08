@@ -14,6 +14,8 @@ public interface CrewMemberJpaRepository extends JpaRepository<CrewMember, Long>
     @Query("select cm from CrewMember cm where cm.crew.id = :crewId and cm.member.id = :memberId")
     Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
+    List<CrewMember> findAllByCrewIdAndMemberIdIn(Long crewId, List<Long> writerIds);
+
     @Modifying
     @Query("delete CrewMember cm where cm.member.id = :memberId")
     int deleteByMemberId(Long memberId);
@@ -21,5 +23,4 @@ public interface CrewMemberJpaRepository extends JpaRepository<CrewMember, Long>
     @Modifying
     @Query("delete CrewMember cm where cm.crew.id in :crewIds")
     int deleteByCrewIdIn(List<Long> crewIds);
-
 }

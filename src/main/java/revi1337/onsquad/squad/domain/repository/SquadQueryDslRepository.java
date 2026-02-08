@@ -7,6 +7,7 @@ import static revi1337.onsquad.member.domain.entity.QMember.member;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
 import static revi1337.onsquad.squad_category.domain.entity.QSquadCategory.squadCategory;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,13 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
+import revi1337.onsquad.member.domain.model.SimpleMember;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
-import revi1337.onsquad.squad.domain.result.QSquadResult;
-import revi1337.onsquad.squad.domain.result.QSquadWithLeaderStateResult;
-import revi1337.onsquad.squad.domain.result.SquadResult;
-import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
+import revi1337.onsquad.squad.domain.model.SquadDetail;
+import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 
 @Repository
 @RequiredArgsConstructor
@@ -41,9 +40,9 @@ public class SquadQueryDslRepository {
         );
     }
 
-    public List<SquadResult> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
+    public List<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
         return jpaQueryFactory
-                .select(new QSquadResult(
+                .select(Projections.constructor(SquadDetail.class,
                         squad.id,
                         squad.title,
                         squad.content,
@@ -52,7 +51,7 @@ public class SquadQueryDslRepository {
                         squad.address,
                         squad.kakaoLink,
                         squad.discordLink,
-                        new QSimpleMemberResult(
+                        Projections.constructor(SimpleMember.class,
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -68,19 +67,19 @@ public class SquadQueryDslRepository {
                 .fetch();
     }
 
-    public List<SquadWithLeaderStateResult> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
+    public List<SquadWithLeaderState> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
         return jpaQueryFactory
-                .select(new QSquadWithLeaderStateResult(
+                .select(Projections.constructor(SquadWithLeaderState.class,
                         new CaseBuilder()
                                 .when(member.id.eq(memberId))
                                 .then(TRUE)
                                 .otherwise(FALSE),
-                        new QSimpleSquadResult(
+                        Projections.constructor(SimpleSquad.class,
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
                                 squad.remain,
-                                new QSimpleMemberResult(
+                                Projections.constructor(SimpleMember.class,
                                         member.id,
                                         member.nickname,
                                         member.introduce,

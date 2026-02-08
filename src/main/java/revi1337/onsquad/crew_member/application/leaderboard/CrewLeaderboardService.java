@@ -7,7 +7,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew_member.domain.CrewActivity;
+import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 import revi1337.onsquad.crew_member.infrastructure.discord.ApplyScoreFailNotificationProvider;
 
 @Slf4j

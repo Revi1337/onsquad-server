@@ -9,7 +9,7 @@ import revi1337.onsquad.crew.domain.entity.vo.Detail;
 import revi1337.onsquad.crew.domain.entity.vo.Introduce;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
-import revi1337.onsquad.member.domain.result.SimpleMemberResult;
+import revi1337.onsquad.member.domain.model.SimpleMember;
 
 @Getter
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class CrewDetail {
     private String kakaoLink;
     private Collection<HashtagType> hashtagTypes;
     private Long memberCnt;
-    private SimpleMemberResult crewOwner;
+    private SimpleMember crewOwner;
 
     public CrewDetail(
             Long id,
@@ -33,7 +33,7 @@ public class CrewDetail {
             String kakaoLink,
             Collection<HashtagType> hashtagTypes,
             Long memberCnt,
-            SimpleMemberResult crewOwner
+            SimpleMember crewOwner
     ) {
         this(id, name, introduce, null, imageUrl, kakaoLink, hashtagTypes, memberCnt, crewOwner);
     }
@@ -45,7 +45,7 @@ public class CrewDetail {
             String imageUrl,
             String kakaoLink,
             Long memberCnt,
-            SimpleMemberResult crewOwner
+            SimpleMember crewOwner
     ) {
         this(id, name, introduce, null, imageUrl, kakaoLink, new ArrayList<>(), memberCnt, crewOwner);
     }

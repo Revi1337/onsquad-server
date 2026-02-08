@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
-import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
+import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class CrewRankedMemberJdbcRepository {
      * @deprecated
      */
     @Deprecated
-    public List<CrewRankedMemberResult> aggregateRankedMembersByActivityOccurrence(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
+    public List<CrewRankedMemberDetail> aggregateRankedMembersByActivityOccurrence(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
@@ -107,7 +107,7 @@ public class CrewRankedMemberJdbcRepository {
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankedMemberMapper());
     }
 
-    public List<CrewRankedMemberResult> aggregateRankedMembersGivenActivityWeight(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
+    public List<CrewRankedMemberDetail> aggregateRankedMembersGivenActivityWeight(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
@@ -168,8 +168,8 @@ public class CrewRankedMemberJdbcRepository {
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankedMemberMapper());
     }
 
-    private RowMapper<CrewRankedMemberResult> crewRankedMemberMapper() {
-        return (rs, rowNum) -> new CrewRankedMemberResult(
+    private RowMapper<CrewRankedMemberDetail> crewRankedMemberMapper() {
+        return (rs, rowNum) -> new CrewRankedMemberDetail(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
                 rs.getLong("score"),

@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
+import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
-import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class LocalCrewRankedMemberInitializer {
         crewRankedMemberRepository.deleteAllInBatch();
         crewRankedMemberRepository.insertBatch(
                 crewRankedMemberRepository.fetchAggregatedRankedMembers(from, to, crewRankedMemberProperties.rankLimit()).stream()
-                        .map(CrewRankedMemberResult::toEntity)
+                        .map(CrewRankedMemberDetail::toEntity)
                         .toList()
         );
     }

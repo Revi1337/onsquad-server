@@ -36,24 +36,24 @@ public class CrewQueryService {
     }
 
     public CrewWithParticipantStateResponse findCrewById(@Nullable Long memberId, Long crewId) {
-        CrewDetail result = crewAccessor.fetchCrewWithDetailById(crewId);
+        CrewDetail crew = crewAccessor.fetchCrewWithDetailById(crewId);
         if (memberId == null) {
-            return CrewWithParticipantStateResponse.from(null, result);
+            return CrewWithParticipantStateResponse.from(null, crew);
         }
         boolean alreadyParticipant = crewMemberAccessor.checkAlreadyParticipant(memberId, crewId);
 
-        return CrewWithParticipantStateResponse.from(alreadyParticipant, result);
+        return CrewWithParticipantStateResponse.from(alreadyParticipant, crew);
     }
 
     public PageResponse<CrewResponse> fetchCrewsByName(String crewName, Pageable pageable) {
         Page<CrewDetail> pageResults = crewAccessor.fetchCrewsWithDetailByName(crewName, pageable);
-        CrewDetails results = new CrewDetails(pageResults.getContent());
-        if (results.isNotEmpty()) {
-            CrewHashtags hashtags = crewHashtagAccessor.fetchHashtagsByCrewIdIn(results.getIds());
-            results.linkHashtags(hashtags);
+        CrewDetails crews = new CrewDetails(pageResults.getContent());
+        if (crews.isNotEmpty()) {
+            CrewHashtags hashtags = crewHashtagAccessor.fetchHashtagsByCrewIdIn(crews.getIds());
+            crews.linkHashtags(hashtags);
         }
 
-        List<CrewResponse> response = results.map(CrewResponse::from);
+        List<CrewResponse> response = crews.map(CrewResponse::from);
         return PageResponse.from(new PageImpl<>(response, pageResults.getPageable(), pageResults.getTotalElements()));
     }
 }

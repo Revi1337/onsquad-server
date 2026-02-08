@@ -7,7 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
+import revi1337.onsquad.crew_member.domain.model.CrewMembers;
+import revi1337.onsquad.crew_member.domain.model.MyParticipantCrew;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,12 +28,17 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
+    public CrewMembers findAllByCrewIdAndMemberIdIn(Long crewId, List<Long> writerIds) {
+        return new CrewMembers(crewMemberJpaRepository.findAllByCrewIdAndMemberIdIn(crewId, writerIds));
+    }
+
+    @Override
     public Page<CrewMember> fetchParticipantsByCrewId(Long crewId, Pageable pageable) {
         return crewMemberQueryDslRepository.fetchParticipantsByCrewId(crewId, pageable);
     }
 
     @Override
-    public List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId) {
+    public List<MyParticipantCrew> fetchParticipantCrews(Long memberId) {
         return crewMemberQueryDslRepository.fetchParticipantCrews(memberId);
     }
 

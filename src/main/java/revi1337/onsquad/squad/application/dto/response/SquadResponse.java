@@ -6,7 +6,7 @@ import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.result.SquadResult;
+import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,21 +24,21 @@ public record SquadResponse(
         SimpleMemberResponse leader
 ) {
 
-    public static SquadResponse from(SquadResult squadResult) {
+    public static SquadResponse from(SquadDetail squadDetail) {
         return new SquadResponse(
-                squadResult.id(),
-                squadResult.title().getValue(),
-                squadResult.content().getValue(),
-                squadResult.capacity(),
-                squadResult.remain(),
-                squadResult.address().getValue(),
-                squadResult.address().getDetail(),
-                squadResult.kakaoLink(),
-                squadResult.discordLink(),
-                squadResult.categories().stream()
+                squadDetail.id(),
+                squadDetail.title().getValue(),
+                squadDetail.content().getValue(),
+                squadDetail.capacity(),
+                squadDetail.remain(),
+                squadDetail.address().getValue(),
+                squadDetail.address().getDetail(),
+                squadDetail.kakaoLink(),
+                squadDetail.discordLink(),
+                squadDetail.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberResponse.from(squadResult.leader())
+                SimpleMemberResponse.from(squadDetail.leader())
         );
     }
 

@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
-import revi1337.onsquad.squad_category.domain.SquadCategories;
-import revi1337.onsquad.squad_category.domain.result.SquadCategoryResult;
+import revi1337.onsquad.squad_category.domain.model.SimpleSquadCategory;
+import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 
 @Slf4j
 @Service
@@ -41,7 +41,7 @@ public class SquadCategoryCacheService {
         List<String> computedKeys = generateCacheKeys(squadIds);
         List<String> serializedValues = stringRedisTemplate.opsForValue().multiGet(computedKeys);
 
-        List<SquadCategoryResult> totalCategories = new ArrayList<>();
+        List<SimpleSquadCategory> totalCategories = new ArrayList<>();
         List<Long> missSquadIds = new ArrayList<>();
         classifyCacheResults(squadIds, missSquadIds, serializedValues, totalCategories);
 
@@ -71,7 +71,7 @@ public class SquadCategoryCacheService {
                 .toList();
     }
 
-    private void classifyCacheResults(List<Long> squadIds, List<Long> missSquadIds, List<String> serializedValues, List<SquadCategoryResult> totalCategories) {
+    private void classifyCacheResults(List<Long> squadIds, List<Long> missSquadIds, List<String> serializedValues, List<SimpleSquadCategory> totalCategories) {
         for (int i = 0; i < squadIds.size(); i++) {
             String json = (serializedValues != null) ? serializedValues.get(i) : null;
             SquadCategories cached = (json != null) ? deserialize(json) : null;
@@ -83,7 +83,7 @@ public class SquadCategoryCacheService {
         }
     }
 
-    private List<SquadCategoryResult> processCacheMiss(List<Long> missSquadIds) {
+    private List<SimpleSquadCategory> processCacheMiss(List<Long> missSquadIds) {
         SquadCategories missedCategories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(missSquadIds);
         Map<Long, SquadCategories> splitGroup = missedCategories.splitBySquad();
         stringRedisTemplate.executePipelined((RedisCallback<Void>) connection -> {

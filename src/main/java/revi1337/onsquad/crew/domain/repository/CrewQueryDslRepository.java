@@ -31,7 +31,7 @@ import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.crew.domain.model.CrewStatistic;
 import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 import revi1337.onsquad.crew.domain.model.SimpleCrew;
-import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
+import revi1337.onsquad.member.domain.model.SimpleMember;
 
 @Repository
 @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class CrewQueryDslRepository {
                                 crew.kakaoLink,
                                 list(hashtag.hashtagType),
                                 crew.currentSize,
-                                new QSimpleMemberResult(
+                                Projections.constructor(SimpleMember.class,
                                         member.id,
                                         member.nickname,
                                         member.introduce,
@@ -77,7 +77,7 @@ public class CrewQueryDslRepository {
                         crew.imageUrl,
                         crew.kakaoLink,
                         crew.currentSize,
-                        new QSimpleMemberResult(
+                        Projections.constructor(SimpleMember.class,
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -115,7 +115,7 @@ public class CrewQueryDslRepository {
                                 crew.introduce.value,
                                 crew.kakaoLink,
                                 crew.imageUrl,
-                                new QSimpleMemberResult(
+                                Projections.constructor(SimpleMember.class,
                                         member.id,
                                         member.nickname,
                                         member.introduce,

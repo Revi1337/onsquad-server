@@ -12,7 +12,7 @@ import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManag
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardRebuildService;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewRankerBackupManager;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
-import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
+import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
 import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
 
 @Slf4j
@@ -34,7 +34,7 @@ public class CrewLeaderboardRefreshScheduler {
             log.info("[Leaderboard Refresh] Task started.");
             try {
                 rankerBackupManager.backupCurrentTopRankers();
-                List<CrewRankedMemberResult> currentRankedMembers = leaderboardManager.getAllLeaderboards(crewRankedMemberProperties.rankLimit());
+                List<CrewRankedMemberDetail> currentRankedMembers = leaderboardManager.getAllLeaderboards(crewRankedMemberProperties.rankLimit());
                 leaderboardRebuildService.renewTopRankers(currentRankedMembers);
                 leaderboardManager.removeAllLeaderboards();
                 log.info("[Leaderboard Refresh] Task completed successfully.");

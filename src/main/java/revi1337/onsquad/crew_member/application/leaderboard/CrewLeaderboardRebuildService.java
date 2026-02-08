@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
+import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
-import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 
@@ -27,7 +27,7 @@ public class CrewLeaderboardRebuildService {
     public void renewTopRankers(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         try {
             List<CrewRankedMember> rankedMembers = crewRankedMemberRepository.fetchAggregatedRankedMembers(from, to, rankLimit).stream()
-                    .map(CrewRankedMemberResult::toEntity)
+                    .map(CrewRankedMemberDetail::toEntity)
                     .toList();
 
             crewRankedMemberRepository.truncate();
@@ -39,7 +39,7 @@ public class CrewLeaderboardRebuildService {
         }
     }
 
-    public void renewTopRankers(List<CrewRankedMemberResult> rankedMembers) {
+    public void renewTopRankers(List<CrewRankedMemberDetail> rankedMembers) {
         try {
             List<Long> memberIds = collectRankedMemberIds(rankedMembers);
             Map<Long, Member> memberMapping = getMemberLookupTable(memberIds);
@@ -57,13 +57,13 @@ public class CrewLeaderboardRebuildService {
 
     private void attemptRecoveryFromBackup() {
         try {
-            List<CrewRankedMemberResult> backup = crewRankerBackupManager.getBackup();
+            List<CrewRankedMemberDetail> backup = crewRankerBackupManager.getBackup();
             if (backup.isEmpty()) {
                 log.warn("[Recovery] Fallback failed: No backup found in Redis.");
                 return;
             }
             List<Long> memberIds = backup.stream()
-                    .map(CrewRankedMemberResult::memberId)
+                    .map(CrewRankedMemberDetail::memberId)
                     .toList();
 
             Map<Long, Member> memberMapping = getMemberLookupTable(memberIds);
@@ -75,9 +75,9 @@ public class CrewLeaderboardRebuildService {
         }
     }
 
-    private List<Long> collectRankedMemberIds(List<CrewRankedMemberResult> rankedMembers) {
+    private List<Long> collectRankedMemberIds(List<CrewRankedMemberDetail> rankedMembers) {
         return rankedMembers.stream()
-                .map(CrewRankedMemberResult::memberId)
+                .map(CrewRankedMemberDetail::memberId)
                 .toList();
     }
 
@@ -86,9 +86,9 @@ public class CrewLeaderboardRebuildService {
                 .collect(Collectors.toMap(Member::getId, member -> member));
     }
 
-    private List<CrewRankedMember> getNewCrewRankedMembers(List<CrewRankedMemberResult> rankedMembers, Map<Long, Member> memberLookupTable) {
+    private List<CrewRankedMember> getNewCrewRankedMembers(List<CrewRankedMemberDetail> rankedMembers, Map<Long, Member> memberLookupTable) {
         List<CrewRankedMember> newRankedMembers = new ArrayList<>();
-        for (CrewRankedMemberResult rankedResult : rankedMembers) {
+        for (CrewRankedMemberDetail rankedResult : rankedMembers) {
             Member member = memberLookupTable.get(rankedResult.memberId());
             if (member == null) {
                 continue;

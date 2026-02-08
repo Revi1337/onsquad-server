@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew.domain.CrewPolicy;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
-import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
+import revi1337.onsquad.crew_member.application.response.MyParticipantCrewResponse;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 
@@ -36,9 +36,9 @@ public class CrewMemberQueryService {
         return PageResponse.from(participants);
     }
 
-    public List<MyParticipantResponse> fetchMyParticipatingCrews(Long memberId) {
+    public List<MyParticipantCrewResponse> fetchMyParticipatingCrews(Long memberId) {
         return crewMemberAccessor.fetchParticipantCrews(memberId).stream()
-                .map(MyParticipantResponse::from)
+                .map(MyParticipantCrewResponse::from)
                 .toList();
     }
 }

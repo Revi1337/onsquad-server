@@ -17,8 +17,8 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
 import revi1337.onsquad.crew_request.application.CrewRequestQueryService;
+import revi1337.onsquad.crew_request.application.response.CrewRequestResponse;
 import revi1337.onsquad.crew_request.application.response.CrewRequestWithCrewResponse;
-import revi1337.onsquad.crew_request.application.response.CrewRequestWithMemberResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -61,12 +61,12 @@ public class CrewRequestController {
     }
 
     @GetMapping("/crews/{crewId}/requests")
-    public ResponseEntity<RestResponse<List<CrewRequestWithMemberResponse>>> fetchAllRequests(
+    public ResponseEntity<RestResponse<List<CrewRequestResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewRequestWithMemberResponse> response = crewRequestQueryService.fetchAllRequests(currentMember.id(), crewId, pageable);
+        List<CrewRequestResponse> response = crewRequestQueryService.fetchAllRequests(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

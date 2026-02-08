@@ -5,11 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import revi1337.onsquad.announce.domain.entity.Announce;
-import revi1337.onsquad.announce.domain.result.AnnounceReference;
+import revi1337.onsquad.announce.domain.model.AnnounceReference;
 
 public interface AnnounceJpaRepository extends JpaRepository<Announce, Long> {
 
-    @Query("select new revi1337.onsquad.announce.domain.result.AnnounceReference(a.crew.id, a.id) " +
+    @Query("select new revi1337.onsquad.announce.domain.model.AnnounceReference(a.crew.id, a.id) " +
             "from Announce a where a.member.id = :memberId")
     List<AnnounceReference> findAnnounceReferencesByMemberId(Long memberId);
 

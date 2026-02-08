@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -32,10 +33,11 @@ public class Announce extends BaseEntity {
     @Embedded
     private Title title;
 
+    @Lob
     @Column(nullable = false)
     private String content;
 
-    @Column(name = "pinned", nullable = false)
+    @Column(name = "pinned")
     private boolean pinned = false;
 
     @Column(name = "pinned_at")

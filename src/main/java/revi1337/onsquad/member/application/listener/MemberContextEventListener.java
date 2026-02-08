@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import revi1337.onsquad.announce.application.AnnounceCacheService;
-import revi1337.onsquad.announce.domain.result.AnnounceReference;
+import revi1337.onsquad.announce.domain.model.AnnounceReference;
 import revi1337.onsquad.history.domain.repository.HistoryRepository;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.domain.event.MemberContextDisposed;

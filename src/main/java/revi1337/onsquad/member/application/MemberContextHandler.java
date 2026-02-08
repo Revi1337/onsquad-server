@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.announce.domain.result.AnnounceReference;
+import revi1337.onsquad.announce.domain.model.AnnounceReference;
 import revi1337.onsquad.crew.application.CrewContextHandler;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.member.domain.entity.Member;

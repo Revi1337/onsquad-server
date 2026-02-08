@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.result.SquadResult;
-import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
+import revi1337.onsquad.squad.domain.model.SquadDetail;
+import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 
 @Repository
 @RequiredArgsConstructor
@@ -53,12 +53,12 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public List<SquadResult> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
+    public List<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
         return squadQueryDslRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, categoryType, pageable);
     }
 
     @Override
-    public List<SquadWithLeaderStateResult> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
+    public List<SquadWithLeaderState> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
         return squadQueryDslRepository.fetchManageList(memberId, crewId, pageable);
     }
 

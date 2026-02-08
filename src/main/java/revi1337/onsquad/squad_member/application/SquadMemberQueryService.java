@@ -11,16 +11,16 @@ import revi1337.onsquad.crew.application.CrewAccessor;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
-import revi1337.onsquad.squad.domain.SquadLinkableGroup;
 import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
-import revi1337.onsquad.squad_category.domain.SquadCategories;
+import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.response.MyParticipantResponse;
 import revi1337.onsquad.squad_member.application.response.SquadMemberResponse;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
-import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
+import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
@@ -57,15 +57,15 @@ public class SquadMemberQueryService {
     }
 
     public List<MyParticipantResponse> fetchMyParticipatingSquads(Long memberId) {
-        List<MyParticipantSquadResult> squads = squadMemberAccessor.fetchParticipantSquads(memberId);
-        SquadLinkableGroup<MyParticipantSquadResult> squadGroup = new SquadLinkableGroup<>(squads);
+        List<MyParticipantSquad> squads = squadMemberAccessor.fetchParticipantSquads(memberId);
+        SquadLinkableGroup<MyParticipantSquad> squadGroup = new SquadLinkableGroup<>(squads);
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 
-        Map<Long, List<MyParticipantSquadResult>> groupedSquads = squadGroup.values().stream().collect(Collectors.groupingBy(MyParticipantSquadResult::crewId));
-        List<Long> crewIds = squads.stream().map(MyParticipantSquadResult::crewId).toList();
+        Map<Long, List<MyParticipantSquad>> groupedSquads = squadGroup.values().stream().collect(Collectors.groupingBy(MyParticipantSquad::crewId));
+        List<Long> crewIds = squads.stream().map(MyParticipantSquad::crewId).toList();
 
         return crewAccessor.fetchCrewWithStateByIdsIn(crewIds, memberId).stream()
                 .map(crewResult -> MyParticipantResponse.from(crewResult, groupedSquads.get(crewResult.crew().id())))

@@ -4,14 +4,14 @@ import java.util.List;
 import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
-import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
+import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
 
 public record MyParticipantResponse(
         boolean isOwner,
         CrewWithSquadsResponse crew
 ) {
 
-    public static MyParticipantResponse from(CrewWithOwnerState crewResult, List<MyParticipantSquadResult> squadResults) {
+    public static MyParticipantResponse from(CrewWithOwnerState crewResult, List<MyParticipantSquad> squadResults) {
         return new MyParticipantResponse(
                 crewResult.isOwner(),
                 CrewWithSquadsResponse.from(crewResult, squadResults)
@@ -26,7 +26,7 @@ public record MyParticipantResponse(
             List<MySquadParticipantResponse> squads
     ) {
 
-        public static CrewWithSquadsResponse from(CrewWithOwnerState crewResult, List<MyParticipantSquadResult> squadResults) {
+        public static CrewWithSquadsResponse from(CrewWithOwnerState crewResult, List<MyParticipantSquad> squadResults) {
             return new CrewWithSquadsResponse(
                     crewResult.crew().id(),
                     crewResult.crew().name(),
@@ -44,7 +44,7 @@ public record MyParticipantResponse(
             SimpleSquadResponse squad
     ) {
 
-        public static MySquadParticipantResponse from(MyParticipantSquadResult result) {
+        public static MySquadParticipantResponse from(MyParticipantSquad result) {
             return new MySquadParticipantResponse(result.isLeader(), SimpleSquadResponse.from(result.squad()));
         }
     }

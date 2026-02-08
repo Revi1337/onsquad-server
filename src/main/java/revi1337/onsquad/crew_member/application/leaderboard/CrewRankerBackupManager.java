@@ -17,8 +17,8 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
-import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 
@@ -35,8 +35,8 @@ public class CrewRankerBackupManager {
     private final CrewRankedMemberRepository crewRankedMemberRepository;
 
     public void backupCurrentTopRankers() {
-        List<CrewRankedMemberResult> previousRankers = crewRankedMemberRepository.findAll().stream()
-                .map(CrewRankedMemberResult::from)
+        List<CrewRankedMemberDetail> previousRankers = crewRankedMemberRepository.findAll().stream()
+                .map(CrewRankedMemberDetail::from)
                 .toList();
 
         if (previousRankers.isEmpty()) {
@@ -48,7 +48,7 @@ public class CrewRankerBackupManager {
         log.info("[Backup Start] Archiving {} previous rankers to Redis.", previousRankers.size());
     }
 
-    public List<CrewRankedMemberResult> getBackup() {
+    public List<CrewRankedMemberDetail> getBackup() {
         List<String> backupKeys = RedisScanUtils.scanKeys(stringRedisTemplate, CrewLeaderboardKeyMapper.getPreviousLeaderboardPattern());
         if (backupKeys.isEmpty()) {
             return Collections.emptyList();
@@ -75,9 +75,9 @@ public class CrewRankerBackupManager {
         RedisCacheEvictor.unlinkKeys(stringRedisTemplate, backupKeys);
     }
 
-    private void saveBackup(List<CrewRankedMemberResult> previousRankedMembers) {
-        Map<Long, List<CrewRankedMemberResult>> groupedMembers = previousRankedMembers.stream()
-                .collect(Collectors.groupingBy(CrewRankedMemberResult::crewId));
+    private void saveBackup(List<CrewRankedMemberDetail> previousRankedMembers) {
+        Map<Long, List<CrewRankedMemberDetail>> groupedMembers = previousRankedMembers.stream()
+                .collect(Collectors.groupingBy(CrewRankedMemberDetail::crewId));
 
         stringRedisTemplate.executePipelined((RedisCallback<Void>) connection -> {
             groupedMembers.forEach((key, results) -> {
@@ -95,7 +95,7 @@ public class CrewRankerBackupManager {
         });
     }
 
-    private List<CrewRankedMemberResult> deserializeResults(List<Object> rawResults) {
+    private List<CrewRankedMemberDetail> deserializeResults(List<Object> rawResults) {
         return rawResults.stream()
                 .flatMap(obj -> ((List<?>) obj).stream())
                 .filter(Objects::nonNull)
@@ -105,7 +105,7 @@ public class CrewRankerBackupManager {
                 .toList();
     }
 
-    private List<CrewRankedMemberResult> parseJson(Object obj) {
+    private List<CrewRankedMemberDetail> parseJson(Object obj) {
         try {
             return defaultObjectMapper.readValue((String) obj, new TypeReference<>() {
             });

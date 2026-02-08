@@ -12,13 +12,13 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
 import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
-import revi1337.onsquad.squad.domain.SquadLinkableGroup;
 import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.result.SquadResult;
-import revi1337.onsquad.squad.domain.result.SquadWithLeaderStateResult;
+import revi1337.onsquad.squad.domain.model.SquadDetail;
+import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
+import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
-import revi1337.onsquad.squad_category.domain.SquadCategories;
+import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
@@ -59,7 +59,7 @@ public class SquadQueryService {
 
     public List<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
         crewMemberAccessor.validateMemberInCrew(memberId, crewId);
-        SquadLinkableGroup<SquadResult> squadGroup = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable);
+        SquadLinkableGroup<SquadDetail> squadGroup = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable);
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
@@ -73,7 +73,7 @@ public class SquadQueryService {
     public List<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         SquadPolicy.ensureManageable(me);
-        SquadLinkableGroup<SquadWithLeaderStateResult> squadGroup = squadAccessor.fetchManageList(memberId, crewId, pageable);
+        SquadLinkableGroup<SquadWithLeaderState> squadGroup = squadAccessor.fetchManageList(memberId, crewId, pageable);
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);

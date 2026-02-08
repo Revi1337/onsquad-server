@@ -18,7 +18,7 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
 import revi1337.onsquad.crew_member.application.CrewMemberQueryService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
-import revi1337.onsquad.crew_member.application.response.MyParticipantResponse;
+import revi1337.onsquad.crew_member.application.response.MyParticipantCrewResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -72,10 +72,10 @@ public class CrewMemberController {
     }
 
     @GetMapping("/members/me/crew-participants")
-    public ResponseEntity<RestResponse<List<MyParticipantResponse>>> fetchMyParticipatingCrews(
+    public ResponseEntity<RestResponse<List<MyParticipantCrewResponse>>> fetchMyParticipatingCrews(
             @Authenticate CurrentMember currentMember
     ) {
-        List<MyParticipantResponse> response = crewMemberQueryService.fetchMyParticipatingCrews(currentMember.id());
+        List<MyParticipantCrewResponse> response = crewMemberQueryService.fetchMyParticipatingCrews(currentMember.id());
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

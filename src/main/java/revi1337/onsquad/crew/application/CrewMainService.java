@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.AnnounceCacheService;
-import revi1337.onsquad.announce.domain.result.AnnounceResult;
+import revi1337.onsquad.announce.domain.model.AnnounceDetail;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
@@ -18,8 +18,8 @@ import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberCach
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
-import revi1337.onsquad.squad.domain.SquadLinkableGroup;
-import revi1337.onsquad.squad.domain.result.SquadResult;
+import revi1337.onsquad.squad.domain.model.SquadDetail;
+import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +33,14 @@ public class CrewMainService {
 
     public CrewMainResponse fetchMain(Long memberId, Long crewId, Pageable pageable) {
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        CrewDetail result = crewAccessor.getCrewWithDetailById(crewId);
-        List<AnnounceResult> announces = announceCacheService.getDefaultAnnounces(crewId);
-        List<CrewRankedMember> topMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
-        SquadLinkableGroup<SquadResult> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
+        CrewDetail crew = crewAccessor.getCrewWithDetailById(crewId);
+        List<AnnounceDetail> announces = announceCacheService.getDefaultAnnounces(crewId);
+        List<CrewRankedMember> rankedMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
+        SquadLinkableGroup<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
         boolean canManage = CrewPolicy.canManage(crewMember);
 
-        return CrewMainResponse.from(canManage, result, announces, topMembers, squads.values());
+        return CrewMainResponse.from(canManage, crew, announces, rankedMembers, squads.values());
     }
 
     @Transactional(readOnly = true)

@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
-import revi1337.onsquad.squad_request.domain.result.SquadRequestResult;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestDetail;
 
 public interface SquadRequestRepository {
 
@@ -17,7 +17,7 @@ public interface SquadRequestRepository {
 
     Optional<SquadRequest> findBySquadIdAndMemberId(Long squadId, Long memberId);
 
-    Page<SquadRequestResult> fetchAllBySquadId(Long squadId, Pageable pageable);
+    Page<SquadRequestDetail> fetchAllBySquadId(Long squadId, Pageable pageable);
 
     List<SquadRequest> fetchMyRequests(Long memberId);
 

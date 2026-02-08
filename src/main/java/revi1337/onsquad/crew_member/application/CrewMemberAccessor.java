@@ -6,8 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.model.CrewMembers;
+import revi1337.onsquad.crew_member.domain.model.MyParticipantCrew;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
-import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
 import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
 import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
 
@@ -22,11 +23,15 @@ public class CrewMemberAccessor {
                 .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
     }
 
+    public CrewMembers findAllByCrewIdAndMemberIdIn(Long crewId, List<Long> writerIds) {
+        return crewMemberRepository.findAllByCrewIdAndMemberIdIn(crewId, writerIds);
+    }
+
     public Page<CrewMember> fetchParticipantsByCrewId(Long crewId, Pageable pageable) {
         return crewMemberRepository.fetchParticipantsByCrewId(crewId, pageable);
     }
 
-    public List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId) {
+    public List<MyParticipantCrew> fetchParticipantCrews(Long memberId) {
         return crewMemberRepository.fetchParticipantCrews(memberId);
     }
 

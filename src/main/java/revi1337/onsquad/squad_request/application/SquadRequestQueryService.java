@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
-import revi1337.onsquad.squad_category.domain.SquadCategories;
+import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_request.application.response.MySquadRequestResponse;
 import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
 import revi1337.onsquad.squad_request.domain.SquadRequestPolicy;
-import revi1337.onsquad.squad_request.domain.SquadRequests;
+import revi1337.onsquad.squad_request.domain.model.SquadRequests;
 
 @Service
 @Transactional(readOnly = true)

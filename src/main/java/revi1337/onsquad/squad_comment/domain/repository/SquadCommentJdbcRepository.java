@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 import revi1337.onsquad.member.domain.entity.vo.Introduce;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.entity.vo.Nickname;
-import revi1337.onsquad.member.domain.result.SimpleMemberResult;
-import revi1337.onsquad.squad_comment.domain.result.SquadCommentResult;
+import revi1337.onsquad.member.domain.model.SimpleMember;
+import revi1337.onsquad.squad_comment.domain.model.SquadCommentDetail;
 
 @Deprecated
 @Repository
@@ -22,7 +22,7 @@ public class SquadCommentJdbcRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public List<SquadCommentResult> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childrenSize) {
+    public List<SquadCommentDetail> fetchAllChildrenByParentIdIn(Collection<Long> parentIds, int childrenSize) {
         String sql = "SELECT * FROM (" +
                 "    SELECT " +
                 "        squad_comment.parent_id, " +
@@ -52,19 +52,19 @@ public class SquadCommentJdbcRepository {
         return jdbcTemplate.query(sql, sqlParameterSource, crewCommentRowMapper());
     }
 
-    private RowMapper<SquadCommentResult> crewCommentRowMapper() {
+    private RowMapper<SquadCommentDetail> crewCommentRowMapper() {
         return (rs, rowNum) -> {
             String mbtiText = rs.getString("comment_creator_mbti");
             Mbti mbti = mbtiText != null ? Mbti.valueOf(mbtiText) : null;
 
-            return new SquadCommentResult(
+            return new SquadCommentDetail(
                     rs.getLong("parent_id"),
                     rs.getLong("id"),
                     rs.getString("content"),
                     rs.getBoolean("deleted"),
                     rs.getObject("created_at", LocalDateTime.class),
                     rs.getObject("updated_at", LocalDateTime.class),
-                    new SimpleMemberResult(
+                    new SimpleMember(
                             rs.getLong("comment_creator_id"),
                             new Nickname(rs.getString("comment_creator_nickname")),
                             new Introduce(rs.getString("comment_creator_introduce")),

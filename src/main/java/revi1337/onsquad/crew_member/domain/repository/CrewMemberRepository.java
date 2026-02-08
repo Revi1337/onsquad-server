@@ -5,7 +5,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.result.MyParticipantCrewResult;
+import revi1337.onsquad.crew_member.domain.model.CrewMembers;
+import revi1337.onsquad.crew_member.domain.model.MyParticipantCrew;
 
 public interface CrewMemberRepository {
 
@@ -13,9 +14,11 @@ public interface CrewMemberRepository {
 
     boolean existsByMemberIdAndCrewId(Long memberId, Long crewId);
 
+    CrewMembers findAllByCrewIdAndMemberIdIn(Long crewId, List<Long> writerIds);
+
     Page<CrewMember> fetchParticipantsByCrewId(Long crewId, Pageable pageable);
 
-    List<MyParticipantCrewResult> fetchParticipantCrews(Long memberId);
+    List<MyParticipantCrew> fetchParticipantCrews(Long memberId);
 
     void delete(CrewMember me);
 

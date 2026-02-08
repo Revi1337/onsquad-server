@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew.domain.event.ScoreIncreased;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
+import revi1337.onsquad.crew_member.domain.event.ScoreIncreased;
 
 @Component
 @RequiredArgsConstructor

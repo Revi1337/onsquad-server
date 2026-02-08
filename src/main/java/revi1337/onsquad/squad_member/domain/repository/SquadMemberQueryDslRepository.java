@@ -6,16 +6,16 @@ import static revi1337.onsquad.member.domain.entity.QMember.member;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
 import static revi1337.onsquad.squad_member.domain.entity.QSquadMember.squadMember;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
-import revi1337.onsquad.squad.domain.result.QSimpleSquadResult;
+import revi1337.onsquad.member.domain.model.SimpleMember;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
-import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
-import revi1337.onsquad.squad_member.domain.result.QMyParticipantSquadResult;
+import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
 
 @Repository
 @RequiredArgsConstructor
@@ -31,20 +31,20 @@ public class SquadMemberQueryDslRepository {
                 .fetch();
     }
 
-    public List<MyParticipantSquadResult> fetchParticipantSquads(Long memberId) {
+    public List<MyParticipantSquad> fetchParticipantSquads(Long memberId) {
         return jpaQueryFactory
-                .select(new QMyParticipantSquadResult(
+                .select(Projections.constructor(MyParticipantSquad.class,
                         squad.crew.id,
                         new CaseBuilder()
                                 .when(member.id.eq(memberId))
                                 .then(TRUE)
                                 .otherwise(FALSE),
-                        new QSimpleSquadResult(
+                        Projections.constructor(SimpleSquad.class,
                                 squad.id,
                                 squad.title,
                                 squad.capacity,
                                 squad.remain,
-                                new QSimpleMemberResult(
+                                Projections.constructor(SimpleMember.class,
                                         member.id,
                                         member.nickname,
                                         member.introduce,

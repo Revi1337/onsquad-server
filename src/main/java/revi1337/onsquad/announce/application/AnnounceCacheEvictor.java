@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import revi1337.onsquad.announce.domain.result.AnnounceReference;
+import revi1337.onsquad.announce.domain.model.AnnounceReference;
 import revi1337.onsquad.common.constant.CacheConst;
 
 /**

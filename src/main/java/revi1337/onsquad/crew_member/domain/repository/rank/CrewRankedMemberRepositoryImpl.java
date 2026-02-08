@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.config.CrewRankedMemberProperties;
 import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
-import revi1337.onsquad.crew_member.domain.result.CrewRankedMemberResult;
+import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class CrewRankedMemberRepositoryImpl implements CrewRankedMemberRepositor
     }
 
     @Override
-    public List<CrewRankedMemberResult> fetchAggregatedRankedMembers(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
+    public List<CrewRankedMemberDetail> fetchAggregatedRankedMembers(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         return crewRankedMemberJdbcRepository.aggregateRankedMembersGivenActivityWeight(from, to, rankLimit);
     }
 

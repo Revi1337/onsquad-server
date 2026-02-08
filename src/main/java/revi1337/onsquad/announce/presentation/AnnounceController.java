@@ -2,7 +2,6 @@ package revi1337.onsquad.announce.presentation;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +23,9 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
 
-@Slf4j
-@RequiredArgsConstructor
-@RequestMapping("/api/crews")
 @RestController
+@RequestMapping("/api/crews")
+@RequiredArgsConstructor
 public class AnnounceController {
 
     private final AnnounceCommandService announceCommandService;

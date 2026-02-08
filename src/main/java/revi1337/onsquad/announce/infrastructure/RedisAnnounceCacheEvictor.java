@@ -7,7 +7,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.announce.application.AnnounceCacheEvictor;
-import revi1337.onsquad.announce.domain.result.AnnounceReference;
+import revi1337.onsquad.announce.domain.model.AnnounceReference;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.common.constant.Sign;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;

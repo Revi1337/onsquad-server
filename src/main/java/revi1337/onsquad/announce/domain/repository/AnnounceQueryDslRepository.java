@@ -3,14 +3,14 @@ package revi1337.onsquad.announce.domain.repository;
 import static revi1337.onsquad.announce.domain.entity.QAnnounce.announce;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.announce.domain.result.AnnounceResult;
-import revi1337.onsquad.announce.domain.result.QAnnounceResult;
-import revi1337.onsquad.member.domain.result.QSimpleMemberResult;
+import revi1337.onsquad.announce.domain.model.AnnounceDetail;
+import revi1337.onsquad.member.domain.model.SimpleMember;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,16 +18,16 @@ public class AnnounceQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<AnnounceResult> fetchAllByCrewId(Long crewId) {
+    public List<AnnounceDetail> fetchAllByCrewId(Long crewId) {
         return jpaQueryFactory
-                .select(new QAnnounceResult(
+                .select(Projections.constructor(AnnounceDetail.class,
                         announce.id,
                         announce.title,
                         announce.content,
                         announce.createdAt,
                         announce.pinned,
                         announce.pinnedAt,
-                        new QSimpleMemberResult(
+                        Projections.constructor(SimpleMember.class,
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -45,16 +45,16 @@ public class AnnounceQueryDslRepository {
                 .fetch();
     }
 
-    public List<AnnounceResult> fetchAllInDefaultByCrewId(Long crewId, int limit) {
+    public List<AnnounceDetail> fetchAllInDefaultByCrewId(Long crewId, int limit) {
         return jpaQueryFactory
-                .select(new QAnnounceResult(
+                .select(Projections.constructor(AnnounceDetail.class,
                         announce.id,
                         announce.title,
                         announce.content,
                         announce.createdAt,
                         announce.pinned,
                         announce.pinnedAt,
-                        new QSimpleMemberResult(
+                        Projections.constructor(SimpleMember.class,
                                 member.id,
                                 member.nickname,
                                 member.introduce,
@@ -73,16 +73,16 @@ public class AnnounceQueryDslRepository {
                 .fetch();
     }
 
-    public Optional<AnnounceResult> fetchByIdAndCrewId(Long id, Long crewId) {
+    public Optional<AnnounceDetail> fetchByIdAndCrewId(Long id, Long crewId) {
         return Optional.ofNullable(jpaQueryFactory
-                .select(new QAnnounceResult(
+                .select(Projections.constructor(AnnounceDetail.class,
                         announce.id,
                         announce.title,
                         announce.content,
                         announce.createdAt,
                         announce.pinned,
                         announce.pinnedAt,
-                        new QSimpleMemberResult(
+                        Projections.constructor(SimpleMember.class,
                                 member.id,
                                 member.nickname,
                                 member.introduce,

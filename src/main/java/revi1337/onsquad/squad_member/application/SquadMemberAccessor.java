@@ -5,8 +5,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
-import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
 import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
 import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
@@ -25,7 +25,7 @@ public class SquadMemberAccessor {
                 .orElseThrow(() -> new SquadMemberBusinessException.NotParticipant(SquadMemberErrorCode.NOT_PARTICIPANT));
     }
 
-    public List<MyParticipantSquadResult> fetchParticipantSquads(Long memberId) {
+    public List<MyParticipantSquad> fetchParticipantSquads(Long memberId) {
         return squadMemberRepository.fetchParticipantSquads(memberId);
     }
 

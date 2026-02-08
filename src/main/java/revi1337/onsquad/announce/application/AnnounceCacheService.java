@@ -9,9 +9,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import revi1337.onsquad.announce.domain.model.AnnounceDetail;
+import revi1337.onsquad.announce.domain.model.AnnounceReference;
 import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
-import revi1337.onsquad.announce.domain.result.AnnounceReference;
-import revi1337.onsquad.announce.domain.result.AnnounceResult;
 import revi1337.onsquad.announce.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.error.AnnounceErrorCode;
 
@@ -68,24 +68,24 @@ public class AnnounceCacheService {
     }
 
     @Cacheable(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = CACHE_MANAGER_NAME)
-    public AnnounceResult getAnnounce(Long crewId, Long announceId) {
+    public AnnounceDetail getAnnounce(Long crewId, Long announceId) {
         return announceQueryDslRepository.fetchByIdAndCrewId(announceId, crewId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
     }
 
     @Cacheable(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId", cacheManager = CACHE_MANAGER_NAME)
-    public List<AnnounceResult> getDefaultAnnounces(Long crewId) {
+    public List<AnnounceDetail> getDefaultAnnounces(Long crewId) {
         return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 
     @CachePut(cacheNames = CREW_ANNOUNCE, key = "'crew:' + #crewId + ':announce:' + #announceId", cacheManager = CACHE_MANAGER_NAME)
-    public AnnounceResult putAnnounce(Long crewId, Long announceId) {
+    public AnnounceDetail putAnnounce(Long crewId, Long announceId) {
         return announceQueryDslRepository.fetchByIdAndCrewId(announceId, crewId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
     }
 
     @CachePut(cacheNames = CREW_ANNOUNCES, key = "'crew:' + #crewId", cacheManager = CACHE_MANAGER_NAME)
-    public List<AnnounceResult> putDefaultAnnounceList(Long crewId) {
+    public List<AnnounceDetail> putDefaultAnnounceList(Long crewId) {
         return announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
     }
 

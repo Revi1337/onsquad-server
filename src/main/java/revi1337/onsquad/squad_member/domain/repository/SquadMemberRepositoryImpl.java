@@ -5,7 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
-import revi1337.onsquad.squad_member.domain.result.MyParticipantSquadResult;
+import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public List<MyParticipantSquadResult> fetchParticipantSquads(Long memberId) {
+    public List<MyParticipantSquad> fetchParticipantSquads(Long memberId) {
         return squadMemberQueryDslRepository.fetchParticipantSquads(memberId);
     }
 

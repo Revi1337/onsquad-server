@@ -5,7 +5,7 @@ import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.result.SimpleSquadResult;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
 
 public record SimpleSquadResponse(
         Long id,
@@ -16,16 +16,16 @@ public record SimpleSquadResponse(
         SimpleMemberResponse leader
 ) {
 
-    public static SimpleSquadResponse from(SimpleSquadResult simpleSquadResult) {
+    public static SimpleSquadResponse from(SimpleSquad simpleSquad) {
         return new SimpleSquadResponse(
-                simpleSquadResult.id(),
-                simpleSquadResult.title().getValue(),
-                simpleSquadResult.capacity(),
-                simpleSquadResult.capacity(),
-                simpleSquadResult.categories().stream()
+                simpleSquad.id(),
+                simpleSquad.title().getValue(),
+                simpleSquad.capacity(),
+                simpleSquad.capacity(),
+                simpleSquad.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
-                SimpleMemberResponse.from(simpleSquadResult.leader())
+                SimpleMemberResponse.from(simpleSquad.leader())
         );
     }
 
