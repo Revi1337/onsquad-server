@@ -1,15 +1,10 @@
-    {
-        {
-            title
-        }
-    }
-        |===
-        |코드|설명|상태
+.Response Fields
+|===
+|Path|Type|Description
 
-    {{#fields}}
-        |{{#tableCellContent}}`+{{path}}+`{{/tableCellContent}}
-        |{{#tableCellContent}}`+{{description}}+`{{/tableCellContent}}
-        |{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
-
-    {{/fields}}
-        |===
+{{#fields}}
+    |{{#tableCellContent}}`+{{path}}+`{{/tableCellContent}}
+    |{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
+    |{{#tableCellContent}}{{description}}{{/tableCellContent}}
+{{/fields}}
+|===
