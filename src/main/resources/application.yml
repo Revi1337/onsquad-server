@@ -41,10 +41,6 @@ spring:
     redis:
       repositories:
         enabled: false
-      timeout: 25000
-      sentinel:
-        master: mymaster
-        nodes: 127.0.0.1:5001, 127.0.0.1:5002, 127.0.0.1:5003
 
   mail:
     code-seed: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
