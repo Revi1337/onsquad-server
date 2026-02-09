@@ -68,7 +68,7 @@ class HistoryControllerTest extends PresentationLayerTestSupport {
                                 parameterWithName("from").description("조회 시작 날짜 (yyyy-MM-dd)"),
                                 parameterWithName("to").description("조회 종료 날짜 (yyyy-MM-dd)"),
                                 parameterWithName("type").description("활동 유형 (HistoryType Enum)").optional(),
-                                parameterWithName("page").description("페이지 번호 (0부터 시작)").optional(),
+                                parameterWithName("page").description("페이지 번호 (0부터 시작(1과 동일))").optional(),
                                 parameterWithName("size").description("한 페이지당 개수").optional()
                         ),
                         responseBody()

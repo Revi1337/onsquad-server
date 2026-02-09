@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 class CrewLeaderboardKeyMapperTest {
 
     @Test
+    @DisplayName("크루 식별자를 사용하여 현재 시즌의 리더보드 Redis 키를 생성한다")
     void toLeaderboardKey() {
         Long crewId = 1L;
 
@@ -20,6 +21,7 @@ class CrewLeaderboardKeyMapperTest {
     }
 
     @Test
+    @DisplayName("다수의 크루 식별자 리스트를 현재 시즌의 리더보드 키 리스트로 변환한다")
     void toLeaderboardKeys() {
         List<Long> crewIds = List.of(1L, 2L, 3L);
 
@@ -33,6 +35,7 @@ class CrewLeaderboardKeyMapperTest {
     }
 
     @Test
+    @DisplayName("크루 식별자를 사용하여 지난 시즌(지난주)의 리더보드 Redis 키를 생성한다")
     void toPreviousLeaderboardKey() {
         Long crewId = 1L;
 
@@ -42,6 +45,7 @@ class CrewLeaderboardKeyMapperTest {
     }
 
     @Test
+    @DisplayName("다수의 크루 식별자 리스트를 지난 시즌의 리더보드 키 리스트로 변환한다")
     void toPreviousLeaderboardKeys() {
         List<Long> crewIds = List.of(1L, 2L, 3L);
 
@@ -55,6 +59,7 @@ class CrewLeaderboardKeyMapperTest {
     }
 
     @Test
+    @DisplayName("Redis SCAN을 위한 현재 리더보드 키 전체 검색 패턴을 반환한다")
     void getLeaderboardPattern() {
         String leaderboardPattern = CrewLeaderboardKeyMapper.getLeaderboardPattern();
 
@@ -62,6 +67,7 @@ class CrewLeaderboardKeyMapperTest {
     }
 
     @Test
+    @DisplayName("생성된 리더보드 Redis 키 문자열에서 크루 식별자(ID)만 추출한다")
     void parseCrewIdFromKey() {
         String computedLeaderboardKey = "onsquad:crew:1:leaderboard:current";
         String computedPreviousLeaderboardKey = "onsquad:crew:1:last-week";
@@ -76,6 +82,7 @@ class CrewLeaderboardKeyMapperTest {
     }
 
     @Test
+    @DisplayName("멤버 식별자를 Redis SortedSet 내부의 멤버 키 포맷으로 변환한다")
     void toMemberKey() {
         Long memberId = 1L;
 
@@ -85,6 +92,7 @@ class CrewLeaderboardKeyMapperTest {
     }
 
     @Test
+    @DisplayName("Redis에서 조회한 멤버 키 문자열에서 멤버 식별자(ID)만 추출한다")
     void parseMemberIdFromKey() {
         String memberKey = "member:1";
 
