@@ -34,7 +34,7 @@ public class Announce extends BaseEntity {
     private Title title;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10000)
     private String content;
 
     @Column(name = "pinned")
