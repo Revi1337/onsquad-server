@@ -33,7 +33,7 @@ public class CrewMainController {
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
 
-    @GetMapping("/manage/crews/{crewId}")
+    @GetMapping("/crews/{crewId}/manage")
     public ResponseEntity<RestResponse<CrewManageResponse>> fetchManageInfo(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember

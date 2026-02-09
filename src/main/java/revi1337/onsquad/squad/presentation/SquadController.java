@@ -76,7 +76,7 @@ public class SquadController {
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
 
-    @GetMapping("/manage/crews/{crewId}/squads")
+    @GetMapping("/crews/{crewId}/squads/manage")
     public ResponseEntity<RestResponse<List<SquadWithLeaderStateResponse>>> fetchManageList(
             @PathVariable Long crewId,
             @PageableDefault Pageable pageable,
