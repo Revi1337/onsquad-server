@@ -7,10 +7,4 @@
 
 = OnSquad REST API 문서
 
-== 회원가입 및 인증토큰
-
-include::auth.adoc[]
-
-== 크루
-
 include::crew.adoc[]
