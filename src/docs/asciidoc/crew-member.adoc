@@ -1,0 +1,80 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 크루 참여자
+
+==== 크루 참여자 목록
+
+[black]#Request#
+
+include::{snippets}/crew-member/success/finds/http-request.adoc[]
+
+include::{snippets}/crew-member/success/finds/request-headers.adoc[]
+
+include::{snippets}/crew-member/success/finds/path-parameters.adoc[]
+
+include::{snippets}/crew-member/success/finds/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-member/success/finds/http-response.adoc[]
+
+==== 크루 탈퇴
+
+[black]#Request#
+
+include::{snippets}/crew-member/success/leave/http-request.adoc[]
+
+include::{snippets}/crew-member/success/leave/request-headers.adoc[]
+
+include::{snippets}/crew-member/success/leave/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-member/success/leave/http-response.adoc[]
+
+==== 크루 참여자 추방
+
+[black]#Request#
+
+include::{snippets}/crew-member/success/kick/http-request.adoc[]
+
+include::{snippets}/crew-member/success/kick/request-headers.adoc[]
+
+include::{snippets}/crew-member/success/kick/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-member/success/kick/http-response.adoc[]
+
+==== 크루장 위임
+
+[black]#Request#
+
+include::{snippets}/crew-member/success/delegate/http-request.adoc[]
+
+include::{snippets}/crew-member/success/delegate/request-headers.adoc[]
+
+include::{snippets}/crew-member/success/delegate/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-member/success/delegate/http-response.adoc[]
+
+==== 크루 랭커 목록
+
+[black]#Request#
+
+include::{snippets}/crew-member/success/rankers/http-request.adoc[]
+
+include::{snippets}/crew-member/success/rankers/request-headers.adoc[]
+
+include::{snippets}/crew-member/success/rankers/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-member/success/rankers/http-response.adoc[]

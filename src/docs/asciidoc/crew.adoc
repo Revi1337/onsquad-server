@@ -9,6 +9,7 @@
 
 include::hashtag.adoc[]
 include::crew-request.adoc[]
+include::crew-member.adoc[]
 include::announce.adoc[]
 
 === 크루 메인
