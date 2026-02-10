@@ -1,6 +1,5 @@
 package revi1337.onsquad.crew_request.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +24,8 @@ public class CrewRequestAccessor {
         return crewRequestRepository.fetchCrewRequests(crewId, pageable);
     }
 
-    public List<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId) {
-        return crewRequestRepository.fetchAllWithSimpleCrewByMemberId(memberId);
+    public Page<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId, Pageable pageable) {
+        return crewRequestRepository.fetchAllWithSimpleCrewByMemberId(memberId, pageable);
     }
 
     public boolean isRequestAbsent(Long memberId, Long crewId) {

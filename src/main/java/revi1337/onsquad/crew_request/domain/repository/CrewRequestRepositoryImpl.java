@@ -36,8 +36,8 @@ public class CrewRequestRepositoryImpl implements CrewRequestRepository {
     }
 
     @Override
-    public List<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId) {
-        return crewRequestQueryDslRepository.fetchAllWithSimpleCrewByMemberId(memberId);
+    public Page<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId, Pageable pageable) {
+        return crewRequestQueryDslRepository.fetchAllWithSimpleCrewByMemberId(memberId, pageable);
     }
 
     @Override

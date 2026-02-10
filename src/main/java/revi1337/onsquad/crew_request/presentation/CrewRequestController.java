@@ -1,9 +1,8 @@
 package revi1337.onsquad.crew_request.presentation;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +10,11 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
 import revi1337.onsquad.crew_request.application.CrewRequestQueryService;
@@ -61,12 +62,15 @@ public class CrewRequestController {
     }
 
     @GetMapping("/crews/{crewId}/requests")
-    public ResponseEntity<RestResponse<List<CrewRequestResponse>>> fetchAllRequests(
+    public ResponseEntity<RestResponse<PageResponse<CrewRequestResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
-            @PageableDefault Pageable pageable,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewRequestResponse> response = crewRequestQueryService.fetchAllRequests(currentMember.id(), crewId, pageable);
+        PageResponse<CrewRequestResponse> response = crewRequestQueryService.fetchAllRequests(
+                currentMember.id(), crewId, PageRequest.of(page, size, Sort.by("requestAt").descending())
+        );
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
@@ -82,10 +86,14 @@ public class CrewRequestController {
     }
 
     @GetMapping("/members/me/crew-requests")
-    public ResponseEntity<RestResponse<List<CrewRequestWithCrewResponse>>> fetchAllCrewRequests(
+    public ResponseEntity<RestResponse<PageResponse<CrewRequestWithCrewResponse>>> fetchAllCrewRequests(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewRequestWithCrewResponse> response = crewRequestQueryService.fetchAllCrewRequests(currentMember.id());
+        PageResponse<CrewRequestWithCrewResponse> response = crewRequestQueryService.fetchAllCrewRequests(
+                currentMember.id(), PageRequest.of(page, size, Sort.by("requestAt").descending())
+        );
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

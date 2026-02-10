@@ -16,7 +16,7 @@ public interface CrewRequestRepository {
 
     Optional<CrewRequest> findByCrewIdAndMemberId(Long crewId, Long memberId);
 
-    List<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId);
+    Page<CrewRequest> fetchAllWithSimpleCrewByMemberId(Long memberId, Pageable pageable);
 
     Page<CrewRequest> fetchCrewRequests(Long crewId, Pageable pageable);
 

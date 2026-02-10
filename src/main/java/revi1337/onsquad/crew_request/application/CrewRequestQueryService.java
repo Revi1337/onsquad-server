@@ -1,10 +1,11 @@
 package revi1337.onsquad.crew_request.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_request.application.response.CrewRequestResponse;
@@ -19,18 +20,20 @@ public class CrewRequestQueryService {
     private final CrewRequestAccessor crewRequestAccessor;
     private final CrewMemberAccessor crewMemberAccessor;
 
-    public List<CrewRequestResponse> fetchAllRequests(Long memberId, Long crewId, Pageable pageable) {
+    public PageResponse<CrewRequestResponse> fetchAllRequests(Long memberId, Long crewId, Pageable pageable) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewRequestPolicy.ensureReadRequests(me);
 
-        return crewRequestAccessor.fetchCrewRequests(crewId, pageable).stream()
-                .map(CrewRequestResponse::from)
-                .toList();
+        Page<CrewRequestResponse> response = crewRequestAccessor.fetchCrewRequests(crewId, pageable)
+                .map(CrewRequestResponse::from);
+
+        return PageResponse.from(response);
     }
 
-    public List<CrewRequestWithCrewResponse> fetchAllCrewRequests(Long memberId) {
-        return crewRequestAccessor.fetchAllWithSimpleCrewByMemberId(memberId).stream()
-                .map(CrewRequestWithCrewResponse::from)
-                .toList();
+    public PageResponse<CrewRequestWithCrewResponse> fetchAllCrewRequests(Long memberId, Pageable pageable) {
+        Page<CrewRequestWithCrewResponse> response = crewRequestAccessor.fetchAllWithSimpleCrewByMemberId(memberId, pageable)
+                .map(CrewRequestWithCrewResponse::from);
+
+        return PageResponse.from(response);
     }
 }
