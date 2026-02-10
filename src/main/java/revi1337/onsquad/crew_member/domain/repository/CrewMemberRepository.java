@@ -18,7 +18,7 @@ public interface CrewMemberRepository {
 
     Page<CrewMember> fetchParticipantsByCrewId(Long crewId, Pageable pageable);
 
-    List<MyParticipantCrew> fetchParticipantCrews(Long memberId);
+    Page<MyParticipantCrew> fetchParticipantCrews(Long memberId, Pageable pageable);
 
     void delete(CrewMember me);
 

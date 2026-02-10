@@ -20,7 +20,7 @@ public class CrewRankedMemberController {
 
     private final CrewRankedMemberQueryService crewRankedMemberQueryService;
 
-    @GetMapping("/crews/{crewId}/members/rank")
+    @GetMapping("/crews/{crewId}/members/ranker")
     public ResponseEntity<RestResponse<List<CrewRankedMemberResponse>>> findCrewRankedMembers(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember

@@ -6,7 +6,7 @@ import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 public record CrewMemberResponse(
         CrewMemberStates states,
-        LocalDateTime participantAt,
+        LocalDateTime participateAt,
         SimpleMemberResponse member
 ) {
 

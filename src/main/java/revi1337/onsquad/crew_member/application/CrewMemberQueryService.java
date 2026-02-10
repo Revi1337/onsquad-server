@@ -1,6 +1,5 @@
 package revi1337.onsquad.crew_member.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,9 +35,10 @@ public class CrewMemberQueryService {
         return PageResponse.from(participants);
     }
 
-    public List<MyParticipantCrewResponse> fetchMyParticipatingCrews(Long memberId) {
-        return crewMemberAccessor.fetchParticipantCrews(memberId).stream()
-                .map(MyParticipantCrewResponse::from)
-                .toList();
+    public PageResponse<MyParticipantCrewResponse> fetchMyParticipatingCrews(Long memberId, Pageable pageable) {
+        Page<MyParticipantCrewResponse> response = crewMemberAccessor.fetchParticipantCrews(memberId, pageable)
+                .map(MyParticipantCrewResponse::from);
+
+        return PageResponse.from(response);
     }
 }

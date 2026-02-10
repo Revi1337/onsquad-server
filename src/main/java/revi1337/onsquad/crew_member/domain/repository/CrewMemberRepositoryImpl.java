@@ -38,8 +38,8 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     }
 
     @Override
-    public List<MyParticipantCrew> fetchParticipantCrews(Long memberId) {
-        return crewMemberQueryDslRepository.fetchParticipantCrews(memberId);
+    public Page<MyParticipantCrew> fetchParticipantCrews(Long memberId, Pageable pageable) {
+        return crewMemberQueryDslRepository.fetchParticipantCrews(memberId, pageable);
     }
 
     @Override

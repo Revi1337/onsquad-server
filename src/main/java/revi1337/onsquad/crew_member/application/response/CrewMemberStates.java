@@ -1,5 +1,8 @@
 package revi1337.onsquad.crew_member.application.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record CrewMemberStates(
         Boolean isMe,
         Boolean canKick,

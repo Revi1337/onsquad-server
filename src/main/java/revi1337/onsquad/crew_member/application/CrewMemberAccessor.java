@@ -31,8 +31,8 @@ public class CrewMemberAccessor {
         return crewMemberRepository.fetchParticipantsByCrewId(crewId, pageable);
     }
 
-    public List<MyParticipantCrew> fetchParticipantCrews(Long memberId) {
-        return crewMemberRepository.fetchParticipantCrews(memberId);
+    public Page<MyParticipantCrew> fetchParticipantCrews(Long memberId, Pageable pageable) {
+        return crewMemberRepository.fetchParticipantCrews(memberId, pageable);
     }
 
     public boolean checkAlreadyParticipant(Long memberId, Long crewId) {
