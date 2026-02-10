@@ -35,16 +35,118 @@ include::{snippets}/crew/success/main/query-parameters.adoc[]
 
 include::{snippets}/crew/success/main/http-response.adoc[]
 
+=== 크루 이름 중복 검사
+
+[black]#Request#
+
+include::{snippets}/crew/success/name-duplicate/http-request.adoc[]
+
+include::{snippets}/crew/success/name-duplicate/request-headers.adoc[]
+
+include::{snippets}/crew/success/name-duplicate/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/name-duplicate/http-response.adoc[]
+
+=== 크루 상세 조회
+
+[black]#Request#
+
+include::{snippets}/crew/success/find-auth/http-request.adoc[]
+
+include::{snippets}/crew/success/find-auth/request-headers.adoc[]
+
+include::{snippets}/crew/success/find-no-auth/path-parameters.adoc[]
+
+[black]#Response#
+
+Token이 없을 때 (states 가 비어있음)
+
+include::{snippets}/crew/success/find-no-auth/http-response.adoc[]
+
+Token이 있을 때 (states 가 비어있지 않음)
+
+include::{snippets}/crew/success/find-auth/http-response.adoc[]
+
+=== 크루 검색 및 조회
+
+[black]#Request#
+
+include::{snippets}/crew/success/finds/http-request.adoc[]
+
+include::{snippets}/crew/success/finds/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/finds/http-response.adoc[]
+
 === 크루 관리
 
 [black]#Request#
 
 include::{snippets}/crew/success/manage/http-request.adoc[]
 
-include::{snippets}/crew/success/main/request-headers.adoc[]
+include::{snippets}/crew/success/manage/request-headers.adoc[]
 
 include::{snippets}/crew/success/manage/path-parameters.adoc[]
 
 [black]#Response#
 
 include::{snippets}/crew/success/manage/http-response.adoc[]
+
+=== 크루 정보 수정
+
+[black]#Request#
+
+include::{snippets}/crew/success/update/http-request.adoc[]
+
+include::{snippets}/crew/success/update/request-headers.adoc[]
+
+include::{snippets}/crew/success/update/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/update/http-response.adoc[]
+
+=== 크루 이미지 수정
+
+[black]#Request#
+
+include::{snippets}/crew/success/update-image/http-request.adoc[]
+
+include::{snippets}/crew/success/update-image/request-headers.adoc[]
+
+include::{snippets}/crew/success/update-image/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/update-image/http-response.adoc[]
+
+=== 크루 이미지 삭제
+
+[black]#Request#
+
+include::{snippets}/crew/success/delete-image/http-request.adoc[]
+
+include::{snippets}/crew/success/delete-image/request-headers.adoc[]
+
+include::{snippets}/crew/success/delete-image/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/delete-image/http-response.adoc[]
+
+=== 크루 삭제
+
+[black]#Request#
+
+include::{snippets}/crew/success/delete/http-request.adoc[]
+
+include::{snippets}/crew/success/delete/request-headers.adoc[]
+
+include::{snippets}/crew/success/delete/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/delete/http-response.adoc[]
