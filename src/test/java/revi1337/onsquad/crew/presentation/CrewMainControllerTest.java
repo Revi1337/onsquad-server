@@ -55,16 +55,14 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
 
         mockMvc.perform(get("/api/crews/{crewId}/main", crewId)
                         .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                        .param("page", "1")
-                        .param("size", "2")
+                        .param("page", String.valueOf(pageRequest.getPageNumber()))
+                        .param("size", String.valueOf(pageRequest.getPageSize()))
                         .contentType(APPLICATION_JSON))
                 .andDo(document("crew/success/main",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                        pathParameters(
-                                parameterWithName("crewId").description("크루 식별자(ID)")
-                        ),
+                        pathParameters(parameterWithName("crewId").description("크루 식별자(ID)")),
                         queryParameters(
                                 parameterWithName("page").description("페이지 번호 (0부터 시작(1과 동일))").optional(),
                                 parameterWithName("size").description("한 페이지당 개수").optional()
@@ -87,9 +85,7 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                        pathParameters(
-                                parameterWithName("crewId").description("크루 식별자(ID)")
-                        ),
+                        pathParameters(parameterWithName("crewId").description("크루 식별자(ID)")),
                         responseBody()
                 ));
     }
@@ -115,7 +111,7 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         "kakao-link",
                         List.of(HashtagType.ACTIVE.getText(), HashtagType.POSITIVE.getText()),
                         1L,
-                        new SimpleMemberResponse(1L, "test@email.com", "nickname", "introduce", Mbti.ENTJ.name())
+                        new SimpleMemberResponse(1L, null, "nickname", "introduce", Mbti.ENTJ.name())
                 ),
                 List.of(new AnnounceResponse(
                         1L,
@@ -124,7 +120,7 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         baseTime,
                         false,
                         null,
-                        new SimpleMemberResponse(1L, "test@email.com", "nickname", "introduce", Mbti.ENTJ.name())
+                        new SimpleMemberResponse(1L, null, "nickname", "introduce", Mbti.ENTJ.name())
                 )),
                 List.of(new CrewRankedMemberResponse(
                         crewId,
@@ -146,7 +142,7 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         "kakao-link",
                         "discord-link",
                         List.of(CategoryType.GAME.getText()),
-                        new SimpleMemberResponse(1L, "test@email.com", "nickname", "introduce", Mbti.ENTJ.name())
+                        new SimpleMemberResponse(1L, null, "nickname", "introduce", Mbti.ENTJ.name())
                 ))
         );
     }
