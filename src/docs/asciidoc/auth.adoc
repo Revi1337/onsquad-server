@@ -99,7 +99,7 @@ include::{snippets}/auth/success/kakao-login/http-request.adoc[]
 
 include::{snippets}/auth/success/kakao-login/http-response.adoc[]
 
-=== 토큰 재발급
+==== 토큰 재발급
 
 [black]#Request#
 
