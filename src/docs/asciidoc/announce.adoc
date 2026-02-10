@@ -1,0 +1,94 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 크루 공지사항
+
+==== 크루 공지사항 작성
+
+[black]#Request#
+
+include::{snippets}/announce/success/new/http-request.adoc[]
+
+include::{snippets}/announce/success/new/request-headers.adoc[]
+
+include::{snippets}/announce/success/new/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/announce/success/new/http-response.adoc[]
+
+==== 크루 공지사항 상세 정보
+
+[black]#Request#
+
+include::{snippets}/announce/success/find/http-request.adoc[]
+
+include::{snippets}/announce/success/find/request-headers.adoc[]
+
+include::{snippets}/announce/success/find/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/announce/success/find/http-response.adoc[]
+
+==== 크루 공지사항 목록
+
+[black]#Request#
+
+include::{snippets}/announce/success/finds/http-request.adoc[]
+
+include::{snippets}/announce/success/finds/request-headers.adoc[]
+
+include::{snippets}/announce/success/finds/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/announce/success/finds/http-response.adoc[]
+
+==== 크루 공지사항 수정
+
+[black]#Request#
+
+include::{snippets}/announce/success/update/http-request.adoc[]
+
+include::{snippets}/announce/success/update/request-headers.adoc[]
+
+include::{snippets}/announce/success/update/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/announce/success/update/http-response.adoc[]
+
+==== 크루 공지사항 상단 고정
+
+[black]#Request#
+
+include::{snippets}/announce/success/pin/http-request.adoc[]
+
+include::{snippets}/announce/success/pin/request-headers.adoc[]
+
+include::{snippets}/announce/success/pin/path-parameters.adoc[]
+
+include::{snippets}/announce/success/pin/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/announce/success/update/http-response.adoc[]
+
+==== 크루 공지사항 삭제
+
+[black]#Request#
+
+include::{snippets}/announce/success/delete/http-request.adoc[]
+
+include::{snippets}/announce/success/delete/request-headers.adoc[]
+
+include::{snippets}/announce/success/delete/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/announce/success/delete/http-response.adoc[]

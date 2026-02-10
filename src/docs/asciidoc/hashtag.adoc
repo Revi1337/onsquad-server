@@ -1,0 +1,18 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 크루 해시태그
+
+==== 크루 해시태그 전체 조회
+
+[black]#Request#
+
+include::{snippets}/hashtags/success/fetch/http-request.adoc[]
+
+[black]#Response#
+
+include::{snippets}/hashtags/success/fetch/http-response.adoc[]
