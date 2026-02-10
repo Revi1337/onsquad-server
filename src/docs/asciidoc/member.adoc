@@ -1,0 +1,24 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+== 회원 도메인
+
+=== 크루
+
+==== 크루 참가 신청
+
+===== 나의 크루 참가 신청 이력
+
+[black]#Request#
+
+include::{snippets}/crew-request/success/my-requests/http-request.adoc[]
+
+include::{snippets}/crew-request/success/my-requests/request-headers.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-request/success/my-requests/http-response.adoc[]

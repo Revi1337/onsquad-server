@@ -8,3 +8,5 @@
 = OnSquad REST API 문서
 
 include::crew.adoc[]
+
+include::member.adoc[]

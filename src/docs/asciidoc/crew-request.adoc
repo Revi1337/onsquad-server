@@ -1,0 +1,80 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 크루 참가
+
+==== 크루 참가 신청
+
+[black]#Request#
+
+include::{snippets}/crew-request/success/new/http-request.adoc[]
+
+include::{snippets}/crew-request/success/new/request-headers.adoc[]
+
+include::{snippets}/crew-request/success/new/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-request/success/new/http-response.adoc[]
+
+==== 크루 참가 신청 목록
+
+[black]#Request#
+
+include::{snippets}/crew-request/success/finds/http-request.adoc[]
+
+include::{snippets}/crew-request/success/finds/request-headers.adoc[]
+
+include::{snippets}/crew-request/success/finds/path-parameters.adoc[]
+
+include::{snippets}/crew-request/success/finds/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-request/success/finds/http-response.adoc[]
+
+==== 크루 참가 신청 수락
+
+[black]#Request#
+
+include::{snippets}/crew-request/success/accept/http-request.adoc[]
+
+include::{snippets}/crew-request/success/accept/request-headers.adoc[]
+
+include::{snippets}/crew-request/success/accept/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-request/success/accept/http-response.adoc[]
+
+==== 크루 참가 신청 거절
+
+[black]#Request#
+
+include::{snippets}/crew-request/success/reject/http-request.adoc[]
+
+include::{snippets}/crew-request/success/reject/request-headers.adoc[]
+
+include::{snippets}/crew-request/success/reject/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-request/success/reject/http-response.adoc[]
+
+==== 크루 참가 신청 취소
+
+[black]#Request#
+
+include::{snippets}/crew-request/success/cancel/http-request.adoc[]
+
+include::{snippets}/crew-request/success/cancel/request-headers.adoc[]
+
+include::{snippets}/crew-request/success/cancel/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-request/success/cancel/http-response.adoc[]

@@ -8,6 +8,7 @@
 == 크루 도메인
 
 include::hashtag.adoc[]
+include::crew-request.adoc[]
 include::announce.adoc[]
 
 === 크루 메인
