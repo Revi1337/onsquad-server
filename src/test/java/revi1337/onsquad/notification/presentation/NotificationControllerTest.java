@@ -2,6 +2,7 @@ package revi1337.onsquad.notification.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -19,6 +20,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,7 +31,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,26 +66,24 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
         @DisplayName("SSE 연결에 성공한다.")
         void success() throws Exception {
             Long userId = 1L;
-            Long lastEventId = 100L;
             ClaimsParser mockClaimsParser = mock(ClaimsParser.class);
             given(jsonWebTokenEvaluator.verifyAccessToken(ACCESS_TOKEN)).willReturn(mockClaimsParser);
             given(mockClaimsParser.parseIdentity()).willReturn(1L);
             NamedSseEmitter emitter = new NamedSseEmitter(userId.toString(), SseTopic.USER, 60 * 60 * 1000L);
-            given(notificationService.connect(eq(userId), eq(lastEventId))).willReturn(emitter);
+            given(notificationService.connect(eq(userId), nullable(Long.class))).willReturn(emitter);
 
             mockMvc.perform(get("/api/notifications/sse")
                             .param("accessToken", ACCESS_TOKEN)
-                            .header("Last-Event-ID", lastEventId)
                             .accept(TEXT_EVENT_STREAM))
+                    .andExpect(status().isOk())
                     .andDo(document("notifications/success/sse-connect",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("accessToken").description("사용자 JWT 액세스 토큰 (EventSource 헤더 제약으로 인해 파라미터로 전달)")
-                            ),
                             requestHeaders(
+                                    headerWithName("Accept").description("수신 가능한 미디어 타입 (반드시 text/event-stream이어야 함)"),
                                     headerWithName("Last-Event-ID").description("마지막으로 수신한 이벤트 ID (유실된 알림 복구용)").optional()
-                            )
+                            ),
+                            queryParameters(parameterWithName("accessToken").description("사용자 JWT 액세스 토큰 (EventSource 헤더 제약으로 인해 파라미터로 전달)"))
                     ));
         }
     }
@@ -95,22 +95,24 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("사용자 알림 조회에 성공한다.")
         void success() throws Exception {
-            List<NotificationResponse> results = getNotificationResponse();
-            Page<NotificationResponse> page = new PageImpl<>(results, PageRequest.of(0, 4), results.size());
-            PageResponse<NotificationResponse> pageResponse = PageResponse.from(page);
+            PageRequest pageRequest = PageRequest.of(0, 4);
+            LocalDateTime baseTime = LocalDate.of(2026, 1, 4).atStartOfDay();
+            List<NotificationResponse> results = getNotificationResponse(baseTime);
+            PageResponse<NotificationResponse> pageResponse = PageResponse.from(new PageImpl<>(results, pageRequest, results.size()));
             given(queryService.fetchNotifications(any(), any(Pageable.class))).willReturn(pageResponse);
 
-            mockMvc.perform(get("/api/notifications")
+            mockMvc.perform(get("/api/members/me/notifications")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                            .param("page", "1")
-                            .param("size", "4")
+                            .param("page", String.valueOf(pageRequest.getPageNumber()))
+                            .param("size", String.valueOf(pageRequest.getPageSize()))
                             .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("notifications/success/me",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
                             queryParameters(
-                                    parameterWithName("page").description("페이지 번호 (0부터 시작)").optional(),
+                                    parameterWithName("page").description("페이지 번호 (0부터 시작(1과 동일))").optional(),
                                     parameterWithName("size").description("한 페이지당 개수").optional()
                             ),
                             responseBody()
@@ -130,13 +132,12 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(patch("/api/notifications/{notificationId}/read", 1L)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(204))
                     .andDo(document("notifications/success/read",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                            pathParameters(
-                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID")
-                            ),
+                            pathParameters(parameterWithName("notificationId").description("읽음 처리할 알림 ID")),
                             responseBody()
                     ));
         }
@@ -154,6 +155,7 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(patch("/api/notifications/read-all")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(204))
                     .andDo(document("notifications/success/reads",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -163,8 +165,7 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
         }
     }
 
-    private List<NotificationResponse> getNotificationResponse() {
-        LocalDateTime baseTime = LocalDate.of(2026, 1, 4).atStartOfDay();
+    private List<NotificationResponse> getNotificationResponse(LocalDateTime baseTime) {
         NotificationResponse response1 = new NotificationResponse(
                 3L,
                 2L,
@@ -182,7 +183,7 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
                 NotificationTopic.USER,
                 NotificationDetail.CREW_ACCEPT,
                 baseTime.plusDays(5),
-                false,
+                true,
                 objectMapper.createObjectNode()
         );
         NotificationResponse response3 = new NotificationResponse(

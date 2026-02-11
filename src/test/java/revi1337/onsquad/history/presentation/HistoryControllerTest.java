@@ -13,6 +13,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static revi1337.onsquad.common.fixture.HistoryFixture.createCrewAcceptHistory;
 import static revi1337.onsquad.common.fixture.HistoryFixture.createCrewCreateHistory;
 import static revi1337.onsquad.common.fixture.HistoryFixture.createCrewRejectHistory;
@@ -20,12 +21,13 @@ import static revi1337.onsquad.common.fixture.HistoryFixture.createCrewRequestHi
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.history.application.HistoryQueryService;
 import revi1337.onsquad.history.application.response.HistoryResponse;
+import revi1337.onsquad.history.domain.HistoryType;
 
 @WebMvcTest(HistoryController.class)
 class HistoryControllerTest extends PresentationLayerTestSupport {
@@ -40,38 +43,50 @@ class HistoryControllerTest extends PresentationLayerTestSupport {
     @MockBean
     private HistoryQueryService historyQueryService;
 
-    @Test
-    @DisplayName("사용자 히스토리를 문서화한다.")
-    void fetchHistories() throws Exception {
-        LocalDateTime now = LocalDate.of(2026, 1, 4).atStartOfDay();
-        HistoryResponse response1 = HistoryResponse.from(createCrewCreateHistory(4L, 1L, 1L, "crew-name-1", now.plusDays(4)));
-        HistoryResponse response2 = HistoryResponse.from(createCrewRequestHistory(3L, 1L, 1L, "crew-name-1", now.plusDays(3)));
-        HistoryResponse response3 = HistoryResponse.from(createCrewAcceptHistory(2L, 1L, "requester", 1L, "crew-name-1", now.plusDays(2)));
-        HistoryResponse response4 = HistoryResponse.from(createCrewRejectHistory(1L, 1L, "requester", 1L, "crew-name-1", now.plusDays(1)));
-        List<HistoryResponse> results = List.of(response1, response2, response3, response4);
-        Page<HistoryResponse> page = new PageImpl<>(results, PageRequest.of(0, 4), results.size());
-        PageResponse<HistoryResponse> pageResponse = PageResponse.from(page);
-        when(historyQueryService.fetchHistories(any(), any(), any(), any(), any(Pageable.class))).thenReturn(pageResponse);
+    @Nested
+    @DisplayName("사용자 히스토리 조회를 문서화한다.")
+    class fetchHistories {
 
-        mockMvc.perform(get("/api/members/me/histories")
-                        .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
-                        .param("from", "2026-01-01")
-                        .param("to", "2026-01-07")
-                        .param("page", "1")
-                        .param("size", "4")
-                        .contentType(APPLICATION_JSON))
-                .andDo(document("histories/success/me",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                        queryParameters(
-                                parameterWithName("from").description("조회 시작 날짜 (yyyy-MM-dd)"),
-                                parameterWithName("to").description("조회 종료 날짜 (yyyy-MM-dd)"),
-                                parameterWithName("type").description("활동 유형 (HistoryType Enum)").optional(),
-                                parameterWithName("page").description("페이지 번호 (0부터 시작(1과 동일))").optional(),
-                                parameterWithName("size").description("한 페이지당 개수").optional()
-                        ),
-                        responseBody()
-                ));
+        @Test
+        @DisplayName("사용자 히스토리 조회에 성공한다.")
+        void success() throws Exception {
+            PageRequest pageRequest = PageRequest.of(0, 4);
+            LocalDateTime baseTime = LocalDate.of(2026, 1, 4).atStartOfDay();
+            List<HistoryResponse> results = getHistoryResponse(baseTime);
+            PageResponse<HistoryResponse> pageResponse = PageResponse.from(new PageImpl<>(results, pageRequest, results.size()));
+            when(historyQueryService.fetchHistories(any(), any(), any(), any(), any(Pageable.class))).thenReturn(pageResponse);
+
+            mockMvc.perform(get("/api/members/me/histories")
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .param("from", baseTime.toLocalDate().toString())
+                            .param("to", baseTime.plusDays(5).toLocalDate().toString())
+                            .param("page", String.valueOf(pageRequest.getPageNumber()))
+                            .param("size", String.valueOf(pageRequest.getPageSize()))
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andDo(document("histories/success/me",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
+                            queryParameters(
+                                    parameterWithName("from").description("조회 시작 날짜 (yyyy-MM-dd)"),
+                                    parameterWithName("to").description("조회 종료 날짜 (yyyy-MM-dd)"),
+                                    parameterWithName("type")
+                                            .description("활동 유형 (HistoryType): " + Arrays.stream(HistoryType.values()).map(Enum::name).toList()).optional(),
+                                    parameterWithName("page").description("페이지 번호 (0부터 시작(1과 동일))").optional(),
+                                    parameterWithName("size").description("한 페이지당 개수").optional()
+                            ),
+                            responseBody()
+                    ));
+        }
+    }
+
+    private List<HistoryResponse> getHistoryResponse(LocalDateTime baseTime) {
+        return List.of(
+                HistoryResponse.from(createCrewCreateHistory(4L, 1L, 1L, "crew-name-1", baseTime.plusDays(5))),
+                HistoryResponse.from(createCrewRequestHistory(3L, 1L, 1L, "crew-name-1", baseTime.plusDays(3))),
+                HistoryResponse.from(createCrewAcceptHistory(2L, 1L, "requester", 1L, "crew-name-1", baseTime.plusDays(2))),
+                HistoryResponse.from(createCrewRejectHistory(1L, 1L, "requester", 1L, "crew-name-1", baseTime.plusDays(1)))
+        );
     }
 }
