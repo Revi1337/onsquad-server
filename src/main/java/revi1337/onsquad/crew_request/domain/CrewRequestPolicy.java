@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
-import revi1337.onsquad.crew_request.error.CrewRequestBusinessException;
-import revi1337.onsquad.crew_request.error.CrewRequestErrorCode;
+import revi1337.onsquad.crew_request.domain.error.CrewRequestBusinessException;
+import revi1337.onsquad.crew_request.domain.error.CrewRequestErrorCode;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class CrewRequestPolicy {

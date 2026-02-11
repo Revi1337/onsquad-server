@@ -5,7 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.error.MemberDomainException;
+import revi1337.onsquad.member.domain.error.MemberDomainException;
 
 class IntroduceTest {
 

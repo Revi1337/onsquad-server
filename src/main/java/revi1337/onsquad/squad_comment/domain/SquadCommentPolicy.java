@@ -4,8 +4,8 @@ import static lombok.AccessLevel.PRIVATE;
 
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
-import revi1337.onsquad.squad_comment.error.SquadCommentBusinessException;
-import revi1337.onsquad.squad_comment.error.SquadCommentErrorCode;
+import revi1337.onsquad.squad_comment.domain.error.SquadCommentBusinessException;
+import revi1337.onsquad.squad_comment.domain.error.SquadCommentErrorCode;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 

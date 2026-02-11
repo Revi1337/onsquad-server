@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.entity.vo.Name;
+import revi1337.onsquad.crew.domain.error.CrewBusinessException;
+import revi1337.onsquad.crew.domain.error.CrewErrorCode;
 import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.crew.domain.model.CrewStatistic;
 import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
-import revi1337.onsquad.crew.error.CrewBusinessException;
-import revi1337.onsquad.crew.error.CrewErrorCode;
 
 @Component
 @RequiredArgsConstructor

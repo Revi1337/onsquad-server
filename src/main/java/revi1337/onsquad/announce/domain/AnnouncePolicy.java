@@ -4,8 +4,8 @@ import static lombok.AccessLevel.PRIVATE;
 
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.announce.domain.entity.Announce;
-import revi1337.onsquad.announce.error.AnnounceBusinessException;
-import revi1337.onsquad.announce.error.AnnounceErrorCode;
+import revi1337.onsquad.announce.domain.error.AnnounceBusinessException;
+import revi1337.onsquad.announce.domain.error.AnnounceErrorCode;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 

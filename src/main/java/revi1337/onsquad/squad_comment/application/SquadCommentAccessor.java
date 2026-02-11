@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
+import revi1337.onsquad.squad_comment.domain.error.SquadCommentBusinessException;
+import revi1337.onsquad.squad_comment.domain.error.SquadCommentErrorCode;
 import revi1337.onsquad.squad_comment.domain.repository.SquadCommentRepository;
-import revi1337.onsquad.squad_comment.error.SquadCommentBusinessException;
-import revi1337.onsquad.squad_comment.error.SquadCommentErrorCode;
 
 @Component
 @RequiredArgsConstructor

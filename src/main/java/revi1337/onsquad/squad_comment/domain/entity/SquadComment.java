@@ -3,7 +3,7 @@ package revi1337.onsquad.squad_comment.domain.entity;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static revi1337.onsquad.squad_comment.error.SquadCommentErrorCode.INVALID_LENGTH;
+import static revi1337.onsquad.squad_comment.domain.error.SquadCommentErrorCode.INVALID_LENGTH;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad_comment.error.SquadCommentDomainException;
+import revi1337.onsquad.squad_comment.domain.error.SquadCommentDomainException;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)

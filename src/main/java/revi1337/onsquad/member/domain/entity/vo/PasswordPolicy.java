@@ -1,11 +1,11 @@
 package revi1337.onsquad.member.domain.entity.vo;
 
-import static revi1337.onsquad.member.error.MemberErrorCode.INVALID_PASSWORD_FORMAT;
+import static revi1337.onsquad.member.domain.error.MemberErrorCode.INVALID_PASSWORD_FORMAT;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
-import revi1337.onsquad.member.error.MemberDomainException;
+import revi1337.onsquad.member.domain.error.MemberDomainException;
 
 @RequiredArgsConstructor
 public enum PasswordPolicy {

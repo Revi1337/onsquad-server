@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
-import revi1337.onsquad.squad_request.error.SquadRequestBusinessException;
-import revi1337.onsquad.squad_request.error.SquadRequestErrorCode;
+import revi1337.onsquad.squad_request.domain.error.SquadRequestBusinessException;
+import revi1337.onsquad.squad_request.domain.error.SquadRequestErrorCode;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class SquadRequestPolicy {

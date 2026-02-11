@@ -1,7 +1,7 @@
 package revi1337.onsquad.token.application;
 
-import static revi1337.onsquad.token.error.TokenErrorCode.INVALID_TOKEN_SIGNATURE;
-import static revi1337.onsquad.token.error.TokenErrorCode.TOKEN_EXPIRED;
+import static revi1337.onsquad.token.domain.error.TokenErrorCode.INVALID_TOKEN_SIGNATURE;
+import static revi1337.onsquad.token.domain.error.TokenErrorCode.TOKEN_EXPIRED;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.token.config.TokenProperties;
 import revi1337.onsquad.token.config.TokenProperties.AccessTokenAttributes;
 import revi1337.onsquad.token.config.TokenProperties.RefreshTokenAttributes;
-import revi1337.onsquad.token.error.TokenException;
+import revi1337.onsquad.token.domain.error.TokenException;
 
 @Component
 public class JsonWebTokenEvaluator {

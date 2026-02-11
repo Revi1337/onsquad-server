@@ -5,10 +5,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.error.SquadMemberBusinessException;
+import revi1337.onsquad.squad_member.domain.error.SquadMemberErrorCode;
 import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberRepository;
-import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
-import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
 @Component
 @RequiredArgsConstructor

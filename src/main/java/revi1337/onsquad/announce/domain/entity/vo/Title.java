@@ -1,14 +1,14 @@
 package revi1337.onsquad.announce.domain.entity.vo;
 
 import static lombok.AccessLevel.PROTECTED;
-import static revi1337.onsquad.announce.error.AnnounceErrorCode.INVALID_LENGTH;
+import static revi1337.onsquad.announce.domain.error.AnnounceErrorCode.INVALID_LENGTH;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import revi1337.onsquad.announce.error.AnnounceDomainException;
+import revi1337.onsquad.announce.domain.error.AnnounceDomainException;
 
 @Getter
 @EqualsAndHashCode

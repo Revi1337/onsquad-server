@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
+import revi1337.onsquad.crew_request.domain.error.CrewRequestBusinessException;
+import revi1337.onsquad.crew_request.domain.error.CrewRequestErrorCode;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestRepository;
-import revi1337.onsquad.crew_request.error.CrewRequestBusinessException;
-import revi1337.onsquad.crew_request.error.CrewRequestErrorCode;
 
 @Component
 @RequiredArgsConstructor

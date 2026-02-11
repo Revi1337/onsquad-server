@@ -7,8 +7,8 @@ import revi1337.onsquad.crew.domain.CrewPolicy;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.error.SquadBusinessException;
-import revi1337.onsquad.squad.error.SquadErrorCode;
+import revi1337.onsquad.squad.domain.error.SquadBusinessException;
+import revi1337.onsquad.squad.domain.error.SquadErrorCode;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 

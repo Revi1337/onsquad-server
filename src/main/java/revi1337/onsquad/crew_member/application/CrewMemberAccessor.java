@@ -6,11 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
+import revi1337.onsquad.crew_member.domain.error.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.domain.error.CrewMemberErrorCode;
 import revi1337.onsquad.crew_member.domain.model.CrewMembers;
 import revi1337.onsquad.crew_member.domain.model.MyParticipantCrew;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
-import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
-import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
 
 @Component
 @RequiredArgsConstructor

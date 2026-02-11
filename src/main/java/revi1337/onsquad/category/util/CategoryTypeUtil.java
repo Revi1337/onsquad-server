@@ -1,12 +1,12 @@
 package revi1337.onsquad.category.util;
 
-import static revi1337.onsquad.squad.error.SquadErrorCode.INVALID_CATEGORY;
+import static revi1337.onsquad.squad.domain.error.SquadErrorCode.INVALID_CATEGORY;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.squad.error.SquadDomainException;
+import revi1337.onsquad.squad.domain.error.SquadDomainException;
 
 public abstract class CategoryTypeUtil {
 

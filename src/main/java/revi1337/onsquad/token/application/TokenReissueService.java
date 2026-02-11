@@ -1,6 +1,6 @@
 package revi1337.onsquad.token.application;
 
-import static revi1337.onsquad.token.error.TokenErrorCode.NOT_FOUND_REFRESH;
+import static revi1337.onsquad.token.domain.error.TokenErrorCode.NOT_FOUND_REFRESH;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.token.domain.error.TokenException;
 import revi1337.onsquad.token.domain.model.AccessToken;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
 import revi1337.onsquad.token.domain.model.RefreshToken;
-import revi1337.onsquad.token.error.TokenException;
 
 @Slf4j
 @Service

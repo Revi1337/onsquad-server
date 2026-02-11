@@ -20,9 +20,9 @@ import revi1337.onsquad.squad_member.application.response.MyParticipantResponse;
 import revi1337.onsquad.squad_member.application.response.SquadMemberResponse;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
+import revi1337.onsquad.squad_member.domain.error.SquadMemberBusinessException;
+import revi1337.onsquad.squad_member.domain.error.SquadMemberErrorCode;
 import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
-import revi1337.onsquad.squad_member.error.SquadMemberBusinessException;
-import revi1337.onsquad.squad_member.error.SquadMemberErrorCode;
 
 @Service
 @Transactional(readOnly = true)

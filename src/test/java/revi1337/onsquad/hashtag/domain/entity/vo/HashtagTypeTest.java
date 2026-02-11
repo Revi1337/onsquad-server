@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.hashtag.error.HashtagDomainException;
+import revi1337.onsquad.hashtag.domain.error.HashtagDomainException;
 
 class HashtagTypeTest {
 

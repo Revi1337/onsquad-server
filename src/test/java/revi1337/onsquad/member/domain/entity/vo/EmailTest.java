@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import revi1337.onsquad.member.error.MemberDomainException;
+import revi1337.onsquad.member.domain.error.MemberDomainException;
 
 class EmailTest {
 

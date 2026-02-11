@@ -3,8 +3,8 @@ package revi1337.onsquad.auth.verification.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
-import revi1337.onsquad.auth.verification.error.VerificationErrorCode;
-import revi1337.onsquad.auth.verification.error.VerificationException;
+import revi1337.onsquad.auth.verification.domain.error.VerificationErrorCode;
+import revi1337.onsquad.auth.verification.domain.error.VerificationException;
 
 @Component
 @RequiredArgsConstructor

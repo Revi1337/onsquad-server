@@ -5,12 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.error.SquadBusinessException;
+import revi1337.onsquad.squad.domain.error.SquadErrorCode;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
 import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
-import revi1337.onsquad.squad.error.SquadBusinessException;
-import revi1337.onsquad.squad.error.SquadErrorCode;
 
 @Component
 @RequiredArgsConstructor

@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import revi1337.onsquad.hashtag.error.HashtagDomainException;
-import revi1337.onsquad.hashtag.error.HashtagErrorCode;
+import revi1337.onsquad.hashtag.domain.error.HashtagDomainException;
+import revi1337.onsquad.hashtag.domain.error.HashtagErrorCode;
 
 @Getter
 @RequiredArgsConstructor

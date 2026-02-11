@@ -4,8 +4,8 @@ import static lombok.AccessLevel.PRIVATE;
 
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.error.CrewMemberBusinessException;
-import revi1337.onsquad.crew_member.error.CrewMemberErrorCode;
+import revi1337.onsquad.crew_member.domain.error.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.domain.error.CrewMemberErrorCode;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class CrewMemberPolicy {
