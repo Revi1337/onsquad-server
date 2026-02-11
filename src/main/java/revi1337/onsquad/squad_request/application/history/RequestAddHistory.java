@@ -5,7 +5,7 @@ import lombok.Getter;
 import revi1337.onsquad.history.application.History;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
-import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestAddedContext;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestAddedContext;
 
 @Getter
 public class RequestAddHistory implements History {

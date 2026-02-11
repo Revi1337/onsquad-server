@@ -1,14 +1,11 @@
-package revi1337.onsquad.squad_request.application.notification;
+package revi1337.onsquad.crew_request.domain.model;
 
-public class RequestContext {
+public class CrewRequestContext {
 
     public record RequestAddedContext(
             Long crewId,
             String crewName,
-            Long squadId,
-            String squadTitle,
-            Long squadMemberId,
-            String squadMemberNickname,
+            Long crewMemberId,
             Long requestId,
             Long requesterId,
             String requesterNickname
@@ -19,8 +16,6 @@ public class RequestContext {
     public record RequestAcceptedContext(
             Long crewId,
             String crewName,
-            Long squadId,
-            String squadTitle,
             Long accepterId,
             Long requesterId,
             String requesterNickname
@@ -31,8 +26,6 @@ public class RequestContext {
     public record RequestRejectedContext(
             Long crewId,
             String crewName,
-            Long squadId,
-            String squadTitle,
             Long rejecterId,
             Long requesterId,
             String requesterNickname

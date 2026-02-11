@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad_comment.application.notification;
+package revi1337.onsquad.squad_comment.domain.repository;
 
 import static revi1337.onsquad.crew.domain.entity.QCrew.crew;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
@@ -9,16 +9,16 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.domain.entity.QMember;
-import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentAddedContext;
-import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentReplyAddedContext;
+import revi1337.onsquad.squad_comment.domain.model.SquadCommentContext.CommentAddedContext;
+import revi1337.onsquad.squad_comment.domain.model.SquadCommentContext.CommentReplyAddedContext;
 
-@Service
+@Repository
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CommentContextReader {
+public class SquadCommentContextReader {
 
     private final QMember writer = new QMember("writer");
     private final JPAQueryFactory jpaQueryFactory;

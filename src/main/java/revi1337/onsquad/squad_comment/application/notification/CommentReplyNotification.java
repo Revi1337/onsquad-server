@@ -4,7 +4,7 @@ import lombok.Getter;
 import revi1337.onsquad.notification.domain.AbstractNotification;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
-import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentReplyAddedContext;
+import revi1337.onsquad.squad_comment.domain.model.SquadCommentContext.CommentReplyAddedContext;
 
 @Getter
 public class CommentReplyNotification extends AbstractNotification {

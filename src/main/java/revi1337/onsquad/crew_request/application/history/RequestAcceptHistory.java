@@ -2,7 +2,7 @@ package revi1337.onsquad.crew_request.application.history;
 
 import java.time.LocalDateTime;
 import lombok.Getter;
-import revi1337.onsquad.crew_request.application.notification.RequestContext.RequestAcceptedContext;
+import revi1337.onsquad.crew_request.domain.model.CrewRequestContext.RequestAcceptedContext;
 import revi1337.onsquad.history.application.History;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;

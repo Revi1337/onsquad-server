@@ -1,6 +1,6 @@
-package revi1337.onsquad.squad_comment.application.notification;
+package revi1337.onsquad.squad_comment.domain.model;
 
-public class CommentContext {
+public class SquadCommentContext {
 
     public record CommentAddedContext(
             Long crewId,

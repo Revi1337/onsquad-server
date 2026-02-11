@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad_request.application.notification;
+package revi1337.onsquad.squad_request.domain.repository;
 
 import static revi1337.onsquad.crew.domain.entity.QCrew.crew;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
@@ -9,17 +9,17 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.member.domain.entity.QMember;
-import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestAcceptedContext;
-import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestAddedContext;
-import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestRejectedContext;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestAcceptedContext;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestAddedContext;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestRejectedContext;
 
-@Service("squadRequestContextReader")
+@Repository
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class RequestContextReader {
+public class SquadRequestContextReader {
 
     private final QMember requester = new QMember("requester");
     private final JPAQueryFactory jpaQueryFactory;

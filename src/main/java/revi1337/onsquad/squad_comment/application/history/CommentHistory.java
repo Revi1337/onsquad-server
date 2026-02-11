@@ -5,7 +5,7 @@ import lombok.Getter;
 import revi1337.onsquad.history.application.History;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
-import revi1337.onsquad.squad_comment.application.notification.CommentContext.CommentAddedContext;
+import revi1337.onsquad.squad_comment.domain.model.SquadCommentContext.CommentAddedContext;
 
 @Getter
 public class CommentHistory implements History {

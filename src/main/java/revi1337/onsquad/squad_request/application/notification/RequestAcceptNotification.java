@@ -4,7 +4,7 @@ import lombok.Getter;
 import revi1337.onsquad.notification.domain.AbstractNotification;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
-import revi1337.onsquad.squad_request.application.notification.RequestContext.RequestAcceptedContext;
+import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestAcceptedContext;
 
 @Getter
 public class RequestAcceptNotification extends AbstractNotification {

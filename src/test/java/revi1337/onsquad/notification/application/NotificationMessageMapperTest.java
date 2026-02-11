@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.common.config.web.ObjectMapperConfig;
 import revi1337.onsquad.crew_request.application.notification.RequestAcceptNotification;
-import revi1337.onsquad.crew_request.application.notification.RequestContext.RequestAcceptedContext;
+import revi1337.onsquad.crew_request.domain.model.CrewRequestContext.RequestAcceptedContext;
 import revi1337.onsquad.notification.domain.HeartbeatNotification;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;

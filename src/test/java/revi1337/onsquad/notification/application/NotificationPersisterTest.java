@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew_request.application.notification.RequestAcceptNotification;
-import revi1337.onsquad.crew_request.application.notification.RequestContext.RequestAcceptedContext;
+import revi1337.onsquad.crew_request.domain.model.CrewRequestContext.RequestAcceptedContext;
 import revi1337.onsquad.notification.domain.entity.NotificationEntity;
 
 class NotificationPersisterTest extends ApplicationLayerTestSupport {

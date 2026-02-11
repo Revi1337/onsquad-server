@@ -1,7 +1,7 @@
 package revi1337.onsquad.crew_request.application.notification;
 
 import lombok.Getter;
-import revi1337.onsquad.crew_request.application.notification.RequestContext.RequestRejectedContext;
+import revi1337.onsquad.crew_request.domain.model.CrewRequestContext.RequestRejectedContext;
 import revi1337.onsquad.notification.domain.AbstractNotification;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
