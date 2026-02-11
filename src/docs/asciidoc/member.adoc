@@ -7,6 +7,9 @@
 
 == 회원 도메인
 
+include::notification.adoc[]
+include::history.adoc[]
+
 === 크루
 
 ==== 내가 참여중인 크루

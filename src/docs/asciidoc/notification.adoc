@@ -1,0 +1,50 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 회원 알림
+
+==== 회원 알림 SSE 연결
+
+==== 회원 알림 목록
+
+[black]#Request#
+
+include::{snippets}/notifications/success/sse-connect/http-request.adoc[]
+
+include::{snippets}/notifications/success/sse-connect/request-headers.adoc[]
+
+include::{snippets}/notifications/success/sse-connect/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/notifications/success/sse-connect/http-response.adoc[]
+
+==== 회원 알림 읽기
+
+[black]#Request#
+
+include::{snippets}/notifications/success/read/http-request.adoc[]
+
+include::{snippets}/notifications/success/read/request-headers.adoc[]
+
+include::{snippets}/notifications/success/read/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/notifications/success/read/http-response.adoc[]
+
+==== 회원 알림 모두 읽기
+
+[black]#Request#
+
+include::{snippets}/notifications/success/reads/http-request.adoc[]
+
+include::{snippets}/notifications/success/reads/request-headers.adoc[]
+
+[black]#Response#
+
+include::{snippets}/notifications/success/reads/http-response.adoc[]
