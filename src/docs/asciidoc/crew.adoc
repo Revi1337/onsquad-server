@@ -12,6 +12,36 @@ include::crew-request.adoc[]
 include::crew-member.adoc[]
 include::announce.adoc[]
 
+=== 크루 이름 중복 검사
+
+[black]#Request#
+
+include::{snippets}/crew/success/name-duplicate/http-request.adoc[]
+
+include::{snippets}/crew/success/name-duplicate/request-headers.adoc[]
+
+include::{snippets}/crew/success/name-duplicate/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/name-duplicate/http-response.adoc[]
+
+=== 크루 생성
+
+[black]#Request#
+
+include::{snippets}/crew/success/new/http-request.adoc[]
+
+include::{snippets}/crew/success/new/request-headers.adoc[]
+
+include::{snippets}/crew/success/new/request-parts.adoc[]
+
+include::{snippets}/crew/success/new/request-part-request-fields.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew/success/new/http-response.adoc[]
+
 === 크루 메인
 
 [black]#Request#
@@ -27,20 +57,6 @@ include::{snippets}/crew/success/main/query-parameters.adoc[]
 [black]#Response#
 
 include::{snippets}/crew/success/main/http-response.adoc[]
-
-=== 크루 이름 중복 검사
-
-[black]#Request#
-
-include::{snippets}/crew/success/name-duplicate/http-request.adoc[]
-
-include::{snippets}/crew/success/name-duplicate/request-headers.adoc[]
-
-include::{snippets}/crew/success/name-duplicate/query-parameters.adoc[]
-
-[black]#Response#
-
-include::{snippets}/crew/success/name-duplicate/http-response.adoc[]
 
 === 크루 상세 조회
 

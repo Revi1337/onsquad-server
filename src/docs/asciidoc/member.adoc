@@ -9,6 +9,20 @@
 
 === 크루
 
+==== 내가 참여중인 크루
+
+[black]#Request#
+
+include::{snippets}/crew-member/success/my-participates/http-request.adoc[]
+
+include::{snippets}/crew-member/success/my-participates/request-headers.adoc[]
+
+include::{snippets}/crew-member/success/my-participates/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/crew-member/success/my-participates/http-response.adoc[]
+
 ==== 참가 신청
 
 ===== 나의 크루 가입 신청 내역
@@ -23,16 +37,76 @@ include::{snippets}/crew-request/success/my-requests/request-headers.adoc[]
 
 include::{snippets}/crew-request/success/my-requests/http-response.adoc[]
 
-=== 내가 참여중인 크루
+=== 내 프로필
 
 [black]#Request#
 
-include::{snippets}/crew-member/success/my-participates/http-request.adoc[]
+include::{snippets}/member/success/me/http-request.adoc[]
 
-include::{snippets}/crew-member/success/my-participates/request-headers.adoc[]
-
-include::{snippets}/crew-member/success/my-participates/query-parameters.adoc[]
+include::{snippets}/member/success/me/request-headers.adoc[]
 
 [black]#Response#
 
-include::{snippets}/crew-member/success/my-participates/http-response.adoc[]
+include::{snippets}/member/success/me/http-response.adoc[]
+
+=== 프로필 업데이트
+
+[black]#Request#
+
+include::{snippets}/member/success/update/http-request.adoc[]
+
+include::{snippets}/member/success/update/request-headers.adoc[]
+
+[black]#Response#
+
+include::{snippets}/member/success/update/http-response.adoc[]
+
+=== 비밀번호 변경
+
+[black]#Request#
+
+include::{snippets}/member/success/update-password/http-request.adoc[]
+
+include::{snippets}/member/success/update-password/request-headers.adoc[]
+
+[black]#Response#
+
+include::{snippets}/member/success/update-password/http-response.adoc[]
+
+=== 프로필 이미지 변경
+
+[black]#Request#
+
+include::{snippets}/member/success/update-image/http-request.adoc[]
+
+include::{snippets}/member/success/update-image/request-headers.adoc[]
+
+include::{snippets}/member/success/update-image/request-parts.adoc[]
+
+[black]#Response#
+
+include::{snippets}/member/success/update-image/http-response.adoc[]
+
+=== 프로필 이미지 삭제
+
+[black]#Request#
+
+include::{snippets}/member/success/delete-image/http-request.adoc[]
+
+include::{snippets}/member/success/delete-image/request-headers.adoc[]
+
+[black]#Response#
+
+include::{snippets}/member/success/delete-image/http-response.adoc[]
+
+=== 회원 탈퇴
+
+[black]#Request#
+
+include::{snippets}/member/success/delete/http-request.adoc[]
+
+include::{snippets}/member/success/delete/request-headers.adoc[]
+
+[black]#Response#
+
+include::{snippets}/member/success/delete/http-response.adoc[]
