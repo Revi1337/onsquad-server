@@ -46,7 +46,7 @@ public class NotificationController {
         return notificationService.connect(claimsParser.parseIdentity(), lastEventId);
     }
 
-    @GetMapping("/notifications")
+    @GetMapping("/members/me/notifications")
     public ResponseEntity<RestResponse<PageResponse<NotificationResponse>>> fetchNotifications(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
