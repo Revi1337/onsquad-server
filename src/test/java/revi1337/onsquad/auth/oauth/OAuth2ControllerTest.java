@@ -84,7 +84,7 @@ class OAuth2ControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("카카오 OAuth2 로그인을 문서화에 성공한다.")
         void success() throws Exception {
-            String oauth2Platform = "google";
+            String oauth2Platform = "kakao";
             String authorizationCode = "authorization-code";
             String redirectUri = UriComponentsBuilder
                     .fromHttpUrl(onsquadProperties.getFrontendBaseUrl())

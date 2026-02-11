@@ -10,6 +10,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
@@ -23,7 +24,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG_PASSWORD_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON_PASSWORD_VALUE;
@@ -36,8 +36,9 @@ import static revi1337.onsquad.common.fixture.MemberFixture.REVI_MBTI_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI_PASSWORD_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI_PROFILE_IMAGE_LINK;
+import static revi1337.onsquad.common.fixture.MultipartFixture.PNG_BYTES;
+import static revi1337.onsquad.common.fixture.MultipartFixture.pngMuliPart;
 
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -292,27 +293,23 @@ class MemberControllerTest extends PresentationLayerTestSupport {
         @Test
         @DisplayName("사용자 이미지 변경에 성공한다.")
         void success() throws Exception {
-            MockMultipartFile multipart = new MockMultipartFile(
-                    "file",
-                    "dummy.png",
-                    MULTIPART_FORM_DATA_VALUE,
-                    "dummy".getBytes(StandardCharsets.UTF_8)
-            );
+            MockMultipartFile filePart = pngMuliPart("file", "dummy.png", PNG_BYTES);
             doNothing().when(commandServiceFacade).updateImage(any(), any());
 
             mockMvc.perform(multipart("/api/members/me/image")
-                            .file(multipart)
+                            .file(filePart)
                             .with(request -> {
                                 request.setMethod("PATCH");
                                 return request;
                             })
-                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE))
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(MULTIPART_FORM_DATA_VALUE))
                     .andExpect(jsonPath("$.status").value(204))
                     .andDo(document("member/success/update-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(headerWithName(AUTHORIZATION_HEADER_KEY).description("사용자 JWT 인증 정보")),
-                            requestParts(partWithName("file").description("사용자 프로필 이미지")),
+                            requestParts(partWithName("file").description("사용자 이미지 파일 (Content-Type: multipart/form-data)")),
                             responseBody()
                     ));
         }
