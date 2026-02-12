@@ -20,10 +20,10 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
-import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
-import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
@@ -36,13 +36,13 @@ class CrewLeaderboardRebuildServiceTest extends ApplicationLayerWithTestContaine
     private MemberJpaRepository memberRepository;
 
     @SpyBean
-    private CrewRankedMemberRepository crewRankedMemberRepository;
+    private CrewRankerRepository crewRankerRepository;
 
     @Autowired
     private CrewLeaderboardManager leaderboardManager;
 
     @SpyBean
-    private CrewRankerBackupManager crewRankerBackupManager;
+    private CrewLeaderboardBackupManager crewLeaderboardBackupManager;
 
     @Autowired
     private CrewLeaderboardRebuildService leaderboardRebuildService;
@@ -65,23 +65,23 @@ class CrewLeaderboardRebuildServiceTest extends ApplicationLayerWithTestContaine
 
         Long legacyCrewId = 1L;
         LocalDateTime activityTime = LocalDateTime.of(2026, 1, 4, 0, 0, 0);
-        crewRankedMemberRepository.insertBatch(List.of(
-                createCrewRankedMember(legacyCrewId, 1, 2, revi, activityTime),
-                createCrewRankedMember(legacyCrewId, 2, 3, andong, activityTime)
+        crewRankerRepository.insertBatch(List.of(
+                createCrewRanker(legacyCrewId, 1, 2, revi, activityTime),
+                createCrewRanker(legacyCrewId, 2, 3, andong, activityTime)
         ));
 
         Long renewCrewId = 5L;
         Instant renewActivityTime = CompositeScore.BASE_DATE.toInstant();
         leaderboardManager.applyActivity(renewCrewId, revi.getId(), renewActivityTime, CrewActivity.CREW_PARTICIPANT);
         leaderboardManager.applyActivity(renewCrewId, andong.getId(), renewActivityTime, CrewActivity.SQUAD_CREATE);
-        List<CrewRankedMemberDetail> rankedMember = leaderboardManager.getLeaderboard(renewCrewId, 2);
+        List<CrewRankerDetail> rankedMember = leaderboardManager.getLeaderboard(renewCrewId, 2);
 
         // when
         leaderboardRebuildService.renewTopRankers(rankedMember);
 
         // then
         assertSoftly(softly -> {
-            List<CrewRankedMember> renewRankers = crewRankedMemberRepository.findAllByCrewId(renewCrewId);
+            List<CrewRanker> renewRankers = crewRankerRepository.findAllByCrewId(renewCrewId);
             softly.assertThat(renewRankers).hasSize(2);
             softly.assertThat(renewRankers.get(0).getMemberId()).isEqualTo(andong.getId());
             softly.assertThat(renewRankers.get(1).getMemberId()).isEqualTo(revi.getId());
@@ -93,12 +93,12 @@ class CrewLeaderboardRebuildServiceTest extends ApplicationLayerWithTestContaine
     void renewTopRankers2() {
         // given
         Member revi = memberRepository.save(createRevi());
-        crewRankedMemberRepository.insertBatch(List.of(createCrewRankedMember(1L, 1, 10, revi, LocalDateTime.now())));
-        crewRankerBackupManager.backupCurrentTopRankers();
+        crewRankerRepository.insertBatch(List.of(createCrewRanker(1L, 1, 10, revi, LocalDateTime.now())));
+        crewLeaderboardBackupManager.backupCurrentTopRankers();
         doThrow(new RuntimeException())
                 .doCallRealMethod()
-                .when(crewRankedMemberRepository).insertBatch(anyList());
-        List<CrewRankedMemberDetail> newRankedResults = List.of(createCrewRankedMemberResult(1L, 2, 100, revi, LocalDateTime.now()));
+                .when(crewRankerRepository).insertBatch(anyList());
+        List<CrewRankerDetail> newRankedResults = List.of(createCrewRankerDetail(1L, 2, 100, revi, LocalDateTime.now()));
 
         // when
         assertThatThrownBy(() -> leaderboardRebuildService.renewTopRankers(newRankedResults))
@@ -106,16 +106,16 @@ class CrewLeaderboardRebuildServiceTest extends ApplicationLayerWithTestContaine
 
         // then
         assertSoftly(softly -> {
-            List<CrewRankedMember> finalMembers = crewRankedMemberRepository.findAll();
+            List<CrewRanker> finalMembers = crewRankerRepository.findAll();
             softly.assertThat(finalMembers).hasSize(1);
             softly.assertThat(finalMembers.get(0).getScore()).isEqualTo(10);
-            verify(crewRankedMemberRepository, times(3)).insertBatch(anyList());
-            verify(crewRankerBackupManager, times(1)).getBackup();
+            verify(crewRankerRepository, times(3)).insertBatch(anyList());
+            verify(crewLeaderboardBackupManager, times(1)).getBackup();
         });
     }
 
-    public CrewRankedMember createCrewRankedMember(Long crewId, int rank, long score, Member member, LocalDateTime lastActivityTime) {
-        return new CrewRankedMember(
+    public CrewRanker createCrewRanker(Long crewId, int rank, long score, Member member, LocalDateTime lastActivityTime) {
+        return new CrewRanker(
                 crewId,
                 rank,
                 score,
@@ -126,8 +126,8 @@ class CrewLeaderboardRebuildServiceTest extends ApplicationLayerWithTestContaine
         );
     }
 
-    public CrewRankedMemberDetail createCrewRankedMemberResult(Long crewId, int rank, long score, Member member, LocalDateTime lastActivityTime) {
-        return new CrewRankedMemberDetail(
+    public CrewRankerDetail createCrewRankerDetail(Long crewId, int rank, long score, Member member, LocalDateTime lastActivityTime) {
+        return new CrewRankerDetail(
                 crewId,
                 rank,
                 score,

@@ -18,12 +18,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
 import revi1337.onsquad.crew_member.application.leaderboard.CompositeScore;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardBackupManager;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewRankerBackupManager;
-import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
-import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
@@ -33,7 +33,7 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
     private MemberJpaRepository memberRepository;
 
     @Autowired
-    private CrewRankedMemberRepository crewRankedMemberRepository;
+    private CrewRankerRepository crewRankerRepository;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -42,7 +42,7 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
     private CrewLeaderboardManager crewLeaderboardManager;
 
     @Autowired
-    private CrewRankerBackupManager crewRankerBackupManager;
+    private CrewLeaderboardBackupManager crewLeaderboardBackupManager;
 
     @Autowired
     private CrewLeaderboardRefreshScheduler crewLeaderboardRefreshScheduler;
@@ -64,9 +64,9 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
         Member andong = createAndong();
         Member kwangwon = createKwangwon();
         memberRepository.saveAll(List.of(revi, andong, kwangwon));
-        CrewRankedMember previousRankedMember1 = createCrewRankedMember(1L, 2, 1, revi, LocalDateTime.now());
-        CrewRankedMember previousRankedMember2 = createCrewRankedMember(1L, 2, 1, andong, LocalDateTime.now());
-        crewRankedMemberRepository.insertBatch(List.of(previousRankedMember1, previousRankedMember2));
+        CrewRanker previousRankedMember1 = createCrewRanker(1L, 2, 1, revi, LocalDateTime.now());
+        CrewRanker previousRankedMember2 = createCrewRanker(1L, 2, 1, andong, LocalDateTime.now());
+        crewRankerRepository.insertBatch(List.of(previousRankedMember1, previousRankedMember2));
 
         Instant activityTime = CompositeScore.BASE_DATE.toInstant();
         crewLeaderboardManager.applyActivity(1L, revi.getId(), activityTime.plusSeconds(600), CrewActivity.SQUAD_CREATE);
@@ -78,9 +78,9 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
 
         // then
         assertSoftly(softly -> {
-            List<CrewRankedMemberDetail> backupRankedMembers = crewRankerBackupManager.getBackup();
-            List<CrewRankedMember> currentRankedMembers = crewRankedMemberRepository.findAllByCrewId(1L);
-            List<CrewRankedMemberDetail> allRankedMembers = crewLeaderboardManager.getAllLeaderboards(-1);
+            List<CrewRankerDetail> backupRankedMembers = crewLeaderboardBackupManager.getBackup();
+            List<CrewRanker> currentRankedMembers = crewRankerRepository.findAllByCrewId(1L);
+            List<CrewRankerDetail> allRankedMembers = crewLeaderboardManager.getAllLeaderboards(-1);
 
             softly.assertThat(backupRankedMembers).hasSize(2);
             softly.assertThat(backupRankedMembers.get(0).memberId()).isEqualTo(revi.getId());
@@ -95,8 +95,8 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
         });
     }
 
-    public CrewRankedMember createCrewRankedMember(Long crewId, int rank, long score, Member member, LocalDateTime lastActivityTime) {
-        return new CrewRankedMember(
+    public CrewRanker createCrewRanker(Long crewId, int rank, long score, Member member, LocalDateTime lastActivityTime) {
+        return new CrewRanker(
                 crewId,
                 rank,
                 score,

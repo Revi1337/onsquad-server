@@ -4,8 +4,8 @@ import java.util.List;
 import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.domain.model.AnnounceDetail;
 import revi1337.onsquad.crew.domain.model.CrewDetail;
-import revi1337.onsquad.crew_member.application.response.CrewRankedMemberResponse;
-import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
+import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
+import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 
@@ -13,7 +13,7 @@ public record CrewMainResponse(
         CrewStates states,
         CrewResponse crew,
         List<AnnounceResponse> announces,
-        List<CrewRankedMemberResponse> topMembers,
+        List<CrewRankerResponse> topMembers,
         List<SquadResponse> squads
 ) {
 
@@ -21,7 +21,7 @@ public record CrewMainResponse(
             boolean canManage,
             CrewDetail result,
             List<AnnounceDetail> announces,
-            List<CrewRankedMember> topMembers,
+            List<CrewRanker> topMembers,
             List<SquadDetail> squads
     ) {
         return new CrewMainResponse(
@@ -31,7 +31,7 @@ public record CrewMainResponse(
                         .map(AnnounceResponse::from)
                         .toList(),
                 topMembers.stream()
-                        .map(CrewRankedMemberResponse::from)
+                        .map(CrewRankerResponse::from)
                         .toList(),
                 squads.stream()
                         .map(SquadResponse::from)

@@ -24,35 +24,35 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberQueryService;
-import revi1337.onsquad.crew_member.application.response.CrewRankedMemberResponse;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewRankerQueryService;
+import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
 
-@WebMvcTest(CrewRankedMemberController.class)
-class CrewRankedMemberControllerTest extends PresentationLayerTestSupport {
+@WebMvcTest(CrewLeaderboardController.class)
+class CrewLeaderboardControllerTest extends PresentationLayerTestSupport {
 
     @MockBean
-    private CrewRankedMemberQueryService crewRankedMemberQueryService;
+    private CrewRankerQueryService crewRankerQueryService;
 
     @Nested
     @DisplayName("크루 랭커 조회를 문서화한다.")
-    class findCrewRankedMembers {
+    class findCrewRanker {
 
         @Test
         @DisplayName("특정 크루의 상위 랭커 목록 조회에 성공한다.")
         void success() throws Exception {
             Long crewId = 1L;
             LocalDateTime baseTime = LocalDate.of(2026, 1, 5).atStartOfDay();
-            List<CrewRankedMemberResponse> response = getCrewRankedMemberResponses(crewId, baseTime);
-            when(crewRankedMemberQueryService.findRankedMembers(anyLong(), anyLong()))
+            List<CrewRankerResponse> response = getCrewRankerResponses(crewId, baseTime);
+            when(crewRankerQueryService.findCrewRankers(anyLong(), anyLong()))
                     .thenReturn(response);
 
-            mockMvc.perform(get("/api/crews/{crewId}/members/ranker", crewId)
+            mockMvc.perform(get("/api/crews/{crewId}/leaderboard", crewId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
                     .andExpect(jsonPath("$.data").isArray())
-                    .andDo(document("crew-member/success/rankers",
+                    .andDo(document("crew-member/success/leaderboard",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -66,9 +66,9 @@ class CrewRankedMemberControllerTest extends PresentationLayerTestSupport {
         }
     }
 
-    private List<CrewRankedMemberResponse> getCrewRankedMemberResponses(Long crewId, LocalDateTime baseTime) {
+    private List<CrewRankerResponse> getCrewRankerResponses(Long crewId, LocalDateTime baseTime) {
         return List.of(
-                new CrewRankedMemberResponse(
+                new CrewRankerResponse(
                         crewId,
                         100L,
                         "name-100",
@@ -77,7 +77,7 @@ class CrewRankedMemberControllerTest extends PresentationLayerTestSupport {
                         1200,
                         baseTime.plusDays(2)
                 ),
-                new CrewRankedMemberResponse(
+                new CrewRankerResponse(
                         crewId,
                         50L,
                         "name-50",
@@ -86,7 +86,7 @@ class CrewRankedMemberControllerTest extends PresentationLayerTestSupport {
                         622,
                         baseTime.plusDays(1)
                 ),
-                new CrewRankedMemberResponse(
+                new CrewRankerResponse(
                         crewId,
                         70L,
                         "nick-name-70",

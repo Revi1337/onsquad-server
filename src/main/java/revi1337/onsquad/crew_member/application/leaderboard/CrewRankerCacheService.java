@@ -6,17 +6,17 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
-import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 
 @Service
 @RequiredArgsConstructor
-public class CrewRankedMemberCacheService {
+public class CrewRankerCacheService {
 
-    private final CrewRankedMemberRepository crewRankedMemberRepository;
+    private final CrewRankerRepository crewRankerRepository;
 
     @Cacheable(cacheNames = CREW_RANK_MEMBERS, key = "'crew:' + #crewId")
-    public List<CrewRankedMember> findAllByCrewId(Long crewId) {
-        return crewRankedMemberRepository.findAllByCrewId(crewId);
+    public List<CrewRanker> findAllByCrewId(Long crewId) {
+        return crewRankerRepository.findAllByCrewId(crewId);
     }
 }

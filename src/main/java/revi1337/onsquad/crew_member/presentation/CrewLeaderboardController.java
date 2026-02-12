@@ -10,22 +10,22 @@ import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberQueryService;
-import revi1337.onsquad.crew_member.application.response.CrewRankedMemberResponse;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewRankerQueryService;
+import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class CrewRankedMemberController {
+public class CrewLeaderboardController {
 
-    private final CrewRankedMemberQueryService crewRankedMemberQueryService;
+    private final CrewRankerQueryService crewRankerQueryService;
 
-    @GetMapping("/crews/{crewId}/members/ranker")
-    public ResponseEntity<RestResponse<List<CrewRankedMemberResponse>>> findCrewRankedMembers(
+    @GetMapping("/crews/{crewId}/leaderboard")
+    public ResponseEntity<RestResponse<List<CrewRankerResponse>>> getLeaderboard(
             @PathVariable Long crewId,
             @Authenticate CurrentMember currentMember
     ) {
-        List<CrewRankedMemberResponse> response = crewRankedMemberQueryService.findRankedMembers(currentMember.id(), crewId);
+        List<CrewRankerResponse> response = crewRankerQueryService.findCrewRankers(currentMember.id(), crewId);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

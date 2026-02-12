@@ -6,14 +6,14 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import revi1337.onsquad.common.config.system.properties.SchedulingProperty;
 
-@ConfigurationProperties(prefix = "onsquad.api.crew-rank-members")
-public record CrewRankedMemberProperties(
+@ConfigurationProperties(prefix = "onsquad.api.crew-leaderboard")
+public record CrewLeaderboardProperties(
         Duration during,
         Integer rankLimit,
         @NestedConfigurationProperty SchedulingProperty schedule
 ) {
 
-    public CrewRankedMemberProperties(
+    public CrewLeaderboardProperties(
             @DefaultValue("7d") Duration during,
             @DefaultValue("4") Integer rankLimit,
             SchedulingProperty schedule

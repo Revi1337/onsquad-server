@@ -21,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.TestContainerSupport;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
 
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
 @ContextConfiguration(classes = CrewLeaderboardManager.class)
@@ -59,7 +59,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = 1;
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(rankLimit);
@@ -81,7 +81,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = 2;
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(rankLimit);
@@ -105,7 +105,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = 4;
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(memberIds.size());
@@ -131,7 +131,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = -1;
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(memberIds.size());
@@ -150,7 +150,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             Long invalidCrewId = 999L;
             int rankLimit = 3;
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getLeaderboard(invalidCrewId, rankLimit);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(invalidCrewId, rankLimit);
 
             assertThat(leaderboard).isEmpty();
         }
@@ -167,7 +167,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberId1, firstActivity, activity);
             leaderboardManager.applyActivity(crewId, memberId2, secondActivity, activity);
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getAllLeaderboards(3);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getAllLeaderboards(3);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(2);
@@ -191,7 +191,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, 2L, activityTime, activity);
             leaderboardManager.applyActivity(crewId, 1L, activityTime, activity);
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getAllLeaderboards(3);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getAllLeaderboards(3);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(2);
@@ -218,7 +218,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, 2L, activityTime, CrewActivity.SQUAD_COMMENT);
             leaderboardManager.applyActivity(crewId, 3L, activityTime, CrewActivity.CREW_PARTICIPANT);
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, 3);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, 3);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(3);
@@ -243,7 +243,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, 2L, activityTime, CrewActivity.SQUAD_COMMENT);
             leaderboardManager.applyActivity(crewId, 3L, activityTime, CrewActivity.CREW_PARTICIPANT);
 
-            List<CrewRankedMemberDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, 2, 3);
+            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, 2, 3);
 
             assertSoftly(softly -> {
                 softly.assertThat(leaderboard).hasSize(2);

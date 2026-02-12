@@ -8,35 +8,35 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
-import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
+import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
 
 @Repository
 @RequiredArgsConstructor
-public class CrewRankedMemberJdbcRepository {
+public class CrewRankerJdbcRepository {
 
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
-    public void insertBatch(List<CrewRankedMember> crewRankedMembers) {
-        String sql = "INSERT INTO crew_ranked_member(crew_id, member_id, nickname, mbti, last_activity_time, score, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public void insertBatch(List<CrewRanker> crewRankers) {
+        String sql = "INSERT INTO crew_ranker(crew_id, member_id, nickname, mbti, last_activity_time, score, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
         namedJdbcTemplate.getJdbcOperations().batchUpdate(
                 sql,
-                crewRankedMembers,
-                crewRankedMembers.size(),
-                (ps, crewRankedMember) -> {
-                    ps.setLong(1, crewRankedMember.getCrewId());
-                    ps.setLong(2, crewRankedMember.getMemberId());
-                    ps.setString(3, crewRankedMember.getNickname());
-                    ps.setString(4, crewRankedMember.getMbti());
-                    ps.setObject(5, crewRankedMember.getLastActivityTime());
-                    ps.setLong(6, crewRankedMember.getScore());
-                    ps.setInt(7, crewRankedMember.getRank());
+                crewRankers,
+                crewRankers.size(),
+                (ps, crewRanker) -> {
+                    ps.setLong(1, crewRanker.getCrewId());
+                    ps.setLong(2, crewRanker.getMemberId());
+                    ps.setString(3, crewRanker.getNickname());
+                    ps.setString(4, crewRanker.getMbti());
+                    ps.setObject(5, crewRanker.getLastActivityTime());
+                    ps.setLong(6, crewRanker.getScore());
+                    ps.setInt(7, crewRanker.getRank());
                 }
         );
     }
 
     public void truncate() {
-        namedJdbcTemplate.getJdbcOperations().execute("TRUNCATE TABLE crew_ranked_member");
+        namedJdbcTemplate.getJdbcOperations().execute("TRUNCATE TABLE crew_ranker");
     }
 
     /**
@@ -46,7 +46,7 @@ public class CrewRankedMemberJdbcRepository {
      * @deprecated
      */
     @Deprecated
-    public List<CrewRankedMemberDetail> aggregateRankedMembersByActivityOccurrence(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
+    public List<CrewRankerDetail> aggregateRankedMembersByActivityOccurrence(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
@@ -104,10 +104,10 @@ public class CrewRankedMemberJdbcRepository {
                 .addValue("to", to)
                 .addValue("rankLimit", rankLimit);
 
-        return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankedMemberMapper());
+        return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankerMapper());
     }
 
-    public List<CrewRankedMemberDetail> aggregateRankedMembersGivenActivityWeight(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
+    public List<CrewRankerDetail> aggregateRankedMembersGivenActivityWeight(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         String sql = """
                     \n
                     SELECT
@@ -165,11 +165,11 @@ public class CrewRankedMemberJdbcRepository {
                 .addValue("to", to)
                 .addValue("rankLimit", rankLimit);
 
-        return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankedMemberMapper());
+        return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankerMapper());
     }
 
-    private RowMapper<CrewRankedMemberDetail> crewRankedMemberMapper() {
-        return (rs, rowNum) -> new CrewRankedMemberDetail(
+    private RowMapper<CrewRankerDetail> crewRankerMapper() {
+        return (rs, rowNum) -> new CrewRankerDetail(
                 rs.getLong("crew_id"),
                 rs.getInt("ranks"),
                 rs.getLong("score"),

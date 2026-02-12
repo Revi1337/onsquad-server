@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class CrewRankedMember {
+public class CrewRanker {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -41,7 +41,7 @@ public class CrewRankedMember {
     @Column(name = "ranks", nullable = false)
     private int rank;
 
-    public CrewRankedMember(Long crewId, int rank, long score, Long memberId, String nickname, String mbti, LocalDateTime lastActivityTime) {
+    public CrewRanker(Long crewId, int rank, long score, Long memberId, String nickname, String mbti, LocalDateTime lastActivityTime) {
         this.crewId = crewId;
         this.memberId = memberId;
         this.nickname = nickname;
@@ -56,7 +56,7 @@ public class CrewRankedMember {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CrewRankedMember that)) {
+        if (!(o instanceof CrewRanker that)) {
             return false;
         }
         return id != null && Objects.equals(getId(), that.getId());

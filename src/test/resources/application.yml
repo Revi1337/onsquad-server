@@ -156,7 +156,7 @@ onsquad:
           member-directory: dummy3
 
   api:
-    crew-rank-members:
+    crew-leaderboard:
       during: 7d
       rank-limit: 5
       schedule:

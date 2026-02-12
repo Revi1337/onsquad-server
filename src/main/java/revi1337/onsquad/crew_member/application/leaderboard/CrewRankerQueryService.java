@@ -4,19 +4,19 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.application.response.CrewRankedMemberResponse;
+import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
 
 @Service
 @RequiredArgsConstructor
-public class CrewRankedMemberQueryService {
+public class CrewRankerQueryService {
 
     private final CrewMemberAccessor crewMemberAccessor;
-    private final CrewRankedMemberCacheService crewRankedMemberCacheService;
+    private final CrewRankerCacheService crewRankerCacheService;
 
-    public List<CrewRankedMemberResponse> findRankedMembers(Long memberId, Long crewId) {
+    public List<CrewRankerResponse> findCrewRankers(Long memberId, Long crewId) {
         crewMemberAccessor.validateMemberInCrew(memberId, crewId);
-        return crewRankedMemberCacheService.findAllByCrewId(crewId).stream()
-                .map(CrewRankedMemberResponse::from)
+        return crewRankerCacheService.findAllByCrewId(crewId).stream()
+                .map(CrewRankerResponse::from)
                 .toList();
     }
 }

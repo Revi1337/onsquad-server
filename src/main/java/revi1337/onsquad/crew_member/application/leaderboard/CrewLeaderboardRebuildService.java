@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
-import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
-import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankedMemberRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
+import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 
@@ -20,33 +20,33 @@ import revi1337.onsquad.member.domain.repository.MemberRepository;
 public class CrewLeaderboardRebuildService {
 
     private final MemberRepository memberRepository;
-    private final CrewRankedMemberRepository crewRankedMemberRepository;
-    private final CrewRankerBackupManager crewRankerBackupManager;
+    private final CrewRankerRepository crewRankerRepository;
+    private final CrewLeaderboardBackupManager crewLeaderboardBackupManager;
 
     @Deprecated
     public void renewTopRankers(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         try {
-            List<CrewRankedMember> rankedMembers = crewRankedMemberRepository.fetchAggregatedRankedMembers(from, to, rankLimit).stream()
-                    .map(CrewRankedMemberDetail::toEntity)
+            List<CrewRanker> rankedMembers = crewRankerRepository.fetchAggregatedRankedMembers(from, to, rankLimit).stream()
+                    .map(CrewRankerDetail::toEntity)
                     .toList();
 
-            crewRankedMemberRepository.truncate();
-            crewRankedMemberRepository.insertBatch(rankedMembers);
-            log.info("[Successfully Renew CrewRankedMember In DataBase : {} ~ {}]", from, to);
+            crewRankerRepository.truncate();
+            crewRankerRepository.insertBatch(rankedMembers);
+            log.info("[Successfully Renew CrewRanker In DataBase : {} ~ {}]", from, to);
         } catch (Exception exception) {
-            log.error("[Fail to Renew CrewRankedMember In DataBase : {} ~ {}]", from, to, exception);
+            log.error("[Fail to Renew CrewRanker In DataBase : {} ~ {}]", from, to, exception);
             throw exception;
         }
     }
 
-    public void renewTopRankers(List<CrewRankedMemberDetail> rankedMembers) {
+    public void renewTopRankers(List<CrewRankerDetail> rankedMembers) {
         try {
             List<Long> memberIds = collectRankedMemberIds(rankedMembers);
             Map<Long, Member> memberMapping = getMemberLookupTable(memberIds);
-            List<CrewRankedMember> newRankedMembers = getNewCrewRankedMembers(rankedMembers, memberMapping);
+            List<CrewRanker> newRankedMembers = getNewRankers(rankedMembers, memberMapping);
 
-            crewRankedMemberRepository.truncate();
-            crewRankedMemberRepository.insertBatch(newRankedMembers);
+            crewRankerRepository.truncate();
+            crewRankerRepository.insertBatch(newRankedMembers);
             log.info("[Rebuild] Database sync complete. ({} members)", newRankedMembers.size());
         } catch (Exception exception) {
             log.error("[Rebuild] Failed to sync database. Attempting emergency recovery...", exception);
@@ -57,27 +57,27 @@ public class CrewLeaderboardRebuildService {
 
     private void attemptRecoveryFromBackup() {
         try {
-            List<CrewRankedMemberDetail> backup = crewRankerBackupManager.getBackup();
+            List<CrewRankerDetail> backup = crewLeaderboardBackupManager.getBackup();
             if (backup.isEmpty()) {
                 log.warn("[Recovery] Fallback failed: No backup found in Redis.");
                 return;
             }
             List<Long> memberIds = backup.stream()
-                    .map(CrewRankedMemberDetail::memberId)
+                    .map(CrewRankerDetail::memberId)
                     .toList();
 
             Map<Long, Member> memberMapping = getMemberLookupTable(memberIds);
-            List<CrewRankedMember> recoveredMembers = getNewCrewRankedMembers(backup, memberMapping);
-            crewRankedMemberRepository.insertBatch(recoveredMembers);
+            List<CrewRanker> recoveredMembers = getNewRankers(backup, memberMapping);
+            crewRankerRepository.insertBatch(recoveredMembers);
             log.info("[Recovery] Successfully restored {} members from Redis backup.", recoveredMembers.size());
         } catch (Exception recoveryException) {
             log.error("[Recovery] Fatal error during backup restoration!", recoveryException);
         }
     }
 
-    private List<Long> collectRankedMemberIds(List<CrewRankedMemberDetail> rankedMembers) {
+    private List<Long> collectRankedMemberIds(List<CrewRankerDetail> rankedMembers) {
         return rankedMembers.stream()
-                .map(CrewRankedMemberDetail::memberId)
+                .map(CrewRankerDetail::memberId)
                 .toList();
     }
 
@@ -86,9 +86,9 @@ public class CrewLeaderboardRebuildService {
                 .collect(Collectors.toMap(Member::getId, member -> member));
     }
 
-    private List<CrewRankedMember> getNewCrewRankedMembers(List<CrewRankedMemberDetail> rankedMembers, Map<Long, Member> memberLookupTable) {
-        List<CrewRankedMember> newRankedMembers = new ArrayList<>();
-        for (CrewRankedMemberDetail rankedResult : rankedMembers) {
+    private List<CrewRanker> getNewRankers(List<CrewRankerDetail> rankedMembers, Map<Long, Member> memberLookupTable) {
+        List<CrewRanker> newRankedMembers = new ArrayList<>();
+        for (CrewRankerDetail rankedResult : rankedMembers) {
             Member member = memberLookupTable.get(rankedResult.memberId());
             if (member == null) {
                 continue;

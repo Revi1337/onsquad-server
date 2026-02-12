@@ -184,7 +184,7 @@ onsquad:
           member-directory: member-dir
 
   api:
-    crew-rank-members:
+    crew-leaderboard:
       during: 7d
       rank-limit: 5
       schedule:

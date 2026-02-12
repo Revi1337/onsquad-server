@@ -14,9 +14,9 @@ import revi1337.onsquad.crew.domain.CrewPolicy;
 import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.crew.domain.model.CrewStatistic;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewRankedMemberCacheService;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewRankerCacheService;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.entity.CrewRankedMember;
+import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
@@ -27,7 +27,7 @@ public class CrewMainService {
 
     private final CrewAccessor crewAccessor;
     private final CrewMemberAccessor crewMemberAccessor;
-    private final CrewRankedMemberCacheService crewRankedMemberCacheService;
+    private final CrewRankerCacheService crewRankerCacheService;
     private final AnnounceCacheService announceCacheService;
     private final SquadAccessor squadAccessor;
 
@@ -35,7 +35,7 @@ public class CrewMainService {
         CrewMember crewMember = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewDetail crew = crewAccessor.getCrewWithDetailById(crewId);
         List<AnnounceDetail> announces = announceCacheService.getDefaultAnnounces(crewId);
-        List<CrewRankedMember> rankedMembers = crewRankedMemberCacheService.findAllByCrewId(crewId);
+        List<CrewRanker> rankedMembers = crewRankerCacheService.findAllByCrewId(crewId);
         SquadLinkableGroup<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
         boolean canManage = CrewPolicy.canManage(crewMember);

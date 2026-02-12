@@ -15,7 +15,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.model.CrewRankedMemberDetail;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.infrastructure.storage.redis.RedisDataStructureUtils;
 import revi1337.onsquad.infrastructure.storage.redis.RedisDataStructureUtils.ZSetRange;
@@ -45,11 +45,11 @@ public class CrewLeaderboardManager {
         );
     }
 
-    public List<CrewRankedMemberDetail> getLeaderboard(Long crewId, int topNInclusive) {
+    public List<CrewRankerDetail> getLeaderboard(Long crewId, int topNInclusive) {
         return getLeaderboard(crewId, 1, topNInclusive);
     }
 
-    public List<CrewRankedMemberDetail> getLeaderboard(Long crewId, int startRank, int endRank) {
+    public List<CrewRankerDetail> getLeaderboard(Long crewId, int startRank, int endRank) {
         ZSetRange range = RedisDataStructureUtils.toZSetRange(startRank, endRank);
         Set<TypedTuple<String>> tuples = stringRedisTemplate.opsForZSet()
                 .reverseRangeWithScores(CrewLeaderboardKeyMapper.toLeaderboardKey(crewId), range.start(), range.end());
@@ -61,7 +61,7 @@ public class CrewLeaderboardManager {
         return convertToRankedResults(crewId, startRank, tuples);
     }
 
-    public List<CrewRankedMemberDetail> getAllLeaderboards(int topN) {
+    public List<CrewRankerDetail> getAllLeaderboards(int topN) {
         List<String> computedKeys = RedisScanUtils.scanKeys(stringRedisTemplate, CrewLeaderboardKeyMapper.getLeaderboardPattern());
         if (computedKeys.isEmpty()) {
             return Collections.emptyList();
@@ -75,7 +75,7 @@ public class CrewLeaderboardManager {
             return null;
         });
 
-        List<CrewRankedMemberDetail> results = new ArrayList<>();
+        List<CrewRankerDetail> results = new ArrayList<>();
         for (int i = 0; i < computedKeys.size(); i++) {
             if (!(pipelinedResults.get(i) instanceof Set<?> rawSet)) {
                 continue;
@@ -109,12 +109,12 @@ public class CrewLeaderboardManager {
         return CompositeScore.from(compositeScore).getActualScore();
     }
 
-    private List<CrewRankedMemberDetail> convertToRankedResults(Long crewId, int startRank, Set<TypedTuple<String>> tuples) {
+    private List<CrewRankerDetail> convertToRankedResults(Long crewId, int startRank, Set<TypedTuple<String>> tuples) {
         int currentRank = startRank;
-        List<CrewRankedMemberDetail> results = new ArrayList<>(tuples.size());
+        List<CrewRankerDetail> results = new ArrayList<>(tuples.size());
         for (TypedTuple<String> tuple : tuples) {
             CompositeScore compositeScore = CompositeScore.from(tuple.getScore());
-            results.add(CrewRankedMemberDetail.from(
+            results.add(CrewRankerDetail.from(
                     crewId,
                     CrewLeaderboardKeyMapper.parseMemberIdFromKey(tuple.getValue()),
                     currentRank++,

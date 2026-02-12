@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-public class CrewRankedThreadPoolConfig {
+public class CrewLeaderboardThreadPoolConfig {
 
     @Bean(name = "activityExecutor")
     public Executor activityExecutor() {

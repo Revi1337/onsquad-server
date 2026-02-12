@@ -32,7 +32,7 @@ import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewStates;
-import revi1337.onsquad.crew_member.application.response.CrewRankedMemberResponse;
+import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
@@ -122,7 +122,7 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         null,
                         new SimpleMemberResponse(1L, null, "nickname", "introduce", Mbti.ENTJ.name())
                 )),
-                List.of(new CrewRankedMemberResponse(
+                List.of(new CrewRankerResponse(
                         crewId,
                         1L,
                         "nickname",
