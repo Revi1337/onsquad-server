@@ -58,7 +58,7 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
     @Test
     @DisplayName("스케줄러 실행 시 기존 랭킹은 백업되고, 최신 활동 기반의 새로운 랭킹이 DB에 반영된다")
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    void refreshRankedMembers() {
+    void refreshLeaderboard() {
         // given
         Member revi = createRevi();
         Member andong = createAndong();
@@ -74,7 +74,7 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
         crewLeaderboardManager.applyActivity(1L, kwangwon.getId(), activityTime.plusSeconds(720), CrewActivity.SQUAD_COMMENT);
 
         // when
-        crewLeaderboardRefreshScheduler.refreshRankedMembers();
+        crewLeaderboardRefreshScheduler.refreshLeaderboard();
 
         // then
         assertSoftly(softly -> {

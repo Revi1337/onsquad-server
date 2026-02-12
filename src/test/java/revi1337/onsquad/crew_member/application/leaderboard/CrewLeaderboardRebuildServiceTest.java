@@ -7,9 +7,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static revi1337.onsquad.common.fixture.MemberFixture.createAndong;
+import static revi1337.onsquad.common.fixture.MemberFixture.createMember;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,8 +91,56 @@ class CrewLeaderboardRebuildServiceTest extends ApplicationLayerWithTestContaine
     }
 
     @Test
-    @DisplayName("DB 갱신 중 예외가 발생하더라도, Redis 백업본을 통해 기존 데이터를 안전하게 복구한다.")
+    @DisplayName("탈퇴 유저가 포함된 랭킹 후보군을 전달받으면, 해당 유저를 제외하고 순위를 재구성하여 갱신한다.")
     void renewTopRankers2() {
+        //  given
+        Member revi = createRevi();
+        Member andong = createAndong();
+        Member member1 = createMember(1);
+        Member member2 = createMember(2);
+        Member member3 = createMember(3);
+        Member member4 = createMember(4);
+        Member member5 = createMember(5);
+        memberRepository.saveAll(List.of(revi, andong, member1, member2, member3, member4, member5));
+
+        Long crewId = 1L;
+        LocalDateTime activityTime = LocalDate.of(2025, 12, 20).atStartOfDay();
+        crewRankerRepository.insertBatch(List.of(
+                createCrewRanker(crewId, 1, 10, revi, activityTime),
+                createCrewRanker(crewId, 2, 9, andong, activityTime)
+        ));
+
+        Instant renewActivityTime = CompositeScore.BASE_DATE.toInstant();
+        leaderboardManager.applyActivity(crewId, revi.getId(), renewActivityTime, CrewActivity.SQUAD_CREATE);
+        leaderboardManager.applyActivity(crewId, andong.getId(), renewActivityTime, CrewActivity.CREW_PARTICIPANT);
+        leaderboardManager.applyActivity(crewId, member1.getId(), renewActivityTime, CrewActivity.SQUAD_PARTICIPANT);
+        leaderboardManager.applyActivity(crewId, member2.getId(), renewActivityTime.plusSeconds(10), CrewActivity.SQUAD_COMMENT);
+        leaderboardManager.applyActivity(crewId, member3.getId(), renewActivityTime.plusSeconds(5), CrewActivity.SQUAD_COMMENT_REPLY);
+        leaderboardManager.applyActivity(crewId, member4.getId(), renewActivityTime.plusSeconds(3), CrewActivity.SQUAD_COMMENT_REPLY);
+        leaderboardManager.applyActivity(crewId, member5.getId(), renewActivityTime.plusSeconds(1), CrewActivity.SQUAD_COMMENT_REPLY);
+        List<CrewRankerDetail> rankedMember = leaderboardManager.getLeaderboard(crewId, 50);
+        memberRepository.deleteById(revi.getId());
+        memberRepository.deleteById(andong.getId());
+        clearPersistenceContext();
+
+        // when
+        leaderboardRebuildService.renewTopRankers(rankedMember);
+
+        // then
+        assertSoftly(softly -> {
+            clearPersistenceContext();
+            List<CrewRanker> renewRankers = crewRankerRepository.findAllByCrewId(crewId);
+            softly.assertThat(renewRankers).hasSize(5);
+            softly.assertThat(renewRankers).extracting(CrewRanker::getRank)
+                    .containsExactlyInAnyOrder(1, 2, 3, 4, 5);
+            softly.assertThat(renewRankers).extracting(CrewRanker::getNickname)
+                    .containsExactlyInAnyOrder("nick1", "nick2", "nick3", "nick4", "nick5");
+        });
+    }
+
+    @Test
+    @DisplayName("DB 갱신 중 예외가 발생하더라도, Redis 백업본을 통해 기존 데이터를 안전하게 복구한다.")
+    void renewTopRankers3() {
         // given
         Member revi = memberRepository.save(createRevi());
         crewRankerRepository.insertBatch(List.of(createCrewRanker(1L, 1, 10, revi, LocalDateTime.now())));

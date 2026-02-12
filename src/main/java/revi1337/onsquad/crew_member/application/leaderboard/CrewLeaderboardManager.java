@@ -26,6 +26,7 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 @RequiredArgsConstructor
 public class CrewLeaderboardManager {
 
+    public static final int RANKING_OVER_FETCH_SIZE = 50;
     private static final RedisScript<Long> APPLY_SCORE_SCRIPT = RedisScript.of(new ClassPathResource("db/redis/apply_score.lua"), Long.class);
 
     private final StringRedisTemplate stringRedisTemplate;

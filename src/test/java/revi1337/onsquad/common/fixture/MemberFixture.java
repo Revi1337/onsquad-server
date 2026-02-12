@@ -116,7 +116,7 @@ public class MemberFixture {
         Member member = Member.general(
                 String.format("test-%d@email.com", sequence),
                 PASSWORD_VALUE,
-                NICKNAME_VALUE + 1,
+                NICKNAME_VALUE + sequence,
                 ADDRESS_VALUE,
                 ADDRESS_DETAIL_VALUE
         );

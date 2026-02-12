@@ -34,7 +34,19 @@ public record CrewRankerDetail(
         return new CrewRanker(crewId, rank, score, memberId, nickname, mbti, lastActivityTime);
     }
 
-    public CrewRanker toEntityWithMember(Member member) {
+    public CrewRanker toEntity(Member member) {
+        return new CrewRanker(
+                crewId,
+                rank,
+                score,
+                memberId,
+                member.getNickname().getValue(),
+                member.getMbti() == null ? "" : member.getMbti().name(),
+                lastActivityTime
+        );
+    }
+
+    public CrewRanker toEntity(int rank, Member member) {
         return new CrewRanker(
                 crewId,
                 rank,

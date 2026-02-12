@@ -23,19 +23,19 @@ public class CrewLeaderboardRefreshScheduler {
     private static final String LOCK_KEY = "refresh-sch-lock";
 
     private final RedisLockExecutor redisLockExecutor;
-    private final CrewLeaderboardProperties crewLeaderboardProperties;
+    private final CrewLeaderboardProperties leaderboardProperties;
     private final CrewLeaderboardManager leaderboardManager;
     private final CrewLeaderboardRebuildService leaderboardRebuildService;
     private final CrewLeaderboardBackupManager leaderboardBackupManager;
 
     @Scheduled(cron = "${onsquad.api.crew-leaderboard.schedule.expression}")
-    public void refreshRankedMembers() {
+    public void refreshLeaderboard() {
         redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
             log.info("[Leaderboard Refresh] Task started.");
             try {
                 leaderboardBackupManager.backupCurrentTopRankers();
-                List<CrewRankerDetail> currentRankedMembers = leaderboardManager.getAllLeaderboards(crewLeaderboardProperties.rankLimit());
-                leaderboardRebuildService.renewTopRankers(currentRankedMembers);
+                List<CrewRankerDetail> currentRankers = leaderboardManager.getAllLeaderboards(CrewLeaderboardManager.RANKING_OVER_FETCH_SIZE);
+                leaderboardRebuildService.renewTopRankers(currentRankers);
                 leaderboardManager.removeAllLeaderboards();
                 log.info("[Leaderboard Refresh] Task completed successfully.");
             } catch (Exception e) {
@@ -45,13 +45,13 @@ public class CrewLeaderboardRefreshScheduler {
     }
 
     @Deprecated
-    public void deprecatedRefreshRankedMembers() {
+    public void deprecatedRefreshLeaderboard() {
         redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
             LocalDate today = LocalDate.now();
-            LocalDateTime from = today.minusDays(crewLeaderboardProperties.during().toDays()).atStartOfDay();
+            LocalDateTime from = today.minusDays(leaderboardProperties.during().toDays()).atStartOfDay();
             LocalDateTime to = today.atStartOfDay().minusNanos(1);
             log.info("Starting To Renew Top Rankers - {} ~ {}", from, to);
-            leaderboardRebuildService.renewTopRankers(from, to, crewLeaderboardProperties.rankLimit());
+            leaderboardRebuildService.renewTopRankers(from, to, leaderboardProperties.rankLimit());
         });
     }
 }
