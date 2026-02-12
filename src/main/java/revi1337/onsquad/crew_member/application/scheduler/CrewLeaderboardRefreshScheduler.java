@@ -1,17 +1,13 @@
 package revi1337.onsquad.crew_member.application.scheduler;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardBackupManager;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardRebuildService;
-import revi1337.onsquad.crew_member.config.CrewLeaderboardProperties;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardUpdateService;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
 import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
 
@@ -23,35 +19,21 @@ public class CrewLeaderboardRefreshScheduler {
     private static final String LOCK_KEY = "refresh-sch-lock";
 
     private final RedisLockExecutor redisLockExecutor;
-    private final CrewLeaderboardProperties leaderboardProperties;
     private final CrewLeaderboardManager leaderboardManager;
-    private final CrewLeaderboardRebuildService leaderboardRebuildService;
-    private final CrewLeaderboardBackupManager leaderboardBackupManager;
+    private final CrewLeaderboardUpdateService leaderboardUpdateService;
 
     @Scheduled(cron = "${onsquad.api.crew-leaderboard.schedule.expression}")
-    public void refreshLeaderboard() {
+    public void refreshLeaderboards() {
         redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
-            log.info("[Leaderboard Refresh] Task started.");
             try {
-                leaderboardBackupManager.backupCurrentTopRankers();
-                List<CrewRankerDetail> currentRankers = leaderboardManager.getAllLeaderboards(CrewLeaderboardManager.RANKING_OVER_FETCH_SIZE);
-                leaderboardRebuildService.renewTopRankers(currentRankers);
+                log.info("[Leaderboard-Scheduler] Job initiated. Fetching candidates from Redis...");
+                List<CrewRankerDetail> rankers = leaderboardManager.getAllLeaderboards(CrewLeaderboardManager.RANKING_OVER_FETCH_SIZE);
+                leaderboardUpdateService.update(rankers);
                 leaderboardManager.removeAllLeaderboards();
-                log.info("[Leaderboard Refresh] Task completed successfully.");
+                log.info("[Leaderboard-Scheduler] Job completed. Leaderboard has been refreshed and Redis cleared.");
             } catch (Exception e) {
-                log.error("[Leaderboard Refresh] Critical failure during task execution.", e);
+                log.error("[Leaderboard-Scheduler] Job failed due to unexpected error.", e);
             }
-        });
-    }
-
-    @Deprecated
-    public void deprecatedRefreshLeaderboard() {
-        redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
-            LocalDate today = LocalDate.now();
-            LocalDateTime from = today.minusDays(leaderboardProperties.during().toDays()).atStartOfDay();
-            LocalDateTime to = today.atStartOfDay().minusNanos(1);
-            log.info("Starting To Renew Top Rankers - {} ~ {}", from, to);
-            leaderboardRebuildService.renewTopRankers(from, to, leaderboardProperties.rankLimit());
         });
     }
 }
