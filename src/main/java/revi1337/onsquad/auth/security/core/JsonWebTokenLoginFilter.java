@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.security;
+package revi1337.onsquad.auth.security.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -25,7 +25,6 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import revi1337.onsquad.auth.security.error.UnsupportedLoginUrlMethod;
-import revi1337.onsquad.auth.security.request.LoginRequest;
 import revi1337.onsquad.common.error.CommonErrorCode;
 
 public class JsonWebTokenLoginFilter extends AbstractAuthenticationProcessingFilter {

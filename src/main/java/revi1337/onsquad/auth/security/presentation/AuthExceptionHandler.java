@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.security.error;
+package revi1337.onsquad.auth.security.presentation;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -6,6 +6,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import revi1337.onsquad.auth.security.error.AuthErrorCode;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.ErrorCode;

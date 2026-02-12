@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.security;
+package revi1337.onsquad.auth.security.core;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

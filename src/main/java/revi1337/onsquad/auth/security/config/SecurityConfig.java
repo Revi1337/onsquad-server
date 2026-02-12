@@ -25,11 +25,11 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import revi1337.onsquad.auth.security.JsonWebTokenAuthenticationProvider;
-import revi1337.onsquad.auth.security.JsonWebTokenFailureHandler;
-import revi1337.onsquad.auth.security.JsonWebTokenLoginFilter;
-import revi1337.onsquad.auth.security.JsonWebTokenSuccessHandler;
-import revi1337.onsquad.auth.security.JsonWebTokenUserDetailsService;
+import revi1337.onsquad.auth.security.core.JsonWebTokenAuthenticationProvider;
+import revi1337.onsquad.auth.security.core.JsonWebTokenFailureHandler;
+import revi1337.onsquad.auth.security.core.JsonWebTokenLoginFilter;
+import revi1337.onsquad.auth.security.core.JsonWebTokenSuccessHandler;
+import revi1337.onsquad.auth.security.core.JsonWebTokenUserDetailsService;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.token.application.JsonWebTokenManager;
 

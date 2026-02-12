@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.security.request;
+package revi1337.onsquad.auth.security.core;
 
 import jakarta.validation.constraints.NotNull;
 

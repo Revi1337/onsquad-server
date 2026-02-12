@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.security;
+package revi1337.onsquad.auth.security.core;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
