@@ -9,8 +9,6 @@
 
 ==== 회원 알림 SSE 연결
 
-==== 회원 알림 목록
-
 [black]#Request#
 
 include::{snippets}/notifications/success/sse-connect/http-request.adoc[]
@@ -22,6 +20,20 @@ include::{snippets}/notifications/success/sse-connect/query-parameters.adoc[]
 [black]#Response#
 
 include::{snippets}/notifications/success/sse-connect/http-response.adoc[]
+
+==== 회원 알림 목록
+
+[black]#Request#
+
+include::{snippets}/notifications/success/me/http-request.adoc[]
+
+include::{snippets}/notifications/success/me/request-headers.adoc[]
+
+include::{snippets}/notifications/success/me/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/notifications/success/me/http-response.adoc[]
 
 ==== 회원 알림 읽기
 
