@@ -2,10 +2,10 @@ package revi1337.onsquad.auth.oauth.infrastructure.kakao;
 
 import java.net.URI;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import revi1337.onsquad.auth.oauth.application.PlatformOAuth2EndpointBuilder;
-import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorEndpointBuilder;
+import revi1337.onsquad.auth.oauth.infrastructure.OAuth2ClientProperties.OAuth2Properties;
 
-public class KakaoOAuth2EndpointBuilder implements PlatformOAuth2EndpointBuilder {
+public class KakaoOAuth2EndpointBuilder implements OAuth2VendorEndpointBuilder {
 
     @Override
     public URI build(String baseUrl, OAuth2Properties oAuth2Properties) {

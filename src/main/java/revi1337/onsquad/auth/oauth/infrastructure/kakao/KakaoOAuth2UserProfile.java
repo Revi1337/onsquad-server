@@ -1,18 +1,19 @@
 package revi1337.onsquad.auth.oauth.infrastructure.kakao;
 
-import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfile;
+import revi1337.onsquad.member.domain.entity.vo.UserType;
 
-public record KakaoUserProfile(
+public record KakaoOAuth2UserProfile(
         String name,
         String nickname,
         String email,
         boolean isEmailVerified,
         String profileImage,
         String thumbnailImage
-) implements PlatformUserProfile {
+) implements OAuth2VendorUserProfile {
 
-    public static KakaoUserProfile from(KakaoUserInfoResponse response) {
-        return new KakaoUserProfile(
+    public static KakaoOAuth2UserProfile from(KakaoUserInfoResponse response) {
+        return new KakaoOAuth2UserProfile(
                 response.kakaoAccount().profile().nickname(),
                 response.kakaoAccount().profile().nickname(),
                 response.kakaoAccount().email(),
@@ -20,6 +21,11 @@ public record KakaoUserProfile(
                 response.kakaoAccount().profile().profileImageUrl(),
                 response.kakaoAccount().profile().thumbnailImageUrl()
         );
+    }
+
+    @Override
+    public UserType getUserType() {
+        return UserType.KAKAO;
     }
 
     @Override

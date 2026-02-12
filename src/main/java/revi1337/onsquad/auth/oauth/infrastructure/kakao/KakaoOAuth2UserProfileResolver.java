@@ -7,21 +7,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import revi1337.onsquad.auth.oauth.application.PlatformOAuth2UserProfileFetcher;
-import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfile;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfileResolver;
+import revi1337.onsquad.auth.oauth.infrastructure.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.token.domain.model.AccessToken;
 
-public class KakaoOAuth2UserProfileFetcher implements PlatformOAuth2UserProfileFetcher {
+public class KakaoOAuth2UserProfileResolver implements OAuth2VendorUserProfileResolver {
 
     @Override
-    public PlatformUserProfile fetch(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
+    public OAuth2VendorUserProfile fetch(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
         KakaoUserInfoResponse kakaoUserInfoResponse = fetchUserInfoResponse(accessToken, oAuth2Properties);
-        return KakaoUserProfile.from(kakaoUserInfoResponse);
+        return KakaoOAuth2UserProfile.from(kakaoUserInfoResponse);
     }
 
-    private KakaoUserInfoResponse fetchUserInfoResponse(AccessToken accessToken,
-                                                        OAuth2Properties oAuth2Properties) {
+    private KakaoUserInfoResponse fetchUserInfoResponse(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
         MultiValueMap<String, String> userInfoHeaders = new LinkedMultiValueMap<>() {{
             add(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken.value()));
             add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;");

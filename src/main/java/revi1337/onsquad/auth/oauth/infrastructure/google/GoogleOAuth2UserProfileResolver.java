@@ -5,21 +5,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import revi1337.onsquad.auth.oauth.application.PlatformOAuth2UserProfileFetcher;
-import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfile;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfileResolver;
+import revi1337.onsquad.auth.oauth.infrastructure.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.token.domain.model.AccessToken;
 
-public class GoogleOAuth2UserProfileFetcher implements PlatformOAuth2UserProfileFetcher {
+public class GoogleOAuth2UserProfileResolver implements OAuth2VendorUserProfileResolver {
 
     @Override
-    public PlatformUserProfile fetch(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
+    public OAuth2VendorUserProfile fetch(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
         GoogleUserInfoResponse googleUserInfoResponse = fetchUserInfoResponse(accessToken, oAuth2Properties);
-        return GoogleUserProfile.from(googleUserInfoResponse);
+        return GoogleOAuth2UserProfile.from(googleUserInfoResponse);
     }
 
-    private GoogleUserInfoResponse fetchUserInfoResponse(AccessToken accessToken,
-                                                         OAuth2Properties oAuth2Properties) {
+    private GoogleUserInfoResponse fetchUserInfoResponse(AccessToken accessToken, OAuth2Properties oAuth2Properties) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(accessToken.value());
         ResponseEntity<GoogleUserInfoResponse> googleProfileResponse = new RestTemplate().exchange(

@@ -1,13 +1,13 @@
-package revi1337.onsquad.auth.oauth.config;
+package revi1337.onsquad.auth.oauth.infrastructure;
 
 import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import revi1337.onsquad.auth.oauth.application.OAuth2Platform;
+import revi1337.onsquad.auth.oauth.application.OAuth2Vendor;
 
 @ConfigurationProperties("onsquad.oauth2")
 public record OAuth2ClientProperties(
-        Map<SupportOAuth2Platform, OAuth2Properties> clients
+        Map<OAuth2Vendor, OAuth2Properties> clients
 ) {
 
     public record OAuth2Properties(
@@ -25,9 +25,5 @@ public record OAuth2ClientProperties(
             Map<String, String> scope
     ) {
 
-    }
-
-    public OAuth2Properties getPropertyFrom(OAuth2Platform platform) {
-        return clients().get(SupportOAuth2Platform.from(platform.name()));
     }
 }

@@ -1,18 +1,19 @@
 package revi1337.onsquad.auth.oauth.infrastructure.google;
 
-import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfile;
+import revi1337.onsquad.member.domain.entity.vo.UserType;
 
-public record GoogleUserProfile(
+public record GoogleOAuth2UserProfile(
         String name,
         String nickname,
         String email,
         boolean isEmailVerified,
         String profileImage,
         String thumbnailImage
-) implements PlatformUserProfile {
+) implements OAuth2VendorUserProfile {
 
-    public static GoogleUserProfile from(GoogleUserInfoResponse response) {
-        return new GoogleUserProfile(
+    public static GoogleOAuth2UserProfile from(GoogleUserInfoResponse response) {
+        return new GoogleOAuth2UserProfile(
                 response.name(),
                 response.name(),
                 response.email(),
@@ -20,6 +21,11 @@ public record GoogleUserProfile(
                 response.picture(),
                 response.picture()
         );
+    }
+
+    @Override
+    public UserType getUserType() {
+        return UserType.GOOGLE;
     }
 
     @Override

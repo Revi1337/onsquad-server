@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import revi1337.onsquad.auth.oauth.application.PlatformOAuth2AccessTokenFetcher;
-import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
+import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorAccessTokenFetcher;
+import revi1337.onsquad.auth.oauth.infrastructure.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.token.domain.model.AccessToken;
 
-public class KakaoOAuth2AccessTokenFetcher implements PlatformOAuth2AccessTokenFetcher {
+public class KakaoOAuth2AccessTokenFetcher implements OAuth2VendorAccessTokenFetcher {
 
     @Override
     public AccessToken fetch(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {
