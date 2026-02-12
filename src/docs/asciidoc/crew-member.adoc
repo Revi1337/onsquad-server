@@ -65,16 +65,16 @@ include::{snippets}/crew-member/success/delegate/path-parameters.adoc[]
 
 include::{snippets}/crew-member/success/delegate/http-response.adoc[]
 
-==== 크루 랭커 목록
+==== 크루 리더보드
 
 [black]#Request#
 
-include::{snippets}/crew-member/success/rankers/http-request.adoc[]
+include::{snippets}/crew-member/success/leaderboard/http-request.adoc[]
 
-include::{snippets}/crew-member/success/rankers/request-headers.adoc[]
+include::{snippets}/crew-member/success/leaderboard/request-headers.adoc[]
 
-include::{snippets}/crew-member/success/rankers/path-parameters.adoc[]
+include::{snippets}/crew-member/success/leaderboard/path-parameters.adoc[]
 
 [black]#Response#
 
-include::{snippets}/crew-member/success/rankers/http-response.adoc[]
+include::{snippets}/crew-member/success/leaderboard/http-response.adoc[]
