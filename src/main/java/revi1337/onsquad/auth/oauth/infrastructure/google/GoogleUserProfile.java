@@ -1,7 +1,6 @@
-package revi1337.onsquad.auth.oauth.profile.user;
+package revi1337.onsquad.auth.oauth.infrastructure.google;
 
-import revi1337.onsquad.auth.oauth.profile.PlatformUserProfile;
-import revi1337.onsquad.auth.oauth.provider.user.response.GoogleUserInfoResponse;
+import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
 
 public record GoogleUserProfile(
         String name,

@@ -1,12 +1,11 @@
-package revi1337.onsquad.auth.oauth;
+package revi1337.onsquad.auth.oauth.application;
 
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import revi1337.onsquad.auth.oauth.profile.PlatformUserProfile;
-import revi1337.onsquad.auth.oauth.profile.PlatformUserTypeResolver;
+import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Email;

@@ -1,9 +1,10 @@
-package revi1337.onsquad.auth.oauth.profile;
+package revi1337.onsquad.auth.oauth.application;
 
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
 
 @RequiredArgsConstructor

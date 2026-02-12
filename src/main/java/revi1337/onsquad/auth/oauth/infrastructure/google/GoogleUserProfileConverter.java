@@ -1,9 +1,8 @@
-package revi1337.onsquad.auth.oauth.profile.converter;
+package revi1337.onsquad.auth.oauth.infrastructure.google;
 
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.auth.oauth.profile.PlatformUserProfile;
-import revi1337.onsquad.auth.oauth.profile.PlatformUserTypeConverter;
-import revi1337.onsquad.auth.oauth.profile.user.GoogleUserProfile;
+import revi1337.onsquad.auth.oauth.application.PlatformUserTypeConverter;
+import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
 
 @Component

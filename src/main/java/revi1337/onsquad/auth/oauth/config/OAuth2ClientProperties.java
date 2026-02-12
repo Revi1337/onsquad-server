@@ -3,7 +3,7 @@ package revi1337.onsquad.auth.oauth.config;
 import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import revi1337.onsquad.auth.oauth.OAuth2Platform;
+import revi1337.onsquad.auth.oauth.application.OAuth2Platform;
 
 @ConfigurationProperties("onsquad.oauth2")
 public record OAuth2ClientProperties(

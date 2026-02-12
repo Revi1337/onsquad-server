@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.oauth.provider.user;
+package revi1337.onsquad.auth.oauth.infrastructure.kakao;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -7,11 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import revi1337.onsquad.auth.oauth.application.PlatformOAuth2UserProfileFetcher;
 import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.auth.oauth.profile.PlatformUserProfile;
-import revi1337.onsquad.auth.oauth.profile.user.KakaoUserProfile;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2UserProfileFetcher;
-import revi1337.onsquad.auth.oauth.provider.user.response.KakaoUserInfoResponse;
+import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
 import revi1337.onsquad.token.domain.model.AccessToken;
 
 public class KakaoOAuth2UserProfileFetcher implements PlatformOAuth2UserProfileFetcher {

@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.oauth;
+package revi1337.onsquad.auth.oauth.presentation;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.util.UriComponentsBuilder;
+import revi1337.onsquad.auth.oauth.application.OAuth2Service;
 import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties;
 import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.auth.oauth.config.SupportOAuth2Platform;

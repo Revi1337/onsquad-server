@@ -1,7 +1,7 @@
 package revi1337.onsquad.auth.oauth.config;
 
 import lombok.Getter;
-import revi1337.onsquad.auth.oauth.OAuth2Platform;
+import revi1337.onsquad.auth.oauth.application.OAuth2Platform;
 
 @Getter
 public enum SupportOAuth2Platform {

@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.oauth.provider.token;
+package revi1337.onsquad.auth.oauth.infrastructure.google;
 
 import java.util.Map;
 import org.springframework.core.ParameterizedTypeReference;
@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import revi1337.onsquad.auth.oauth.application.PlatformOAuth2AccessTokenFetcher;
 import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2AccessTokenFetcher;
 import revi1337.onsquad.token.domain.model.AccessToken;
 
-public class KakaoOAuth2AccessTokenFetcher implements PlatformOAuth2AccessTokenFetcher {
+public class GoogleOAuth2AccessTokenFetcher implements PlatformOAuth2AccessTokenFetcher {
 
     @Override
     public AccessToken fetch(String baseUrl, String authorizationCode, OAuth2Properties oAuth2Properties) {

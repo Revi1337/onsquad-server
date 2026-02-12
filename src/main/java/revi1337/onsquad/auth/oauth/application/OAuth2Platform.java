@@ -1,15 +1,12 @@
-package revi1337.onsquad.auth.oauth;
+package revi1337.onsquad.auth.oauth.application;
 
 import lombok.Getter;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2AccessTokenFetcher;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2EndpointBuilder;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2UserProfileFetcher;
-import revi1337.onsquad.auth.oauth.provider.endpoint.GoogleOAuth2EndpointBuilder;
-import revi1337.onsquad.auth.oauth.provider.endpoint.KakaoOAuth2EndpointBuilder;
-import revi1337.onsquad.auth.oauth.provider.token.GoogleOAuth2AccessTokenFetcher;
-import revi1337.onsquad.auth.oauth.provider.token.KakaoOAuth2AccessTokenFetcher;
-import revi1337.onsquad.auth.oauth.provider.user.GoogleOAuth2UserProfileFetcher;
-import revi1337.onsquad.auth.oauth.provider.user.KakaoOAuth2UserProfileFetcher;
+import revi1337.onsquad.auth.oauth.infrastructure.google.GoogleOAuth2AccessTokenFetcher;
+import revi1337.onsquad.auth.oauth.infrastructure.google.GoogleOAuth2EndpointBuilder;
+import revi1337.onsquad.auth.oauth.infrastructure.google.GoogleOAuth2UserProfileFetcher;
+import revi1337.onsquad.auth.oauth.infrastructure.kakao.KakaoOAuth2AccessTokenFetcher;
+import revi1337.onsquad.auth.oauth.infrastructure.kakao.KakaoOAuth2EndpointBuilder;
+import revi1337.onsquad.auth.oauth.infrastructure.kakao.KakaoOAuth2UserProfileFetcher;
 
 @Getter
 public enum OAuth2Platform {

@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.oauth.provider.user.response;
+package revi1337.onsquad.auth.oauth.infrastructure.kakao;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.oauth.provider;
+package revi1337.onsquad.auth.oauth.application;
 
 import java.net.URI;
 import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;

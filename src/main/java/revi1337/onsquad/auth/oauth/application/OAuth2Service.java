@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.oauth;
+package revi1337.onsquad.auth.oauth.application;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -7,10 +7,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties;
 import revi1337.onsquad.auth.oauth.config.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.auth.oauth.config.SupportOAuth2Platform;
-import revi1337.onsquad.auth.oauth.profile.PlatformUserProfile;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2AccessTokenFetcher;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2EndpointBuilder;
-import revi1337.onsquad.auth.oauth.provider.PlatformOAuth2UserProfileFetcher;
+import revi1337.onsquad.auth.oauth.domain.PlatformUserProfile;
 import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
 import revi1337.onsquad.token.domain.model.AccessToken;
 import revi1337.onsquad.token.domain.model.JsonWebToken;

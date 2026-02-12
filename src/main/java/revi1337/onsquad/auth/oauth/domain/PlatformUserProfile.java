@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.oauth.profile;
+package revi1337.onsquad.auth.oauth.domain;
 
 public interface PlatformUserProfile {
 
