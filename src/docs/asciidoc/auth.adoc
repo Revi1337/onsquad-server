@@ -77,27 +77,27 @@ include::{snippets}/auth/success/login/http-request.adoc[]
 
 include::{snippets}/auth/success/login/http-response.adoc[]
 
-==== 카카오 로그인
+==== OAuth2 로그인
 
-===== 카카오 로그인 주소 반환
-
-[black]#Request#
-
-include::{snippets}/auth/success/kakao-endpoint/http-request.adoc[]
-
-[black]#Response#
-
-include::{snippets}/auth/success/kakao-endpoint/http-response.adoc[]
-
-===== 카카오 로그인 (인가서버가 수행)
+===== OAuth2 로그인 주소 반환
 
 [black]#Request#
 
-include::{snippets}/auth/success/kakao-login/http-request.adoc[]
+include::{snippets}/auth/success/oauth2-endpoint/http-request.adoc[]
 
 [black]#Response#
 
-include::{snippets}/auth/success/kakao-login/http-response.adoc[]
+include::{snippets}/auth/success/oauth2-endpoint/http-response.adoc[]
+
+===== OAuth2 로그인 (인가서버가 수행)
+
+[black]#Request#
+
+include::{snippets}/auth/success/oauth2-login/http-request.adoc[]
+
+[black]#Response#
+
+include::{snippets}/auth/success/oauth2-login/http-response.adoc[]
 
 ==== 토큰 재발급
 
