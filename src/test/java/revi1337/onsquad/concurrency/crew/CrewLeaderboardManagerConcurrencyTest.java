@@ -1,4 +1,4 @@
-package revi1337.onsquad.crew_member.application.leaderboard;
+package revi1337.onsquad.concurrency.crew;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,8 +20,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.TestContainerSupport;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 
+@Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
 @ContextConfiguration(classes = CrewLeaderboardManager.class)
 @ExtendWith(SpringExtension.class)

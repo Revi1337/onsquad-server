@@ -23,7 +23,8 @@ import revi1337.onsquad.crew_member.application.leaderboard.CompositeScore;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
+import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
@@ -62,9 +63,9 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
         Member andong = createAndong();
         Member kwangwon = createKwangwon();
         memberRepository.saveAll(List.of(revi, andong, kwangwon));
-        CrewRanker previousRankedMember1 = createCrewRanker(1L, 2, 1, revi, LocalDateTime.now());
-        CrewRanker previousRankedMember2 = createCrewRanker(1L, 2, 1, andong, LocalDateTime.now());
-        crewRankerRepository.insertBatch(List.of(previousRankedMember1, previousRankedMember2));
+        CrewRankerCandidate candidate1 = createCrewRankerCandidate(1L, 2, 1, revi);
+        CrewRankerCandidate candidate2 = createCrewRankerCandidate(1L, 2, 1, andong);
+        crewRankerRepository.insertBatch(List.of(candidate1, candidate2));
 
         Instant activityTime = CompositeScore.BASE_DATE.toInstant();
         crewLeaderboardManager.applyActivity(1L, revi.getId(), activityTime.plusSeconds(600), CrewActivity.SQUAD_CREATE);
@@ -77,14 +78,13 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
         // then
         assertSoftly(softly -> {
             List<CrewRanker> currentRankedMembers = crewRankerRepository.findAllByCrewId(1L);
-            List<CrewRankerDetail> allRankedMembers = crewLeaderboardManager.getAllLeaderboards(-1);
-
             softly.assertThat(currentRankedMembers).hasSize(3);
             softly.assertThat(currentRankedMembers.get(0).getMemberId()).isEqualTo(andong.getId());
             softly.assertThat(currentRankedMembers.get(1).getMemberId()).isEqualTo(revi.getId());
             softly.assertThat(currentRankedMembers.get(2).getMemberId()).isEqualTo(kwangwon.getId());
 
-            softly.assertThat(allRankedMembers).isEmpty();
+            CrewLeaderboards leaderboards = crewLeaderboardManager.getAllLeaderboards(-1);
+            softly.assertThat(leaderboards.isEmpty()).isTrue();
         });
     }
 
@@ -97,9 +97,9 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
         Member andong = createAndong();
         Member kwangwon = createKwangwon();
         memberRepository.saveAll(List.of(revi, andong, kwangwon));
-        CrewRanker previousRankedMember1 = createCrewRanker(1L, 2, 1, revi, LocalDateTime.now());
-        CrewRanker previousRankedMember2 = createCrewRanker(1L, 3, 1, andong, LocalDateTime.now());
-        crewRankerRepository.insertBatch(List.of(previousRankedMember1, previousRankedMember2));
+        CrewRankerCandidate candidate1 = createCrewRankerCandidate(1L, 2, 1, revi);
+        CrewRankerCandidate candidate2 = createCrewRankerCandidate(1L, 3, 1, andong);
+        crewRankerRepository.insertBatch(List.of(candidate1, candidate2));
 
         Instant activityTime = CompositeScore.BASE_DATE.toInstant();
         crewLeaderboardManager.applyActivity(1L, revi.getId(), activityTime.plusSeconds(600), CrewActivity.SQUAD_CREATE);
@@ -113,22 +113,22 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
         // then
         assertSoftly(softly -> {
             List<CrewRanker> currentRankedMembers = crewRankerRepository.findAllByCrewId(1L);
-            List<CrewRankerDetail> allRankedMembers = crewLeaderboardManager.getAllLeaderboards(-1);
-
             softly.assertThat(currentRankedMembers).hasSize(2);
-            softly.assertThat(allRankedMembers).isNotEmpty();
+
+            CrewLeaderboards leaderboards = crewLeaderboardManager.getAllLeaderboards(-1);
+            softly.assertThat(leaderboards.isEmpty()).isFalse();
         });
     }
 
-    public CrewRanker createCrewRanker(Long crewId, int rank, long score, Member member, LocalDateTime lastActivityTime) {
-        return new CrewRanker(
+    private static CrewRankerCandidate createCrewRankerCandidate(Long crewId, int rank, long score, Member member) {
+        return new CrewRankerCandidate(
                 crewId,
                 rank,
                 score,
                 member.getId(),
                 member.getNickname().getValue(),
                 member.getMbti().name(),
-                lastActivityTime
+                LocalDateTime.now()
         );
     }
 }

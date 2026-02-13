@@ -21,7 +21,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.TestContainerSupport;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
+import revi1337.onsquad.crew_member.domain.model.CrewLeaderboard;
+import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
+import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
 @ContextConfiguration(classes = CrewLeaderboardManager.class)
@@ -59,12 +61,13 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = 1;
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            CrewLeaderboard leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(rankLimit);
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(memberIds.get(1));
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(1);
+                softly.assertThat(leaderboard.candidateStream()).hasSize(rankLimit);
+                List<CrewRankerCandidate> candidates = leaderboard.candidateStream().toList();
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(memberIds.get(1));
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(1);
             });
         }
 
@@ -81,14 +84,15 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = 2;
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            CrewLeaderboard leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(rankLimit);
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(memberIds.get(1));
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(1);
-                softly.assertThat(leaderboard.get(1).memberId()).isEqualTo(memberIds.get(0));
-                softly.assertThat(leaderboard.get(1).rank()).isEqualTo(2);
+                softly.assertThat(leaderboard.candidateStream()).hasSize(rankLimit);
+                List<CrewRankerCandidate> candidates = leaderboard.candidateStream().toList();
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(memberIds.get(1));
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(1);
+                softly.assertThat(candidates.get(1).memberId()).isEqualTo(memberIds.get(0));
+                softly.assertThat(candidates.get(1).rank()).isEqualTo(2);
             });
         }
 
@@ -105,16 +109,17 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = 4;
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            CrewLeaderboard leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(memberIds.size());
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(memberIds.get(1));
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(1);
-                softly.assertThat(leaderboard.get(1).memberId()).isEqualTo(memberIds.get(0));
-                softly.assertThat(leaderboard.get(1).rank()).isEqualTo(2);
-                softly.assertThat(leaderboard.get(2).memberId()).isEqualTo(memberIds.get(2));
-                softly.assertThat(leaderboard.get(2).rank()).isEqualTo(3);
+                softly.assertThat(leaderboard.candidateStream()).hasSize(memberIds.size());
+                List<CrewRankerCandidate> candidates = leaderboard.candidateStream().toList();
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(memberIds.get(1));
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(1);
+                softly.assertThat(candidates.get(1).memberId()).isEqualTo(memberIds.get(0));
+                softly.assertThat(candidates.get(1).rank()).isEqualTo(2);
+                softly.assertThat(candidates.get(2).memberId()).isEqualTo(memberIds.get(2));
+                softly.assertThat(candidates.get(2).rank()).isEqualTo(3);
             });
         }
 
@@ -131,16 +136,17 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberIds.get(2), thirdActivity, CrewActivity.SQUAD_COMMENT);
             int rankLimit = -1;
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
+            CrewLeaderboard leaderboard = leaderboardManager.getLeaderboard(crewId, rankLimit);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(memberIds.size());
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(memberIds.get(1));
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(1);
-                softly.assertThat(leaderboard.get(1).memberId()).isEqualTo(memberIds.get(0));
-                softly.assertThat(leaderboard.get(1).rank()).isEqualTo(2);
-                softly.assertThat(leaderboard.get(2).memberId()).isEqualTo(memberIds.get(2));
-                softly.assertThat(leaderboard.get(2).rank()).isEqualTo(3);
+                softly.assertThat(leaderboard.candidateStream()).hasSize(memberIds.size());
+                List<CrewRankerCandidate> candidates = leaderboard.candidateStream().toList();
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(memberIds.get(1));
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(1);
+                softly.assertThat(candidates.get(1).memberId()).isEqualTo(memberIds.get(0));
+                softly.assertThat(candidates.get(1).rank()).isEqualTo(2);
+                softly.assertThat(candidates.get(2).memberId()).isEqualTo(memberIds.get(2));
+                softly.assertThat(candidates.get(2).rank()).isEqualTo(3);
             });
         }
 
@@ -150,9 +156,9 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             Long invalidCrewId = 999L;
             int rankLimit = 3;
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(invalidCrewId, rankLimit);
+            CrewLeaderboard leaderboard = leaderboardManager.getLeaderboard(invalidCrewId, rankLimit);
 
-            assertThat(leaderboard).isEmpty();
+            assertThat(leaderboard.size()).isZero();
         }
 
         @Test
@@ -167,18 +173,21 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, memberId1, firstActivity, activity);
             leaderboardManager.applyActivity(crewId, memberId2, secondActivity, activity);
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getAllLeaderboards(3);
+            CrewLeaderboards leaderboards = leaderboardManager.getAllLeaderboards(3);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(2);
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(memberId2);
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(1);
-                softly.assertThat(leaderboard.get(0).score()).isEqualTo(10);
-                softly.assertThat(leaderboard.get(0).lastActivityTime()).isEqualTo(LocalDateTime.ofInstant(secondActivity, CompositeScore.KST));
-                softly.assertThat(leaderboard.get(1).memberId()).isEqualTo(memberId1);
-                softly.assertThat(leaderboard.get(1).rank()).isEqualTo(2);
-                softly.assertThat(leaderboard.get(1).score()).isEqualTo(10);
-                softly.assertThat(leaderboard.get(1).lastActivityTime()).isEqualTo(LocalDateTime.ofInstant(firstActivity, CompositeScore.KST));
+                softly.assertThat(leaderboards.size()).isEqualTo(1);
+                CrewLeaderboard leaderboard = leaderboards.getLeaderboard(crewId);
+                List<CrewRankerCandidate> candidates = leaderboard.candidateStream().toList();
+                softly.assertThat(candidates).hasSize(2);
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(memberId2);
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(1);
+                softly.assertThat(candidates.get(0).score()).isEqualTo(activity.getScore());
+                softly.assertThat(candidates.get(0).lastActivityTime()).isEqualTo(LocalDateTime.ofInstant(secondActivity, CompositeScore.KST));
+                softly.assertThat(candidates.get(1).memberId()).isEqualTo(memberId1);
+                softly.assertThat(candidates.get(1).rank()).isEqualTo(2);
+                softly.assertThat(candidates.get(1).score()).isEqualTo(activity.getScore());
+                softly.assertThat(candidates.get(1).lastActivityTime()).isEqualTo(LocalDateTime.ofInstant(firstActivity, CompositeScore.KST));
             });
         }
 
@@ -191,16 +200,14 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, 2L, activityTime, activity);
             leaderboardManager.applyActivity(crewId, 1L, activityTime, activity);
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getAllLeaderboards(3);
+            CrewLeaderboards leaderboards = leaderboardManager.getAllLeaderboards(3);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(2);
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(2L);
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(1);
-                softly.assertThat(leaderboard.get(0).score()).isEqualTo(10);
-                softly.assertThat(leaderboard.get(1).memberId()).isEqualTo(1L);
-                softly.assertThat(leaderboard.get(1).rank()).isEqualTo(2);
-                softly.assertThat(leaderboard.get(1).score()).isEqualTo(10);
+                List<CrewRankerCandidate> candidates = leaderboards.getLeaderboard(crewId).candidateStream().toList();
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(2L);
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(1);
+                softly.assertThat(candidates.get(1).memberId()).isEqualTo(1L);
+                softly.assertThat(candidates.get(1).rank()).isEqualTo(2);
             });
         }
     }
@@ -218,19 +225,17 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, 2L, activityTime, CrewActivity.SQUAD_COMMENT);
             leaderboardManager.applyActivity(crewId, 3L, activityTime, CrewActivity.CREW_PARTICIPANT);
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, 3);
+            CrewLeaderboard leaderboard = leaderboardManager.getLeaderboard(crewId, 3);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(3);
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(1L);
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(1);
-                softly.assertThat(leaderboard.get(0).score()).isEqualTo(CrewActivity.SQUAD_CREATE.getScore());
-                softly.assertThat(leaderboard.get(1).memberId()).isEqualTo(3L);
-                softly.assertThat(leaderboard.get(1).rank()).isEqualTo(2);
-                softly.assertThat(leaderboard.get(1).score()).isEqualTo(CrewActivity.CREW_PARTICIPANT.getScore());
-                softly.assertThat(leaderboard.get(2).memberId()).isEqualTo(2L);
-                softly.assertThat(leaderboard.get(2).rank()).isEqualTo(3);
-                softly.assertThat(leaderboard.get(2).score()).isEqualTo(CrewActivity.SQUAD_COMMENT.getScore());
+                List<CrewRankerCandidate> candidates = leaderboard.candidateStream().toList();
+                softly.assertThat(candidates).hasSize(3);
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(1L);
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(1);
+                softly.assertThat(candidates.get(1).memberId()).isEqualTo(3L);
+                softly.assertThat(candidates.get(1).rank()).isEqualTo(2);
+                softly.assertThat(candidates.get(2).memberId()).isEqualTo(2L);
+                softly.assertThat(candidates.get(2).rank()).isEqualTo(3);
             });
         }
 
@@ -243,16 +248,15 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
             leaderboardManager.applyActivity(crewId, 2L, activityTime, CrewActivity.SQUAD_COMMENT);
             leaderboardManager.applyActivity(crewId, 3L, activityTime, CrewActivity.CREW_PARTICIPANT);
 
-            List<CrewRankerDetail> leaderboard = leaderboardManager.getLeaderboard(crewId, 2, 3);
+            CrewLeaderboard leaderboard = leaderboardManager.getLeaderboard(crewId, 2, 3);
 
             assertSoftly(softly -> {
-                softly.assertThat(leaderboard).hasSize(2);
-                softly.assertThat(leaderboard.get(0).memberId()).isEqualTo(3L);
-                softly.assertThat(leaderboard.get(0).rank()).isEqualTo(2);
-                softly.assertThat(leaderboard.get(0).score()).isEqualTo(CrewActivity.CREW_PARTICIPANT.getScore());
-                softly.assertThat(leaderboard.get(1).memberId()).isEqualTo(2L);
-                softly.assertThat(leaderboard.get(1).rank()).isEqualTo(3);
-                softly.assertThat(leaderboard.get(1).score()).isEqualTo(CrewActivity.SQUAD_COMMENT.getScore());
+                List<CrewRankerCandidate> candidates = leaderboard.candidateStream().toList();
+                softly.assertThat(candidates).hasSize(2);
+                softly.assertThat(candidates.get(0).memberId()).isEqualTo(3L);
+                softly.assertThat(candidates.get(0).rank()).isEqualTo(2);
+                softly.assertThat(candidates.get(1).memberId()).isEqualTo(2L);
+                softly.assertThat(candidates.get(1).rank()).isEqualTo(3);
             });
         }
 
@@ -269,7 +273,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
 
             leaderboardManager.removeAllLeaderboards();
 
-            assertThat(leaderboardManager.getAllLeaderboards(3)).hasSize(0);
+            assertThat(leaderboardManager.getAllLeaderboards(3).size()).isZero();
         }
 
         @Test
@@ -285,7 +289,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
 
             leaderboardManager.removeAllLeaderboards();
 
-            assertThat(leaderboardManager.getAllLeaderboards(3)).hasSize(0);
+            assertThat(leaderboardManager.getAllLeaderboards(3).size()).isZero();
         }
 
         @Test
@@ -301,7 +305,7 @@ class CrewLeaderboardManagerTest extends TestContainerSupport {
 
             leaderboardManager.removeLeaderboards(crewIds);
 
-            assertThat(leaderboardManager.getAllLeaderboards(3)).hasSize(0);
+            assertThat(leaderboardManager.getAllLeaderboards(3).size()).isZero();
         }
 
         @Test

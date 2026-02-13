@@ -1,14 +1,13 @@
 package revi1337.onsquad.crew_member.application.scheduler;
 
 import java.time.Duration;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardUpdateService;
-import revi1337.onsquad.crew_member.domain.model.CrewRankerDetail;
+import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
 import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
 
 @Slf4j
@@ -27,8 +26,8 @@ public class CrewLeaderboardRefreshScheduler {
         redisLockExecutor.executeIfAcquired(LOCK_KEY, Duration.ofHours(1), () -> {
             try {
                 log.info("[Leaderboard-Scheduler] Job initiated. Fetching candidates from Redis...");
-                List<CrewRankerDetail> rankers = leaderboardManager.getAllLeaderboards(CrewLeaderboardManager.RANKING_OVER_FETCH_SIZE);
-                leaderboardUpdateService.update(rankers);
+                CrewLeaderboards leaderboards = leaderboardManager.getAllLeaderboards(CrewLeaderboardManager.RANKING_OVER_FETCH_SIZE);
+                leaderboardUpdateService.updateLeaderboards(leaderboards);
                 leaderboardManager.removeAllLeaderboards();
                 log.info("[Leaderboard-Scheduler] Job completed. Leaderboard has been refreshed and Redis cleared.");
             } catch (Exception e) {
