@@ -13,12 +13,8 @@ public interface CrewRankerRepository {
 
     List<CrewRankerCandidate> fetchAggregatedRankedMembers(LocalDateTime from, LocalDateTime to, Integer rankLimit);
 
-    boolean exists();
-
     void insertBatch(List<CrewRankerCandidate> candidates);
 
     void deleteAllInBatch();
-
-    void truncate();
 
 }

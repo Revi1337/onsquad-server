@@ -32,11 +32,6 @@ public class CrewRankerRepositoryImpl implements CrewRankerRepository {
     }
 
     @Override
-    public boolean exists() {
-        return crewRankerJpaRepository.existsBy();
-    }
-
-    @Override
     public void deleteAllInBatch() {
         crewRankerJpaRepository.deleteAllInBatch();
     }
@@ -44,10 +39,5 @@ public class CrewRankerRepositoryImpl implements CrewRankerRepository {
     @Override
     public void insertBatch(List<CrewRankerCandidate> candidates) {
         crewRankerJdbcRepository.insertBatch(candidates);
-    }
-
-    @Override
-    public void truncate() {
-        crewRankerJdbcRepository.truncate();
     }
 }

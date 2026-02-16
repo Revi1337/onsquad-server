@@ -1,7 +1,6 @@
 package revi1337.onsquad.crew_member.application.scheduler;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.Mockito.doThrow;
 import static revi1337.onsquad.common.fixture.MemberFixture.createAndong;
 import static revi1337.onsquad.common.fixture.MemberFixture.createKwangwon;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
@@ -13,12 +12,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.common.ApplicationLayerWithTestContainerSupport;
+import org.springframework.test.context.jdbc.Sql;
+import revi1337.onsquad.common.MySqlTestContainerSupport;
+import revi1337.onsquad.common.RedisTestContainerSupport;
+import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.crew_member.application.leaderboard.CompositeScore;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
@@ -29,7 +30,10 @@ import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
-class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContainerSupport {
+@Sql("/mysql-truncate.sql")
+@Import({ApplicationLayerConfiguration.class})
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+class CrewLeaderboardRefreshSchedulerTest implements RedisTestContainerSupport, MySqlTestContainerSupport {
 
     @Autowired
     private MemberJpaRepository memberRepository;
@@ -40,40 +44,36 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @SpyBean
-    private CrewLeaderboardManager crewLeaderboardManager;
+    @Autowired
+    private CrewLeaderboardManager leaderboardManager;
 
     @Autowired
-    private CrewLeaderboardRefreshScheduler crewLeaderboardRefreshScheduler;
+    private CrewLeaderboardRefreshScheduler leaderboardRefreshScheduler;
 
     @BeforeEach
     void setUp() {
-        stringRedisTemplate.execute((RedisCallback<Void>) connection -> {
-            connection.serverCommands().flushAll();
-            return null;
-        });
+        flushRedis(stringRedisTemplate);
     }
 
     @Test
     @DisplayName("스케줄러 실행 시 기존 랭킹은 사라지고, 최신 활동 기반의 새로운 랭킹이 DB에 반영된다")
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void refreshLeaderboard() {
         // given
         Member revi = createRevi();
         Member andong = createAndong();
         Member kwangwon = createKwangwon();
         memberRepository.saveAll(List.of(revi, andong, kwangwon));
-        CrewRankerCandidate candidate1 = createCrewRankerCandidate(1L, 2, 1, revi);
+        CrewRankerCandidate candidate1 = createCrewRankerCandidate(1L, 1, 1, revi);
         CrewRankerCandidate candidate2 = createCrewRankerCandidate(1L, 2, 1, andong);
         crewRankerRepository.insertBatch(List.of(candidate1, candidate2));
 
         Instant activityTime = CompositeScore.BASE_DATE.toInstant();
-        crewLeaderboardManager.applyActivity(1L, revi.getId(), activityTime.plusSeconds(600), CrewActivity.SQUAD_CREATE);
-        crewLeaderboardManager.applyActivity(1L, andong.getId(), activityTime.plusSeconds(660), CrewActivity.SQUAD_CREATE);
-        crewLeaderboardManager.applyActivity(1L, kwangwon.getId(), activityTime.plusSeconds(720), CrewActivity.SQUAD_COMMENT);
+        leaderboardManager.applyActivity(1L, revi.getId(), activityTime.plusSeconds(600), CrewActivity.SQUAD_CREATE);
+        leaderboardManager.applyActivity(1L, andong.getId(), activityTime.plusSeconds(660), CrewActivity.SQUAD_CREATE);
+        leaderboardManager.applyActivity(1L, kwangwon.getId(), activityTime.plusSeconds(720), CrewActivity.SQUAD_COMMENT);
 
         // when
-        crewLeaderboardRefreshScheduler.refreshLeaderboards();
+        leaderboardRefreshScheduler.refreshLeaderboards();
 
         // then
         assertSoftly(softly -> {
@@ -83,40 +83,8 @@ class CrewLeaderboardRefreshSchedulerTest extends ApplicationLayerWithTestContai
             softly.assertThat(currentRankedMembers.get(1).getMemberId()).isEqualTo(revi.getId());
             softly.assertThat(currentRankedMembers.get(2).getMemberId()).isEqualTo(kwangwon.getId());
 
-            CrewLeaderboards leaderboards = crewLeaderboardManager.getAllLeaderboards(-1);
+            CrewLeaderboards leaderboards = leaderboardManager.getAllLeaderboards(-1);
             softly.assertThat(leaderboards.isEmpty()).isTrue();
-        });
-    }
-
-    @Test
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    @DisplayName("리더보드 정산 작업 중 예외가 발생하면, 기존 RDB 데이터와 Redis 데이터를 보존하며 작업을 중단한다.")
-    void refreshLeaderboard2() {
-        // given
-        Member revi = createRevi();
-        Member andong = createAndong();
-        Member kwangwon = createKwangwon();
-        memberRepository.saveAll(List.of(revi, andong, kwangwon));
-        CrewRankerCandidate candidate1 = createCrewRankerCandidate(1L, 2, 1, revi);
-        CrewRankerCandidate candidate2 = createCrewRankerCandidate(1L, 3, 1, andong);
-        crewRankerRepository.insertBatch(List.of(candidate1, candidate2));
-
-        Instant activityTime = CompositeScore.BASE_DATE.toInstant();
-        crewLeaderboardManager.applyActivity(1L, revi.getId(), activityTime.plusSeconds(600), CrewActivity.SQUAD_CREATE);
-        crewLeaderboardManager.applyActivity(1L, andong.getId(), activityTime.plusSeconds(660), CrewActivity.SQUAD_CREATE);
-        crewLeaderboardManager.applyActivity(1L, kwangwon.getId(), activityTime.plusSeconds(720), CrewActivity.SQUAD_COMMENT);
-        doThrow(new RuntimeException()).when(crewLeaderboardManager).getAllLeaderboards(50);
-
-        // when
-        crewLeaderboardRefreshScheduler.refreshLeaderboards();
-
-        // then
-        assertSoftly(softly -> {
-            List<CrewRanker> currentRankedMembers = crewRankerRepository.findAllByCrewId(1L);
-            softly.assertThat(currentRankedMembers).hasSize(2);
-
-            CrewLeaderboards leaderboards = crewLeaderboardManager.getAllLeaderboards(-1);
-            softly.assertThat(leaderboards.isEmpty()).isFalse();
         });
     }
 

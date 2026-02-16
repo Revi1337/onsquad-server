@@ -6,8 +6,6 @@ import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 
 public interface CrewRankerJpaRepository extends JpaRepository<CrewRanker, Long> {
 
-    boolean existsBy();
-
     List<CrewRanker> findAllByCrewIdAndRankLessThanEqualOrderByRankAsc(Long crewId, int rank);
 
 }

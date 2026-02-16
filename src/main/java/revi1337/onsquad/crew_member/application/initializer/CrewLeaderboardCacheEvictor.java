@@ -21,7 +21,7 @@ public class CrewLeaderboardCacheEvictor {
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationEvent() {
-        List<String> patterns = List.of(CrewLeaderboardKeyMapper.getLeaderboardPattern(), CrewLeaderboardKeyMapper.getPreviousLeaderboardPattern());
+        List<String> patterns = List.of(CrewLeaderboardKeyMapper.getLeaderboardPattern(), CrewLeaderboardKeyMapper.getLeaderboardSnapshotPattern());
         RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, patterns);
         log.info("[Cache-Evict] Initializing Crew ranking caches on startup. Patterns: {}", patterns);
     }

@@ -10,14 +10,15 @@ public abstract class CrewLeaderboardKeyMapper {
     private CrewLeaderboardKeyMapper() {
     }
 
-    private static final String CURRENT_LEADERBOARD_KEY_FORMAT = "crew:%s:leaderboard:current";
-    private static final String CURRENT_LEADERBOARD_PATTERN = "crew:*:leaderboard:current";
-    private static final String PREVIOUS_LEADERBOARD_KEY_FORMAT = "crew:%s:leaderboard:last-week";
-    private static final String PREVIOUS_LEADERBOARD_PATTERN = "crew:*:leaderboard:last-week";
+    private static final String LEADERBOARD_KEY_FORMAT = "crew:%s:leaderboard";
+    private static final String LEADERBOARD_PATTERN = "crew:*:leaderboard";
+    private static final String LEADERBOARD_SNAPSHOT_KEY_FORMAT = "crew:%s:leaderboard:snapshot";
+    private static final String LEADERBOARD_SNAPSHOT_PATTERN = "crew:*:leaderboard:snapshot";
     private static final String MEMBER_KEY_FORMAT = "member:%s";
+    public static final String LEADERBOARD_SNAPSHOT_POSTFIX = ":snapshot";
 
     public static String toLeaderboardKey(Long crewId) {
-        String leaderboardKey = String.format(CURRENT_LEADERBOARD_KEY_FORMAT, crewId);
+        String leaderboardKey = String.format(LEADERBOARD_KEY_FORMAT, crewId);
         return String.format(CacheFormat.SIMPLE, leaderboardKey);
     }
 
@@ -27,27 +28,33 @@ public abstract class CrewLeaderboardKeyMapper {
                 .toList();
     }
 
-    public static String toPreviousLeaderboardKey(Long crewId) {
-        String leaderboardKey = String.format(PREVIOUS_LEADERBOARD_KEY_FORMAT, crewId);
+    public static String toLeaderboardSnapshotKey(Long crewId) {
+        String leaderboardKey = String.format(LEADERBOARD_SNAPSHOT_KEY_FORMAT, crewId);
         return String.format(CacheFormat.SIMPLE, leaderboardKey);
     }
 
-    public static List<String> toPreviousLeaderboardKeys(Collection<Long> crewIds) {
+    public static List<String> toLeaderboardSnapshotKeys(Collection<Long> crewIds) {
         return crewIds.stream()
-                .map(CrewLeaderboardKeyMapper::toPreviousLeaderboardKey)
+                .map(CrewLeaderboardKeyMapper::toLeaderboardSnapshotKey)
                 .toList();
     }
 
     public static String getLeaderboardPattern() {
-        return String.format(CacheFormat.SIMPLE, CURRENT_LEADERBOARD_PATTERN);
+        return String.format(CacheFormat.SIMPLE, LEADERBOARD_PATTERN);
     }
 
-    public static String getPreviousLeaderboardPattern() {
-        return String.format(CacheFormat.SIMPLE, PREVIOUS_LEADERBOARD_PATTERN);
+    public static String getLeaderboardSnapshotPattern() {
+        return String.format(CacheFormat.SIMPLE, LEADERBOARD_SNAPSHOT_PATTERN);
     }
 
     public static Long parseCrewIdFromKey(String computedLeaderboardKey) {
         return Long.parseLong(computedLeaderboardKey.split(Sign.COLON)[2]);
+    }
+
+    public static List<Long> parseCrewIdFromKeys(List<String> computedLeaderboardKeys) {
+        return computedLeaderboardKeys.stream()
+                .map(CrewLeaderboardKeyMapper::parseCrewIdFromKey)
+                .toList();
     }
 
     public static String toMemberKey(Long memberId) {

@@ -1,6 +1,6 @@
 package revi1337.onsquad.crew_member.application.scheduler;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -21,57 +21,29 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.util.StopWatch;
-import revi1337.onsquad.common.TestContainerSupport;
-import revi1337.onsquad.common.aspect.RedisCacheAspect;
-import revi1337.onsquad.common.aspect.ThrottlingAspect;
+import revi1337.onsquad.common.MySqlTestContainerSupport;
+import revi1337.onsquad.common.RedisTestContainerSupport;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.common.fixture.MemberFixture;
 import revi1337.onsquad.crew_member.application.leaderboard.CompositeScore;
+import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardKeyMapper;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardUpdateService;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
-import revi1337.onsquad.infrastructure.storage.sqlite.ImageRecycleBinRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
-import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
-/**
- * Test In [Docker Image mysql-8.0:oracle]
- *
- * <pre> {@code
- *   datasource:
- *     url: jdbc:mysql://127.0.0.1:3306/onsquad?rewriteBatchedStatements=true
- *     username: revi1337
- *     password: 1337
- *     driver-class-name: com.mysql.cj.jdbc.Driver}</pre>
- */
+@Sql("/mysql-truncate.sql")
 @Import({ApplicationLayerConfiguration.class})
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-class LegacyCrewLeaderboardSchedulerAnalysisTest extends TestContainerSupport {
-
-    @MockBean
-    private NotificationEventListener notificationEventListener;
-
-    @MockBean
-    private CrewLeaderboardService crewLeaderboardService;
-
-    @MockBean
-    private ImageRecycleBinRepository imageRecycleBinRepository;
-
-    @MockBean
-    private ThrottlingAspect throttlingAspect;
-
-    @MockBean
-    private RedisCacheAspect redisCacheAspect;
+class CrewLeaderboardRefreshSchedulerAnalysisTest implements RedisTestContainerSupport, MySqlTestContainerSupport {
 
     @Autowired
     private CrewRankerRepository crewRankerRepository;
@@ -93,14 +65,11 @@ class LegacyCrewLeaderboardSchedulerAnalysisTest extends TestContainerSupport {
 
     @BeforeEach
     void setUp() {
-        stringRedisTemplate.execute((RedisCallback<Void>) connection -> {
-            connection.serverCommands().flushAll();
-            return null;
-        });
+        flushRedis(stringRedisTemplate);
     }
 
     @Test
-    @DisplayName("[Legacy] 스케줄러 갱신 중 발생하는 유저 활동의 점수 유실 검증")
+    @DisplayName("스케줄러 갱신 중 발생하는 유저 활동의 점수 유실 검증")
     void success1() {
         // given
         Long crewId = 1L;
@@ -125,14 +94,19 @@ class LegacyCrewLeaderboardSchedulerAnalysisTest extends TestContainerSupport {
         schedulerFuture.join();
 
         // then
-        assertThat(leaderboardManager.getScore(crewId, memberId))
-                .as("스케줄러가 리더보드 rdb 를 갱신하는 사이 발생한 추가 활동 점수가 Redis에서 유실된다")
-                .isZero();
+        assertSoftly(softly -> {
+            softly.assertThat(stringRedisTemplate.hasKey(CrewLeaderboardKeyMapper.toLeaderboardSnapshotKey(crewId)))
+                    .as("스케줄러 작업이 완료된 후 스냅샷 키는 삭제되어야 한다.")
+                    .isFalse();
+            softly.assertThat(leaderboardManager.getScore(crewId, memberId))
+                    .as("스케줄러가 리더보드 rdb 를 갱신하는 사이 발생한 추가 활동 점수가 Redis 에서 누락되지 않고, 새로운 리더보드에 적용된다.")
+                    .isEqualTo(CrewActivity.CREW_PARTICIPANT.getScore());
+        });
     }
 
     @Test
     @Disabled
-    @DisplayName("[Legacy] 운영 중인 테이블에 대규모 데이터(10만개)를 직접 갱신(쓰기)할 떄의 성능 측정 (488ms)")
+    @DisplayName("운영 중인 테이블에 대규모 데이터(10만개)를 직접 갱신(쓰기)할 떄의 성능 측정 (269ms)")
     void success2() {
         // given
         int memberCount = 100;

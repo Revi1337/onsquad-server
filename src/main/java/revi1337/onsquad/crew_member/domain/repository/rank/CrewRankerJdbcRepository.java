@@ -34,6 +34,42 @@ public class CrewRankerJdbcRepository {
         );
     }
 
+    public void insertBatchToShadowTable(List<CrewRankerCandidate> candidates) {
+        String sql = "INSERT INTO crew_ranker_shadow(crew_id, member_id, nickname, mbti, last_activity_time, score, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        namedJdbcTemplate.getJdbcOperations().batchUpdate(
+                sql,
+                candidates,
+                candidates.size(),
+                (ps, candidate) -> {
+                    ps.setLong(1, candidate.crewId());
+                    ps.setLong(2, candidate.memberId());
+                    ps.setString(3, candidate.nickname());
+                    ps.setString(4, candidate.mbti());
+                    ps.setObject(5, candidate.lastActivityTime());
+                    ps.setLong(6, candidate.score());
+                    ps.setInt(7, candidate.rank());
+                }
+        );
+    }
+
+    public void prepareShadowTable() {
+        namedJdbcTemplate.getJdbcOperations().execute("CREATE TABLE IF NOT EXISTS crew_ranker_shadow LIKE crew_ranker");
+        namedJdbcTemplate.getJdbcOperations().execute("TRUNCATE TABLE crew_ranker_shadow");
+    }
+
+    public void switchTables() {
+        namedJdbcTemplate.getJdbcOperations().execute("""
+                RENAME TABLE
+                        crew_ranker TO crew_ranker_swapping,
+                        crew_ranker_shadow TO crew_ranker,
+                        crew_ranker_swapping TO crew_ranker_shadow;
+                """);
+    }
+
+    public void dropShadowTable() {
+        namedJdbcTemplate.getJdbcOperations().execute("DROP TABLE IF EXISTS crew_ranker_shadow");
+    }
+
     public void truncate() {
         namedJdbcTemplate.getJdbcOperations().execute("TRUNCATE TABLE crew_ranker");
     }
