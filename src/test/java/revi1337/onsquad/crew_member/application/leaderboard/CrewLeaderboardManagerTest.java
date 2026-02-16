@@ -19,7 +19,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.common.TestContainerSupport;
+import revi1337.onsquad.common.container.RedisTestContainerSupport;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 import revi1337.onsquad.crew_member.domain.model.CrewLeaderboard;
 import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
@@ -28,7 +28,7 @@ import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
 @ContextConfiguration(classes = CrewLeaderboardManager.class)
 @ExtendWith(SpringExtension.class)
-class CrewLeaderboardManagerTest extends TestContainerSupport {
+class CrewLeaderboardManagerTest implements RedisTestContainerSupport {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;

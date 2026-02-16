@@ -19,7 +19,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.common.TestContainerSupport;
+import revi1337.onsquad.common.container.RedisTestContainerSupport;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 
@@ -27,7 +27,7 @@ import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
 @ContextConfiguration(classes = CrewLeaderboardManager.class)
 @ExtendWith(SpringExtension.class)
-class CrewLeaderboardManagerConcurrencyTest extends TestContainerSupport {
+class CrewLeaderboardManagerConcurrencyTest implements RedisTestContainerSupport {
 
     @Autowired
     private CrewLeaderboardManager crewLeaderboardManager;
