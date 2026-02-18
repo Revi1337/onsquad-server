@@ -90,4 +90,24 @@ class CrewLeaderboardSnapshotManagerTest {
                     );
         });
     }
+
+    @Test
+    @DisplayName("크루 ID 목록을 전달하면, 해당 크루들의 리더보드 스냅샷 키를 Redis에서 영구 삭제한다")
+    void removeSnapshots() {
+        List<Long> crewIds = List.of(1L, 2L, 3L);
+        List<Long> memberIds = List.of(1L, 2L, 3L);
+        Instant baseTime = CompositeScore.BASE_DATE.toInstant();
+        leaderboardManager.applyActivity(crewIds.get(0), memberIds.get(0), baseTime.plusSeconds(10), CrewActivity.SQUAD_COMMENT);
+        leaderboardManager.applyActivity(crewIds.get(1), memberIds.get(1), baseTime.plusSeconds(20), CrewActivity.SQUAD_COMMENT);
+        leaderboardManager.applyActivity(crewIds.get(2), memberIds.get(2), baseTime.plusSeconds(40), CrewActivity.SQUAD_CREATE);
+        leaderboardSnapshotManager.captureSnapshots();
+
+        leaderboardSnapshotManager.removeSnapshots(crewIds);
+
+        assertSoftly(softly -> {
+            softly.assertThat(stringRedisTemplate.hasKey(CrewLeaderboardKeyMapper.toLeaderboardKey(crewIds.get(0)))).isFalse();
+            softly.assertThat(stringRedisTemplate.hasKey(CrewLeaderboardKeyMapper.toLeaderboardKey(crewIds.get(1)))).isFalse();
+            softly.assertThat(stringRedisTemplate.hasKey(CrewLeaderboardKeyMapper.toLeaderboardKey(crewIds.get(2)))).isFalse();
+        });
+    }
 }

@@ -73,6 +73,11 @@ public class CrewLeaderboardSnapshotManager {
         RedisCacheEvictor.unlinkKeys(stringRedisTemplate, snapshotKeys);
     }
 
+    public void removeSnapshots(List<Long> crewIds) {
+        List<String> snapshotKeys = CrewLeaderboardKeyMapper.toLeaderboardSnapshotKeys(crewIds);
+        RedisCacheEvictor.unlinkKeys(stringRedisTemplate, snapshotKeys);
+    }
+
     private CrewLeaderboard convertToLeaderboard(Long crewId, int startRank, Set<TypedTuple<String>> tuples) {
         int currentRank = startRank;
         List<CrewRankerCandidate> candidates = new ArrayList<>(tuples.size());
