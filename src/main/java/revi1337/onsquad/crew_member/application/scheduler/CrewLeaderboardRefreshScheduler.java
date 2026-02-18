@@ -11,6 +11,7 @@ import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManag
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardSnapshotManager;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardUpdateService;
 import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
+import revi1337.onsquad.crew_member.infrastructure.discord.LeaderboardRefreshFailNotificationProvider;
 import revi1337.onsquad.infrastructure.storage.redis.RedisLockExecutor;
 
 @Slf4j
@@ -23,6 +24,7 @@ public class CrewLeaderboardRefreshScheduler {
     private final RedisLockExecutor redisLockExecutor;
     private final CrewLeaderboardSnapshotManager leaderboardSnapshotManager;
     private final CrewLeaderboardUpdateService leaderboardUpdateService;
+    private final LeaderboardRefreshFailNotificationProvider notificationProvider;
 
     @Scheduled(cron = "${onsquad.api.crew-leaderboard.schedule.expression}")
     public void refreshLeaderboards() {
@@ -43,6 +45,7 @@ public class CrewLeaderboardRefreshScheduler {
                 log.info("[Leaderboard-Scheduler] Job completed. Leaderboard has been refreshed and Redis cleared.");
             } catch (Exception e) {
                 log.error("[Leaderboard-Scheduler] Job failed. Target Crew IDs: {}. Snapshots are preserved in Redis.", relatedCrewIds, e);
+                notificationProvider.sendLeaderboardUpdateFailAlert(snapshotKeys);
             }
         });
     }
