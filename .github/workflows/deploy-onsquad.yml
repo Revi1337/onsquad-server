@@ -12,7 +12,6 @@ jobs:
   onsquad-server:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout to project
         uses: actions/checkout@v3
 
@@ -22,6 +21,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'gradle'
+
+      - name: Force Docker API Version
+        run: echo 'api.version=1.44' > ~/.docker-java.properties
+
+      - name: Docker Version
+        run: |
+          docker -v
+          docker info
 
       - name: Make application-dev.yml & application-prod.yml
         run: |
@@ -33,9 +40,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build            # run: ./gradlew clean build -Pprofile=ci
-        env:
-          TESTCONTAINERS_RYUK_DISABLED: true
+        run: ./gradlew clean build -i -s            # run: ./gradlew clean build -Pprofile=ci
 
       - name: Delivery Executable JAR
         uses: appleboy/scp-action@v0.1.4
