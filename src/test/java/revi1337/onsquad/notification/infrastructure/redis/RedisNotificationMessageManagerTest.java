@@ -12,12 +12,12 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
-import revi1337.onsquad.common.container.RedisTestContainerSupport;
+import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
 import revi1337.onsquad.notification.domain.model.NotificationMessage;
 
-@ContextConfiguration(initializers = RedisTestContainerSupport.RedisInitializer.class)
+@ContextConfiguration(initializers = RedisTestContainerInitializer.class)
 class RedisNotificationMessageManagerTest extends ApplicationLayerTestSupport {
 
     @Autowired

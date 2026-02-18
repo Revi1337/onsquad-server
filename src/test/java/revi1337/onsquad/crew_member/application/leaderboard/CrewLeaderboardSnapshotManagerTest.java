@@ -17,12 +17,12 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.common.container.RedisTestContainerSupport;
+import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
 
 @ContextConfiguration(
-        initializers = RedisTestContainerSupport.RedisInitializer.class,
+        initializers = RedisTestContainerInitializer.class,
         classes = {CrewLeaderboardManager.class, CrewLeaderboardSnapshotManager.class}
 )
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})

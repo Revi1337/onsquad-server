@@ -19,12 +19,12 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import revi1337.onsquad.common.container.RedisTestContainerSupport;
+import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 
 @Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
-@ContextConfiguration(initializers = RedisTestContainerSupport.RedisInitializer.class, classes = {CrewLeaderboardManager.class})
+@ContextConfiguration(initializers = RedisTestContainerInitializer.class, classes = {CrewLeaderboardManager.class})
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
 @ExtendWith(SpringExtension.class)
 class CrewLeaderboardManagerConcurrencyTest {

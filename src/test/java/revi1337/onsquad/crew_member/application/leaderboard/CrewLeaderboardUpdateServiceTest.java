@@ -20,8 +20,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
-import revi1337.onsquad.common.container.MySqlTestContainerSupport;
-import revi1337.onsquad.common.container.RedisTestContainerSupport;
+import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
+import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.crew_member.domain.model.CrewLeaderboard;
 import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
@@ -34,8 +34,8 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 @Sql("/mysql-truncate.sql")
 @Import({ApplicationLayerConfiguration.class})
 @ContextConfiguration(initializers = {
-        RedisTestContainerSupport.RedisInitializer.class,
-        MySqlTestContainerSupport.MySqlInitializer.class
+        MySqlTestContainerInitializer.class,
+        RedisTestContainerInitializer.class
 })
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 class CrewLeaderboardUpdateServiceTest {

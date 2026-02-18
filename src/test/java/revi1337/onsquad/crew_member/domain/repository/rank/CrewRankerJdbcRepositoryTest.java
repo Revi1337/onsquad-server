@@ -21,14 +21,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
-import revi1337.onsquad.common.container.MySqlTestContainerSupport;
+import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
 import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 import revi1337.onsquad.member.domain.entity.Member;
 
 @Sql({"/mysql-truncate.sql"})
 @Import({PersistenceLayerConfiguration.class, CrewRankerJdbcRepository.class})
-@ContextConfiguration(initializers = MySqlTestContainerSupport.MySqlInitializer.class)
+@ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest(showSql = false)
 class CrewRankerJdbcRepositoryTest {
