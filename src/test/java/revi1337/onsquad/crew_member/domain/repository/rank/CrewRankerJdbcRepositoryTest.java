@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.config.PersistenceLayerConfiguration;
 import revi1337.onsquad.common.container.MySqlTestContainerSupport;
@@ -27,9 +28,10 @@ import revi1337.onsquad.member.domain.entity.Member;
 
 @Sql({"/mysql-truncate.sql"})
 @Import({PersistenceLayerConfiguration.class, CrewRankerJdbcRepository.class})
+@ContextConfiguration(initializers = MySqlTestContainerSupport.MySqlInitializer.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest(showSql = false)
-class CrewRankerJdbcRepositoryTest implements MySqlTestContainerSupport {
+class CrewRankerJdbcRepositoryTest {
 
     @Autowired
     private CrewRankerJpaRepository jpaRepository;

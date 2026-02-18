@@ -11,13 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.container.RedisTestContainerSupport;
 
 @Import(RedisVerificationCodeStorage.class)
+@ContextConfiguration(initializers = RedisTestContainerSupport.RedisInitializer.class)
 @DataRedisTest
-class RedisVerificationCodeStorageTest implements RedisTestContainerSupport {
+class RedisVerificationCodeStorageTest {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -30,7 +33,10 @@ class RedisVerificationCodeStorageTest implements RedisTestContainerSupport {
 
     @BeforeEach
     void setUp() {
-        flushRedis(stringRedisTemplate);
+        stringRedisTemplate.execute((RedisCallback<Void>) connection -> {
+            connection.serverCommands().flushAll();
+            return null;
+        });
     }
 
     @Nested

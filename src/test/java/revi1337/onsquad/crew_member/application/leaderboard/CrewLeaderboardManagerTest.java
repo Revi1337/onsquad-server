@@ -25,10 +25,10 @@ import revi1337.onsquad.crew_member.domain.model.CrewLeaderboard;
 import revi1337.onsquad.crew_member.domain.model.CrewLeaderboards;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 
+@ContextConfiguration(initializers = RedisTestContainerSupport.RedisInitializer.class, classes = CrewLeaderboardManager.class)
 @ImportAutoConfiguration({RedisAutoConfiguration.class, JacksonAutoConfiguration.class})
-@ContextConfiguration(classes = CrewLeaderboardManager.class)
 @ExtendWith(SpringExtension.class)
-class CrewLeaderboardManagerTest implements RedisTestContainerSupport {
+class CrewLeaderboardManagerTest {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;

@@ -23,7 +23,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.util.StopWatch;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
@@ -42,8 +44,12 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 @Sql("/mysql-truncate.sql")
 @Import({ApplicationLayerConfiguration.class})
+@ContextConfiguration(initializers = {
+        RedisTestContainerSupport.RedisInitializer.class,
+        MySqlTestContainerSupport.MySqlInitializer.class
+})
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-class CrewLeaderboardRefreshSchedulerAnalysisTest implements RedisTestContainerSupport, MySqlTestContainerSupport {
+class CrewLeaderboardRefreshSchedulerAnalysisTest {
 
     @Autowired
     private CrewRankerRepository crewRankerRepository;
@@ -65,7 +71,10 @@ class CrewLeaderboardRefreshSchedulerAnalysisTest implements RedisTestContainerS
 
     @BeforeEach
     void setUp() {
-        flushRedis(stringRedisTemplate);
+        stringRedisTemplate.execute((RedisCallback<Void>) connection -> {
+            connection.serverCommands().flushAll();
+            return null;
+        });
     }
 
     @Test

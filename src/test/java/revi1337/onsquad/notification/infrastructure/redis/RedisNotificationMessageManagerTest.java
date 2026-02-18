@@ -8,14 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.container.RedisTestContainerSupport;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
 import revi1337.onsquad.notification.domain.model.NotificationMessage;
 
-class RedisNotificationMessageManagerTest extends ApplicationLayerTestSupport implements RedisTestContainerSupport {
+@ContextConfiguration(initializers = RedisTestContainerSupport.RedisInitializer.class)
+class RedisNotificationMessageManagerTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private RedisTemplate<String, NotificationMessage> redisTemplate;
@@ -25,7 +28,10 @@ class RedisNotificationMessageManagerTest extends ApplicationLayerTestSupport im
 
     @BeforeEach
     void setUp() {
-        flushRedis(redisTemplate);
+        redisTemplate.execute((RedisCallback<Void>) connection -> {
+            connection.serverCommands().flushAll();
+            return null;
+        });
     }
 
     @Test
