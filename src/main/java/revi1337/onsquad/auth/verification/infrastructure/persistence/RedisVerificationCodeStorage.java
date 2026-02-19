@@ -7,7 +7,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
@@ -37,20 +36,33 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
             end
             """;
 
-    private static final RedisScript<Long> ATOMIC_SAVE_VERIFICATION_SCRIPT = new DefaultRedisScript<>(ATOMIC_SAVE_VERIFICATION_LUA, Long.class);
-    private static final RedisScript<Long> ATOMIC_MARK_VERIFICATION_SCRIPT = new DefaultRedisScript<>(ATOMIC_MARK_VERIFICATION_LUA, Long.class);
+    private static final String ATOMIC_VALIDATE_AND_MARK_LUA = """
+            local currentCode = redis.call('HGET', KEYS[1], 'code')
+            local currentStatus = redis.call('HGET', KEYS[1], 'status')
+            if (currentCode == ARGV[1] and currentStatus ~= ARGV[2]) then
+                redis.call('HSET', KEYS[1], 'status', ARGV[2])
+                redis.call('PEXPIRE', KEYS[1], ARGV[3])
+                return 1
+            else
+                return 0
+            end
+            """;
+
+    private static final RedisScript<Boolean> ATOMIC_SAVE_VERIFICATION_SCRIPT = RedisScript.of(ATOMIC_SAVE_VERIFICATION_LUA, Boolean.class);
+    private static final RedisScript<Boolean> ATOMIC_MARK_VERIFICATION_SCRIPT = RedisScript.of(ATOMIC_MARK_VERIFICATION_LUA, Boolean.class);
+    private static final RedisScript<Boolean> ATOMIC_VALIDATE_AND_MARK_SCRIPT = RedisScript.of(ATOMIC_VALIDATE_AND_MARK_LUA, Boolean.class);
 
     private final StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration minutes) {
+    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration expireDuration) {
         String redisKey = getKey(email);
-        long expiredTime = getExpectExpiredTime(minutes);
+        long expiredTime = getExpectExpiredTime(expireDuration);
 
         RedisSafeExecutor.run(() -> stringRedisTemplate.execute(
                 ATOMIC_SAVE_VERIFICATION_SCRIPT,
                 Collections.singletonList(redisKey),
-                email, code, status.name(), String.valueOf(expiredTime), String.valueOf(minutes.toMillis())
+                email, code, status.name(), String.valueOf(expiredTime), String.valueOf(expireDuration.toMillis())
         ));
 
         return expiredTime;
@@ -67,17 +79,27 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean markVerificationStatus(String email, VerificationStatus status, Duration minutes) {
+    public boolean markVerificationStatus(String email, VerificationStatus status, Duration expireDuration) {
         String redisKey = getKey(email);
 
-        Long result = RedisSafeExecutor.supply(() -> stringRedisTemplate.execute(
+        return RedisSafeExecutor.supply(() -> stringRedisTemplate.execute(
                 ATOMIC_MARK_VERIFICATION_SCRIPT,
                 Collections.singletonList(redisKey),
                 status.name(),
-                String.valueOf(minutes.toMillis())
+                String.valueOf(expireDuration.toMillis())
         ));
+    }
 
-        return Long.valueOf(1).equals(result);
+    @Override
+    public boolean markVerificationStatusAsSuccess(String email, String authCode, Duration expireDuration) {
+        String redisKey = getKey(email);
+        return stringRedisTemplate.execute(
+                ATOMIC_VALIDATE_AND_MARK_SCRIPT,
+                Collections.singletonList(redisKey),
+                authCode,
+                VerificationStatus.SUCCESS.name(),
+                String.valueOf(expireDuration.toMillis())
+        );
     }
 
     @Override

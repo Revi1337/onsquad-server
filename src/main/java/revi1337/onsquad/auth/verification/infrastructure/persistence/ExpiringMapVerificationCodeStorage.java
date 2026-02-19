@@ -30,12 +30,12 @@ public class ExpiringMapVerificationCodeStorage implements VerificationCodeStora
             .build();
 
     @Override
-    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration duration) {
+    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration expireDuration) {
         String inMemoryKey = getKey(email);
-        long expectedTime = getExpectExpiredTime(duration);
+        long expectedTime = getExpectExpiredTime(expireDuration);
 
         VerificationCode verification = new VerificationCode(email, code, status, expectedTime);
-        verificationStore.put(inMemoryKey, verification, ExpirationPolicy.CREATED, duration.toMillis(), TimeUnit.MILLISECONDS);
+        verificationStore.put(inMemoryKey, verification, ExpirationPolicy.CREATED, expireDuration.toMillis(), TimeUnit.MILLISECONDS);
 
         return expectedTime;
     }
@@ -52,17 +52,25 @@ public class ExpiringMapVerificationCodeStorage implements VerificationCodeStora
     }
 
     @Override
-    public synchronized boolean markVerificationStatus(String email, VerificationStatus status, Duration duration) {
+    public synchronized boolean markVerificationStatus(String email, VerificationStatus status, Duration expireDuration) {
         String inMemoryKey = getKey(email);
         VerificationCode verification = verificationStore.get(inMemoryKey);
         if (verification != null) {
             verificationStore.remove(inMemoryKey);
-            long expectedTime = getExpectExpiredTime(duration);
+            long expectedTime = getExpectExpiredTime(expireDuration);
             VerificationCode updated = new VerificationCode(email, verification.getCode(), status, expectedTime);
-            verificationStore.put(inMemoryKey, updated, duration.toMillis(), TimeUnit.MILLISECONDS);
+            verificationStore.put(inMemoryKey, updated, expireDuration.toMillis(), TimeUnit.MILLISECONDS);
             return true;
         }
 
+        return false;
+    }
+
+    @Override
+    public synchronized boolean markVerificationStatusAsSuccess(String email, String authCode, Duration expireDuration) {
+        if (isValidVerificationCode(email, authCode)) {
+            return markVerificationStatus(email, VerificationStatus.SUCCESS, expireDuration);
+        }
         return false;
     }
 

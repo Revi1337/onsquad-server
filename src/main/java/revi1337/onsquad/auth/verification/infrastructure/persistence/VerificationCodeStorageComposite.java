@@ -27,8 +27,8 @@ public class VerificationCodeStorageComposite implements VerificationCodeStorage
     }
 
     @Override
-    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration minutes) {
-        return delegate(repository -> repository.saveVerificationCode(email, code, status, minutes));
+    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration expireDuration) {
+        return delegate(repository -> repository.saveVerificationCode(email, code, status, expireDuration));
     }
 
     @Override
@@ -37,8 +37,13 @@ public class VerificationCodeStorageComposite implements VerificationCodeStorage
     }
 
     @Override
-    public boolean markVerificationStatus(String email, VerificationStatus status, Duration minutes) {
-        return delegate(repository -> repository.markVerificationStatus(email, status, minutes));
+    public boolean markVerificationStatus(String email, VerificationStatus status, Duration expireDuration) {
+        return delegate(repository -> repository.markVerificationStatus(email, status, expireDuration));
+    }
+
+    @Override
+    public boolean markVerificationStatusAsSuccess(String email, String authCode, Duration expireDuration) {
+        return delegate(repository -> repository.markVerificationStatusAsSuccess(email, authCode, expireDuration));
     }
 
     @Override

@@ -111,6 +111,63 @@ class RedisVerificationCodeStorageTest {
     }
 
     @Nested
+    @DisplayName("원자적 인증 성공 마킹 (Lua Script)")
+    class MarkVerificationStatusAsSuccess {
+
+        @Test
+        @DisplayName("코드가 일치하고 아직 성공 상태가 아니면, 상태를 SUCCESS로 변경하고 TTL을 갱신하며 참을 반환한다")
+        void returnTrueAndUpdateWhenConditionsMet() {
+            String authCode = "123456";
+            redisVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
+
+            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).isTrue();
+                softly.assertThat(stringRedisTemplate.opsForHash().get(key, "status")).isEqualTo(VerificationStatus.SUCCESS.name());
+                softly.assertThat(stringRedisTemplate.getExpire(key)).isGreaterThan(590);
+            });
+        }
+
+        @Test
+        @DisplayName("코드가 일치하지 않으면 상태를 변경하지 않고 거짓을 반환한다")
+        void returnFalseWhenCodeIsWrong() {
+            String realCode = "123456";
+            redisVerificationCodeStorage.saveVerificationCode(email, realCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
+
+            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, "wrong_code", Duration.ofMinutes(10));
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).isFalse();
+                softly.assertThat(stringRedisTemplate.opsForHash().get(key, "status")).isEqualTo(VerificationStatus.PENDING.name());
+            });
+        }
+
+        @Test
+        @DisplayName("데이터가 이미 만료되어 존재하지 않으면 거짓을 반환한다")
+        void returnFalseWhenKeyDoesNotExist() throws InterruptedException {
+            String authCode = "123456";
+            redisVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, Duration.ofMillis(100));
+            Thread.sleep(200);
+
+            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+
+            assertThat(result).isFalse();
+        }
+
+        @Test
+        @DisplayName("이미 SUCCESS 상태인 경우, Lua 스크립트 조건(status ~= SUCCESS)에 의해 변경 없이 거짓을 반환한다")
+        void returnFalseWhenAlreadySuccessStatus() {
+            String authCode = "123456";
+            redisVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+
+            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+
+            assertThat(result).isFalse();
+        }
+    }
+
+    @Nested
     @DisplayName("특정 상태 마킹 여부 조회")
     class IsMarkedVerificationStatusWith {
 

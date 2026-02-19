@@ -106,6 +106,61 @@ class ExpiringMapVerificationCodeStorageTest {
     }
 
     @Nested
+    @DisplayName("인증 성공 마킹 (Atomic Check-and-Update)")
+    class MarkVerificationStatusAsSuccess {
+
+        @Test
+        @DisplayName("코드가 일치하고 데이터가 유효하면 상태를 SUCCESS로 변경하고 참을 반환한다")
+        void returnTrueWhenValidAndMatches() {
+            String code = "123456";
+            storage.saveVerificationCode(email, code, VerificationStatus.PENDING, Duration.ofMinutes(5));
+
+            boolean result = storage.markVerificationStatusAsSuccess(email, code, Duration.ofMinutes(5));
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).isTrue();
+                softly.assertThat(storage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
+            });
+        }
+
+        @Test
+        @DisplayName("코드가 일치하지 않으면 상태를 변경하지 않고 거짓을 반환한다")
+        void returnFalseWhenCodeMismatched() {
+            storage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
+
+            boolean result = storage.markVerificationStatusAsSuccess(email, "wrong_code", Duration.ofMinutes(5));
+
+            assertSoftly(softly -> {
+                softly.assertThat(result).isFalse();
+                softly.assertThat(storage.isMarkedVerificationStatusWith(email, VerificationStatus.PENDING)).isTrue();
+            });
+        }
+
+        @Test
+        @DisplayName("데이터가 이미 만료되었으면 거짓을 반환한다")
+        void returnFalseWhenExpired() throws InterruptedException {
+            String code = "123456";
+            storage.saveVerificationCode(email, code, VerificationStatus.PENDING, Duration.ofMillis(10));
+            Thread.sleep(20);
+
+            boolean result = storage.markVerificationStatusAsSuccess(email, code, Duration.ofMinutes(5));
+
+            assertThat(result).isFalse();
+        }
+
+        @Test
+        @DisplayName("이미 SUCCESS 상태인 경우에도 검증 로직(isValid)을 통과한다면 다시 성공으로 마킹된다")
+        void processAgainIfAlreadySuccess() {
+            String code = "123456";
+            storage.saveVerificationCode(email, code, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+
+            boolean result = storage.markVerificationStatusAsSuccess(email, code, Duration.ofMinutes(5));
+
+            assertThat(result).isTrue();
+        }
+    }
+
+    @Nested
     @DisplayName("특정 상태 마킹 여부 조회")
     class IsMarkedVerificationStatusWith {
 

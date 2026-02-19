@@ -49,12 +49,11 @@ public class VerificationMailService {
     }
 
     public boolean validateVerificationCode(String email, String authCode) {
-        if (redisVerificationCodeStorage.isValidVerificationCode(email, authCode)) {
-            boolean mark = redisVerificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
+        boolean marked = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, JOINING_TIMEOUT);
+        if (marked) {
             log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());
-            return mark;
+            return true;
         }
-
         log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.FAIL.name());
         return false;
     }
