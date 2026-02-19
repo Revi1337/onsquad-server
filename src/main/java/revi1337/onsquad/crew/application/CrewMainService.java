@@ -17,8 +17,8 @@ import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.crew.domain.model.CrewStatistic;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewRankerCacheService;
+import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
 import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.crew_member.domain.model.CrewMembers;
 import revi1337.onsquad.squad.application.SquadAccessor;
@@ -39,12 +39,12 @@ public class CrewMainService {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewDetail crew = crewAccessor.getCrewWithDetailById(crewId);
         List<AnnounceWithRoleStateResponse> announces = getCrewAnnounces(crewId);
-        List<CrewRanker> rankedMembers = crewRankerCacheService.findAllByCrewId(crewId);
+        List<CrewRankerResponse> rankers = getCrewRankers(crewId);
         SquadLinkableGroup<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
         boolean canManage = CrewPolicy.canManage(me);
 
-        return CrewMainResponse.from(canManage, crew, announces, rankedMembers, squads.values());
+        return CrewMainResponse.from(canManage, crew, announces, rankers, squads.values());
     }
 
     @Transactional(readOnly = true)
@@ -66,6 +66,12 @@ public class CrewMainService {
 
         return announces.values().stream()
                 .map(detail -> AnnounceWithRoleStateResponse.from(memberRoleMap.get(detail.writer().id()), detail))
+                .toList();
+    }
+
+    private List<CrewRankerResponse> getCrewRankers(Long crewId) {
+        return crewRankerCacheService.findAllByCrewId(crewId).stream()
+                .map(CrewRankerResponse::from)
                 .toList();
     }
 }
