@@ -2,6 +2,8 @@ package revi1337.onsquad.member.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.entity.vo.Introduce;
+import revi1337.onsquad.member.domain.entity.vo.Mbti;
 import revi1337.onsquad.member.domain.model.SimpleMember;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,18 +22,18 @@ public record SimpleMemberResponse(
                 member.getId(),
                 null,
                 member.getNickname().getValue(),
-                member.getIntroduce() != null ? member.getIntroduce().getValue() : null,
-                member.getMbti() != null ? member.getMbti().name() : ""
+                Introduce.getOrDefault(member.getIntroduce()),
+                Mbti.getOrDefault(member.getMbti())
         );
     }
 
-    public static SimpleMemberResponse from(SimpleMember simpleMember) {
+    public static SimpleMemberResponse from(SimpleMember member) {
         return new SimpleMemberResponse(
-                simpleMember.id(),
-                simpleMember.email() != null ? simpleMember.email().getValue() : null,
-                simpleMember.nickname().getValue(),
-                simpleMember.introduce() != null ? simpleMember.introduce().getValue() : null,
-                simpleMember.mbti() != null ? simpleMember.mbti().name() : ""
+                member.id(),
+                null,
+                member.nickname().getValue(),
+                Introduce.getOrDefault(member.introduce()),
+                Mbti.getOrDefault(member.mbti())
         );
     }
 }

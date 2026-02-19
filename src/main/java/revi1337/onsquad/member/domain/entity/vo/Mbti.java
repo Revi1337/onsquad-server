@@ -30,4 +30,12 @@ public enum Mbti {
             throw new MemberDomainException.InvalidMbti(INVALID_MBTI);
         }
     }
+
+    public static String getOrDefault(Mbti mbti) {
+        if (mbti == null) {
+            return "";
+        }
+
+        return mbti.name();
+    }
 }

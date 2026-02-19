@@ -1,6 +1,8 @@
 package revi1337.onsquad.member.application.dto.response;
 
 import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.member.domain.entity.vo.Introduce;
+import revi1337.onsquad.member.domain.entity.vo.Mbti;
 
 public record MemberResponse(
         Long id,
@@ -20,8 +22,8 @@ public record MemberResponse(
                 member.getId(),
                 member.getEmail().getValue(),
                 member.getNickname().getValue(),
-                member.getIntroduce().getValue(),
-                member.getMbti() != null ? member.getMbti().name() : "",
+                Introduce.getOrDefault(member.getIntroduce()),
+                Mbti.getOrDefault(member.getMbti()),
                 member.getKakaoLink(),
                 member.getProfileImage(),
                 member.getUserType().getText(),

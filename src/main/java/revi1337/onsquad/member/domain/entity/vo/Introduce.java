@@ -40,4 +40,12 @@ public class Introduce {
             throw new MemberDomainException.InvalidIntroduceLength(INVALID_INTRODUCE_LENGTH);
         }
     }
+
+    public static String getOrDefault(Introduce introduce) {
+        if (introduce == null) {
+            return "";
+        }
+
+        return introduce.getValue();
+    }
 }
