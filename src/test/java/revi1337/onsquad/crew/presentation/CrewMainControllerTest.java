@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
+import revi1337.onsquad.announce.application.dto.response.AnnounceStates;
+import revi1337.onsquad.announce.application.dto.response.AnnounceWithRoleStateResponse;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew.application.CrewMainService;
@@ -33,6 +34,7 @@ import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewStates;
 import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
+import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
@@ -113,7 +115,8 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         1L,
                         new SimpleMemberResponse(1L, null, "nickname", "introduce", Mbti.ENTJ.name())
                 ),
-                List.of(new AnnounceResponse(
+                List.of(new AnnounceWithRoleStateResponse(
+                        new AnnounceStates(CrewRole.OWNER),
                         1L,
                         "title",
                         "content",
