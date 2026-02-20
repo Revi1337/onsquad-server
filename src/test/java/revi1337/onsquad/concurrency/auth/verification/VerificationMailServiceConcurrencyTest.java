@@ -85,7 +85,7 @@ class VerificationMailServiceConcurrencyTest {
         }
 
         @Test
-        @DisplayName("동시에 10개의 인증 요청이 올 때, 단 하나만 성공(true)해야 정상이지만, Concurrency 문제로 하나 이상이 성공한다.")
+        @DisplayName("동시에 10개의 인증 요청이 올 때, 단 하나만 성공(true)을 반환해야 한다.")
         void success() {
             invokeConcurrencyTest();
         }
@@ -112,7 +112,7 @@ class VerificationMailServiceConcurrencyTest {
         }
 
         @Test
-        @DisplayName("동시에 10개의 인증 요청이 올 때, 단 하나만 성공(true)해야 정상이지만, Concurrency 문제로 하나 이상이 성공한다.")
+        @DisplayName("동시에 10개의 인증 요청이 올 때, 단 하나만 성공(true)을 반환해야 한다.")
         void success() {
             invokeConcurrencyTest();
         }
@@ -133,7 +133,7 @@ class VerificationMailServiceConcurrencyTest {
         }
 
         @Test
-        @DisplayName("동시에 10개의 인증 요청이 올 때, 단 하나만 성공(true)해야 정상이지만, Concurrency 문제로 하나 이상이 성공한다.")
+        @DisplayName("동시에 10개의 인증 요청이 올 때, 단 하나만 성공(true)을 반환해야 한다.")
         void success() {
             invokeConcurrencyTest();
         }
@@ -169,8 +169,11 @@ class VerificationMailServiceConcurrencyTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(successCount.get())
-                    .as("인증 성공은 반드시 1번이어야 정상이지만, Concurrency 문제로 하나 이상이 성공한다.")
-                    .isGreaterThan(1);
+                    .as("인증 성공은 반드시 1번만 성공한다.")
+                    .isEqualTo(1);
+            softly.assertThat(failCount.get())
+                    .as("나머지는 모두 실패해야 한다")
+                    .isEqualTo(threadCount - 1);
         });
     }
 

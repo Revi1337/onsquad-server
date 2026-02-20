@@ -49,16 +49,12 @@ public class VerificationMailService {
     }
 
     public boolean validateVerificationCode(String email, String authCode) {
-        if (!verificationCodeStorage.isValidVerificationCode(email, authCode)) {
-            log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.FAIL.name());
-            return false;
-        }
-        boolean mark = verificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
-        if (mark) {
+        boolean marked = verificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, JOINING_TIMEOUT);
+        if (marked) {
             log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());
-        } else {
-            log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.FAIL.name());
+            return true;
         }
-        return mark;
+        log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.FAIL.name());
+        return false;
     }
 }
