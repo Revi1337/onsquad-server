@@ -149,14 +149,14 @@ class ExpiringMapVerificationCodeStorageTest {
         }
 
         @Test
-        @DisplayName("이미 SUCCESS 상태인 경우에도 검증 로직(isValid)을 통과한다면 다시 성공으로 마킹된다")
-        void processAgainIfAlreadySuccess() {
-            String code = "123456";
-            storage.saveVerificationCode(email, code, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+        @DisplayName("이미 SUCCESS 상태인 경우 업데이트되지 않고 거짓을 반환한다")
+        void returnFalseWhenAlreadySuccessStatus() {
+            String authCode = "123456";
+            storage.saveVerificationCode(email, authCode, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
 
-            boolean result = storage.markVerificationStatusAsSuccess(email, code, Duration.ofMinutes(5));
+            boolean result = storage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
 
-            assertThat(result).isTrue();
+            assertThat(result).isFalse();
         }
     }
 

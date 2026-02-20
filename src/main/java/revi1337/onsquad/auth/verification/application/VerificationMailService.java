@@ -21,25 +21,25 @@ public class VerificationMailService {
     private static final Duration VERIFICATION_CODE_TIMEOUT = Duration.ofMinutes(3);
     private static final Duration JOINING_TIMEOUT = Duration.ofMinutes(5);
 
+    private final EmailSender emailSender;
+    private final VerificationCodeStorage verificationCodeStorage;
+    private final VerificationCodeGenerator verificationCodeGenerator;
+
     public VerificationMailService(
             @Qualifier("verificationCodeEmailSender") EmailSender emailSender,
             VerificationCodeStorage redisVerificationCodeStorage,
             VerificationCodeGenerator verificationCodeGenerator
     ) {
         this.emailSender = emailSender;
-        this.redisVerificationCodeStorage = redisVerificationCodeStorage;
+        this.verificationCodeStorage = redisVerificationCodeStorage;
         this.verificationCodeGenerator = verificationCodeGenerator;
     }
-
-    private final EmailSender emailSender;
-    private final VerificationCodeStorage redisVerificationCodeStorage;
-    private final VerificationCodeGenerator verificationCodeGenerator;
 
     @Async("sending-verification-code-executor")
     public void sendVerificationCode(String email) {
         try {
             String authCode = verificationCodeGenerator.generate();
-            long expireMilli = redisVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, VERIFICATION_CODE_TIMEOUT);
+            long expireMilli = verificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, VERIFICATION_CODE_TIMEOUT);
 
             emailSender.sendEmail(MAIL_SUBJECT, new VerificationCode(email, authCode, VerificationStatus.PENDING, expireMilli), email);
             log.info(SEND_VERIFICATION_CODE_SUCCESS_LOG_FORMAT, email, authCode);
@@ -49,12 +49,16 @@ public class VerificationMailService {
     }
 
     public boolean validateVerificationCode(String email, String authCode) {
-        boolean marked = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, JOINING_TIMEOUT);
-        if (marked) {
-            log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());
-            return true;
+        if (!verificationCodeStorage.isValidVerificationCode(email, authCode)) {
+            log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.FAIL.name());
+            return false;
         }
-        log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.FAIL.name());
-        return false;
+        boolean mark = verificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, JOINING_TIMEOUT);
+        if (mark) {
+            log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());
+        } else {
+            log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.FAIL.name());
+        }
+        return mark;
     }
 }

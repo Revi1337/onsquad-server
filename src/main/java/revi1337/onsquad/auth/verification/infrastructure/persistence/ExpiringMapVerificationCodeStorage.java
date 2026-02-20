@@ -68,9 +68,12 @@ public class ExpiringMapVerificationCodeStorage implements VerificationCodeStora
 
     @Override
     public synchronized boolean markVerificationStatusAsSuccess(String email, String authCode, Duration expireDuration) {
-        if (isValidVerificationCode(email, authCode)) {
+        String inMemoryKey = getKey(email);
+        VerificationCode verification = verificationStore.get(inMemoryKey);
+        if (verification != null && Objects.equals(verification.getCode(), authCode) && verification.getStatus() != VerificationStatus.SUCCESS) {
             return markVerificationStatus(email, VerificationStatus.SUCCESS, expireDuration);
         }
+
         return false;
     }
 
