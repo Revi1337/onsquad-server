@@ -1,4 +1,4 @@
-package revi1337.onsquad.auth.verification.application;
+package revi1337.onsquad.auth.verification.infrastructure.persistence.initializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
