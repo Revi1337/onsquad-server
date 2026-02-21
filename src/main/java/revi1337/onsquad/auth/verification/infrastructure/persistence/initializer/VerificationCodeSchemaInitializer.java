@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Profile({"local", "default"})
-@ConditionalOnExpression("#{'${spring.sql.init.mode:never}'.equals('always') or '${spring.jpa.hibernate.ddl-auto:none}'.equals('create')}")
+@ConditionalOnExpression("#{'${spring.sql.init.mode:never}'.equals('always') and '${spring.jpa.hibernate.ddl-auto:none}'.equals('create')}")
 @Component
 public class VerificationCodeSchemaInitializer implements CommandLineRunner {
 

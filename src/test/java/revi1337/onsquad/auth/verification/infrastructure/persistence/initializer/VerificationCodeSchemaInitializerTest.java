@@ -12,11 +12,13 @@ import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
 
+@ActiveProfiles("local")
 @TestPropertySource(properties = {
         "spring.sql.init.mode=always",
         "spring.jpa.hibernate.ddl-auto=create"
