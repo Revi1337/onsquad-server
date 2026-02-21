@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.constant.CacheConst;
@@ -26,6 +27,7 @@ public class AnnounceCacheEvictor {
 
     private final StringRedisTemplate stringRedisTemplate;
 
+    @Order(2)
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationEvent() {
         log.info("[Cache-Evict] Evicting Announce caches on startup. Patterns: {}", DESTROY_KEY_PATTERNS);
