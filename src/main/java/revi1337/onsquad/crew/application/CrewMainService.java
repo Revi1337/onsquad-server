@@ -34,8 +34,8 @@ public class CrewMainService {
     public CrewMainResponse fetchMain(Long memberId, Long crewId, Pageable pageable) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewDetail crew = crewAccessor.getCrewWithDetailById(crewId);
-        List<AnnounceResponse> announces = getCrewAnnounces(crewId);
-        List<CrewRankerResponse> rankers = getCrewRankers(crewId);
+        List<AnnounceResponse> announces = announceCacheService.getDefaultAnnounces(crewId);
+        List<CrewRankerResponse> rankers = crewRankerCacheService.findAllByCrewId(crewId);
         SquadLinkableGroup<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
         boolean canManage = CrewPolicy.canManage(me);
@@ -53,15 +53,5 @@ public class CrewMainService {
         boolean canDelete = CrewPolicy.canDelete(me);
 
         return CrewManageResponse.from(canModify, canDelete, statistic);
-    }
-
-    private List<AnnounceResponse> getCrewAnnounces(Long crewId) {
-        return announceCacheService.getDefaultAnnounces(crewId);
-    }
-
-    private List<CrewRankerResponse> getCrewRankers(Long crewId) {
-        return crewRankerCacheService.findAllByCrewId(crewId).stream()
-                .map(CrewRankerResponse::from)
-                .toList();
     }
 }

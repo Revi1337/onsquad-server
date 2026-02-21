@@ -31,11 +31,18 @@ public enum Mbti {
         }
     }
 
+    public static String getOrDefault(String mbti) {
+        try {
+            return parse(mbti).name();
+        } catch (MemberDomainException.InvalidMbti e) {
+            return "";
+        }
+    }
+
     public static String getOrDefault(Mbti mbti) {
         if (mbti == null) {
             return "";
         }
-
         return mbti.name();
     }
 }

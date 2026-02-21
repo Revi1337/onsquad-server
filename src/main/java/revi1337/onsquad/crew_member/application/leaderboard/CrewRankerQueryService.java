@@ -15,8 +15,6 @@ public class CrewRankerQueryService {
 
     public List<CrewRankerResponse> findCrewRankers(Long memberId, Long crewId) {
         crewMemberAccessor.validateMemberInCrew(memberId, crewId);
-        return crewRankerCacheService.findAllByCrewId(crewId).stream()
-                .map(CrewRankerResponse::from)
-                .toList();
+        return crewRankerCacheService.findAllByCrewId(crewId);
     }
 }
