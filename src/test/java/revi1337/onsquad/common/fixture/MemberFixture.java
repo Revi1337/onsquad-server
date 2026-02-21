@@ -149,6 +149,12 @@ public class MemberFixture {
         return kwangwon;
     }
 
+    public static Member createMember(Long id) {
+        Member member = createMember(id.intValue());
+        ReflectionTestUtils.setField(member, "id", id);
+        return member;
+    }
+
     private static Mbti peekRandomMbti() {
         List<Mbti> mbtiList = Arrays.asList(Mbti.values());
         Collections.shuffle(mbtiList);

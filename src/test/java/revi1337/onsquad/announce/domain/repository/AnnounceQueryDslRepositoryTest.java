@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import revi1337.onsquad.announce.domain.entity.Announce;
-import revi1337.onsquad.announce.domain.model.AnnounceDetail;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
@@ -50,19 +49,20 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
         announce2.pin(now.plusHours(2));
         announceRepository.saveAll(List.of(announce1, announce2, announce3));
 
-        List<AnnounceDetail> results = announceQueryDslRepository.fetchAllByCrewId(revi.getId());
+        List<Announce> announces = announceQueryDslRepository.fetchAllByCrewId(revi.getId());
 
         assertSoftly(softly -> {
-            softly.assertThat(results).hasSize(3);
+            clearPersistenceContext();
+            softly.assertThat(announces).hasSize(3);
 
-            softly.assertThat(results.get(0).id()).isEqualTo(announce2.getId());
-            softly.assertThat(results.get(0).pinned()).isTrue();
+            softly.assertThat(announces.get(0).getId()).isEqualTo(announce2.getId());
+            softly.assertThat(announces.get(0).isPinned()).isTrue();
 
-            softly.assertThat(results.get(1).id()).isEqualTo(announce1.getId());
-            softly.assertThat(results.get(1).pinned()).isTrue();
+            softly.assertThat(announces.get(1).getId()).isEqualTo(announce1.getId());
+            softly.assertThat(announces.get(1).isPinned()).isTrue();
 
-            softly.assertThat(results.get(2).id()).isEqualTo(announce3.getId());
-            softly.assertThat(results.get(2).pinned()).isFalse();
+            softly.assertThat(announces.get(2).getId()).isEqualTo(announce3.getId());
+            softly.assertThat(announces.get(2).isPinned()).isFalse();
         });
     }
 
@@ -79,16 +79,17 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
         announce2.pin(now.plusHours(2));
         announceRepository.saveAll(List.of(announce1, announce2, announce3));
 
-        List<AnnounceDetail> results = announceQueryDslRepository.fetchAllInDefaultByCrewId(crew.getId(), 2);
+        List<Announce> announces = announceQueryDslRepository.fetchAllInDefaultByCrewId(crew.getId(), 2);
 
         assertSoftly(softly -> {
-            softly.assertThat(results).hasSize(2);
+            clearPersistenceContext();
+            softly.assertThat(announces).hasSize(2);
 
-            softly.assertThat(results.get(0).id()).isEqualTo(announce2.getId());
-            softly.assertThat(results.get(0).pinned()).isTrue();
+            softly.assertThat(announces.get(0).getId()).isEqualTo(announce2.getId());
+            softly.assertThat(announces.get(0).isPinned()).isTrue();
 
-            softly.assertThat(results.get(1).id()).isEqualTo(announce1.getId());
-            softly.assertThat(results.get(1).pinned()).isTrue();
+            softly.assertThat(announces.get(1).getId()).isEqualTo(announce1.getId());
+            softly.assertThat(announces.get(1).isPinned()).isTrue();
         });
     }
 
@@ -105,9 +106,10 @@ class AnnounceQueryDslRepositoryTest extends PersistenceLayerTestSupport {
         announce2.pin(now.plusHours(2));
         announceRepository.saveAll(List.of(announce1, announce2, announce3));
 
-        Optional<AnnounceDetail> result = announceQueryDslRepository.fetchByIdAndCrewId(announce2.getId(), crew.getId());
+        Optional<Announce> announce = announceQueryDslRepository.fetchByIdAndCrewId(announce2.getId(), crew.getId());
 
-        assertThat(result).isPresent();
+        clearPersistenceContext();
+        assertThat(announce).isPresent();
     }
 
     private Announce createCrewAnnounce(Crew crew, Member revi) {

@@ -22,9 +22,9 @@ import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
+import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.domain.entity.Announce;
 import revi1337.onsquad.announce.domain.error.AnnounceBusinessException;
-import revi1337.onsquad.announce.domain.model.AnnounceDetail;
 import revi1337.onsquad.announce.domain.repository.AnnounceJpaRepository;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.common.container.RedisTestContainerInitializer;
@@ -77,9 +77,9 @@ class AnnounceEventListenerTest {
         triggerCommit();
 
         // then
-        List<AnnounceDetail> list = announceCacheService.getDefaultAnnounces(crew.getId());
+        List<AnnounceResponse> list = announceCacheService.getDefaultAnnounces(crew.getId());
         assertThat(list).hasSize(1);
-        assertThat(list.get(0).title().getValue()).isEqualTo("새로운 공지");
+        assertThat(list.get(0).title()).isEqualTo("새로운 공지");
     }
 
     @Test
@@ -98,8 +98,8 @@ class AnnounceEventListenerTest {
         triggerCommit();
 
         // then
-        AnnounceDetail updatedDetail = announceCacheService.getAnnounce(crew.getId(), id);
-        assertThat(updatedDetail.title().getValue()).isEqualTo("수정된 제목");
+        AnnounceResponse updatedDetail = announceCacheService.getAnnounce(crew.getId(), id);
+        assertThat(updatedDetail.title()).isEqualTo("수정된 제목");
     }
 
     @Test
@@ -118,7 +118,7 @@ class AnnounceEventListenerTest {
         triggerCommit();
 
         // then
-        List<AnnounceDetail> list = announceCacheService.getDefaultAnnounces(crew.getId());
+        List<AnnounceResponse> list = announceCacheService.getDefaultAnnounces(crew.getId());
         assertThat(list).isEmpty();
         assertThatThrownBy(() -> announceCacheService.getAnnounce(crew.getId(), id))
                 .isInstanceOf(AnnounceBusinessException.NotFound.class);
@@ -139,7 +139,7 @@ class AnnounceEventListenerTest {
         triggerCommit();
 
         // then
-        AnnounceDetail pinnedDetail = announceCacheService.getAnnounce(crew.getId(), id);
+        AnnounceResponse pinnedDetail = announceCacheService.getAnnounce(crew.getId(), id);
         assertThat(pinnedDetail.pinned()).isTrue();
     }
 

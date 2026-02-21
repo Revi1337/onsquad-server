@@ -1,14 +1,12 @@
 package revi1337.onsquad.crew.application;
 
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.announce.application.AnnounceCacheService;
-import revi1337.onsquad.announce.application.dto.response.AnnounceWithRoleStateResponse;
-import revi1337.onsquad.announce.domain.model.AnnounceDetails;
+import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.crew.application.dto.response.CrewMainResponse;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
@@ -19,8 +17,6 @@ import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewRankerCacheService;
 import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
-import revi1337.onsquad.crew_member.domain.model.CrewMembers;
 import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
@@ -38,7 +34,7 @@ public class CrewMainService {
     public CrewMainResponse fetchMain(Long memberId, Long crewId, Pageable pageable) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewDetail crew = crewAccessor.getCrewWithDetailById(crewId);
-        List<AnnounceWithRoleStateResponse> announces = getCrewAnnounces(crewId);
+        List<AnnounceResponse> announces = getCrewAnnounces(crewId);
         List<CrewRankerResponse> rankers = getCrewRankers(crewId);
         SquadLinkableGroup<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
@@ -59,14 +55,8 @@ public class CrewMainService {
         return CrewManageResponse.from(canModify, canDelete, statistic);
     }
 
-    private List<AnnounceWithRoleStateResponse> getCrewAnnounces(Long crewId) {
-        AnnounceDetails announces = new AnnounceDetails(announceCacheService.getDefaultAnnounces(crewId));
-        CrewMembers crewMembers = crewMemberAccessor.findAllByCrewIdAndMemberIdIn(crewId, announces.getWriterIds());
-        Map<Long, CrewRole> memberRoleMap = crewMembers.splitRolesByMemberId();
-
-        return announces.values().stream()
-                .map(detail -> AnnounceWithRoleStateResponse.from(memberRoleMap.get(detail.writer().id()), detail))
-                .toList();
+    private List<AnnounceResponse> getCrewAnnounces(Long crewId) {
+        return announceCacheService.getDefaultAnnounces(crewId);
     }
 
     private List<CrewRankerResponse> getCrewRankers(Long crewId) {

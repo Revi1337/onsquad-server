@@ -16,8 +16,8 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.domain.entity.Announce;
-import revi1337.onsquad.announce.domain.model.AnnounceDetail;
 import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
 import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
@@ -78,7 +78,7 @@ class AnnounceCacheServiceTest extends ApplicationLayerTestSupport {
         announceRepository.save(createCrewAnnounce(crew, revi));
         announceCacheService.getDefaultAnnounces(crew.getId());
 
-        List<AnnounceDetail> results = announceCacheService.getDefaultAnnounces(crew.getId());
+        List<AnnounceResponse> results = announceCacheService.getDefaultAnnounces(crew.getId());
 
         verify(announceQueryDslRepository, times(1)).fetchAllInDefaultByCrewId(crew.getId(), 4);
         assertThat(results).hasSize(2);

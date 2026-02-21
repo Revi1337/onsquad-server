@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
+import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.application.dto.response.AnnounceStates;
-import revi1337.onsquad.announce.application.dto.response.AnnounceWithRoleStateResponse;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.crew.application.CrewMainService;
@@ -115,7 +115,7 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         1L,
                         new SimpleMemberResponse(1L, null, "nickname", "introduce", Mbti.ENTJ.name())
                 ),
-                List.of(new AnnounceWithRoleStateResponse(
+                List.of(new AnnounceResponse(
                         new AnnounceStates(CrewRole.OWNER),
                         1L,
                         "title",

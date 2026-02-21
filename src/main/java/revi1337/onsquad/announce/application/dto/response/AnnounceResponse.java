@@ -2,11 +2,13 @@ package revi1337.onsquad.announce.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
-import revi1337.onsquad.announce.domain.model.AnnounceDetail;
+import revi1337.onsquad.announce.domain.entity.Announce;
+import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record AnnounceResponse(
+        AnnounceStates states,
         Long id,
         String title,
         String content,
@@ -16,15 +18,16 @@ public record AnnounceResponse(
         SimpleMemberResponse writer
 ) {
 
-    public static AnnounceResponse from(AnnounceDetail detail) {
+    public static AnnounceResponse from(CrewRole role, Announce announce) {
         return new AnnounceResponse(
-                detail.id(),
-                detail.title().getValue(),
-                detail.content(),
-                detail.createdAt(),
-                detail.pinned(),
-                detail.pinnedAt(),
-                detail.writer().id() != null ? SimpleMemberResponse.from(detail.writer()) : SimpleMemberResponse.DELETED_MEMBER
+                new AnnounceStates(role),
+                announce.getId(),
+                announce.getTitle().getValue(),
+                announce.getContent(),
+                announce.getCreatedAt(),
+                announce.isPinned(),
+                announce.getPinnedAt(),
+                announce.getMember() != null ? SimpleMemberResponse.from(announce.getMember()) : SimpleMemberResponse.DELETED_MEMBER
         );
     }
 }

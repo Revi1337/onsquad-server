@@ -38,9 +38,9 @@ import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.AnnounceQueryService;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
+import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.application.dto.response.AnnounceStates;
 import revi1337.onsquad.announce.application.dto.response.AnnounceWithPinAndModifyStateResponse;
-import revi1337.onsquad.announce.application.dto.response.AnnounceWithRoleStateResponse;
 import revi1337.onsquad.announce.application.dto.response.AnnouncesWithWriteStateResponse;
 import revi1337.onsquad.announce.presentation.request.AnnounceCreateRequest;
 import revi1337.onsquad.announce.presentation.request.AnnounceUpdateRequest;
@@ -146,7 +146,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             AnnouncesWithWriteStateResponse response = new AnnouncesWithWriteStateResponse(
                     new AnnounceStates(true),
                     List.of(
-                            new AnnounceWithRoleStateResponse(
+                            new AnnounceResponse(
                                     new AnnounceStates(CrewRole.OWNER),
                                     2L,
                                     "announce-title-2",
@@ -162,7 +162,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                                             Mbti.ENTJ.name()
                                     )
                             ),
-                            new AnnounceWithRoleStateResponse(
+                            new AnnounceResponse(
                                     new AnnounceStates(CrewRole.MANAGER),
                                     1L,
                                     "announce-title-1",

@@ -2,23 +2,24 @@ package revi1337.onsquad.announce.domain.model;
 
 import java.util.Collections;
 import java.util.List;
+import revi1337.onsquad.announce.domain.entity.Announce;
 
-public class AnnounceDetails {
+public class Announces {
 
-    private final List<AnnounceDetail> announces;
+    private final List<Announce> announces;
 
-    public AnnounceDetails(List<AnnounceDetail> announces) {
+    public Announces(List<Announce> announces) {
         this.announces = Collections.unmodifiableList(announces);
     }
 
     public List<Long> getWriterIds() {
         return announces.stream()
-                .map(detail -> detail.writer().id())
+                .map(announce -> announce.getMember().getId())
                 .distinct()
                 .toList();
     }
 
-    public List<AnnounceDetail> values() {
+    public List<Announce> values() {
         return announces;
     }
 }

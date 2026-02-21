@@ -4,10 +4,10 @@ import java.util.List;
 
 public record AnnouncesWithWriteStateResponse(
         AnnounceStates states,
-        List<AnnounceWithRoleStateResponse> announces
+        List<AnnounceResponse> announces
 ) {
 
-    public static AnnouncesWithWriteStateResponse from(boolean canWrite, List<AnnounceWithRoleStateResponse> details) {
+    public static AnnouncesWithWriteStateResponse from(boolean canWrite, List<AnnounceResponse> details) {
         return new AnnouncesWithWriteStateResponse(new AnnounceStates(canWrite), details);
     }
 }
