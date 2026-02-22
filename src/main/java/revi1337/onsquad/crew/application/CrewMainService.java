@@ -2,6 +2,7 @@ package revi1337.onsquad.crew.application;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,6 @@ import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
-import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
 
 @Service
 @RequiredArgsConstructor
@@ -36,11 +36,11 @@ public class CrewMainService {
         CrewDetail crew = crewAccessor.getCrewWithDetailById(crewId);
         List<AnnounceResponse> announces = announceCacheService.getDefaultAnnounces(crewId);
         List<CrewRankerResponse> rankers = crewRankerCacheService.findAllByCrewId(crewId);
-        SquadLinkableGroup<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
+        Page<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, CategoryType.ALL, pageable);
 
         boolean canManage = CrewPolicy.canManage(me);
 
-        return CrewMainResponse.from(canManage, crew, announces, rankers, squads.values());
+        return CrewMainResponse.from(canManage, crew, announces, rankers, squads.getContent());
     }
 
     @Transactional(readOnly = true)

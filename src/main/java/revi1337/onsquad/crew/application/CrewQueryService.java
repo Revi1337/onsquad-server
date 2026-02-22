@@ -17,6 +17,7 @@ import revi1337.onsquad.crew.domain.model.CrewDetails;
 import revi1337.onsquad.crew_hashtag.application.CrewHashtagAccessor;
 import revi1337.onsquad.crew_hashtag.domain.CrewHashtags;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
+import revi1337.onsquad.crew_request.application.CrewRequestAccessor;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,6 +27,7 @@ public class CrewQueryService {
     private final CrewAccessor crewAccessor;
     private final CrewMemberAccessor crewMemberAccessor;
     private final CrewHashtagAccessor crewHashtagAccessor;
+    private final CrewRequestAccessor crewRequestAccessor;
 
     public DuplicateResponse checkNameDuplicate(String name) {
         if (crewAccessor.checkCrewNameExists(name)) {
@@ -38,11 +40,16 @@ public class CrewQueryService {
     public CrewWithParticipantStateResponse findCrewById(@Nullable Long memberId, Long crewId) {
         CrewDetail crew = crewAccessor.fetchCrewWithDetailById(crewId);
         if (memberId == null) {
-            return CrewWithParticipantStateResponse.from(null, crew);
+            return CrewWithParticipantStateResponse.from(null, null, crew);
         }
-        boolean alreadyParticipant = crewMemberAccessor.checkAlreadyParticipant(memberId, crewId);
 
-        return CrewWithParticipantStateResponse.from(alreadyParticipant, crew);
+        boolean alreadyParticipant = crewMemberAccessor.checkAlreadyParticipant(memberId, crewId);
+        if (alreadyParticipant) {
+            return CrewWithParticipantStateResponse.from(null, true, crew);
+        }
+
+        boolean alreadyRequest = crewRequestAccessor.checkAlreadyRequest(memberId, crewId);
+        return CrewWithParticipantStateResponse.from(alreadyRequest, false, crew);
     }
 
     public PageResponse<CrewResponse> fetchCrewsByName(String crewName, Pageable pageable) {

@@ -153,7 +153,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         void success1() throws Exception {
             Long crewId = 1L;
             CrewWithParticipantStateResponse response = new CrewWithParticipantStateResponse(
-                    new CrewStates(Boolean.TRUE),
+                    new CrewStates(Boolean.TRUE, Boolean.FALSE),
                     crewId,
                     "crew-name",
                     "crew-introduce",
@@ -190,7 +190,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
         void success2() throws Exception {
             Long crewId = 1L;
             CrewWithParticipantStateResponse response = new CrewWithParticipantStateResponse(
-                    new CrewStates(null),
+                    new CrewStates(null, null),
                     crewId,
                     "crew-name",
                     "crew-introduce",

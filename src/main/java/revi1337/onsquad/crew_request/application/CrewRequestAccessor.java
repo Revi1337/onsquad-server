@@ -28,6 +28,10 @@ public class CrewRequestAccessor {
         return crewRequestRepository.fetchAllWithSimpleCrewByMemberId(memberId, pageable);
     }
 
+    public boolean checkAlreadyRequest(Long memberId, Long crewId) {
+        return crewRequestRepository.findByCrewIdAndMemberId(crewId, memberId).isPresent();
+    }
+
     public boolean isRequestAbsent(Long memberId, Long crewId) {
         return crewRequestRepository.findByCrewIdAndMemberId(crewId, memberId).isEmpty();
     }

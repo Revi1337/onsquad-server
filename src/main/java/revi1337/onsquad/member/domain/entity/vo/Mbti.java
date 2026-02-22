@@ -26,7 +26,7 @@ public enum Mbti {
     public static Mbti parse(String value) {
         try {
             return Mbti.valueOf(value.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new MemberDomainException.InvalidMbti(INVALID_MBTI);
         }
     }

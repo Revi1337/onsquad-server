@@ -21,9 +21,9 @@ public record CrewWithParticipantStateResponse(
         SimpleMemberResponse owner
 ) {
 
-    public static CrewWithParticipantStateResponse from(@Nullable Boolean alreadyParticipant, CrewDetail result) {
+    public static CrewWithParticipantStateResponse from(@Nullable Boolean alreadyRequest, @Nullable Boolean alreadyParticipant, CrewDetail result) {
         return new CrewWithParticipantStateResponse(
-                new CrewStates(alreadyParticipant),
+                new CrewStates(alreadyRequest, alreadyParticipant),
                 result.getId(),
                 result.getName().getValue(),
                 result.getIntroduce().getValue(),
