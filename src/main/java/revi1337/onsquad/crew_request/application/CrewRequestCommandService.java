@@ -32,7 +32,7 @@ public class CrewRequestCommandService {
     private final CrewRequestRepository crewRequestRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    @Throttling(name = "throttle-crew-req", key = "'crew:' + #crewId + ':member:' + #memberId", during = 5)
+    @Throttling(name = "throttle-crew-req", key = "'crew:' + #crewId + ':member:' + #memberId", during = 1)
     public void request(Long memberId, Long crewId) {
         crewMemberAccessor.validateMemberNotInCrew(memberId, crewId);
         if (crewRequestAccessor.isRequestAbsent(memberId, crewId)) {
