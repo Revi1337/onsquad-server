@@ -87,9 +87,10 @@ public class SquadQueryService {
         }
 
         List<SquadWithLeaderStateResponse> response = squadGroup.stream()
-                .map(simpleSquad -> {
-                    boolean isLeader = simpleSquad.leader().id().equals(memberId);
-                    return SquadWithLeaderStateResponse.from(isLeader, simpleSquad);
+                .map(squad -> {
+                    boolean isLeader = SquadMemberPolicy.isLeader(memberId, squad.leader().id());
+                    boolean canDestroy = SquadPolicy.canDestroy(me);
+                    return SquadWithLeaderStateResponse.from(isLeader, canDestroy, squad);
                 })
                 .toList();
 

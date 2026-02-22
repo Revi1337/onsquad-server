@@ -16,6 +16,10 @@ public final class SquadMemberPolicy {
         return me.isLeader();
     }
 
+    public static boolean isLeader(Long memberId, Long squadLeaderId) {
+        return memberId.equals(squadLeaderId);
+    }
+
     public static boolean isNotLeader(SquadMember me) {
         return !isLeader(me);
     }

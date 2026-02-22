@@ -8,7 +8,8 @@ public record SquadStates(
         Boolean isLeader,
         Boolean canSeeParticipants,
         Boolean canLeave,
-        Boolean canDelete
+        Boolean canDelete,
+        Boolean canDestroy
 ) {
 
     public static SquadStates of(
@@ -18,10 +19,10 @@ public record SquadStates(
             Boolean canLeave,
             boolean canDelete
     ) {
-        return new SquadStates(alreadyParticipant, isLeader, canSeeParticipants, canLeave, canDelete);
+        return new SquadStates(alreadyParticipant, isLeader, canSeeParticipants, canLeave, canDelete, null);
     }
 
-    public static SquadStates of(boolean isLeader) {
-        return new SquadStates(null, isLeader, null, null, null);
+    public static SquadStates of(boolean isLeader, boolean canDestroy) {
+        return new SquadStates(null, isLeader, null, null, null, canDestroy);
     }
 }

@@ -4,7 +4,6 @@ import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.domain.model.SimpleSquad;
-import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 
 public record SquadWithLeaderStateResponse(
         SquadStates states,
@@ -16,9 +15,9 @@ public record SquadWithLeaderStateResponse(
         SimpleMemberResponse leader
 ) {
 
-    public static SquadWithLeaderStateResponse from(boolean isLeader, SimpleSquad squad) {
+    public static SquadWithLeaderStateResponse from(boolean isLeader, boolean canDestroy, SimpleSquad squad) {
         return new SquadWithLeaderStateResponse(
-                SquadStates.of(isLeader),
+                SquadStates.of(isLeader, canDestroy),
                 squad.id(),
                 squad.title().getValue(),
                 squad.capacity(),
@@ -27,20 +26,6 @@ public record SquadWithLeaderStateResponse(
                         .map(CategoryType::getText)
                         .toList(),
                 SimpleMemberResponse.from(squad.leader())
-        );
-    }
-
-    public static SquadWithLeaderStateResponse from(SquadWithLeaderState domainDto) {
-        return new SquadWithLeaderStateResponse(
-                SquadStates.of(domainDto.isLeader()),
-                domainDto.squad().id(),
-                domainDto.squad().title().getValue(),
-                domainDto.squad().capacity(),
-                domainDto.squad().capacity(),
-                domainDto.squad().categories().stream()
-                        .map(CategoryType::getText)
-                        .toList(),
-                SimpleMemberResponse.from(domainDto.squad().leader())
         );
     }
 }

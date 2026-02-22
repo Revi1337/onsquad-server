@@ -27,6 +27,10 @@ public final class SquadPolicy {
         return SquadMemberPolicy.isLeader(me) || CrewPolicy.canDelete(meInCrew);
     }
 
+    public static boolean canDestroy(CrewMember me) {
+        return CrewMemberPolicy.isOwner(me);
+    }
+
     public static boolean canLeave(SquadMember me, Squad squad) {
         return isLastMemberRemaining(squad) || SquadMemberPolicy.isNotLeader(me);
     }
@@ -46,7 +50,7 @@ public final class SquadPolicy {
     }
 
     public static void ensureManageable(CrewMember me) {
-        if (CrewMemberPolicy.isNotOwner(me)) {
+        if (CrewMemberPolicy.isLowerThanManager(me)) {
             throw new SquadBusinessException.InsufficientAuthority(SquadErrorCode.INSUFFICIENT_MANAGE_SQUAD_AUTHORITY);
         }
     }
