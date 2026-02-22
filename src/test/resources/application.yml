@@ -167,10 +167,12 @@ onsquad:
 logging:
   level:
     org:
-      springframework.jdbc: DEBUG
-      springframework.jdbc.datasource.DataSourceUtils: ERROR
       hibernate.SQL: DEBUG
       hibernate.orm.jdbc.bind: ERROR
+
+      springframework.jdbc: DEBUG
+      springframework.jdbc.core.StatementCreatorUtils: ERROR
+      springframework.jdbc.datasource.DataSourceUtils: ERROR
 
       springframework.transaction.interceptor: ERROR
       springframework.jdbc.datasource.DataSourceTransactionManager: ERROR

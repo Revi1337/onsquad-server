@@ -29,8 +29,9 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
-        format_sql: false
-  #        default_batch_fetch_size: 100
+        format_sql: true
+        highlight_sql: true
+        generate_statistics: true
 
   data:
     web:
@@ -80,44 +81,15 @@ server:
     include-binding-errors: never
   port: 8080
 
-management:
-  server:
-    port: 9097
-  endpoint:
-    health:
-      show-components: always
-  info:
-    java.enabled: true
-    env.enabled: true
-    os.enabled: true
-  endpoints:
-    web:
-      base-path: /metadata
-      exposure:
-        include: metrics, info, http-exchanges, prometheus, health
-
-logging:
-  level:
-    org:
-      springframework.jdbc: DEBUG
-      hibernate.SQL: DEBUG
-      hibernate.orm.jdbc.bind: DEBUG
-      springframework.transaction.interceptor: TRACE
-      springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
-      springframework.orm.jpa.JpaTransactionManager: DEBUG
-    revi1337:
-      onsquad:
-        DEBUG
-
 onsquad:
   frontend-base-url: frontend-base-url
 
   token:
-    backup-path: token-backup-path
     access-token-attributes:
       token-attributes:
         expired: 365d
         secret-key: secret-key
+
     refresh-token-attributes:
       token-attributes:
         expired: 365d
@@ -158,13 +130,6 @@ onsquad:
         scope:
           - email: https://www.googleapis.com/auth/userinfo.email
           - profile: https://www.googleapis.com/auth/userinfo.profile
-
-  discord:
-    webhook:
-      alert:
-        aws: https://discord.com/api/webhooks/web-hook-url
-        apply-score: https://discord.com/api/webhooks/web-hook-url
-        leaderboard-scheduler: https://discord.com/api/webhooks/web-hook-url
   
   aws:
     cloud-front:
@@ -184,6 +149,13 @@ onsquad:
           squad-directory: squad-dir
           member-directory: member-dir
 
+  discord:
+    webhook:
+      alert:
+        aws: https://discord.com/api/webhooks/web-hook-url
+        apply-score: https://discord.com/api/webhooks/web-hook-url
+        leaderboard-scheduler: https://discord.com/api/webhooks/web-hook-url
+
   api:
     crew-leaderboard:
       during: 7d
@@ -191,3 +163,36 @@ onsquad:
       schedule:
         expression:
           0 0 0 * * 1
+
+management:
+  server:
+    port: 9097
+  endpoint:
+    health:
+      show-components: always
+  info:
+    java.enabled: true
+    env.enabled: true
+    os.enabled: true
+  endpoints:
+    web:
+      base-path: /metadata
+      exposure:
+        include: metrics, info, http-exchanges, prometheus, health
+
+logging:
+  level:
+    org:
+      hibernate.SQL: DEBUG
+      hibernate.orm.jdbc.bind: TRACE
+
+      springframework.jdbc: DEBUG
+      springframework.jdbc.core.StatementCreatorUtils: TRACE
+
+      springframework.transaction.interceptor: TRACE
+      springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+      springframework.orm.jpa.JpaTransactionManager: DEBUG
+
+    revi1337:
+      onsquad:
+        DEBUG
