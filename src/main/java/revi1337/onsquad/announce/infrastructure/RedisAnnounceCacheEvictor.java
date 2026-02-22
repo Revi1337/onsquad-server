@@ -40,9 +40,8 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 public class RedisAnnounceCacheEvictor implements AnnounceCacheEvictor {
 
     private static final String CREW_ANNOUNCE_KEY_FORMAT = String.join(Sign.COLON, CREW_ANNOUNCE_CACHE_NAME, "crew:%s:announce:%s");
-    private static final String CREW_ANNOUNCES_KEY_FORMAT = String.join(Sign.COLON, CREW_ANNOUNCES_CACHE_NAME, "crew:%s:announces");
+    private static final String CREW_ANNOUNCES_KEY_FORMAT = String.join(Sign.COLON, CREW_ANNOUNCES_CACHE_NAME, "crew:%s");
     private static final String CREW_ANNOUNCE_KEY_PATTERN = String.join(Sign.COLON, CREW_ANNOUNCE_CACHE_NAME, "crew:%s:announce:*");
-
     private final CacheManager cacheManager;
     private final StringRedisTemplate stringRedisTemplate;
 

@@ -1,11 +1,10 @@
 package revi1337.onsquad.announce.application.listener;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,10 +21,8 @@ import revi1337.onsquad.announce.application.AnnounceCacheService;
 import revi1337.onsquad.announce.application.AnnounceCommandService;
 import revi1337.onsquad.announce.application.dto.AnnounceCreateDto;
 import revi1337.onsquad.announce.application.dto.AnnounceUpdateDto;
-import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.domain.entity.Announce;
-import revi1337.onsquad.announce.domain.error.AnnounceBusinessException;
-import revi1337.onsquad.announce.domain.repository.AnnounceJpaRepository;
+import revi1337.onsquad.announce.domain.repository.AnnounceRepository;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.crew.domain.entity.Crew;
@@ -46,7 +43,7 @@ class AnnounceEventListenerTest {
     private CrewRepository crewRepository;
 
     @Autowired
-    private AnnounceJpaRepository announceRepository;
+    private AnnounceRepository announceRepository;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -66,81 +63,93 @@ class AnnounceEventListenerTest {
     }
 
     @Test
-    @DisplayName("공지 생성 시, 리스트 캐시가 즉시 갱신되어 최신 공지를 포함해야 한다")
+    @DisplayName("공지 생성 시, 기존 리스트 캐시는 무효화되어야 한다")
     void onCreate() {
-        // given
         Member revi = memberRepository.save(createRevi());
         Crew crew = crewRepository.save(createCrew(revi));
+        announceRepository.save(createAnnounce(1, crew, revi));
+        announceCacheService.getDefaultAnnounces(crew.getId());
+        String announcesCacheKey = generateAnnounceListCacheKey(crew.getId());
+        assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isTrue();
 
-        // when
-        announceCommandService.newAnnounce(revi.getId(), crew.getId(), new AnnounceCreateDto("새로운 공지", "내용"));
+        announceCommandService.newAnnounce(revi.getId(), crew.getId(), new AnnounceCreateDto("새 공지", "내용"));
         triggerCommit();
 
-        // then
-        List<AnnounceResponse> list = announceCacheService.getDefaultAnnounces(crew.getId());
-        assertThat(list).hasSize(1);
-        assertThat(list.get(0).title()).isEqualTo("새로운 공지");
+        assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isFalse();
     }
 
     @Test
-    @DisplayName("공지 수정 시, 단건 캐시와 리스트 캐시가 모두 최신 정보로 동기화되어야 한다")
+    @DisplayName("공지 수정 시, 해당 단건 캐시와 리스트 캐시가 모두 삭제되어야 한다")
     void onUpdate() {
-        // given
         Member revi = memberRepository.save(createRevi());
         Crew crew = crewRepository.save(createCrew(revi));
-        announceCommandService.newAnnounce(revi.getId(), crew.getId(), new AnnounceCreateDto("원래 제목", "내용"));
-        Announce savedAnnounce = announceRepository.findAll().get(0);
-        Long id = savedAnnounce.getId();
-        announceCacheService.getAnnounce(crew.getId(), id);
+        Announce announce = announceRepository.save(createAnnounce(1, crew, revi));
+        announceCacheService.getAnnounce(crew.getId(), announce.getId());
+        announceCacheService.getDefaultAnnounces(crew.getId());
+        String announceCacheKey = generateAnnounceCacheKey(crew.getId(), announce.getId());
+        String announcesCacheKey = generateAnnounceListCacheKey(crew.getId());
+        assertThat(stringRedisTemplate.hasKey(announceCacheKey)).isTrue();
+        assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isTrue();
 
-        // when
-        announceCommandService.updateAnnounce(revi.getId(), crew.getId(), id, new AnnounceUpdateDto("수정된 제목", "내용"));
+        announceCommandService.updateAnnounce(revi.getId(), crew.getId(), announce.getId(), new AnnounceUpdateDto("수정", "내용"));
         triggerCommit();
 
-        // then
-        AnnounceResponse updatedDetail = announceCacheService.getAnnounce(crew.getId(), id);
-        assertThat(updatedDetail.title()).isEqualTo("수정된 제목");
+        assertSoftly(softly -> {
+            softly.assertThat(stringRedisTemplate.hasKey(announceCacheKey)).isFalse();
+            softly.assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isFalse();
+        });
     }
 
     @Test
-    @DisplayName("공지 삭제 시, 단건 캐시는 제거되고 리스트 캐시는 갱신되어야 한다")
+    @DisplayName("공지 삭제 시, 캐시에서 해당 데이터들이 제거되어야 한다")
     void onDelete() {
-        // given
         Member revi = memberRepository.save(createRevi());
         Crew crew = crewRepository.save(createCrew(revi));
-        announceCommandService.newAnnounce(revi.getId(), crew.getId(), new AnnounceCreateDto("삭제될 공지", "내용"));
-        Announce savedAnnounce = announceRepository.findAll().get(0);
-        Long id = savedAnnounce.getId();
-        announceCacheService.getAnnounce(crew.getId(), id);
+        Announce announce = announceRepository.save(createAnnounce(1, crew, revi));
+        announceCacheService.getAnnounce(crew.getId(), announce.getId());
+        announceCacheService.getDefaultAnnounces(crew.getId());
+        String announceCacheKey = generateAnnounceCacheKey(crew.getId(), announce.getId());
+        String announcesCacheKey = generateAnnounceListCacheKey(crew.getId());
+        assertThat(stringRedisTemplate.hasKey(announceCacheKey)).isTrue();
+        assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isTrue();
 
-        // when
-        announceCommandService.deleteAnnounce(revi.getId(), crew.getId(), id);
+        announceCommandService.deleteAnnounce(revi.getId(), crew.getId(), announce.getId());
         triggerCommit();
 
-        // then
-        List<AnnounceResponse> list = announceCacheService.getDefaultAnnounces(crew.getId());
-        assertThat(list).isEmpty();
-        assertThatThrownBy(() -> announceCacheService.getAnnounce(crew.getId(), id))
-                .isInstanceOf(AnnounceBusinessException.NotFound.class);
+        assertSoftly(softly -> {
+            softly.assertThat(stringRedisTemplate.hasKey(announceCacheKey)).isFalse();
+            softly.assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isFalse();
+        });
     }
 
     @Test
-    @DisplayName("공지 고정 상태 변경 시, 캐시가 무효화되어 바뀐 순서가 반영되어야 한다")
+    @DisplayName("고정 상태 변경 시, 순서 변경을 위해 리스트 캐시가 삭제되어야 한다")
     void onPinned() {
         Member revi = memberRepository.save(createRevi());
         Crew crew = crewRepository.save(createCrew(revi));
-        announceCommandService.newAnnounce(revi.getId(), crew.getId(), new AnnounceCreateDto("공지", "내용"));
-        Announce savedAnnounce = announceRepository.findAll().get(0);
-        Long id = savedAnnounce.getId();
-        announceCacheService.getAnnounce(crew.getId(), id);
+        Announce announce = announceRepository.save(createAnnounce(1, crew, revi));
+        announceCacheService.getAnnounce(crew.getId(), announce.getId());
+        announceCacheService.getDefaultAnnounces(crew.getId());
+        String announceCacheKey = generateAnnounceCacheKey(crew.getId(), announce.getId());
+        String announcesCacheKey = generateAnnounceListCacheKey(crew.getId());
+        assertThat(stringRedisTemplate.hasKey(announceCacheKey)).isTrue();
+        assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isTrue();
 
-        // when
-        announceCommandService.changePinState(revi.getId(), crew.getId(), id, true); // Pin 고정
+        announceCommandService.changePinState(revi.getId(), crew.getId(), announce.getId(), true);
         triggerCommit();
 
-        // then
-        AnnounceResponse pinnedDetail = announceCacheService.getAnnounce(crew.getId(), id);
-        assertThat(pinnedDetail.pinned()).isTrue();
+        assertSoftly(softly -> {
+            softly.assertThat(stringRedisTemplate.hasKey(announceCacheKey)).isFalse();
+            softly.assertThat(stringRedisTemplate.hasKey(announcesCacheKey)).isFalse();
+        });
+    }
+
+    private String generateAnnounceListCacheKey(Long crewId) {
+        return String.format("onsquad:crew-announces:crew:%d", crewId);
+    }
+
+    private String generateAnnounceCacheKey(Long crewId, Long announceId) {
+        return String.format("onsquad:crew-announce:crew:%d:announce:%d", crewId, announceId);
     }
 
     private void triggerCommit() {
@@ -148,5 +157,14 @@ class AnnounceEventListenerTest {
             TestTransaction.flagForCommit();
             TestTransaction.end();
         }
+    }
+
+    private Announce createAnnounce(int sequence, Crew crew, Member member) {
+        return new Announce(
+                "테스트 제목" + sequence,
+                "테스트 내용" + sequence,
+                crew,
+                member
+        );
     }
 }

@@ -105,16 +105,16 @@ class RedisAnnounceCacheEvictorTest extends ApplicationLayerTestSupport {
     @DisplayName("공지사항 상세 내용 캐시는 유지하고 목록(List) 캐시만 선택적으로 제거한다.")
     void evictAnnounceLists() {
         Cache cache = redisCacheManager.getCache(CacheConst.CREW_ANNOUNCES);
-        cache.put("crew:1:announces", "datas1");
-        cache.put("crew:2:announces", "datas2");
-        cache.put("crew:3:announces", "datas3");
+        cache.put("crew:1", "datas1");
+        cache.put("crew:2", "datas2");
+        cache.put("crew:3", "datas3");
 
         announceCacheEvictor.evictAnnounceLists(List.of(1L, 2L, 3L));
 
         assertSoftly(softly -> {
-            softly.assertThat(cache.get("crew:1:announces")).isNull();
-            softly.assertThat(cache.get("crew:2:announces")).isNull();
-            softly.assertThat(cache.get("crew:3:announces")).isNull();
+            softly.assertThat(cache.get("crew:1")).isNull();
+            softly.assertThat(cache.get("crew:2")).isNull();
+            softly.assertThat(cache.get("crew:3")).isNull();
         });
     }
 }

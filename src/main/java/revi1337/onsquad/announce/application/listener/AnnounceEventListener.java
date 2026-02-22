@@ -1,5 +1,6 @@
 package revi1337.onsquad.announce.application.listener;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,19 +12,14 @@ import revi1337.onsquad.announce.domain.event.AnnouncePinnedEvent;
 import revi1337.onsquad.announce.domain.event.AnnounceUpdateEvent;
 
 /**
- * Event listener responsible for synchronizing announcement caches. This component listens for various announcement-related events and updates the cache using
- * the following strategies:
+ * Event listener for announcement cache invalidation. Ensures data consistency by evicting stale caches based on a Cache-Aside strategy:
  * <ul>
- * <li><b>onCreate:</b> Refreshes the default announcement list cache to include the newly created item.
- * Note: Individual item caching is deferred until the first access (Cache-Aside) to save resources,
- * unless a massive simultaneous access (Thundering Herd) is expected via push notifications.</li>
- * <li><b>onUpdate:</b> Updates both the specific announcement cache and the overall default list cache
- * to reflect content changes.</li>
- * <li><b>onDelete:</b> Removes the specific announcement from the cache and refreshes the default list cache.</li>
- * <li><b>onPinned:</b> Updates both the specific announcement and the default list cache,
- * <p>
- * as the pinning state affects the display order.</li>
+ * <li><b>onCreate:</b> Evicts the list cache to reflect new content.</li>
+ * <li><b>onUpdate:</b> Evicts both the specific item and the list cache.</li>
+ * <li><b>onDelete:</b> Removes the specific item and evicts the list cache.</li>
+ * <li><b>onPinned:</b> Evicts both the item and the list cache as the display order changes.</li>
  * </ul>
+ * Note: Eviction (Invalidation) is used instead of immediate updates to minimize database I/O.
  */
 @Slf4j
 @Component
@@ -34,28 +30,29 @@ public class AnnounceEventListener {
 
     @TransactionalEventListener
     public void onCreate(AnnounceCreateEvent event) {
-        log.debug("[{}] Refreshing list cache for crew: {}", event.getEventName(), event.crewId());
-        announceCacheService.putDefaultAnnounceList(event.crewId());
+        log.debug("[{}] Evicting list cache due to new announcement in crew: {}", event.getEventName(), event.crewId());
+        announceCacheService.evictAnnounceLists(List.of(event.crewId()));
+        announceCacheService.evictAnnounces(List.of(event.crewId()));
     }
 
     @TransactionalEventListener
     public void onUpdate(AnnounceUpdateEvent event) {
-        log.debug("[{}] Refreshing single & list cache for crew: {}", event.getEventName(), event.crewId());
-        announceCacheService.putAnnounce(event.crewId(), event.announceId());
-        announceCacheService.putDefaultAnnounceList(event.crewId());
+        log.debug("[{}] Evicting single & list cache due to update in crew: {}, announce: {}", event.getEventName(), event.crewId(), event.announceId());
+        announceCacheService.evictAnnounce(event.crewId(), event.announceId());
+        announceCacheService.evictAnnounceLists(List.of(event.crewId()));
     }
 
     @TransactionalEventListener
     public void onDelete(AnnounceDeleteEvent event) {
-        log.debug("[{}] Evicting single and refreshing list cache for crew: {}", event.getEventName(), event.crewId());
+        log.debug("[{}] Evicting single & list cache due to deletion in crew: {}, announce: {}", event.getEventName(), event.crewId(), event.announceId());
         announceCacheService.evictAnnounce(event.crewId(), event.announceId());
-        announceCacheService.putDefaultAnnounceList(event.crewId());
+        announceCacheService.evictAnnounceLists(List.of(event.crewId()));
     }
 
     @TransactionalEventListener
     public void onPinned(AnnouncePinnedEvent event) {
-        log.debug("[{}] Refreshing pinned state caches for crew: {}", event.getEventName(), event.crewId());
+        log.debug("[{}] Evicting caches due to pin state change in crew: {}, announce: {}", event.getEventName(), event.crewId(), event.announceId());
         announceCacheService.evictAnnounce(event.crewId(), event.announceId());
-        announceCacheService.putDefaultAnnounceList(event.crewId());
+        announceCacheService.evictAnnounceLists(List.of(event.crewId()));
     }
 }
