@@ -2,11 +2,12 @@ package revi1337.onsquad.squad.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
-import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 
 public interface SquadRepository {
 
@@ -24,9 +25,9 @@ public interface SquadRepository {
 
     Optional<Squad> findSquadWithDetailById(Long id);
 
-    List<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable);
+    Page<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable);
 
-    List<SquadWithLeaderState> fetchManageList(Long memberId, Long crewId, Pageable pageable);
+    Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable);
 
     List<Long> findIdsByMemberId(Long memberId);
 

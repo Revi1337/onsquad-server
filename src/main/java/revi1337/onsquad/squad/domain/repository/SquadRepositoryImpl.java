@@ -3,12 +3,13 @@ package revi1337.onsquad.squad.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
-import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 
 @Repository
 @RequiredArgsConstructor
@@ -53,13 +54,13 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public List<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
+    public Page<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
         return squadQueryDslRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, categoryType, pageable);
     }
 
     @Override
-    public List<SquadWithLeaderState> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
-        return squadQueryDslRepository.fetchManageList(memberId, crewId, pageable);
+    public Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable) {
+        return squadQueryDslRepository.fetchManageList(crewId, pageable);
     }
 
     @Override

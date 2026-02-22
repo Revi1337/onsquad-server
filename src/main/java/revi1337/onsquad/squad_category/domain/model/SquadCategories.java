@@ -12,6 +12,10 @@ public class SquadCategories {
 
     private final List<SimpleSquadCategory> categories;
 
+    public SquadCategories() {
+        this.categories = List.of();
+    }
+
     public SquadCategories(List<SimpleSquadCategory> categories) {
         this.categories = Collections.unmodifiableList(categories);
     }

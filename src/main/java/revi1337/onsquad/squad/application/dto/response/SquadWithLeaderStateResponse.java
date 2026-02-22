@@ -1,16 +1,46 @@
 package revi1337.onsquad.squad.application.dto.response;
 
+import java.util.List;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 
 public record SquadWithLeaderStateResponse(
-        boolean isLeader,
-        SimpleSquadResponse squad
+        SquadStates states,
+        Long id,
+        String title,
+        int capacity,
+        int remain,
+        List<String> categories,
+        SimpleMemberResponse leader
 ) {
+
+    public static SquadWithLeaderStateResponse from(boolean isLeader, SimpleSquad squad) {
+        return new SquadWithLeaderStateResponse(
+                SquadStates.of(isLeader),
+                squad.id(),
+                squad.title().getValue(),
+                squad.capacity(),
+                squad.capacity(),
+                squad.categories().stream()
+                        .map(CategoryType::getText)
+                        .toList(),
+                SimpleMemberResponse.from(squad.leader())
+        );
+    }
 
     public static SquadWithLeaderStateResponse from(SquadWithLeaderState domainDto) {
         return new SquadWithLeaderStateResponse(
-                domainDto.isLeader(),
-                SimpleSquadResponse.from(domainDto.squad())
+                SquadStates.of(domainDto.isLeader()),
+                domainDto.squad().id(),
+                domainDto.squad().title().getValue(),
+                domainDto.squad().capacity(),
+                domainDto.squad().capacity(),
+                domainDto.squad().categories().stream()
+                        .map(CategoryType::getText)
+                        .toList(),
+                SimpleMemberResponse.from(domainDto.squad().leader())
         );
     }
 }

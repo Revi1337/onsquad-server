@@ -1,8 +1,6 @@
 package revi1337.onsquad.squad_category.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class SquadCategoryCacheService {
 
     public SquadCategories getCategoriesBySquadIdIn(List<Long> squadIds) {
         if (CollectionUtils.isEmpty(squadIds)) {
-            return new SquadCategories(new ArrayList<>());
+            return new SquadCategories();
         }
 
         List<String> computedKeys = generateCacheKeys(squadIds);
@@ -89,7 +87,7 @@ public class SquadCategoryCacheService {
         stringRedisTemplate.executePipelined((RedisCallback<Void>) connection -> {
             missSquadIds.forEach(missSquadId -> {
                 String key = generateCacheKey(missSquadId);
-                String value = serialize(splitGroup.getOrDefault(missSquadId, new SquadCategories(new ArrayList<>())));
+                String value = serialize(splitGroup.getOrDefault(missSquadId, new SquadCategories()));
                 byte[] serializedKey = stringRedisTemplate.getStringSerializer().serialize(key);
                 byte[] serializedValue = stringRedisTemplate.getStringSerializer().serialize(value);
 
@@ -112,10 +110,7 @@ public class SquadCategoryCacheService {
 
     private SquadCategories deserialize(String json) {
         try {
-            JsonNode rootNode = defaultObjectMapper.readTree(json);
-            JsonNode categoriesNode = rootNode.get("categories");
-            return new SquadCategories(defaultObjectMapper.convertValue(categoriesNode, new TypeReference<>() {
-            }));
+            return defaultObjectMapper.readValue(json, SquadCategories.class);
         } catch (JsonProcessingException e) {
             log.error("Error deserializing SquadCategories", e);
             return null;

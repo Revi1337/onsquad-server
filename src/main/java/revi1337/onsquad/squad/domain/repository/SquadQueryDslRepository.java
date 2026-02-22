@@ -1,7 +1,5 @@
 package revi1337.onsquad.squad.domain.repository;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static revi1337.onsquad.category.domain.entity.QCategory.category;
 import static revi1337.onsquad.member.domain.entity.QMember.member;
 import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
@@ -9,19 +7,20 @@ import static revi1337.onsquad.squad_category.domain.entity.QSquadCategory.squad
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.domain.model.SimpleMember;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
-import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 
 @Repository
 @RequiredArgsConstructor
@@ -40,8 +39,8 @@ public class SquadQueryDslRepository {
         );
     }
 
-    public List<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
-        return jpaQueryFactory
+    public Page<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
+        List<SquadDetail> squads = jpaQueryFactory
                 .select(Projections.constructor(SquadDetail.class,
                         squad.id,
                         squad.title,
@@ -65,27 +64,29 @@ public class SquadQueryDslRepository {
                 .limit(pageable.getPageSize())
                 .orderBy(squad.createdAt.desc())
                 .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(squad.id.count())
+                .from(squad)
+                .where(squad.crew.id.eq(crewId), categoryEq(categoryType));
+
+        return PageableExecutionUtils.getPage(squads, pageable, countQuery::fetchOne);
     }
 
-    public List<SquadWithLeaderState> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
-        return jpaQueryFactory
-                .select(Projections.constructor(SquadWithLeaderState.class,
-                        new CaseBuilder()
-                                .when(member.id.eq(memberId))
-                                .then(TRUE)
-                                .otherwise(FALSE),
-                        Projections.constructor(SimpleSquad.class,
-                                squad.id,
-                                squad.title,
-                                squad.capacity,
-                                squad.remain,
-                                Projections.constructor(SimpleMember.class,
-                                        member.id,
-                                        member.nickname,
-                                        member.introduce,
-                                        member.mbti
-                                )
-                        )))
+    public Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable) {
+        List<SimpleSquad> squads = jpaQueryFactory
+                .select(Projections.constructor(SimpleSquad.class,
+                        squad.id,
+                        squad.title,
+                        squad.capacity,
+                        squad.remain,
+                        Projections.constructor(SimpleMember.class,
+                                member.id,
+                                member.nickname,
+                                member.introduce,
+                                member.mbti
+                        )
+                ))
                 .from(squad)
                 .innerJoin(squad.member, member)
                 .where(squad.crew.id.eq(crewId))
@@ -93,6 +94,13 @@ public class SquadQueryDslRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(squad.id.count())
+                .from(squad)
+                .where(squad.crew.id.eq(crewId));
+
+        return PageableExecutionUtils.getPage(squads, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression categoryEq(CategoryType categoryType) {

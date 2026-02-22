@@ -1,15 +1,15 @@
 package revi1337.onsquad.squad.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.error.SquadBusinessException;
 import revi1337.onsquad.squad.domain.error.SquadErrorCode;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
-import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
-import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 
 @Component
@@ -37,11 +37,11 @@ public class SquadAccessor {
         return squadRepository.getReferenceById(squadId);
     }
 
-    public SquadLinkableGroup<SquadWithLeaderState> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
-        return new SquadLinkableGroup<>(squadRepository.fetchManageList(memberId, crewId, pageable));
+    public Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable) {
+        return squadRepository.fetchManageList(crewId, pageable);
     }
 
-    public SquadLinkableGroup<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
-        return new SquadLinkableGroup<>(squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, categoryType, pageable));
+    public Page<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
+        return squadRepository.fetchSquadsWithDetailByCrewIdAndCategory(crewId, categoryType, pageable);
     }
 }

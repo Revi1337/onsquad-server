@@ -3,10 +3,13 @@ package revi1337.onsquad.squad.application;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.presentation.request.CategoryCondition;
+import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
@@ -14,9 +17,9 @@ import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateRespo
 import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
-import revi1337.onsquad.squad.domain.model.SquadWithLeaderState;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
 import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
@@ -57,30 +60,39 @@ public class SquadQueryService {
         return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, canDelete, squad);
     }
 
-    public List<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
+    public PageResponse<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
         crewMemberAccessor.validateMemberInCrew(memberId, crewId);
-        SquadLinkableGroup<SquadDetail> squadGroup = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable);
+        Page<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable);
+        SquadLinkableGroup<SquadDetail> squadGroup = new SquadLinkableGroup<>(squads.getContent());
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 
-        return squadGroup.values().stream()
+        List<SquadResponse> response = squadGroup.stream()
                 .map(SquadResponse::from)
                 .toList();
+
+        return PageResponse.from(new PageImpl<>(response, squads.getPageable(), squads.getTotalElements()));
     }
 
-    public List<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
+    public PageResponse<SquadWithLeaderStateResponse> fetchManageList(Long memberId, Long crewId, Pageable pageable) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         SquadPolicy.ensureManageable(me);
-        SquadLinkableGroup<SquadWithLeaderState> squadGroup = squadAccessor.fetchManageList(memberId, crewId, pageable);
+        Page<SimpleSquad> squads = squadAccessor.fetchManageList(crewId, pageable);
+        SquadLinkableGroup<SimpleSquad> squadGroup = new SquadLinkableGroup<>(squads.getContent());
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 
-        return squadGroup.values().stream()
-                .map(SquadWithLeaderStateResponse::from)
+        List<SquadWithLeaderStateResponse> response = squadGroup.stream()
+                .map(simpleSquad -> {
+                    boolean isLeader = simpleSquad.leader().id().equals(memberId);
+                    return SquadWithLeaderStateResponse.from(isLeader, simpleSquad);
+                })
                 .toList();
+
+        return PageResponse.from(new PageImpl<>(response, squads.getPageable(), squads.getTotalElements()));
     }
 }
