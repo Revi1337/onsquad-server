@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.category.util.CategoryTypeUtil;
 
 public class CategoryTypeDeserializer extends StdDeserializer<CategoryType> {
 
@@ -19,9 +18,7 @@ public class CategoryTypeDeserializer extends StdDeserializer<CategoryType> {
         try {
             TextNode textNode = p.getCodec().readTree(p);
             String hashtag = textNode.asText();
-            CategoryType categoryType = CategoryType.fromText(hashtag);
-            CategoryTypeUtil.validateCategory(categoryType);
-            return categoryType;
+            return CategoryType.fromText(hashtag);
         } catch (IOException e) {
             throw new IllegalArgumentException("카테고리 JSON 파싱 중 에러 발생", e);
         }

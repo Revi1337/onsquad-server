@@ -32,8 +32,6 @@ public class Category {
 
     public static List<Category> fromCategoryTypes(List<CategoryType> categoryTypes) {
         return categoryTypes.stream()
-                .filter(type -> type != CategoryType.ALL)
-                .distinct()
                 .map(Category::new)
                 .toList();
     }

@@ -18,6 +18,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<RestResponse<List<String>>> getAllCategories() {
-        return ResponseEntity.ok(RestResponse.success(cachedCategoryService.findCategories()));
+        List<String> categories = cachedCategoryService.findCategories();
+        return ResponseEntity.ok(RestResponse.success(categories));
     }
 }

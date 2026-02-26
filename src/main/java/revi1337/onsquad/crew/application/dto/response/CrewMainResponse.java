@@ -19,14 +19,14 @@ public record CrewMainResponse(
             boolean canManage,
             CrewDetail result,
             List<AnnounceResponse> announces,
-            List<CrewRankerResponse> topMembers,
+            List<CrewRankerResponse> rankers,
             List<SquadDetail> squads
     ) {
         return new CrewMainResponse(
                 new CrewStates(canManage),
                 CrewResponse.from(result),
                 announces,
-                topMembers,
+                rankers,
                 squads.stream()
                         .map(SquadResponse::from)
                         .toList()

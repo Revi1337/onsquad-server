@@ -3,7 +3,6 @@ package revi1337.onsquad.squad.presentation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
-import revi1337.onsquad.category.presentation.request.CategoryCondition;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.common.support.AdaptivePageable;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
 import revi1337.onsquad.squad.application.dto.response.SquadResponse;
@@ -47,8 +47,8 @@ public class SquadController {
     @GetMapping("/crews/{crewId}/squads")
     public ResponseEntity<RestResponse<PageResponse<SquadResponse>>> fetchSquads(
             @PathVariable Long crewId,
-            @RequestParam CategoryCondition category,
-            @PageableDefault Pageable pageable,
+            @RequestParam(required = false) CategoryType category,
+            @AdaptivePageable(defaultSort = "createdAt") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadResponse> response = squadQueryService.fetchSquadsByCrewId(currentMember.id(), crewId, category, pageable);
@@ -79,7 +79,7 @@ public class SquadController {
     @GetMapping("/crews/{crewId}/squads/manage")
     public ResponseEntity<RestResponse<PageResponse<SquadWithLeaderStateResponse>>> fetchManageList(
             @PathVariable Long crewId,
-            @PageableDefault Pageable pageable,
+            @AdaptivePageable(defaultSort = "createdAt") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadWithLeaderStateResponse> response = squadQueryService.fetchManageList(currentMember.id(), crewId, pageable);

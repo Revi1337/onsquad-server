@@ -3,8 +3,11 @@ package revi1337.onsquad.common.config;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.web.SortHandlerMethodArgumentResolver;
+import org.springframework.data.web.config.SortHandlerMethodArgumentResolverCustomizer;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import revi1337.onsquad.infrastructure.aws.s3.client.S3BucketProperties;
@@ -15,6 +18,12 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 @TestConfiguration
 public class ApplicationLayerConfiguration {
+
+    @MockBean
+    public SortHandlerMethodArgumentResolver sortResolver;
+
+    @MockBean
+    public SortHandlerMethodArgumentResolverCustomizer pagingCustomizer;
 
     @Bean
     public HandlerExceptionResolver handlerExceptionResolver() {

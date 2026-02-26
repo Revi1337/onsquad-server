@@ -13,8 +13,7 @@ public class CategoryTypeSerializer extends StdSerializer<CategoryType> {
     }
 
     @Override
-    public void serialize(CategoryType categoryType, JsonGenerator jsonGenerator,
-                          SerializerProvider serializerProvider) {
+    public void serialize(CategoryType categoryType, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) {
         try {
             jsonGenerator.writeString(categoryType.getText());
         } catch (IOException e) {

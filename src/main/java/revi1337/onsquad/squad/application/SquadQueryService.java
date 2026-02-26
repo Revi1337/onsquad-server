@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.presentation.request.CategoryCondition;
+import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
@@ -60,9 +60,9 @@ public class SquadQueryService {
         return SquadWithStatesResponse.from(alreadyParticipant, isLeader, canSeeParticipants, canLeave, canDelete, squad);
     }
 
-    public PageResponse<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryCondition condition, Pageable pageable) {
+    public PageResponse<SquadResponse> fetchSquadsByCrewId(Long memberId, Long crewId, CategoryType categoryType, Pageable pageable) {
         crewMemberAccessor.validateMemberInCrew(memberId, crewId);
-        Page<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, condition.categoryType(), pageable);
+        Page<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, categoryType, pageable);
         SquadLinkableGroup<SquadDetail> squadGroup = new SquadLinkableGroup<>(squads.getContent());
         if (squadGroup.isNotEmpty()) {
             SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());

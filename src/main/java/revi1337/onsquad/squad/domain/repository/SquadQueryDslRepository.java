@@ -6,7 +6,7 @@ import static revi1337.onsquad.squad.domain.entity.QSquad.squad;
 import static revi1337.onsquad.squad_category.domain.entity.QSquadCategory.squadCategory;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.common.domain.OrderSpecifierBuilder;
 import revi1337.onsquad.member.domain.model.SimpleMember;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.model.SimpleSquad;
@@ -33,14 +34,14 @@ public class SquadQueryDslRepository {
                 .selectFrom(squad)
                 .innerJoin(squad.member, member).fetchJoin()
                 .leftJoin(squad.categories, squadCategory).fetchJoin()
-                .leftJoin(squadCategory.category, category).fetchJoin()
+                .innerJoin(squadCategory.category, category).fetchJoin()
                 .where(squad.id.eq(id))
                 .fetchOne()
         );
     }
 
     public Page<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {
-        List<SquadDetail> squads = jpaQueryFactory
+        JPQLQuery<SquadDetail> baseQuery = jpaQueryFactory
                 .select(Projections.constructor(SquadDetail.class,
                         squad.id,
                         squad.title,
@@ -59,18 +60,29 @@ public class SquadQueryDslRepository {
                 ))
                 .from(squad)
                 .innerJoin(squad.member, member)
-                .where(squad.crew.id.eq(crewId), categoryEq(categoryType))
+                .where(squad.crew.id.eq(crewId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(squad.createdAt.desc())
-                .fetch();
+                .orderBy(OrderSpecifierBuilder.startWith(squad, pageable).build());
 
-        JPAQuery<Long> countQuery = jpaQueryFactory
+        JPAQuery<Long> baseCountQuery = jpaQueryFactory
                 .select(squad.id.count())
                 .from(squad)
-                .where(squad.crew.id.eq(crewId), categoryEq(categoryType));
+                .where(squad.crew.id.eq(crewId));
 
-        return PageableExecutionUtils.getPage(squads, pageable, countQuery::fetchOne);
+        if (categoryType != null) {
+            baseQuery.innerJoin(squad.categories, squadCategory)
+                    .innerJoin(squadCategory.category, category)
+                    .where(category.categoryType.eq(categoryType));
+
+            baseCountQuery.innerJoin(squad.categories, squadCategory)
+                    .innerJoin(squadCategory.category, category)
+                    .where(category.categoryType.eq(categoryType));
+        }
+
+        List<SquadDetail> squads = baseQuery.fetch();
+
+        return PageableExecutionUtils.getPage(squads, pageable, baseCountQuery::fetchOne);
     }
 
     public Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable) {
@@ -90,7 +102,7 @@ public class SquadQueryDslRepository {
                 .from(squad)
                 .innerJoin(squad.member, member)
                 .where(squad.crew.id.eq(crewId))
-                .orderBy(squad.createdAt.desc())
+                .orderBy(OrderSpecifierBuilder.startWith(squad, pageable).build())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -101,13 +113,5 @@ public class SquadQueryDslRepository {
                 .where(squad.crew.id.eq(crewId));
 
         return PageableExecutionUtils.getPage(squads, pageable, countQuery::fetchOne);
-    }
-
-    private BooleanExpression categoryEq(CategoryType categoryType) {
-        if (categoryType == CategoryType.ALL) {
-            return null;
-        }
-
-        return category.id.eq(categoryType.getPk());
     }
 }
