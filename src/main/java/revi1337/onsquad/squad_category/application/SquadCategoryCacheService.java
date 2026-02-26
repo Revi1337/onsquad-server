@@ -13,7 +13,6 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.squad_category.domain.model.SimpleSquadCategory;
@@ -32,10 +31,6 @@ public class SquadCategoryCacheService {
     private final SquadCategoryAccessor squadCategoryAccessor;
 
     public SquadCategories getCategoriesBySquadIdIn(List<Long> squadIds) {
-        if (CollectionUtils.isEmpty(squadIds)) {
-            return new SquadCategories();
-        }
-
         List<String> computedKeys = generateCacheKeys(squadIds);
         List<String> serializedValues = stringRedisTemplate.opsForValue().multiGet(computedKeys);
 
@@ -50,10 +45,6 @@ public class SquadCategoryCacheService {
     }
 
     public void evictSquadCategories(List<Long> squadIds) {
-        if (CollectionUtils.isEmpty(squadIds)) {
-            return;
-        }
-
         List<String> computedKeys = generateCacheKeys(squadIds);
         RedisCacheEvictor.unlinkKeys(stringRedisTemplate, computedKeys);
     }
