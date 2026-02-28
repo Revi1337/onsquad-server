@@ -1,20 +1,19 @@
 package revi1337.onsquad.crew_member.presentation;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.common.support.AdaptivePageable;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
 import revi1337.onsquad.crew_member.application.CrewMemberQueryService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
@@ -31,13 +30,10 @@ public class CrewMemberController {
     @GetMapping("/crews/{crewId}/members")
     public ResponseEntity<RestResponse<PageResponse<CrewMemberResponse>>> fetchParticipants(
             @PathVariable Long crewId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @AdaptivePageable(defaultSort = "participateAt") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        PageResponse<CrewMemberResponse> response = crewMemberQueryService.fetchParticipants(
-                currentMember.id(), crewId, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "participateAt"))
-        );
+        PageResponse<CrewMemberResponse> response = crewMemberQueryService.fetchParticipants(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
@@ -76,13 +72,10 @@ public class CrewMemberController {
 
     @GetMapping("/members/me/crew-participants")
     public ResponseEntity<RestResponse<PageResponse<MyParticipantCrewResponse>>> fetchMyParticipatingCrews(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @AdaptivePageable Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        PageResponse<MyParticipantCrewResponse> response = crewMemberQueryService.fetchMyParticipatingCrews(
-                currentMember.id(), PageRequest.of(page, size)
-        );
+        PageResponse<MyParticipantCrewResponse> response = crewMemberQueryService.fetchMyParticipatingCrews(currentMember.id(), pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

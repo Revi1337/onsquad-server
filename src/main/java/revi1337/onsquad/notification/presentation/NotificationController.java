@@ -3,8 +3,7 @@ package revi1337.onsquad.notification.presentation;
 import static org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,6 +17,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.common.support.AdaptivePageable;
 import revi1337.onsquad.notification.application.NotificationCommandService;
 import revi1337.onsquad.notification.application.NotificationQueryService;
 import revi1337.onsquad.notification.application.NotificationService;
@@ -48,12 +48,10 @@ public class NotificationController {
 
     @GetMapping("/members/me/notifications")
     public ResponseEntity<RestResponse<PageResponse<NotificationResponse>>> fetchNotifications(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @AdaptivePageable(defaultSort = "id") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        PageResponse<NotificationResponse> response = notificationQueryService
-                .fetchNotifications(currentMember.id(), PageRequest.of(page, size, Sort.by("id").descending()));
+        PageResponse<NotificationResponse> response = notificationQueryService.fetchNotifications(currentMember.id(), pageable);
 
         return ResponseEntity.ok(RestResponse.success(response));
     }

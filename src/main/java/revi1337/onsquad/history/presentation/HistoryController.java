@@ -2,8 +2,7 @@ package revi1337.onsquad.history.presentation;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +12,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.common.support.AdaptivePageable;
 import revi1337.onsquad.history.application.HistoryQueryService;
 import revi1337.onsquad.history.application.response.HistoryResponse;
 import revi1337.onsquad.history.domain.HistoryType;
@@ -29,13 +29,10 @@ public class HistoryController {
             @RequestParam LocalDate from,
             @RequestParam LocalDate to,
             @RequestParam(required = false) HistoryType type,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @AdaptivePageable(defaultSort = "recordedAt") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        PageResponse<HistoryResponse> response = historyQueryService.fetchHistories(
-                currentMember.id(), from, to, type, PageRequest.of(page, size, Sort.by("recordedAt").descending())
-        );
+        PageResponse<HistoryResponse> response = historyQueryService.fetchHistories(currentMember.id(), from, to, type, pageable);
 
         return ResponseEntity.ok(RestResponse.success(response));
     }
