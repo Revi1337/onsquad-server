@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_request.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.common.support.AdaptivePageable;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
 import revi1337.onsquad.crew_request.application.CrewRequestQueryService;
 import revi1337.onsquad.crew_request.application.response.CrewRequestResponse;
@@ -64,13 +66,10 @@ public class CrewRequestController {
     @GetMapping("/crews/{crewId}/requests")
     public ResponseEntity<RestResponse<PageResponse<CrewRequestResponse>>> fetchAllRequests(
             @PathVariable Long crewId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @AdaptivePageable(defaultSort = "requestAt") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        PageResponse<CrewRequestResponse> response = crewRequestQueryService.fetchAllRequests(
-                currentMember.id(), crewId, PageRequest.of(page, size, Sort.by("requestAt").descending())
-        );
+        PageResponse<CrewRequestResponse> response = crewRequestQueryService.fetchAllRequests(currentMember.id(), crewId, pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }
