@@ -15,6 +15,20 @@ public abstract class SquadDomainException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
+    public static class InvalidTitleLength extends SquadDomainException {
+
+        public InvalidTitleLength(ErrorCode errorCode, Number minSize, Number maxSize) {
+            super(errorCode, String.format(errorCode.getDescription(), minSize, maxSize));
+        }
+    }
+
+    public static class InvalidContentLength extends SquadDomainException {
+
+        public InvalidContentLength(ErrorCode errorCode, Number minSize, Number maxSize) {
+            super(errorCode, String.format(errorCode.getDescription(), minSize, maxSize));
+        }
+    }
+
     public static class InvalidCapacitySize extends SquadDomainException {
 
         public InvalidCapacitySize(ErrorCode errorCode, Number minSize, Number maxSize) {
@@ -25,13 +39,6 @@ public abstract class SquadDomainException extends RuntimeException {
     public static class NotEnoughLeft extends SquadDomainException {
 
         public NotEnoughLeft(ErrorCode errorCode) {
-            super(errorCode, String.format(errorCode.getDescription()));
-        }
-    }
-
-    public static class InvalidCategory extends SquadDomainException {
-
-        public InvalidCategory(ErrorCode errorCode) {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }

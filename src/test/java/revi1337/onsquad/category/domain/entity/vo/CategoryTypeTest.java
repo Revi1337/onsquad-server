@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import revi1337.onsquad.squad.domain.error.SquadDomainException;
+import revi1337.onsquad.category.domain.error.CategoryDomainException;
 
 class CategoryTypeTest {
 
@@ -52,7 +52,7 @@ class CategoryTypeTest {
         String invalidText = "존재하지않는카테고리";
 
         assertThatThrownBy(() -> CategoryType.fromText(invalidText))
-                .isExactlyInstanceOf(SquadDomainException.InvalidCategory.class);
+                .isExactlyInstanceOf(CategoryDomainException.InvalidCategory.class);
     }
 
     @Test

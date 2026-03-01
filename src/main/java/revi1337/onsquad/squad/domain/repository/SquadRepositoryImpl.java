@@ -49,8 +49,8 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Optional<Squad> findSquadWithDetailById(Long id) {
-        return squadQueryDslRepository.findSquadWithDetailById(id);
+    public Optional<Squad> fetchSquadDetailById(Long id) {
+        return squadQueryDslRepository.fetchSquadDetailById(id);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class SquadRepositoryImpl implements SquadRepository {
     }
 
     @Override
-    public Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable) {
-        return squadQueryDslRepository.fetchManageList(crewId, pageable);
+    public Page<SimpleSquad> fetchSquadsByCrewId(Long crewId, Pageable pageable) {
+        return squadQueryDslRepository.fetchSquadsByCrewId(crewId, pageable);
     }
 
     @Override

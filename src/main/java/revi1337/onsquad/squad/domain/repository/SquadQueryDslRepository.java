@@ -29,14 +29,15 @@ public class SquadQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Optional<Squad> findSquadWithDetailById(Long id) {
-        return Optional.ofNullable(jpaQueryFactory
-                .selectFrom(squad)
-                .innerJoin(squad.member, member).fetchJoin()
-                .leftJoin(squad.categories, squadCategory).fetchJoin()
-                .innerJoin(squadCategory.category, category).fetchJoin()
-                .where(squad.id.eq(id))
-                .fetchOne()
+    public Optional<Squad> fetchSquadDetailById(Long id) {
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .selectFrom(squad)
+                        .innerJoin(squad.member, member).fetchJoin()
+                        .leftJoin(squad.categories, squadCategory).fetchJoin()
+                        .leftJoin(squadCategory.category, category).fetchJoin()
+                        .where(squad.id.eq(id))
+                        .fetchOne()
         );
     }
 
@@ -85,7 +86,7 @@ public class SquadQueryDslRepository {
         return PageableExecutionUtils.getPage(squads, pageable, baseCountQuery::fetchOne);
     }
 
-    public Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable) {
+    public Page<SimpleSquad> fetchSquadsByCrewId(Long crewId, Pageable pageable) {
         List<SimpleSquad> squads = jpaQueryFactory
                 .select(Projections.constructor(SimpleSquad.class,
                         squad.id,

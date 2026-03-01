@@ -2,7 +2,7 @@ package revi1337.onsquad.squad_request.application.response;
 
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
+import revi1337.onsquad.squad.application.response.SimpleSquadResponse;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 
 public record MySquadRequestResponse(

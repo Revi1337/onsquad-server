@@ -4,9 +4,12 @@ import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import revi1337.onsquad.squad.domain.error.SquadDomainException;
+import revi1337.onsquad.squad.domain.error.SquadErrorCode;
 
 @Getter
 @EqualsAndHashCode
@@ -15,10 +18,9 @@ import lombok.NoArgsConstructor;
 public class Content {
 
     private static final int MIN_LENGTH = 1;
-    private static final int MAX_LENGTH = 300;
-    private static final int PERSIST_MAX_LENGTH = MAX_LENGTH * 3;
+    private static final int MAX_LENGTH = 10000;
 
-    @Column(name = "content", nullable = false, length = PERSIST_MAX_LENGTH)
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String value;
 
     public Content(String value) {
@@ -26,15 +28,10 @@ public class Content {
         this.value = value;
     }
 
-    public void validate(String value) {
-        if (value == null) {
-            throw new NullPointerException("내용은 null 일 수 없습니다.");
-        }
-
+    private void validate(String value) {
+        Objects.requireNonNull(value, "스쿼드 본문은 null 일 수 없습니다.");
         if (value.length() > MAX_LENGTH || value.isEmpty()) {
-            throw new IllegalArgumentException(
-                    String.format("내용의 길이는 %d 자 이상 %d 자 이하여야 합니다", MIN_LENGTH, MAX_LENGTH)
-            );
+            throw new SquadDomainException.InvalidContentLength(SquadErrorCode.INVALID_CONTENT_LENGTH, MIN_LENGTH, MAX_LENGTH);
         }
     }
 }

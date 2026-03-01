@@ -1,5 +1,6 @@
 package revi1337.onsquad.squad.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -8,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
-import revi1337.onsquad.squad.application.dto.SquadCreateDto;
 import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.event.SquadCreated;
+import revi1337.onsquad.squad.domain.model.SquadCreateSpec;
 import revi1337.onsquad.squad.domain.repository.SquadRepository;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryRepository;
@@ -30,10 +31,10 @@ public class SquadCommandService {
     private final SquadContextHandler squadContextHandler;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Long newSquad(Long memberId, Long crewId, SquadCreateDto dto) {
+    public Long newSquad(Long memberId, Long crewId, SquadCreateSpec spec) {
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
-        Squad squad = squadRepository.save(Squad.create(dto.toEntityMetadata(), me.getMember(), me.getCrew()));
-        List<SquadCategory> squadCategories = createSquadCategories(squad, Category.fromCategoryTypes(dto.categories()));
+        Squad squad = squadRepository.save(Squad.create(spec, me.getCrew(), me.getMember(), LocalDateTime.now()));
+        List<SquadCategory> squadCategories = createSquadCategories(squad, Category.fromCategoryTypes(spec.getCategories()));
         squadCategoryRepository.insertBatch(squadCategories);
         eventPublisher.publishEvent(new SquadCreated(crewId, memberId));
         return squad.getId();

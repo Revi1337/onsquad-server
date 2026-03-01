@@ -47,7 +47,7 @@ public class SquadRequestCommandService {
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadRequestPolicy.ensureAcceptable(me);
         Squad squad = request.getSquad();
-        squad.addMembers(SquadMemberFactory.general(request.getMember(), LocalDateTime.now()));
+        squad.addMembers(SquadMemberFactory.general(squad, request.getMember(), LocalDateTime.now()));
         squadRequestRepository.deleteById(requestId);
         eventPublisher.publishEvent(new RequestAccepted(squadId, request.getMember().getId(), memberId));
     }

@@ -20,9 +20,9 @@ import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.support.AdaptivePageable;
 import revi1337.onsquad.squad.application.SquadCommandService;
 import revi1337.onsquad.squad.application.SquadQueryService;
-import revi1337.onsquad.squad.application.dto.response.SquadResponse;
-import revi1337.onsquad.squad.application.dto.response.SquadWithLeaderStateResponse;
-import revi1337.onsquad.squad.application.dto.response.SquadWithStatesResponse;
+import revi1337.onsquad.squad.application.response.SquadResponse;
+import revi1337.onsquad.squad.application.response.SquadWithLeaderStateResponse;
+import revi1337.onsquad.squad.application.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.presentation.request.SquadCreateRequest;
 
 @RestController
@@ -36,10 +36,10 @@ public class SquadController {
     @PostMapping("/crews/{crewId}/squads")
     public ResponseEntity<RestResponse<Void>> newSquad(
             @PathVariable Long crewId,
-            @Valid @RequestBody SquadCreateRequest squadCreateRequest,
+            @Valid @RequestBody SquadCreateRequest request,
             @Authenticate CurrentMember currentMember
     ) {
-        squadCommandService.newSquad(currentMember.id(), crewId, squadCreateRequest.toDto());
+        squadCommandService.newSquad(currentMember.id(), crewId, request.toDomainSpec());
 
         return ResponseEntity.ok(RestResponse.created());
     }

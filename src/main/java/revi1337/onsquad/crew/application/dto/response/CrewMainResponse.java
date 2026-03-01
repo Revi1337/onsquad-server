@@ -4,7 +4,7 @@ import java.util.List;
 import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.crew_member.application.response.CrewRankerResponse;
-import revi1337.onsquad.squad.application.dto.response.SquadResponse;
+import revi1337.onsquad.squad.application.response.SquadResponse;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 
 public record CrewMainResponse(

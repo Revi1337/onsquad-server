@@ -5,7 +5,6 @@ import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static revi1337.onsquad.squad.domain.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
 import static revi1337.onsquad.squad.domain.error.SquadErrorCode.NOT_ENOUGH_LEFT;
 import static revi1337.onsquad.squad.domain.error.SquadErrorCode.SQUAD_MEMBER_UNDERFLOW;
 
@@ -26,10 +25,11 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.member.domain.entity.Member;
-import revi1337.onsquad.member.domain.entity.vo.Address;
+import revi1337.onsquad.squad.domain.entity.vo.Address;
 import revi1337.onsquad.squad.domain.entity.vo.Content;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
 import revi1337.onsquad.squad.domain.error.SquadDomainException;
+import revi1337.onsquad.squad.domain.model.SquadCreateSpec;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
@@ -38,9 +38,6 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMemberFactory;
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Squad extends BaseEntity {
-
-    private static final int MIN_CAPACITY = 2;
-    private static final int MAX_CAPACITY = 1000;
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -82,23 +79,31 @@ public class Squad extends BaseEntity {
     @OneToMany(mappedBy = "squad")
     private final List<SquadCategory> categories = new ArrayList<>();
 
-    public static Squad create(SquadMetadata metadata, Member member, Crew crew) {
-        Squad squad = metadata.toEntity();
+    public static Squad create(SquadCreateSpec spec, Crew crew, Member member, LocalDateTime leaderParticipateAt) {
+        Objects.requireNonNull(spec, "squadCreateSpec must not be null");
+        Objects.requireNonNull(crew, "crew must not be null");
+        Objects.requireNonNull(member, "member must not be null");
+        Objects.requireNonNull(leaderParticipateAt, "leaderParticipateAt must not be null");
+
+        Squad squad = new Squad(
+                spec.getTitle(),
+                spec.getContent(),
+                spec.getCapacity(),
+                spec.getAddress(),
+                spec.getKakaoLink(),
+                spec.getDiscordLink()
+        );
+
         squad.registerMember(member);
         squad.registerCrew(crew);
-        squad.addMembers(SquadMemberFactory.leader(member, LocalDateTime.now()));
+        squad.addMembers(SquadMemberFactory.leader(squad, member, leaderParticipateAt));
         return squad;
     }
 
-    public static Squad create(SquadMetadata metadata) {
-        return metadata.toEntity();
-    }
-
-    private Squad(String title, String content, int capacity, String address, String addressDetail, String kakaoLink, String discordLink) {
-        validateCapacity(capacity);
-        this.title = new Title(title);
-        this.content = new Content(content);
-        this.address = new Address(address, addressDetail);
+    private Squad(Title title, Content content, int capacity, Address address, String kakaoLink, String discordLink) {
+        this.title = title;
+        this.content = content;
+        this.address = address;
         this.capacity = capacity;
         this.remain = capacity;
         this.kakaoLink = kakaoLink;
@@ -161,28 +166,7 @@ public class Squad extends BaseEntity {
         return Objects.hashCode(id);
     }
 
-    private void validateCapacity(int value) {
-        if (value < MIN_CAPACITY || value > MAX_CAPACITY) {
-            throw new SquadDomainException.InvalidCapacitySize(INVALID_CAPACITY_SIZE, MIN_CAPACITY, MAX_CAPACITY);
-        }
-    }
-
     private void updateLeader(Member member) {
         this.member = member;
-    }
-
-    public record SquadMetadata(
-            String title,
-            String content,
-            int capacity,
-            String address,
-            String addressDetail,
-            String kakaoLink,
-            String discordLink
-    ) {
-
-        Squad toEntity() {
-            return new Squad(title, content, capacity, address, addressDetail, kakaoLink, discordLink);
-        }
     }
 }

@@ -56,7 +56,7 @@ public class SquadMemberQueryDslRepository {
                 .innerJoin(squadMember.squad, squad)
                 .innerJoin(squad.member, member)
                 .where(squadMember.member.id.eq(memberId))
-                .orderBy(squadMember.requestAt.desc())
+                .orderBy(squadMember.participateAt.desc())
                 .fetch();
     }
 }

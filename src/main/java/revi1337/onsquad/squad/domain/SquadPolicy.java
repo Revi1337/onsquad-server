@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad.domain;
 
 import static lombok.AccessLevel.PRIVATE;
+import static revi1337.onsquad.squad.domain.error.SquadErrorCode.INVALID_CAPACITY_SIZE;
 
 import lombok.NoArgsConstructor;
 import revi1337.onsquad.crew.domain.CrewPolicy;
@@ -8,12 +9,16 @@ import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.error.SquadBusinessException;
+import revi1337.onsquad.squad.domain.error.SquadDomainException;
 import revi1337.onsquad.squad.domain.error.SquadErrorCode;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class SquadPolicy {
+
+    public static final int MIN_CAPACITY = 2;
+    public static final int MAX_CAPACITY = 1000;
 
     public static boolean isLastMemberRemaining(Squad squad) {
         return squad.getCurrentSize() == 1;
@@ -61,6 +66,12 @@ public final class SquadPolicy {
         }
         if (SquadMemberPolicy.isLeader(me) && !isLastMemberRemaining(squad)) {
             throw new SquadBusinessException.InsufficientAuthority(SquadErrorCode.INSUFFICIENT_LEAVE_SQUAD_AUTHORITY);
+        }
+    }
+
+    public static void validateCapacity(int value) {
+        if (value < MIN_CAPACITY || value > MAX_CAPACITY) {
+            throw new SquadDomainException.InvalidCapacitySize(INVALID_CAPACITY_SIZE, MIN_CAPACITY, MAX_CAPACITY);
         }
     }
 

@@ -4,17 +4,15 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static revi1337.onsquad.squad_member.domain.entity.vo.JoinStatus.PENDING;
 import static revi1337.onsquad.squad_member.domain.entity.vo.SquadRole.GENERAL;
 import static revi1337.onsquad.squad_member.domain.entity.vo.SquadRole.LEADER;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,20 +21,18 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import revi1337.onsquad.common.domain.RequestEntity;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad_member.domain.entity.vo.JoinStatus;
 import revi1337.onsquad.squad_member.domain.entity.vo.SquadRole;
 
-@DynamicInsert
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(name = "uk_squadmember_squad_member", columnNames = {"squad_id", "member_id"})})
-@AttributeOverrides({@AttributeOverride(name = "requestAt", column = @Column(name = "participate_at", nullable = false))})
-public class SquadMember extends RequestEntity {
+@Table(
+        uniqueConstraints = {@UniqueConstraint(name = "uk_squadmember_squad_member", columnNames = {"squad_id", "member_id"})},
+        indexes = {@Index(name = "idx_squadmember_participate_at", columnList = "participate_at")}
+)
+public class SquadMember {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -54,18 +50,14 @@ public class SquadMember extends RequestEntity {
     @Column(nullable = false)
     private SquadRole role;
 
-    @Enumerated(STRING)
     @Column(nullable = false)
-    private JoinStatus status;
+    private LocalDateTime participateAt;
 
-    SquadMember(SquadRole role, JoinStatus status, LocalDateTime participantAt) {
-        super(participantAt);
-        this.role = role == null ? GENERAL : role;
-        this.status = status == null ? PENDING : status;
-    }
-
-    void addOwner(Member member) {
+    SquadMember(Squad squad, Member member, SquadRole role, LocalDateTime participantAt) {
+        this.squad = squad;
         this.member = member;
+        this.role = role == null ? GENERAL : role;
+        this.participateAt = participantAt;
     }
 
     public void addSquad(Squad squad) {
@@ -84,10 +76,6 @@ public class SquadMember extends RequestEntity {
 
     public void demoteToGeneral() {
         this.role = SquadRole.GENERAL;
-    }
-
-    public boolean isNotLeader() {
-        return !isLeader();
     }
 
     public boolean isLeader() {

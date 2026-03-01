@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.application.dto.response;
+package revi1337.onsquad.squad.application.response;
 
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;

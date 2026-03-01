@@ -28,8 +28,8 @@ public class SquadAccessor {
                 .orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND));
     }
 
-    public Squad getWithDetailById(Long squadId) {
-        return squadRepository.findSquadWithDetailById(squadId)
+    public Squad getDetailById(Long squadId) {
+        return squadRepository.fetchSquadDetailById(squadId)
                 .orElseThrow(() -> new SquadBusinessException.NotFound(SquadErrorCode.NOT_FOUND));
     }
 
@@ -37,8 +37,8 @@ public class SquadAccessor {
         return squadRepository.getReferenceById(squadId);
     }
 
-    public Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable) {
-        return squadRepository.fetchManageList(crewId, pageable);
+    public Page<SimpleSquad> fetchSquadsByCrewId(Long crewId, Pageable pageable) {
+        return squadRepository.fetchSquadsByCrewId(crewId, pageable);
     }
 
     public Page<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable) {

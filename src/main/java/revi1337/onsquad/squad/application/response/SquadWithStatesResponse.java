@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.application.dto.response;
+package revi1337.onsquad.squad.application.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
@@ -6,6 +6,7 @@ import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.entity.vo.Address;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,6 +26,7 @@ public record SquadWithStatesResponse(
 ) {
 
     public static SquadWithStatesResponse from(
+            Boolean alreadyRequest,
             boolean alreadyParticipant,
             Boolean isLeader,
             boolean canSeeParticipants,
@@ -34,6 +36,7 @@ public record SquadWithStatesResponse(
     ) {
         return new SquadWithStatesResponse(
                 SquadStates.of(
+                        alreadyRequest,
                         alreadyParticipant,
                         isLeader,
                         canSeeParticipants,
@@ -45,8 +48,8 @@ public record SquadWithStatesResponse(
                 squad.getContent().getValue(),
                 squad.getCapacity(),
                 squad.getRemain(),
-                squad.getAddress().getValue(),
-                squad.getAddress().getDetail(),
+                Address.getValueOrDefault(squad.getAddress()),
+                Address.getDetailOrDefault(squad.getAddress()),
                 squad.getKakaoLink(),
                 squad.getDiscordLink(),
                 squad.getCategories().stream()

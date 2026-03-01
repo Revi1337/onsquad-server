@@ -22,13 +22,6 @@ public abstract class SquadBusinessException extends RuntimeException {
         }
     }
 
-    public static class AlreadyParticipant extends SquadBusinessException {
-
-        public AlreadyParticipant(ErrorCode errorCode) {
-            super(errorCode, String.format(errorCode.getDescription()));
-        }
-    }
-
     public static class MismatchReference extends SquadBusinessException {
 
         public MismatchReference(ErrorCode errorCode) {

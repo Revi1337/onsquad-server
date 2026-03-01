@@ -5,20 +5,29 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
-import revi1337.onsquad.squad.application.dto.SquadCreateDto;
+import revi1337.onsquad.squad.domain.model.SquadCreateSpec;
 
 public record SquadCreateRequest(
         @NotEmpty String title,
         @NotEmpty String content,
         @Positive int capacity,
-        @NotEmpty String address,
+        String address,
         String addressDetail,
         @NotNull List<CategoryType> categories,
         String kakaoLink,
         String discordLink
 ) {
 
-    public SquadCreateDto toDto() {
-        return new SquadCreateDto(title, content, capacity, address, addressDetail, categories, kakaoLink, discordLink);
+    public SquadCreateSpec toDomainSpec() {
+        return new SquadCreateSpec(
+                title,
+                content,
+                capacity,
+                address,
+                addressDetail,
+                categories,
+                kakaoLink,
+                discordLink
+        );
     }
 }

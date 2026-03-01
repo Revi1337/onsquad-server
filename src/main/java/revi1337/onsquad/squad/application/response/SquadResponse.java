@@ -1,4 +1,4 @@
-package revi1337.onsquad.squad.application.dto.response;
+package revi1337.onsquad.squad.application.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
@@ -6,6 +6,7 @@ import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.entity.vo.Address;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 
@@ -31,8 +32,8 @@ public record SquadResponse(
                 squadDetail.content().getValue(),
                 squadDetail.capacity(),
                 squadDetail.remain(),
-                squadDetail.address().getValue(),
-                squadDetail.address().getDetail(),
+                Address.getValueOrDefault(squadDetail.address()),
+                Address.getDetailOrDefault(squadDetail.address()),
                 squadDetail.kakaoLink(),
                 squadDetail.discordLink(),
                 squadDetail.categories().stream()

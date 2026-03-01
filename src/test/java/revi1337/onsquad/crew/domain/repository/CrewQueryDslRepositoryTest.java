@@ -32,7 +32,7 @@ import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.entity.Squad.SquadMetadata;
+import revi1337.onsquad.squad.domain.model.SquadCreateSpec;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 
 @Sql({"/h2-hashtag.sql"})
@@ -180,14 +180,20 @@ class CrewQueryDslRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     private Squad createSquad(Crew crew, Member member) {
-        return Squad.create(new SquadMetadata(
-                "title",
-                "content",
-                20,
-                "어딘가",
-                "상세-어딘가",
-                "kakao-link",
-                "discord-link"
-        ), member, crew);
+        return Squad.create(
+                new SquadCreateSpec(
+                        "title",
+                        "content",
+                        20,
+                        "어딘가",
+                        "상세-어딘가",
+                        List.of(),
+                        "kakao-link",
+                        "discord-link"
+                ),
+                crew,
+                member,
+                LocalDateTime.now()
+        );
     }
 }

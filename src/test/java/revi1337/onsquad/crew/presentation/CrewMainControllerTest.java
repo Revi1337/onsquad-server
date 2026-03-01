@@ -38,7 +38,7 @@ import revi1337.onsquad.crew_member.domain.entity.vo.CrewRole;
 import revi1337.onsquad.hashtag.domain.entity.vo.HashtagType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
-import revi1337.onsquad.squad.application.dto.response.SquadResponse;
+import revi1337.onsquad.squad.application.response.SquadResponse;
 
 @WebMvcTest(CrewMainController.class)
 class CrewMainControllerTest extends PresentationLayerTestSupport {

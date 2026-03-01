@@ -23,11 +23,11 @@ public interface SquadRepository {
 
     Optional<Squad> findWithCrewById(Long id);
 
-    Optional<Squad> findSquadWithDetailById(Long id);
+    Optional<Squad> fetchSquadDetailById(Long id);
 
     Page<SquadDetail> fetchSquadsWithDetailByCrewIdAndCategory(Long crewId, CategoryType categoryType, Pageable pageable);
 
-    Page<SimpleSquad> fetchManageList(Long crewId, Pageable pageable);
+    Page<SimpleSquad> fetchSquadsByCrewId(Long crewId, Pageable pageable);
 
     List<Long> findIdsByMemberId(Long memberId);
 

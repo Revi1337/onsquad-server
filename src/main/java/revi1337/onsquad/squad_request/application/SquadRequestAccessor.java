@@ -33,4 +33,8 @@ public class SquadRequestAccessor {
     public boolean isRequestAbsent(Long memberId, Long squadId) {
         return squadRequestRepository.findBySquadIdAndMemberId(squadId, memberId).isEmpty();
     }
+
+    public boolean checkAlreadyRequest(Long memberId, Long squadId) {
+        return squadRequestRepository.findBySquadIdAndMemberId(squadId, memberId).isPresent();
+    }
 }

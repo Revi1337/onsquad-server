@@ -3,13 +3,14 @@ package revi1337.onsquad.squad_category.domain.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
+import static revi1337.onsquad.common.fixture.SquadCategoryFixture.createSquadCategories;
+import static revi1337.onsquad.common.fixture.SquadFixture.createSquad;
 
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
@@ -17,9 +18,7 @@ import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.entity.Squad.SquadMetadata;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
-import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 import revi1337.onsquad.squad_category.domain.model.SimpleSquadCategory;
 
 @Sql({"/h2-category.sql"})
@@ -69,27 +68,5 @@ class SquadCategoryJpaRepositoryTest extends PersistenceLayerTestSupport {
 
         assertThat(deleted).isEqualTo(2);
         assertThat(squadCategoryRepository.findAll()).hasSize(2);
-    }
-
-    private static Squad createSquad(Crew crew, Member member) {
-        return Squad.create(
-                new SquadMetadata(
-                        "title",
-                        "content",
-                        10,
-                        "add",
-                        "add-detail",
-                        "kakao",
-                        "discord"
-                ),
-                member,
-                crew
-        );
-    }
-
-    private static List<SquadCategory> createSquadCategories(Squad squad, CategoryType... categoryTypes) {
-        return Category.fromCategoryTypes(List.of(categoryTypes)).stream()
-                .map(category -> new SquadCategory(squad, category))
-                .toList();
     }
 }

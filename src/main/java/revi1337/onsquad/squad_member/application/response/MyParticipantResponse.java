@@ -3,7 +3,7 @@ package revi1337.onsquad.squad_member.application.response;
 import java.util.List;
 import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
-import revi1337.onsquad.squad.application.dto.response.SimpleSquadResponse;
+import revi1337.onsquad.squad.application.response.SimpleSquadResponse;
 import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
 
 public record MyParticipantResponse(

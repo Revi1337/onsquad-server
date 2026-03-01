@@ -7,6 +7,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
+import static revi1337.onsquad.common.fixture.SquadCategoryFixture.createSquadCategories;
+import static revi1337.onsquad.common.fixture.SquadFixture.createSquad;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +25,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.common.config.web.ObjectMapperConfig;
@@ -33,9 +34,7 @@ import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
-import revi1337.onsquad.squad.domain.entity.Squad.SquadMetadata;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
-import revi1337.onsquad.squad_category.domain.entity.SquadCategory;
 import revi1337.onsquad.squad_category.domain.model.SimpleSquadCategory;
 import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_category.domain.repository.SquadCategoryJpaRepository;
@@ -152,27 +151,5 @@ class SquadCategoryCacheServiceTest extends ApplicationLayerTestSupport {
         SquadCategories result = squadCategoryCacheService.getCategoriesBySquadIdIn(List.of());
 
         assertThat(result.values()).isEmpty();
-    }
-
-    private static Squad createSquad(Crew crew, Member member) {
-        return Squad.create(
-                new SquadMetadata(
-                        "title",
-                        "content",
-                        10,
-                        "add",
-                        "add-detail",
-                        "kakao",
-                        "discord"
-                ),
-                member,
-                crew
-        );
-    }
-
-    private static List<SquadCategory> createSquadCategories(Squad squad, CategoryType... categoryTypes) {
-        return Category.fromCategoryTypes(List.of(categoryTypes)).stream()
-                .map(category -> new SquadCategory(squad, category))
-                .toList();
     }
 }
