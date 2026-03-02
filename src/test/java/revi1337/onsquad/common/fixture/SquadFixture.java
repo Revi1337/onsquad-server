@@ -28,6 +28,24 @@ public class SquadFixture {
         );
     }
 
+    public static Squad createSquad(Crew crew, Member member, int capacity) {
+        return Squad.create(
+                new SquadCreateSpec(
+                        "title",
+                        "content",
+                        capacity,
+                        "addr",
+                        "addr-detail",
+                        List.of(),
+                        "https://kakao-link.com",
+                        "https://discord-link.com"
+                ),
+                crew,
+                member,
+                LocalDateTime.now()
+        );
+    }
+
     public static Squad createSquad(Crew crew, Member member, LocalDateTime leaderParticipantAt) {
         return Squad.create(
                 new SquadCreateSpec(

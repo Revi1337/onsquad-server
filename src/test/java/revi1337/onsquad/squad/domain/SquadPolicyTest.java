@@ -60,6 +60,45 @@ class SquadPolicyTest {
     }
 
     @Nested
+    @DisplayName("스쿼드 참여자 목록 열람 권한 확인")
+    class readParticipants {
+
+        @Test
+        @DisplayName("크루 Owner는 스쿼드 참여자 목록을 읽을 수 있다.")
+        void canReadWhenOwner() {
+            Crew crew = createCrew(1L, createRevi(1L));
+            CrewMember owner = crew.getCrewMembers().get(0);
+
+            assertThat(SquadPolicy.canReadParticipants(owner)).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("스쿼드 참여자 목록 열람 권한 검증")
+    class ensureReadParticipants {
+
+        @Test
+        @DisplayName("크루 Owner는 스쿼드 참여자 목록을 읽을 수 있다.")
+        void canReadWhenOwner() {
+            Crew crew = createCrew(1L, createRevi(1L));
+            CrewMember owner = crew.getCrewMembers().get(0);
+
+            assertDoesNotThrow(() -> SquadPolicy.canReadParticipants(owner));
+        }
+
+        @Test
+        @DisplayName("크루 Owner가 아니면 스쿼드 참여자 목록을 읽을 수 없다.")
+        void cannotReadWhenNotOwner() {
+            Crew crew = createCrew(1L, createRevi(1L));
+            CrewMember manager = createManagerCrewMember(crew, createAndong(2L));
+
+            assertThatThrownBy(() -> SquadPolicy.ensureReadParticipants(manager))
+                    .isExactlyInstanceOf(SquadBusinessException.InsufficientAuthority.class)
+                    .hasMessage(SquadErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY.getDescription());
+        }
+    }
+
+    @Nested
     @DisplayName("스쿼드 관리 권한 검증")
     class ensureManageable {
 
@@ -133,29 +172,6 @@ class SquadPolicyTest {
             assertThatThrownBy(() -> SquadPolicy.ensureLeavable(squad1, meFromSquad2))
                     .isExactlyInstanceOf(SquadBusinessException.MismatchReference.class)
                     .hasMessage(SquadErrorCode.MISMATCH_SQUAD_REFERENCE.getDescription());
-        }
-    }
-
-    @Nested
-    @DisplayName("스쿼드 참여자 목록 열람 권한 확인")
-    class readParticipants {
-
-        @Test
-        @DisplayName("크루 Owner는 스쿼드 참여자 목록을 읽을 수 있다.")
-        void canReadWhenOwner() {
-            Crew crew = createCrew(1L, createRevi(1L));
-            CrewMember owner = crew.getCrewMembers().get(0);
-
-            assertThat(SquadPolicy.canReadParticipants(owner)).isTrue();
-        }
-
-        @Test
-        @DisplayName("크루 Owner가 아니면 스쿼드 참여자 목록을 읽을 수 없다.")
-        void cannotReadWhenNotOwner() {
-            Crew crew = createCrew(1L, createRevi(1L));
-            CrewMember manager = createManagerCrewMember(crew, createAndong(2L));
-
-            assertThat(SquadPolicy.cannotReadParticipants(manager)).isTrue();
         }
     }
 

@@ -44,8 +44,10 @@ public final class SquadPolicy {
         return CrewMemberPolicy.isOwner(me);
     }
 
-    public static boolean cannotReadParticipants(CrewMember me) {
-        return !canReadParticipants(me);
+    public static void ensureReadParticipants(CrewMember me) {
+        if (!canReadParticipants(me)) {
+            throw new SquadBusinessException.InsufficientAuthority(SquadErrorCode.INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY);
+        }
     }
 
     public static void ensureDeletable(SquadMember me, CrewMember meInCrew) {

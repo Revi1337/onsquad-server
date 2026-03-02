@@ -20,7 +20,8 @@ public enum SquadErrorCode implements ErrorCode {
     MISMATCH_MEMBER_REFERENCE(403, "SQ009", "스쿼드 작성자 정보가 일치하지 않습니다."),
     INSUFFICIENT_DELETE_AUTHORITY(403, "SQ010", "스쿼드 삭제는 크루장 또는 스쿼드 리더만 가능합니다."),
     INSUFFICIENT_MANAGE_SQUAD_AUTHORITY(403, "SQ011", "스쿼드 관리는 스쿼드 리더만 가능합니다."),
-    INSUFFICIENT_LEAVE_SQUAD_AUTHORITY(403, "SQ012", "스쿼드 리더는 권한 위임 후 탈퇴 가능합니다.");
+    INSUFFICIENT_LEAVE_SQUAD_AUTHORITY(403, "SQ012", "스쿼드 리더는 권한 위임 후 탈퇴 가능합니다."),
+    INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY(403, "SQ013", "스쿼드 참가자 조회는 스쿼드 참가자 또는 크루장만 가능합니다.");
 
     private final int status;
     private final String code;

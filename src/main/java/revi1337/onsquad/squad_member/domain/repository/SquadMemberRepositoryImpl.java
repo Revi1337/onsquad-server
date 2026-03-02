@@ -3,6 +3,8 @@ package revi1337.onsquad.squad_member.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.model.MyParticipantSquad;
@@ -30,8 +32,8 @@ public class SquadMemberRepositoryImpl implements SquadMemberRepository {
     }
 
     @Override
-    public List<SquadMember> fetchParticipantsBySquadId(Long squadId) {
-        return squadMemberQueryDslRepository.fetchParticipantsBySquadId(squadId);
+    public Page<SquadMember> fetchParticipantsBySquadId(Long squadId, Pageable pageable) {
+        return squadMemberQueryDslRepository.fetchParticipantsBySquadId(squadId, pageable);
     }
 
     @Override

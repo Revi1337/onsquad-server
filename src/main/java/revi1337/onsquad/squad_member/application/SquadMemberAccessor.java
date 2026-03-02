@@ -3,6 +3,8 @@ package revi1337.onsquad.squad_member.application;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_member.domain.error.SquadMemberBusinessException;
@@ -29,12 +31,8 @@ public class SquadMemberAccessor {
         return squadMemberRepository.fetchParticipantSquads(memberId);
     }
 
-    public List<SquadMember> fetchParticipantsBySquadId(Long squadId) {
-        return squadMemberRepository.fetchParticipantsBySquadId(squadId);
-    }
-
-    public boolean alreadyParticipant(Long memberId, Long squadId) {
-        return squadMemberRepository.findBySquadIdAndMemberId(squadId, memberId).isPresent();
+    public Page<SquadMember> fetchParticipantsBySquadId(Long squadId, Pageable pageable) {
+        return squadMemberRepository.fetchParticipantsBySquadId(squadId, pageable);
     }
 
     public void validateMemberNotInSquad(Long memberId, Long squadId) {

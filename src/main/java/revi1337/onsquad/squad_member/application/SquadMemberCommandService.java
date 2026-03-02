@@ -22,11 +22,11 @@ public class SquadMemberCommandService {
     private final SquadMemberRepository squadMemberRepository;
 
     public void delegateLeader(Long memberId, Long squadId, Long targetMemberId) { // TODO 동시성 이슈 해결 필요.
-        Squad squad = squadAccessor.getById(squadId);
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadMemberPolicy.ensureNotSelfTargeting(memberId, targetMemberId);
         SquadMemberPolicy.ensureLeaderDelegatable(me);
         SquadMember nextLeader = squadMemberAccessor.getByMemberIdAndSquadId(targetMemberId, squadId);
+        Squad squad = me.getSquad();
         squad.delegateLeader(me, nextLeader);
     }
 

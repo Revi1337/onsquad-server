@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.member.domain.entity.Member;
+import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.vo.Address;
 import revi1337.onsquad.squad.domain.entity.vo.Content;
 import revi1337.onsquad.squad.domain.entity.vo.Title;
@@ -101,6 +102,7 @@ public class Squad extends BaseEntity {
     }
 
     private Squad(Title title, Content content, int capacity, Address address, String kakaoLink, String discordLink) {
+        SquadPolicy.validateCapacity(capacity);
         this.title = title;
         this.content = content;
         this.address = address;

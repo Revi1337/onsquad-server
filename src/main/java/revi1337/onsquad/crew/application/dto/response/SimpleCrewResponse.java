@@ -24,14 +24,14 @@ public record SimpleCrewResponse(
         );
     }
 
-    public static SimpleCrewResponse from(SimpleCrew simpleCrew) {
+    public static SimpleCrewResponse from(SimpleCrew crew) {
         return new SimpleCrewResponse(
-                simpleCrew.id(),
-                simpleCrew.name(),
-                simpleCrew.introduce() != null ? simpleCrew.introduce() : "",
-                simpleCrew.kakaoLink() != null ? simpleCrew.kakaoLink() : "",
-                simpleCrew.imageUrl() != null ? simpleCrew.imageUrl() : "",
-                SimpleMemberResponse.from(simpleCrew.owner())
+                crew.id(),
+                crew.name().getValue(),
+                crew.introduce() != null ? crew.introduce().getValue() : "",
+                crew.kakaoLink() != null ? crew.kakaoLink() : "",
+                crew.imageUrl() != null ? crew.imageUrl() : "",
+                SimpleMemberResponse.from(crew.owner())
         );
     }
 }
