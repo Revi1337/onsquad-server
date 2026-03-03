@@ -6,6 +6,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.entity.vo.Title;
 import revi1337.onsquad.squad.domain.model.SquadCreateSpec;
 
 public class SquadFixture {
@@ -14,6 +15,24 @@ public class SquadFixture {
         return Squad.create(
                 new SquadCreateSpec(
                         "title",
+                        "content",
+                        10,
+                        "addr",
+                        "addr-detail",
+                        List.of(),
+                        "https://kakao-link.com",
+                        "https://discord-link.com"
+                ),
+                crew,
+                member,
+                LocalDateTime.now()
+        );
+    }
+
+    public static Squad createSquad(Crew crew, Member member, String title) {
+        return Squad.create(
+                new SquadCreateSpec(
+                        title,
                         "content",
                         10,
                         "addr",
@@ -62,6 +81,13 @@ public class SquadFixture {
                 member,
                 leaderParticipantAt
         );
+    }
+
+    public static Squad createSquad(Long id, Crew crew, Member member, String title) {
+        Squad squad = createSquad(id.intValue(), crew, member);
+        ReflectionTestUtils.setField(squad, "id", id);
+        ReflectionTestUtils.setField(squad, "title", new Title(title));
+        return squad;
     }
 
     public static Squad createSquad(Long id, Crew crew, Member member) {

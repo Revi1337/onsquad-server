@@ -35,6 +35,20 @@ public class CrewFixture {
         );
     }
 
+    public static Crew createCrew(Member member, String name) {
+        return Crew.create(
+                new CrewCreateSpec(
+                        member,
+                        name,
+                        CREW_INTRODUCE_VALUE,
+                        CREW_DETAIL_VALUE,
+                        CREW_KAKAO_LINK_VALUE,
+                        CREW_UPDATED_IMAGE_LINK_VALUE
+                ),
+                LocalDateTime.now()
+        );
+    }
+
     public static Crew createCrew(Member member, LocalDateTime ownerParticipateAt) {
         return Crew.create(
                 new CrewCreateSpec(
@@ -88,6 +102,22 @@ public class CrewFixture {
                         CREW_DETAIL_VALUE + id,
                         CREW_KAKAO_LINK_VALUE + id,
                         imageUrl + id
+                ),
+                LocalDateTime.now()
+        );
+        ReflectionTestUtils.setField(crew, "id", id);
+        return crew;
+    }
+
+    public static Crew createCrew(Long id, Member member, String name) {
+        Crew crew = Crew.create(
+                new CrewCreateSpec(
+                        member,
+                        name,
+                        CREW_INTRODUCE_VALUE + id,
+                        CREW_DETAIL_VALUE + id,
+                        CREW_KAKAO_LINK_VALUE + id,
+                        null
                 ),
                 LocalDateTime.now()
         );

@@ -3,10 +3,12 @@ package revi1337.onsquad.common.fixture;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Introduce;
 import revi1337.onsquad.member.domain.entity.vo.Mbti;
+import revi1337.onsquad.member.domain.entity.vo.Nickname;
 import revi1337.onsquad.member.domain.entity.vo.PasswordPolicy;
 
 public class MemberFixture {
@@ -131,6 +133,26 @@ public class MemberFixture {
         return member;
     }
 
+    public static Member createMember(String nickname) {
+        int randomSequence = (int) ThreadLocalRandom.current().nextLong(1, 100_000_001);
+        Member member = Member.general(
+                String.format("test-%d@email.com", randomSequence),
+                PASSWORD_VALUE,
+                nickname,
+                ADDRESS_VALUE,
+                ADDRESS_DETAIL_VALUE
+        );
+
+        member.updatePassword(ENCRYPTED_PASSWORD_VALUE, PasswordPolicy.BCRYPT);
+
+        ReflectionTestUtils.setField(member, "introduce", new Introduce(INTRODUCE_VALUE));
+        ReflectionTestUtils.setField(member, "profileImage", PROFILE_IMAGE_LINK);
+        ReflectionTestUtils.setField(member, "kakaoLink", KAKAO_LINK);
+        ReflectionTestUtils.setField(member, "mbti", peekRandomMbti());
+
+        return member;
+    }
+
     public static Member createRevi(Long id) {
         Member revi = createRevi();
         ReflectionTestUtils.setField(revi, "id", id);
@@ -152,6 +174,13 @@ public class MemberFixture {
     public static Member createMember(Long id) {
         Member member = createMember(id.intValue());
         ReflectionTestUtils.setField(member, "id", id);
+        return member;
+    }
+
+    public static Member createMember(Long id, String nickname) {
+        Member member = createMember(id.intValue());
+        ReflectionTestUtils.setField(member, "id", id);
+        ReflectionTestUtils.setField(member, "nickname", new Nickname(nickname));
         return member;
     }
 
