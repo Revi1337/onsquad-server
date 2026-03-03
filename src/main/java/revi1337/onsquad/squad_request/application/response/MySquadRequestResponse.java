@@ -1,35 +1,50 @@
 package revi1337.onsquad.squad_request.application.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
+import revi1337.onsquad.crew.application.dto.response.SimpleCrewResponse;
 import revi1337.onsquad.squad.application.response.SimpleSquadResponse;
+import revi1337.onsquad.squad.domain.SquadLinkable;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 
 public record MySquadRequestResponse(
-        Long crewId,
-        String crewName,
-        String imageUrl,
-        SimpleSquadResponse squad,
-        RequestResponse request
-) {
+        Long id,
+        LocalDateTime requestAt,
+        SimpleCrewResponse crew,
+        SimpleSquadResponse squad
+) implements SquadLinkable {
 
-    public static MySquadRequestResponse from(SquadRequest squadRequest) {
+    public static MySquadRequestResponse from(SquadRequest request) {
         return new MySquadRequestResponse(
-                squadRequest.getSquad().getCrew().getId(),
-                squadRequest.getSquad().getCrew().getName().getValue(),
-                squadRequest.getSquad().getCrew().getImageUrl() != null ? squadRequest.getSquad().getCrew().getImageUrl() : "",
-                SimpleSquadResponse.from(squadRequest.getSquad()),
-                RequestResponse.from(squadRequest)
+                request.getId(),
+                request.getRequestAt(),
+                SimpleCrewResponse.from(request.getSquad().getCrew()),
+                SimpleSquadResponse.from(request.getSquad())
+
         );
     }
 
-    public static MySquadRequestResponse from(SquadRequest squadRequest, List<CategoryType> categories) {
+    public static MySquadRequestResponse from(SquadRequest request, List<CategoryType> categories) {
         return new MySquadRequestResponse(
-                squadRequest.getSquad().getCrew().getId(),
-                squadRequest.getSquad().getCrew().getName().getValue(),
-                squadRequest.getSquad().getCrew().getImageUrl() != null ? squadRequest.getSquad().getCrew().getImageUrl() : "",
-                SimpleSquadResponse.from(squadRequest.getSquad(), categories),
-                RequestResponse.from(squadRequest)
+                request.getId(),
+                request.getRequestAt(),
+                SimpleCrewResponse.from(request.getSquad().getCrew()),
+                SimpleSquadResponse.from(request.getSquad(), categories)
+        );
+    }
+
+    @Override
+    public Long getSquadId() {
+        return squad.id();
+    }
+
+    @Override
+    public void addCategories(List<CategoryType> categories) {
+        squad.categories().addAll(
+                categories.stream()
+                        .map(CategoryType::getText)
+                        .toList()
         );
     }
 }

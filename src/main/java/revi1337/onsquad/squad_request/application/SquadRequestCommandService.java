@@ -61,7 +61,7 @@ public class SquadRequestCommandService {
         eventPublisher.publishEvent(new RequestRejected(squadId, request.getMember().getId(), memberId));
     }
 
-    public void cancelMyRequest(Long memberId, Long squadId) {
-        squadRequestRepository.deleteBySquadIdMemberId(squadId, memberId);
+    public int cancelMyRequest(Long memberId, Long squadId) {
+        return squadRequestRepository.deleteBySquadIdMemberId(squadId, memberId);
     }
 }

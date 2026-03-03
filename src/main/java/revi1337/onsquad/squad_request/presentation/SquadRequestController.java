@@ -1,9 +1,7 @@
 package revi1337.onsquad.squad_request.presentation;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +14,7 @@ import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.common.support.AdaptivePageable;
 import revi1337.onsquad.squad_request.application.SquadRequestCommandService;
 import revi1337.onsquad.squad_request.application.SquadRequestQueryService;
 import revi1337.onsquad.squad_request.application.response.MySquadRequestResponse;
@@ -74,7 +73,7 @@ public class SquadRequestController {
     @GetMapping("/squads/{squadId}/requests")
     public ResponseEntity<RestResponse<PageResponse<SquadRequestResponse>>> fetchAllRequests(
             @PathVariable Long squadId,
-            @PageableDefault Pageable pageable,
+            @AdaptivePageable(defaultSort = "requestAt") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadRequestResponse> response = squadRequestQueryService.fetchAllRequests(currentMember.id(), squadId, pageable);
@@ -83,10 +82,11 @@ public class SquadRequestController {
     }
 
     @GetMapping("/members/me/squad-requests")
-    public ResponseEntity<RestResponse<List<MySquadRequestResponse>>> fetchMyRequests(
+    public ResponseEntity<RestResponse<PageResponse<MySquadRequestResponse>>> fetchMyRequests(
+            @AdaptivePageable(defaultSort = "requestAt") Pageable pageable,
             @Authenticate CurrentMember currentMember
     ) {
-        List<MySquadRequestResponse> response = squadRequestQueryService.fetchMyRequests(currentMember.id());
+        PageResponse<MySquadRequestResponse> response = squadRequestQueryService.fetchMyRequests(currentMember.id(), pageable);
 
         return ResponseEntity.ok().body(RestResponse.success(response));
     }

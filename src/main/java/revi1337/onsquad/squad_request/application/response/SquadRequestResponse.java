@@ -2,19 +2,19 @@ package revi1337.onsquad.squad_request.application.response;
 
 import java.time.LocalDateTime;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
-import revi1337.onsquad.squad_request.domain.model.SquadRequestDetail;
+import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 
 public record SquadRequestResponse(
         Long id,
         LocalDateTime requestAt,
-        SimpleMemberResponse member
+        SimpleMemberResponse requester
 ) {
 
-    public static SquadRequestResponse from(SquadRequestDetail squadRequestDetail) {
+    public static SquadRequestResponse from(SquadRequest request) {
         return new SquadRequestResponse(
-                squadRequestDetail.id(),
-                squadRequestDetail.requestAt(),
-                SimpleMemberResponse.from(squadRequestDetail.member())
+                request.getId(),
+                request.getRequestAt(),
+                SimpleMemberResponse.from(request.getMember())
         );
     }
 }

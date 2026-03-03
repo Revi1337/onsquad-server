@@ -1,13 +1,12 @@
 package revi1337.onsquad.squad_request.application;
 
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.category.domain.entity.vo.CategoryType;
 import revi1337.onsquad.common.dto.PageResponse;
+import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
 import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
 import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
@@ -15,7 +14,6 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 import revi1337.onsquad.squad_request.application.response.MySquadRequestResponse;
 import revi1337.onsquad.squad_request.application.response.SquadRequestResponse;
 import revi1337.onsquad.squad_request.domain.SquadRequestPolicy;
-import revi1337.onsquad.squad_request.domain.model.SquadRequests;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,22 +27,22 @@ public class SquadRequestQueryService {
     public PageResponse<SquadRequestResponse> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
         SquadRequestPolicy.ensureReadRequests(me);
+        Page<SquadRequestResponse> response = squadRequestAccessor.fetchAllBySquadId(squadId, pageable)
+                .map(SquadRequestResponse::from);
 
-        return PageResponse.from(squadRequestAccessor.fetchAllBySquadId(squadId, pageable).map(SquadRequestResponse::from));
+        return PageResponse.from(response);
     }
 
-    public List<MySquadRequestResponse> fetchMyRequests(Long memberId) {
-        SquadRequests requests = squadRequestAccessor.fetchMyRequests(memberId);
-        if (requests.isNotEmpty()) {
-            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(requests.getSquadIds());
-            Map<Long, List<CategoryType>> categoryMap = categories.groupBySquadId();
-            return requests.values().stream()
-                    .map(request -> MySquadRequestResponse.from(request, categoryMap.get(request.getSquad().getId())))
-                    .toList();
+    public PageResponse<MySquadRequestResponse> fetchMyRequests(Long memberId, Pageable pageable) {
+        Page<MySquadRequestResponse> response = squadRequestAccessor.fetchMyRequests(memberId, pageable)
+                .map(MySquadRequestResponse::from);
+
+        SquadLinkableGroup<MySquadRequestResponse> group = new SquadLinkableGroup<>(response.getContent());
+        if (group.isNotEmpty()) {
+            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(group.getSquadIds());
+            group.linkCategories(categories);
         }
 
-        return requests.values().stream()
-                .map(MySquadRequestResponse::from)
-                .toList();
+        return PageResponse.from(response);
     }
 }

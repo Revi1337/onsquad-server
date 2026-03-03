@@ -30,7 +30,8 @@ public class SquadRequestCancelHistoryRecorder implements HistoryRecorder {
         Squad squad = squadRepository.findWithCrewById((Long) args[1]).orElseThrow();
         historyRepository.save(HistoryEntity.builder()
                 .memberId((Long) args[0])
-                .crewId(squad.getId())
+                .crewId(squad.getCrew().getId())
+                .squadId(squad.getId())
                 .type(HistoryType.SQUAD_CANCEL)
                 .message(HistoryType.SQUAD_CANCEL.formatMessage(squad.getCrew().getName().getValue(), squad.getTitle().getValue()))
                 .build());

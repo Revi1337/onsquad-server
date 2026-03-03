@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.error.SquadRequestBusinessException;
 import revi1337.onsquad.squad_request.domain.error.SquadRequestErrorCode;
-import revi1337.onsquad.squad_request.domain.model.SquadRequestDetail;
-import revi1337.onsquad.squad_request.domain.model.SquadRequests;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
 
 @Component
@@ -22,11 +20,11 @@ public class SquadRequestAccessor {
                 .orElseThrow(() -> new SquadRequestBusinessException.NotFound(SquadRequestErrorCode.NOT_FOUND));
     }
 
-    public SquadRequests fetchMyRequests(Long memberId) {
-        return new SquadRequests(squadRequestRepository.fetchMyRequests(memberId));
+    public Page<SquadRequest> fetchMyRequests(Long memberId, Pageable pageable) {
+        return squadRequestRepository.fetchMyRequests(memberId, pageable);
     }
 
-    public Page<SquadRequestDetail> fetchAllBySquadId(Long squadId, Pageable pageable) {
+    public Page<SquadRequest> fetchAllBySquadId(Long squadId, Pageable pageable) {
         return squadRequestRepository.fetchAllBySquadId(squadId, pageable);
     }
 
