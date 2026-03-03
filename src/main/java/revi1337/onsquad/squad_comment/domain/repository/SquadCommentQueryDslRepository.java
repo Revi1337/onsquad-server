@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.common.domain.OrderSpecifierBuilder;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 
 @Repository
@@ -24,7 +25,7 @@ public class SquadCommentQueryDslRepository {
                 .selectFrom(squadComment)
                 .innerJoin(squadComment.member, member).fetchJoin()
                 .where(squadComment.squad.id.eq(squadId), squadComment.parent.isNull())
-                .orderBy(squadComment.createdAt.desc())
+                .orderBy(OrderSpecifierBuilder.startWith(squadComment, pageable).build())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -42,9 +43,9 @@ public class SquadCommentQueryDslRepository {
                 .selectFrom(squadComment)
                 .innerJoin(squadComment.member, member).fetchJoin()
                 .where(squadComment.squad.id.eq(squadId), squadComment.parent.id.eq(parentId))
+                .orderBy(OrderSpecifierBuilder.startWith(squadComment, pageable).build())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(squadComment.createdAt.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory

@@ -12,6 +12,9 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 @NoArgsConstructor(access = PRIVATE)
 public final class SquadCommentPolicy {
 
+    public static final int MAX_CONTENT_LENGTH = 250;
+    public static final String DELETED_CONTENT = "삭제된 댓글입니다.";
+
     public static boolean isDeleted(SquadComment comment) {
         return comment.isDeleted();
     }
@@ -44,7 +47,7 @@ public final class SquadCommentPolicy {
 
     public static void ensureDeletable(SquadComment comment, SquadMember me) {
         if (mismatchSquad(comment, me)) {
-            throw new RuntimeException();
+            throw new SquadCommentBusinessException.MismatchReference(SquadCommentErrorCode.MISMATCH_SQUAD_REFERENCE);
         }
         if (!canDelete(comment, me)) {
             throw new SquadCommentBusinessException.InsufficientAuthority(SquadCommentErrorCode.INSUFFICIENT_DELETE_AUTHORITY);

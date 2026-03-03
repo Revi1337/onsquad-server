@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 import revi1337.onsquad.common.domain.BaseEntity;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad_comment.domain.SquadCommentPolicy;
 import revi1337.onsquad.squad_comment.domain.error.SquadCommentDomainException;
 
 @Getter
@@ -28,14 +29,13 @@ import revi1337.onsquad.squad_comment.domain.error.SquadCommentDomainException;
 @Entity
 public class SquadComment extends BaseEntity {
 
-    private static final int MAX_LENGTH = 250;
-    private static final int PERSIST_MAX_LENGTH = MAX_LENGTH * 3;
+    private static final int MAX_CONTENT_PERSIST_LENGTH = SquadCommentPolicy.MAX_CONTENT_LENGTH * 3;
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = PERSIST_MAX_LENGTH)
+    @Column(nullable = false, length = MAX_CONTENT_PERSIST_LENGTH)
     private String content;
 
     private boolean deleted;
@@ -98,12 +98,9 @@ public class SquadComment extends BaseEntity {
     }
 
     private void validate(String content) {
-        if (content == null) {
-            throw new NullPointerException("댓글은 null 일 수 없습니다.");
-        }
-
-        if (content.isEmpty() || content.length() > MAX_LENGTH) {
-            throw new SquadCommentDomainException.InvalidLength(INVALID_LENGTH, MAX_LENGTH);
+        Objects.requireNonNull(content, "댓글은 null 일 수 없습니다.");
+        if (content.isBlank() || content.length() > SquadCommentPolicy.MAX_CONTENT_LENGTH) {
+            throw new SquadCommentDomainException.InvalidLength(INVALID_LENGTH, SquadCommentPolicy.MAX_CONTENT_LENGTH);
         }
     }
 

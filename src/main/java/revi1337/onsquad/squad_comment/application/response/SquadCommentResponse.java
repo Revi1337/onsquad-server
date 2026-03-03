@@ -5,31 +5,46 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
+import revi1337.onsquad.squad_comment.domain.SquadCommentPolicy;
 import revi1337.onsquad.squad_comment.domain.entity.SquadComment;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SquadCommentResponse(
+        SquadCommentStates states,
         Long parentId,
         Long id,
         boolean deleted,
         String content,
+        LocalDateTime deletedAt,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         SimpleMemberResponse writer,
         List<SquadCommentResponse> replies
 ) {
 
-    private static final String DELETED_CONTENT = "삭제된 댓글입니다.";
-
-    public static SquadCommentResponse from(SquadComment comment) {
-        if (comment.isDeleted()) {
-            return new SquadCommentResponse(null, null, true, DELETED_CONTENT, null, null, null, new ArrayList<>());
-        }
+    public static SquadCommentResponse deleted(boolean canDelete, SquadComment comment) {
         return new SquadCommentResponse(
+                new SquadCommentStates(canDelete),
                 comment.getParent() == null ? null : comment.getParent().getId(),
                 comment.getId(),
-                false,
+                comment.isDeleted(),
+                SquadCommentPolicy.DELETED_CONTENT,
+                comment.getDeletedAt(),
+                null,
+                null,
+                null,
+                new ArrayList<>()
+        );
+    }
+
+    public static SquadCommentResponse from(boolean canDelete, SquadComment comment) {
+        return new SquadCommentResponse(
+                new SquadCommentStates(canDelete),
+                comment.getParent() == null ? null : comment.getParent().getId(),
+                comment.getId(),
+                comment.isDeleted(),
                 comment.getContent(),
+                null,
                 comment.getCreatedAt(),
                 comment.getUpdatedAt(),
                 SimpleMemberResponse.from(comment.getMember()),
