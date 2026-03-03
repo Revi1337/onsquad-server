@@ -1,0 +1,72 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 스쿼드 참여자
+
+==== 스쿼드 참여자 목록
+
+[black]#Request#
+
+include::{snippets}/squad-member/success/finds/http-request.adoc[]
+
+include::{snippets}/squad-member/success/finds/request-headers.adoc[]
+
+include::{snippets}/squad-member/success/finds/path-parameters.adoc[]
+
+include::{snippets}/squad-member/success/finds/query-parameters.adoc[]
+
+[black]#Response#
+
+본인이 스쿼드 참여자인 경우
+
+include::{snippets}/squad-member/success/finds/http-response.adoc[]
+
+본인이 스쿼드 참여하지 않은 경우(크루 오너) (isMe & canKick & canDelegateLeader 는 내려오지 않음)
+
+include::{snippets}/squad-member/success/finds2/http-response.adoc[]
+
+==== 스쿼드 탈퇴
+
+[black]#Request#
+
+include::{snippets}/squad-member/success/leave/http-request.adoc[]
+
+include::{snippets}/squad-member/success/leave/request-headers.adoc[]
+
+include::{snippets}/squad-member/success/leave/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-member/success/leave/http-response.adoc[]
+
+==== 스쿼드 참여자 추방
+
+[black]#Request#
+
+include::{snippets}/squad-member/success/kick/http-request.adoc[]
+
+include::{snippets}/squad-member/success/kick/request-headers.adoc[]
+
+include::{snippets}/squad-member/success/kick/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-member/success/kick/http-response.adoc[]
+
+==== 스쿼드 리더 위임
+
+[black]#Request#
+
+include::{snippets}/squad-member/success/delegate/http-request.adoc[]
+
+include::{snippets}/squad-member/success/delegate/request-headers.adoc[]
+
+include::{snippets}/squad-member/success/delegate/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-member/success/delegate/http-response.adoc[]

@@ -11,4 +11,6 @@ include::auth.adoc[]
 
 include::crew.adoc[]
 
+include::squad.adoc[]
+
 include::member.adoc[]

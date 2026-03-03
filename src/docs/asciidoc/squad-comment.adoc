@@ -1,0 +1,96 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+=== 스쿼드 댓글
+
+==== 스쿼드 댓글 작성
+
+[black]#Request#
+
+include::{snippets}/squad-comment/success/new/http-request.adoc[]
+
+include::{snippets}/squad-comment/success/new/request-headers.adoc[]
+
+include::{snippets}/squad-comment/success/new/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-comment/success/new/http-response.adoc[]
+
+==== 스쿼드 대댓글 작성
+
+[black]#Request#
+
+include::{snippets}/squad-comment/success/reply-new/http-request.adoc[]
+
+include::{snippets}/squad-comment/success/reply-new/request-headers.adoc[]
+
+include::{snippets}/squad-comment/success/reply-new/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-comment/success/new/http-response.adoc[]
+
+==== 스쿼드 댓글 목록
+
+[black]#Request#
+
+include::{snippets}/squad-comment/success/finds/http-request.adoc[]
+
+include::{snippets}/squad-comment/success/finds/request-headers.adoc[]
+
+include::{snippets}/squad-comment/success/finds/path-parameters.adoc[]
+
+include::{snippets}/squad-comment/success/finds/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-comment/success/finds/http-response.adoc[]
+
+==== 스쿼드 대댓글 목록
+
+[black]#Request#
+
+include::{snippets}/squad-comment/success/finds/http-request.adoc[]
+
+include::{snippets}/squad-comment/success/finds/request-headers.adoc[]
+
+include::{snippets}/squad-comment/success/finds/path-parameters.adoc[]
+
+include::{snippets}/squad-comment/success/finds/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-comment/success/finds/http-response.adoc[]
+
+==== 스쿼드 댓글 수정
+
+[black]#Request#
+
+include::{snippets}/squad-comment/success/update/http-request.adoc[]
+
+include::{snippets}/squad-comment/success/update/request-headers.adoc[]
+
+include::{snippets}/squad-comment/success/update/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-comment/success/update/http-response.adoc[]
+
+==== 스쿼드 댓글 삭제
+
+[black]#Request#
+
+include::{snippets}/squad-comment/success/delete/http-request.adoc[]
+
+include::{snippets}/squad-comment/success/delete/request-headers.adoc[]
+
+include::{snippets}/squad-comment/success/delete/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-comment/success/delete/http-response.adoc[]

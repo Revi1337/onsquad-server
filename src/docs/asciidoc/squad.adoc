@@ -1,0 +1,91 @@
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+== 스쿼드 도메인
+
+include::category.adoc[]
+include::squad-request.adoc[]
+include::squad-member.adoc[]
+include::squad-comment.adoc[]
+
+=== 스쿼드 생성
+
+[black]#Request#
+
+include::{snippets}/squad/success/new/http-request.adoc[]
+
+include::{snippets}/squad/success/new/request-headers.adoc[]
+
+include::{snippets}/squad/success/new/request-fields.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad/success/new/http-response.adoc[]
+
+=== 스쿼드 상세 조회
+
+[black]#Request#
+
+include::{snippets}/squad/success/find/http-request.adoc[]
+
+include::{snippets}/squad/success/find/request-headers.adoc[]
+
+include::{snippets}/squad/success/find/path-parameters.adoc[]
+
+[black]#Response#
+
+본인이 스쿼드 참여자인 경우 (alreadyRequest 는 내려오지 않음)
+
+include::{snippets}/squad/success/find/http-response.adoc[]
+
+본인이 스쿼드 참여자가 아닌 경우(크루에만 소속) (isLeader & canLeave 는 내려오지 않음)
+
+include::{snippets}/squad/success/find2/http-response.adoc[]
+
+=== 스쿼드 검색 및 조회
+
+[black]#Request#
+
+include::{snippets}/squad/success/finds/http-request.adoc[]
+
+include::{snippets}/squad/success/finds/request-headers.adoc[]
+
+include::{snippets}/squad/success/finds/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad/success/finds/http-response.adoc[]
+
+=== 스쿼드 관리
+
+[black]#Request#
+
+include::{snippets}/squad/success/manage/http-request.adoc[]
+
+include::{snippets}/squad/success/manage/request-headers.adoc[]
+
+include::{snippets}/squad/success/manage/path-parameters.adoc[]
+
+include::{snippets}/squad/success/manage/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad/success/manage/http-response.adoc[]
+
+=== 스쿼드 삭제
+
+[black]#Request#
+
+include::{snippets}/squad/success/delete/http-request.adoc[]
+
+include::{snippets}/squad/success/delete/request-headers.adoc[]
+
+include::{snippets}/squad/success/delete/path-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad/success/delete/http-response.adoc[]

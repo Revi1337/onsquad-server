@@ -40,6 +40,36 @@ include::{snippets}/crew-request/success/my-requests/request-headers.adoc[]
 
 include::{snippets}/crew-request/success/my-requests/http-response.adoc[]
 
+=== 스쿼드
+
+==== 내가 참여중인 스쿼드
+
+[black]#Request#
+
+include::{snippets}/squad-member/success/my-participating/http-request.adoc[]
+
+include::{snippets}/squad-member/success/my-participating/request-headers.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-member/success/my-participating/http-response.adoc[]
+
+==== 참가 신청
+
+===== 나의 스쿼드 가입 신청 내역
+
+[black]#Request#
+
+include::{snippets}/squad-request/success/my-requests/http-request.adoc[]
+
+include::{snippets}/squad-request/success/my-requests/request-headers.adoc[]
+
+include::{snippets}/squad-request/success/my-requests/query-parameters.adoc[]
+
+[black]#Response#
+
+include::{snippets}/squad-request/success/my-requests/http-response.adoc[]
+
 === 내 프로필
 
 [black]#Request#
