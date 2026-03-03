@@ -7,10 +7,10 @@
 
 = OnSquad REST API 문서
 
-include::auth.adoc[]
+include::auth/auth.adoc[]
 
-include::crew.adoc[]
+include::crew/crew.adoc[]
 
-include::squad.adoc[]
+include::squad/squad.adoc[]
 
-include::member.adoc[]
+include::member/member.adoc[]
