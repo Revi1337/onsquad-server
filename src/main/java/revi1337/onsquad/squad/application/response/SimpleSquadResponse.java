@@ -21,7 +21,7 @@ public record SimpleSquadResponse(
                 simpleSquad.id(),
                 simpleSquad.title().getValue(),
                 simpleSquad.capacity(),
-                simpleSquad.capacity(),
+                simpleSquad.remain(),
                 simpleSquad.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),

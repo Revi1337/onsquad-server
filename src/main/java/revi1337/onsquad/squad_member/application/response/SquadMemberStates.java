@@ -11,7 +11,7 @@ public record SquadMemberStates(
 ) {
 
     public static SquadMemberStates of(boolean isLeader) {
-        return new SquadMemberStates(isLeader, null, null, null);
+        return new SquadMemberStates(null, isLeader, null, null);
     }
 
     public static SquadMemberStates of(Boolean isMe, Boolean canKick, Boolean canDelegateLeader) {

@@ -1,5 +1,6 @@
 package revi1337.onsquad.squad_request.application.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 import revi1337.onsquad.category.domain.entity.vo.CategoryType;
@@ -34,6 +35,7 @@ public record MySquadRequestResponse(
         );
     }
 
+    @JsonIgnore
     @Override
     public Long getSquadId() {
         return squad.id();
