@@ -30,8 +30,8 @@ import revi1337.onsquad.auth.security.core.JsonWebTokenFailureHandler;
 import revi1337.onsquad.auth.security.core.JsonWebTokenLoginFilter;
 import revi1337.onsquad.auth.security.core.JsonWebTokenSuccessHandler;
 import revi1337.onsquad.auth.security.core.JsonWebTokenUserDetailsService;
+import revi1337.onsquad.auth.token.application.JsonWebTokenManager;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
-import revi1337.onsquad.token.application.JsonWebTokenManager;
 
 @EnableWebSecurity
 @Configuration

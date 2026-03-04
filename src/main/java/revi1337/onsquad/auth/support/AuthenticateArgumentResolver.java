@@ -1,7 +1,7 @@
 package revi1337.onsquad.auth.support;
 
-import static revi1337.onsquad.token.domain.error.TokenErrorCode.EMPTY_TOKEN;
-import static revi1337.onsquad.token.domain.error.TokenErrorCode.INVALID_TOKEN_FORMAT;
+import static revi1337.onsquad.auth.token.domain.error.TokenErrorCode.EMPTY_TOKEN;
+import static revi1337.onsquad.auth.token.domain.error.TokenErrorCode.INVALID_TOKEN_FORMAT;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import revi1337.onsquad.auth.token.application.JsonWebTokenManager;
+import revi1337.onsquad.auth.token.domain.error.TokenException;
+import revi1337.onsquad.auth.token.domain.model.ClaimsParser;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.token.application.JsonWebTokenManager;
-import revi1337.onsquad.token.domain.error.TokenException;
-import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @RequiredArgsConstructor
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {

@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfile;
+import revi1337.onsquad.auth.token.application.JsonWebTokenManager;
+import revi1337.onsquad.auth.token.domain.model.JsonWebToken;
 import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Email;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
-import revi1337.onsquad.token.application.JsonWebTokenManager;
-import revi1337.onsquad.token.domain.model.JsonWebToken;
 
 @Service
 @RequiredArgsConstructor

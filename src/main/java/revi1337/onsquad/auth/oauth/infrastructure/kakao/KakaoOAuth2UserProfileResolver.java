@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfile;
 import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfileResolver;
 import revi1337.onsquad.auth.oauth.infrastructure.OAuth2ClientProperties.OAuth2Properties;
-import revi1337.onsquad.token.domain.model.AccessToken;
+import revi1337.onsquad.auth.token.domain.model.AccessToken;
 
 public class KakaoOAuth2UserProfileResolver implements OAuth2VendorUserProfileResolver {
 

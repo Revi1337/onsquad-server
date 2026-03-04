@@ -12,9 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.auth.token.application.JsonWebTokenManager;
+import revi1337.onsquad.auth.token.domain.model.JsonWebToken;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.token.application.JsonWebTokenManager;
-import revi1337.onsquad.token.domain.model.JsonWebToken;
 
 @Slf4j
 @RequiredArgsConstructor

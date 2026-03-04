@@ -10,9 +10,9 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import revi1337.onsquad.auth.support.AuthenticateArgumentResolver;
+import revi1337.onsquad.auth.token.application.JsonWebTokenManager;
 import revi1337.onsquad.category.presentation.converter.CategoryTypeConverter;
 import revi1337.onsquad.common.support.AdaptivePageableHandlerMethodArgumentResolver;
-import revi1337.onsquad.token.application.JsonWebTokenManager;
 
 @Configuration
 @RequiredArgsConstructor

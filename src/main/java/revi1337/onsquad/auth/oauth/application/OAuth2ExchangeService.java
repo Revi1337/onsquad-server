@@ -9,9 +9,9 @@ import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorEndpointBuil
 import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorProvider;
 import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfile;
 import revi1337.onsquad.auth.oauth.application.contract.OAuth2VendorUserProfileResolver;
+import revi1337.onsquad.auth.token.domain.model.AccessToken;
+import revi1337.onsquad.auth.token.domain.model.JsonWebToken;
 import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
-import revi1337.onsquad.token.domain.model.AccessToken;
-import revi1337.onsquad.token.domain.model.JsonWebToken;
 
 @Service
 @RequiredArgsConstructor

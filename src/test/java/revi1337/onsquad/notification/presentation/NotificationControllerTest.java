@@ -34,6 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import revi1337.onsquad.auth.token.domain.model.ClaimsParser;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.notification.application.NotificationCommandService;
@@ -44,7 +45,6 @@ import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
 import revi1337.onsquad.notification.infrastructure.sse.NamedSseEmitter;
 import revi1337.onsquad.notification.infrastructure.sse.SseTopic;
-import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @WebMvcTest(NotificationController.class)
 class NotificationControllerTest extends PresentationLayerTestSupport {

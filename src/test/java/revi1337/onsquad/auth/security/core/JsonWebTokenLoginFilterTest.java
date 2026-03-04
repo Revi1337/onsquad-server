@@ -32,11 +32,11 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.auth.token.domain.model.AccessToken;
+import revi1337.onsquad.auth.token.domain.model.JsonWebToken;
+import revi1337.onsquad.auth.token.domain.model.RefreshToken;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
-import revi1337.onsquad.token.domain.model.AccessToken;
-import revi1337.onsquad.token.domain.model.JsonWebToken;
-import revi1337.onsquad.token.domain.model.RefreshToken;
 
 @WebMvcTest(JsonWebTokenLoginFilter.class)
 class JsonWebTokenLoginFilterTest extends PresentationLayerTestSupport {

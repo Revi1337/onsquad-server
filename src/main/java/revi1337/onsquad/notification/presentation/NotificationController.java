@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import revi1337.onsquad.auth.support.Authenticate;
 import revi1337.onsquad.auth.support.CurrentMember;
+import revi1337.onsquad.auth.token.application.JsonWebTokenManager;
+import revi1337.onsquad.auth.token.domain.model.ClaimsParser;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.support.AdaptivePageable;
@@ -22,8 +24,6 @@ import revi1337.onsquad.notification.application.NotificationCommandService;
 import revi1337.onsquad.notification.application.NotificationQueryService;
 import revi1337.onsquad.notification.application.NotificationService;
 import revi1337.onsquad.notification.application.response.NotificationResponse;
-import revi1337.onsquad.token.application.JsonWebTokenManager;
-import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @RestController
 @RequestMapping("/api")
