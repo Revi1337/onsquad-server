@@ -22,8 +22,8 @@ import revi1337.onsquad.notification.application.NotificationCommandService;
 import revi1337.onsquad.notification.application.NotificationQueryService;
 import revi1337.onsquad.notification.application.NotificationService;
 import revi1337.onsquad.notification.application.response.NotificationResponse;
-import revi1337.onsquad.token.application.ClaimsParser;
-import revi1337.onsquad.token.application.JsonWebTokenEvaluator;
+import revi1337.onsquad.token.application.JsonWebTokenManager;
+import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @RestController
 @RequestMapping("/api")
@@ -35,14 +35,14 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final NotificationCommandService notificationCommandService;
     private final NotificationQueryService notificationQueryService;
-    private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
+    private final JsonWebTokenManager jsonWebTokenManager;
 
     @GetMapping(value = "/notifications/sse", produces = TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect(
             @RequestParam String accessToken,
             @RequestHeader(value = LAST_EVENT_ID, required = false) Long lastEventId
     ) {
-        ClaimsParser claimsParser = jsonWebTokenEvaluator.verifyAccessToken(accessToken);
+        ClaimsParser claimsParser = jsonWebTokenManager.verifyAccessToken(accessToken);
         return notificationService.connect(claimsParser.parseIdentity(), lastEventId);
     }
 

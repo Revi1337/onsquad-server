@@ -44,7 +44,7 @@ import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
 import revi1337.onsquad.notification.infrastructure.sse.NamedSseEmitter;
 import revi1337.onsquad.notification.infrastructure.sse.SseTopic;
-import revi1337.onsquad.token.application.ClaimsParser;
+import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @WebMvcTest(NotificationController.class)
 class NotificationControllerTest extends PresentationLayerTestSupport {
@@ -67,7 +67,7 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long userId = 1L;
             ClaimsParser mockClaimsParser = mock(ClaimsParser.class);
-            given(jsonWebTokenEvaluator.verifyAccessToken(ACCESS_TOKEN)).willReturn(mockClaimsParser);
+            given(jsonWebTokenManager.verifyAccessToken(ACCESS_TOKEN)).willReturn(mockClaimsParser);
             given(mockClaimsParser.parseIdentity()).willReturn(1L);
             NamedSseEmitter emitter = new NamedSseEmitter(userId.toString(), SseTopic.USER, 60 * 60 * 1000L);
             given(notificationService.connect(eq(userId), nullable(Long.class))).willReturn(emitter);

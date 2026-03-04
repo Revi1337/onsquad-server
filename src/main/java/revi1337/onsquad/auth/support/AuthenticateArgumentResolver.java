@@ -11,9 +11,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.token.application.ClaimsParser;
-import revi1337.onsquad.token.application.JsonWebTokenEvaluator;
+import revi1337.onsquad.token.application.JsonWebTokenManager;
 import revi1337.onsquad.token.domain.error.TokenException;
+import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @RequiredArgsConstructor
 public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolver {
@@ -21,7 +21,7 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
     private static final int TOKEN_INDEX = 1;
     private static final String TOKEN_PREFIX = "Bearer ";
 
-    private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
+    private final JsonWebTokenManager jsonWebTokenManager;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -38,7 +38,7 @@ public class AuthenticateArgumentResolver implements HandlerMethodArgumentResolv
 
         validateAuthorizationHeader(authorizationHeader);
         final String accessToken = authorizationHeader.split(Sign.WHITESPACE)[TOKEN_INDEX];
-        final ClaimsParser claimsParser = jsonWebTokenEvaluator.verifyAccessToken(accessToken);
+        final ClaimsParser claimsParser = jsonWebTokenManager.verifyAccessToken(accessToken);
 
         return CurrentMember.of(claimsParser.parseIdentity(), claimsParser.parseEmail(), claimsParser.parseUserType());
     }

@@ -85,13 +85,14 @@ onsquad:
   frontend-base-url: frontend-base-url
 
   token:
-    access-token-attributes:
-      token-attributes:
+    access-token:
+      attributes:
         expired: 365d
         secret-key: secret-key
 
-    refresh-token-attributes:
-      token-attributes:
+    refresh-token:
+      backup-path: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+      attributes:
         expired: 365d
         secret-key: secret-key
 

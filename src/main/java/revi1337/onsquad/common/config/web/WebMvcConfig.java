@@ -12,13 +12,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import revi1337.onsquad.auth.support.AuthenticateArgumentResolver;
 import revi1337.onsquad.category.presentation.converter.CategoryTypeConverter;
 import revi1337.onsquad.common.support.AdaptivePageableHandlerMethodArgumentResolver;
-import revi1337.onsquad.token.application.JsonWebTokenEvaluator;
+import revi1337.onsquad.token.application.JsonWebTokenManager;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final JsonWebTokenEvaluator jsonWebTokenEvaluator;
+    private final JsonWebTokenManager jsonWebTokenManager;
     private final SortHandlerMethodArgumentResolver sortResolver;
     private final Optional<PageableHandlerMethodArgumentResolverCustomizer> pagingCustomizer;
 
@@ -34,7 +34,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     private AuthenticateArgumentResolver getAuthenticateArgumentResolver() {
-        return new AuthenticateArgumentResolver(jsonWebTokenEvaluator);
+        return new AuthenticateArgumentResolver(jsonWebTokenManager);
     }
 
     private AdaptivePageableHandlerMethodArgumentResolver getPagingArgumentResolver() {

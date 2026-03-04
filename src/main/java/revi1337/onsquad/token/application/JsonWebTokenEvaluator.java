@@ -8,32 +8,20 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.token.config.TokenProperties;
-import revi1337.onsquad.token.config.TokenProperties.AccessTokenAttributes;
-import revi1337.onsquad.token.config.TokenProperties.RefreshTokenAttributes;
 import revi1337.onsquad.token.domain.error.TokenException;
+import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @Component
 public class JsonWebTokenEvaluator {
 
-    private final AccessTokenAttributes accessTokenAttributes;
-    private final RefreshTokenAttributes refreshTokenAttributes;
-
-    public JsonWebTokenEvaluator(TokenProperties tokenProperties) {
-        this.accessTokenAttributes = tokenProperties.accessTokenAttributes();
-        this.refreshTokenAttributes = tokenProperties.refreshTokenAttributes();
+    public ClaimsParser verifyAccessToken(String accessToken, String secretKey) {
+        return new ClaimsParser(verifyToken(accessToken, secretKey));
     }
 
-    public ClaimsParser verifyAccessToken(String accessToken) {
-        String accessTokenSecretKey = accessTokenAttributes.tokenAttributes().secretKey();
-        return new ClaimsParser(verifyToken(accessToken, accessTokenSecretKey));
-    }
-
-    public ClaimsParser verifyRefreshToken(String refreshToken) {
-        String refreshTokenSecretKey = refreshTokenAttributes.tokenAttributes().secretKey();
-        return new ClaimsParser(verifyToken(refreshToken, refreshTokenSecretKey));
+    public ClaimsParser verifyRefreshToken(String refreshToken, String secretKey) {
+        return new ClaimsParser(verifyToken(refreshToken, secretKey));
     }
 
     private Claims verifyToken(String token, String secretKey) {
@@ -48,13 +36,9 @@ public class JsonWebTokenEvaluator {
 
     private Claims extractAllClaims(String token, String secretKey) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey(secretKey))
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    private Key getSigningKey(String keyType) {
-        return Keys.hmacShaKeyFor(keyType.getBytes());
     }
 }

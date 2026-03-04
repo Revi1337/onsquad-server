@@ -1,4 +1,4 @@
-package revi1337.onsquad.token.application;
+package revi1337.onsquad.token.domain.model;
 
 import io.jsonwebtoken.Claims;
 import revi1337.onsquad.member.domain.entity.vo.UserType;

@@ -2,7 +2,7 @@ package revi1337.onsquad.common.constant;
 
 public abstract class CacheConst {
 
-    public static final String REFRESH_TOKEN = "refresh";
+    public static final String REFRESH_TOKEN = "refresh-token";
     public static final String VERIFICATION_CODE = "verification-code";
 
     public static final String CREW_ANNOUNCES = "crew-announces";

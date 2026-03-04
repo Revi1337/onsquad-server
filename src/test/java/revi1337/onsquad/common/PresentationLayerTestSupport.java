@@ -23,8 +23,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import revi1337.onsquad.common.config.TestObjectMapperConfiguration;
 import revi1337.onsquad.common.config.web.WebMvcConfig;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
-import revi1337.onsquad.token.application.ClaimsParser;
-import revi1337.onsquad.token.application.JsonWebTokenEvaluator;
+import revi1337.onsquad.token.application.JsonWebTokenManager;
+import revi1337.onsquad.token.domain.model.ClaimsParser;
 
 @Import({WebMvcConfig.class, TestObjectMapperConfiguration.class})
 @WebMvcTest
@@ -43,7 +43,7 @@ public abstract class PresentationLayerTestSupport {
     protected ObjectMapper objectMapper;
 
     @MockBean
-    protected JsonWebTokenEvaluator jsonWebTokenEvaluator;
+    protected JsonWebTokenManager jsonWebTokenManager;
 
     @BeforeEach
     protected void setUp(
@@ -59,6 +59,6 @@ public abstract class PresentationLayerTestSupport {
         ClaimsParser claimsParser = mock(ClaimsParser.class);
         when(claimsParser.parseIdentity()).thenReturn(1L);
         when(claimsParser.parseUserType()).thenReturn(UserType.GENERAL);
-        when(jsonWebTokenEvaluator.verifyAccessToken(any())).thenReturn(claimsParser);
+        when(jsonWebTokenManager.verifyAccessToken(any())).thenReturn(claimsParser);
     }
 }

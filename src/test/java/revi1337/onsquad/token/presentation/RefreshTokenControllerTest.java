@@ -1,6 +1,6 @@
 package revi1337.onsquad.token.presentation;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -21,7 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.token.application.TokenReissueService;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
-import revi1337.onsquad.token.domain.model.RefreshToken;
 
 @WebMvcTest(RefreshTokenController.class)
 class RefreshTokenControllerTest extends PresentationLayerTestSupport {
@@ -39,7 +38,7 @@ class RefreshTokenControllerTest extends PresentationLayerTestSupport {
             String oldRefreshToken = "old-refresh-token-value";
             ReissueRequest request = new ReissueRequest(oldRefreshToken);
             JsonWebToken responseToken = new JsonWebToken("new-access-token", "new-refresh-token");
-            when(tokenReissueService.reissue(any(RefreshToken.class))).thenReturn(responseToken);
+            when(tokenReissueService.reissue(anyString())).thenReturn(responseToken);
 
             mockMvc.perform(post("/api/auth/reissue")
                             .content(objectMapper.writeValueAsString(request))

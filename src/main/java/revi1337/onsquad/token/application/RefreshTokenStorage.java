@@ -1,14 +1,17 @@
 package revi1337.onsquad.token.application;
 
+import java.time.Duration;
 import java.util.Optional;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 
-public interface RefreshTokenManager {
+public interface RefreshTokenStorage {
 
-    void saveTokenFor(Long memberId, RefreshToken refreshToken);
+    long saveToken(Long memberId, RefreshToken refreshToken, Duration expireDuration);
 
     Optional<RefreshToken> findTokenBy(Long memberId);
 
     void deleteTokenBy(Long memberId);
+
+    void deleteAll();
 
 }

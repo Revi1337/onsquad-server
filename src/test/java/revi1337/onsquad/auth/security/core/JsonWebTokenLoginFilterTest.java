@@ -34,15 +34,12 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.member.domain.entity.vo.UserType;
-import revi1337.onsquad.token.application.JsonWebTokenManager;
 import revi1337.onsquad.token.domain.model.AccessToken;
+import revi1337.onsquad.token.domain.model.JsonWebToken;
 import revi1337.onsquad.token.domain.model.RefreshToken;
 
 @WebMvcTest(JsonWebTokenLoginFilter.class)
 class JsonWebTokenLoginFilterTest extends PresentationLayerTestSupport {
-
-    @MockBean
-    private JsonWebTokenManager jsonWebTokenManager;
 
     @MockBean
     private JsonWebTokenUserDetailsService jsonWebTokenUserDetailsService;
@@ -88,8 +85,8 @@ class JsonWebTokenLoginFilterTest extends PresentationLayerTestSupport {
         );
         when(jsonWebTokenUserDetailsService.loadUserByUsername("test@gmail.com")).thenReturn(currentMember);
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(jsonWebTokenManager.generateAccessToken(any())).thenReturn(new AccessToken(ACCESS_TOKEN));
-        when(jsonWebTokenManager.generateRefreshToken(any())).thenReturn(new RefreshToken(REFRESH_TOKEN));
+        JsonWebToken expectedToken = JsonWebToken.create(new AccessToken(ACCESS_TOKEN), new RefreshToken(REFRESH_TOKEN));
+        when(jsonWebTokenManager.issueJsonWebToken(any(), any())).thenReturn(expectedToken);
 
         mockMvc.perform(post("/api/auth/login")
                         .content(objectMapper.writeValueAsString(loginRequest))

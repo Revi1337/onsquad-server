@@ -18,7 +18,7 @@ import revi1337.onsquad.history.domain.repository.HistoryRepository;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.domain.event.MemberContextDisposed;
 import revi1337.onsquad.notification.domain.repository.NotificationRepository;
-import revi1337.onsquad.token.application.RefreshTokenManager;
+import revi1337.onsquad.token.application.RefreshTokenStorage;
 
 @ExtendWith(MockitoExtension.class)
 class MemberContextEventListenerTest {
@@ -30,7 +30,7 @@ class MemberContextEventListenerTest {
     private NotificationRepository notificationRepository;
 
     @Mock
-    private RefreshTokenManager refreshTokenManager;
+    private RefreshTokenStorage refreshTokenStorage;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -52,7 +52,7 @@ class MemberContextEventListenerTest {
 
         eventListener.onContextDisposed(event);
 
-        verify(refreshTokenManager).deleteTokenBy(event.memberId());
+        verify(refreshTokenStorage).deleteTokenBy(event.memberId());
         verify(historyRepository).deleteByMemberId(event.memberId());
         verify(notificationRepository).deleteByReceiverId(event.memberId());
         verify(announceCacheService).evictAnnounceLists(announceReferences.stream().map(AnnounceReference::crewId).toList());

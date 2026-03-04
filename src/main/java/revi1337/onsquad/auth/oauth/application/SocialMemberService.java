@@ -1,5 +1,6 @@
 package revi1337.onsquad.auth.oauth.application;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +12,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.entity.vo.Email;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.token.application.JsonWebTokenManager;
-import revi1337.onsquad.token.domain.model.AccessToken;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
-import revi1337.onsquad.token.domain.model.RefreshToken;
 
 @Service
 @RequiredArgsConstructor
@@ -49,10 +48,8 @@ public class SocialMemberService {
     }
 
     private JsonWebToken issueTokens(Member member) {
-        AccessToken accessToken = jsonWebTokenManager.generateAccessToken(MemberSummary.from(member));
-        RefreshToken refreshToken = jsonWebTokenManager.generateRefreshToken(member.getId());
-        jsonWebTokenManager.storeRefreshTokenFor(member.getId(), refreshToken);
+        Instant now = Instant.now();
 
-        return JsonWebToken.create(accessToken, refreshToken);
+        return jsonWebTokenManager.issueJsonWebToken(MemberSummary.from(member), now);
     }
 }

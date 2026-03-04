@@ -56,6 +56,7 @@ spring:
 
   mail:
     code-seed: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+    verification-code-backup-path: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
     host: smtp.gmail.com
     port: 587
     username: aaaaa
@@ -85,13 +86,14 @@ server:
 onsquad:
   frontend-base-url: http://localhost:3000
   token:
-    access-token-attributes:
-      token-attributes:
+    access-token:
+      attributes:
         expired: 1h
         secret-key: 11111111111111111111111111111111111111111111111111111111111111111111111111111111
 
-    refresh-token-attributes:
-      token-attributes:
+    refresh-token:
+      backup-path: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+      attributes:
         expired: 1h
         secret-key: 22222222222222222222222222222222222222222222222222222222222222222222222222222222
 

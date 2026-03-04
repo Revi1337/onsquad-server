@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.token.application.TokenReissueService;
 import revi1337.onsquad.token.domain.model.JsonWebToken;
-import revi1337.onsquad.token.domain.model.RefreshToken;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -23,7 +22,7 @@ public class RefreshTokenController {
     public ResponseEntity<RestResponse<JsonWebToken>> reissueToken(
             @Valid @RequestBody ReissueRequest reissueRequest
     ) {
-        JsonWebToken jsonWebToken = tokenReissueService.reissue(new RefreshToken(reissueRequest.refreshToken()));
+        JsonWebToken jsonWebToken = tokenReissueService.reissue(reissueRequest.refreshToken());
 
         return ResponseEntity.ok().body(RestResponse.created(jsonWebToken));
     }
