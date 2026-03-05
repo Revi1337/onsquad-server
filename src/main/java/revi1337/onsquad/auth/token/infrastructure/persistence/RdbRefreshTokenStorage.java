@@ -37,7 +37,7 @@ public class RdbRefreshTokenStorage implements RefreshTokenStorage {
 
     @Override
     public Optional<RefreshToken> findTokenBy(Long memberId) {
-        String sql = "SELECT token_value, expired_at FROM refresh_token WHERE member_id = :memberId AND expired_at > :now";
+        String sql = "SELECT member_id, token_value, expired_at FROM refresh_token WHERE member_id = :memberId AND expired_at > :now";
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("memberId", memberId)
