@@ -29,7 +29,7 @@ import revi1337.onsquad.auth.oauth.application.OAuth2Vendor;
 import revi1337.onsquad.auth.oauth.infrastructure.OAuth2ClientProperties;
 import revi1337.onsquad.auth.oauth.infrastructure.OAuth2ClientProperties.OAuth2Properties;
 import revi1337.onsquad.common.PresentationLayerTestSupport;
-import revi1337.onsquad.common.config.YamlPropertySourceFactory;
+import revi1337.onsquad.common.config.etc.YamlPropertySourceFactory;
 import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
 
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)

@@ -1,14 +1,15 @@
-package revi1337.onsquad.infrastructure.aws.s3.core;
+package revi1337.onsquad.infrastructure.aws.s3.cleanup;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import revi1337.onsquad.infrastructure.aws.s3.cleanup.model.FilePath;
+import revi1337.onsquad.infrastructure.aws.s3.cleanup.model.FilePaths;
 import revi1337.onsquad.infrastructure.aws.s3.client.S3StorageCleaner;
 import revi1337.onsquad.infrastructure.aws.s3.client.S3StorageCleaner.DeletedResult;
-import revi1337.onsquad.infrastructure.aws.s3.model.FilePath;
-import revi1337.onsquad.infrastructure.aws.s3.model.FilePaths;
 import revi1337.onsquad.infrastructure.storage.sqlite.DeletedImage;
 import revi1337.onsquad.infrastructure.storage.sqlite.ImageRecycleBinRepository;
 
@@ -18,11 +19,13 @@ import revi1337.onsquad.infrastructure.storage.sqlite.ImageRecycleBinRepository;
 public class S3ImageCleanupProcessor {
 
     public static final int MAX_RETRY_COUNT = 5;
+    private static final int BATCH_SIZE = 1000;
 
+    private final Executor s3DeletionExecutor;
     private final ImageRecycleBinRepository imageRecyclebinRepository;
     private final S3StorageCleaner s3StorageCleaner;
 
-    public FilePaths fetchCleanupTargets() {
+    public FilePaths findAllTargets() {
         List<FilePath> targets = imageRecyclebinRepository.findAll().stream()
                 .map(this::convert)
                 .toList();
@@ -30,11 +33,19 @@ public class S3ImageCleanupProcessor {
         return new FilePaths(targets);
     }
 
-    public CleanupResult processCleanup(FilePaths targets) {
-        return CleanupResult.of(targets, dispatchDeleteRequests(targets));
+    public CleanupResult executeS3Deletion(FilePaths targets) {
+        List<CompletableFuture<DeletedResult>> futures = targets.partition(BATCH_SIZE).stream()
+                .map(FilePaths::pathValues)
+                .map(this::deleteBatchAsync)
+                .toList();
+
+        List<DeletedResult> results = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply(v -> futures.stream().map(CompletableFuture::join).toList()).join();
+
+        return CleanupResult.of(targets, results);
     }
 
-    public FilePaths handleFailedResults(FilePaths failedPaths) {
+    public FilePaths updateRetryCountAndGetExceeded(FilePaths failedPaths) {
         imageRecyclebinRepository.incrementRetryCount(failedPaths.getFileIds());
 
         List<FilePath> exceedPaths = imageRecyclebinRepository.findByRetryCountLargerThan(MAX_RETRY_COUNT).stream()
@@ -44,17 +55,16 @@ public class S3ImageCleanupProcessor {
         return new FilePaths(exceedPaths);
     }
 
-    public void clearBin(FilePaths paths) {
+    public void deleteFromRecycleBin(FilePaths paths) {
         imageRecyclebinRepository.deleteByIdIn(paths.getFileIds());
     }
 
-    private List<DeletedResult> dispatchDeleteRequests(FilePaths targets) {
-        List<CompletableFuture<DeletedResult>> futures = targets.partition(S3StorageCleaner.BATCH_SIZE).stream()
-                .map(FilePaths::pathValues)
-                .map(s3StorageCleaner::deleteInBatch)
-                .toList();
-
-        return futures.stream().map(CompletableFuture::join).toList();
+    private CompletableFuture<DeletedResult> deleteBatchAsync(List<String> pathValues) {
+        return CompletableFuture.supplyAsync(() -> s3StorageCleaner.deleteInBatch(pathValues), s3DeletionExecutor)
+                .exceptionally(throwable -> {
+                    log.error("S3 Batch deletion failed - Total: {}", pathValues.size(), throwable);
+                    return new DeletedResult(List.of(), pathValues);
+                });
     }
 
     private FilePath convert(DeletedImage deletedImage) {

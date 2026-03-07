@@ -1,4 +1,4 @@
-package revi1337.onsquad.infrastructure.aws.s3.error;
+package revi1337.onsquad.common.application.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

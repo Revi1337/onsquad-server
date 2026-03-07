@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.common.application.file.FileStorageManager;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
@@ -27,13 +26,13 @@ import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 class CrewCommandServiceFacadeTest {
 
     @Mock
-    private FileStorageManager crewS3StorageManager;
+    private CrewCommandService crewCommandService;
+
+    @Mock
+    private CrewFileStorageManager crewFileStorageManager;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
-
-    @Mock
-    private CrewCommandService crewCommandService;
 
     @InjectMocks
     private CrewCommandServiceFacade facade;
@@ -51,7 +50,7 @@ class CrewCommandServiceFacadeTest {
 
             facade.newCrew(memberId, dto, file);
 
-            verify(crewS3StorageManager, times(0)).upload(file);
+            verify(crewFileStorageManager, times(0)).upload(file);
         }
 
         @Test
@@ -61,7 +60,7 @@ class CrewCommandServiceFacadeTest {
             CrewCreateDto dto = mock(CrewCreateDto.class);
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
             String uploadedUrl = "https://s3.url/test.png";
-            given(crewS3StorageManager.upload(file)).willReturn(uploadedUrl);
+            given(crewFileStorageManager.upload(file)).willReturn(uploadedUrl);
 
             facade.newCrew(memberId, dto, file);
 
@@ -76,7 +75,7 @@ class CrewCommandServiceFacadeTest {
             CrewCreateDto dto = mock(CrewCreateDto.class);
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
             String uploadedUrl = "https://s3.url/test.png";
-            given(crewS3StorageManager.upload(file)).willReturn(uploadedUrl);
+            given(crewFileStorageManager.upload(file)).willReturn(uploadedUrl);
             willThrow(CrewBusinessException.NotFound.class)
                     .given(crewCommandService).newCrew(memberId, dto, uploadedUrl);
 
@@ -99,7 +98,7 @@ class CrewCommandServiceFacadeTest {
 
             facade.updateImage(memberId, crewId, file);
 
-            verify(crewS3StorageManager, times(0)).upload(file);
+            verify(crewFileStorageManager, times(0)).upload(file);
         }
 
         @Test
@@ -109,7 +108,7 @@ class CrewCommandServiceFacadeTest {
             Long crewId = 2L;
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
             String uploadedUrl = "https://s3.url/test.png";
-            given(crewS3StorageManager.upload(file)).willReturn(uploadedUrl);
+            given(crewFileStorageManager.upload(file)).willReturn(uploadedUrl);
 
             facade.updateImage(memberId, crewId, file);
 
@@ -124,7 +123,7 @@ class CrewCommandServiceFacadeTest {
             Long crewId = 2L;
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
             String uploadedUrl = "https://s3.url/test.png";
-            given(crewS3StorageManager.upload(file)).willReturn(uploadedUrl);
+            given(crewFileStorageManager.upload(file)).willReturn(uploadedUrl);
             willThrow(CrewBusinessException.NotFound.class)
                     .given(crewCommandService).updateImage(memberId, crewId, uploadedUrl);
 

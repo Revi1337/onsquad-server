@@ -1,4 +1,4 @@
-package revi1337.onsquad.infrastructure.aws.s3.util;
+package revi1337.onsquad.common.util;
 
 import java.util.List;
 import revi1337.onsquad.common.constant.Sign;

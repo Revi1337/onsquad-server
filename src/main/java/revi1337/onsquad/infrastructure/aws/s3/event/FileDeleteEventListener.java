@@ -7,8 +7,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.CollectionUtils;
+import revi1337.onsquad.common.util.UrlUtils;
 import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontProperties;
-import revi1337.onsquad.infrastructure.aws.s3.util.UrlUtils;
 import revi1337.onsquad.infrastructure.storage.sqlite.ImageRecycleBinRepository;
 
 @Slf4j

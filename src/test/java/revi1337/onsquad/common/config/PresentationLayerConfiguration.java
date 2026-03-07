@@ -16,7 +16,7 @@ import revi1337.onsquad.hashtag.presentation.serialize.HashtagTypeDeserializer;
 import revi1337.onsquad.hashtag.presentation.serialize.HashtagTypeSerializer;
 
 @TestConfiguration
-public class TestObjectMapperConfiguration {
+public class PresentationLayerConfiguration {
 
     @Primary
     @Bean

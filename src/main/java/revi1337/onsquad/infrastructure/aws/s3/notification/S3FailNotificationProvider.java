@@ -9,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.common.config.system.properties.OnsquadProperties;
-import revi1337.onsquad.infrastructure.aws.s3.core.S3ImageCleanupProcessor;
-import revi1337.onsquad.infrastructure.aws.s3.model.RetryExceedJson;
+import revi1337.onsquad.infrastructure.aws.s3.cleanup.S3ImageCleanupProcessor;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage.Embed;
 import revi1337.onsquad.infrastructure.network.discord.DiscordMessage.Embed.Footer;
@@ -75,5 +74,9 @@ public class S3FailNotificationProvider {
                 .thumbnail(new Thumbnail(S3_ICON_URL))
                 .footer(new Footer(S3_SERVICE_NAME, S3_ICON_URL))
                 .build());
+    }
+
+    public record RetryExceedJson(List<String> exceedPaths) {
+
     }
 }

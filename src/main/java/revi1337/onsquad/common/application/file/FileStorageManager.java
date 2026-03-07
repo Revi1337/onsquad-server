@@ -4,12 +4,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileStorageManager {
 
-    String upload(byte[] content, String currentFileName);
+    String upload(byte[] fileBytes, String filePathAndName);
 
-    String upload(MultipartFile multipartFile);
+    String upload(MultipartFile multipart);
 
-    String upload(MultipartFile multipartFile, String currentFileName);
+    String upload(MultipartFile multipart, String filePathAndName);
 
-    void delete(String uploadUrl);
+    void delete(String filePathAndName);
 
 }

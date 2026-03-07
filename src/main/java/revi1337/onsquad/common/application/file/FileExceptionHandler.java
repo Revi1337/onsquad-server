@@ -1,4 +1,4 @@
-package revi1337.onsquad.infrastructure.aws.s3.error;
+package revi1337.onsquad.common.application.file;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,7 +11,7 @@ import revi1337.onsquad.common.error.ErrorCode;
 public class FileExceptionHandler {
 
     @ExceptionHandler(FileActionException.class)
-    public ResponseEntity<RestResponse<ProblemDetail>> handleS3BusinessException(
+    public ResponseEntity<RestResponse<ProblemDetail>> handleFileException(
             FileActionException exception
     ) {
         ErrorCode errorCode = exception.getErrorCode();

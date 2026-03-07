@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.common.application.file.FileStorageManager;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.domain.error.CrewBusinessException;
@@ -15,7 +14,7 @@ import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 public class CrewCommandServiceFacade {
 
     private final CrewCommandService crewCommandService;
-    private final FileStorageManager crewS3StorageManager;
+    private final CrewFileStorageManager fileStorageManager;
     private final ApplicationEventPublisher eventPublisher;
 
     public void newCrew(Long memberId, CrewCreateDto dto, MultipartFile file) {
@@ -25,7 +24,7 @@ public class CrewCommandServiceFacade {
         }
         String imageUrl = null;
         try {
-            imageUrl = crewS3StorageManager.upload(file);
+            imageUrl = fileStorageManager.upload(file);
             crewCommandService.newCrew(memberId, dto, imageUrl);
         } catch (CrewBusinessException exception) {
             if (imageUrl != null) {
@@ -45,7 +44,7 @@ public class CrewCommandServiceFacade {
         }
         String imageUrl = null;
         try {
-            imageUrl = crewS3StorageManager.upload(file);
+            imageUrl = fileStorageManager.upload(file);
             crewCommandService.updateImage(memberId, crewId, imageUrl);
         } catch (CrewBusinessException exception) {
             if (imageUrl != null) {

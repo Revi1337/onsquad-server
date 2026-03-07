@@ -3,19 +3,15 @@ package revi1337.onsquad.infrastructure.aws.s3.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
+import revi1337.onsquad.common.application.file.FileActionException;
+import revi1337.onsquad.common.application.file.FileErrorCode;
 import revi1337.onsquad.common.application.file.FileStorageManager;
-import revi1337.onsquad.common.application.file.FilenameConvertStrategy;
-import revi1337.onsquad.common.constant.Sign;
-import revi1337.onsquad.infrastructure.aws.cloudfront.CloudFrontCacheInvalidator;
-import revi1337.onsquad.infrastructure.aws.s3.error.FileActionException;
-import revi1337.onsquad.infrastructure.aws.s3.error.FileErrorCode;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -28,20 +24,15 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 public class S3StorageManager implements FileStorageManager {
 
     private final S3Client s3Client;
-    private final CloudFrontCacheInvalidator cacheInvalidator;
-    private final FilenameConvertStrategy convertStrategy;
     private final String bucket;
-    private final String assetsDir;
-    private final String cloudFrontDomain;
 
     @Override
-    public String upload(byte[] fileContent, String fileName) {
-        try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
-            RequestBody requestBody = RequestBody.fromInputStream(inputStream, fileContent.length);
-            MediaType type = MediaType.parseMediaType(Files.probeContentType(Paths.get(fileName)));
-            String uuidFileName = convertStrategy.convert(fileName);
+    public String upload(byte[] fileBytes, String filePathAndName) {
+        try (InputStream inputStream = new ByteArrayInputStream(fileBytes)) {
+            RequestBody requestBody = RequestBody.fromInputStream(inputStream, fileBytes.length);
+            MediaType type = MediaType.parseMediaType(Files.probeContentType(Paths.get(filePathAndName)));
 
-            return uploadFile(uuidFileName, type, requestBody, false);
+            return uploadFile(filePathAndName, type, requestBody);
         } catch (IOException exception) {
             log.error("byte array 처리 중 예외 발생", exception);
             throw new FileActionException.ProcessFail(FileErrorCode.FAIL_PROCESS, exception);
@@ -49,13 +40,12 @@ public class S3StorageManager implements FileStorageManager {
     }
 
     @Override
-    public String upload(MultipartFile file) {
+    public String upload(MultipartFile multipart) {
         try {
-            RequestBody requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
-            MediaType type = MediaType.parseMediaType(Files.probeContentType(Paths.get(file.getOriginalFilename())));
-            String uuidFileName = convertStrategy.convert(file.getOriginalFilename());
+            RequestBody requestBody = RequestBody.fromInputStream(multipart.getInputStream(), multipart.getSize());
+            MediaType type = MediaType.parseMediaType(Files.probeContentType(Paths.get(multipart.getOriginalFilename())));
 
-            return uploadFile(uuidFileName, type, requestBody, false);
+            return uploadFile(multipart.getOriginalFilename(), type, requestBody);
         } catch (IOException exception) {
             log.error("multipart 처리 중 예외 발생", exception);
             throw new FileActionException.ProcessFail(FileErrorCode.FAIL_PROCESS, exception);
@@ -63,13 +53,12 @@ public class S3StorageManager implements FileStorageManager {
     }
 
     @Override
-    public String upload(MultipartFile file, String targetFileName) {
+    public String upload(MultipartFile multipart, String filePathAndName) {
         try {
-            RequestBody requestBody = RequestBody.fromInputStream(file.getInputStream(), file.getSize());
-            MediaType type = MediaType.parseMediaType(Files.probeContentType(Paths.get(file.getOriginalFilename())));
-            String fileName = Paths.get(URI.create(targetFileName).getPath()).getFileName().toString();
+            RequestBody requestBody = RequestBody.fromInputStream(multipart.getInputStream(), multipart.getSize());
+            MediaType type = MediaType.parseMediaType(Files.probeContentType(Paths.get(multipart.getOriginalFilename())));
 
-            return uploadFile(fileName, type, requestBody, true);
+            return uploadFile(filePathAndName, type, requestBody);
         } catch (IOException exception) {
             log.error("multipart 처리 중 예외 발생", exception);
             throw new FileActionException.ProcessFail(FileErrorCode.FAIL_PROCESS, exception);
@@ -77,12 +66,11 @@ public class S3StorageManager implements FileStorageManager {
     }
 
     @Override
-    public void delete(String remoteUrl) {
+    public void delete(String filePathAndName) {
         try {
-            String removePath = remoteUrl.replaceFirst(cloudFrontDomain, Sign.EMPTY).substring(1);
             DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
-                    .key(removePath)
+                    .key(filePathAndName)
                     .build();
 
             s3Client.deleteObject(deleteRequest);
@@ -92,21 +80,19 @@ public class S3StorageManager implements FileStorageManager {
         }
     }
 
-    private String uploadFile(String fileName, MediaType mediaType, RequestBody requestBody, boolean invalidateCache) {
+    private String uploadFile(String filePathAndName, MediaType mediaType, RequestBody requestBody) {
         try {
-            String uploadPath = String.join(Sign.SLASH, assetsDir, fileName);
             PutObjectRequest uploadRequest = PutObjectRequest.builder()
                     .bucket(bucket)
-                    .key(uploadPath)
+                    .key(filePathAndName)
                     .contentType(mediaType.toString())
                     .build();
 
             s3Client.putObject(uploadRequest, requestBody);
-            if (invalidateCache) {
-                cacheInvalidator.createInvalidation(Sign.SLASH + uploadPath);
-            }
 
-            return String.join(Sign.SLASH, cloudFrontDomain, uploadPath);
+            return s3Client.utilities()
+                    .getUrl(builder -> builder.bucket(bucket).key(filePathAndName))
+                    .toExternalForm();
         } catch (SdkClientException | AwsServiceException exception) {
             log.error("s3 업로드 중 예외 발생", exception);
             throw new FileActionException.UploadFail(FileErrorCode.FAIL_UPLOAD, exception);

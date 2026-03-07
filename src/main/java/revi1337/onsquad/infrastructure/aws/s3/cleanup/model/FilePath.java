@@ -1,4 +1,4 @@
-package revi1337.onsquad.infrastructure.aws.s3.model;
+package revi1337.onsquad.infrastructure.aws.s3.cleanup.model;
 
 import lombok.Getter;
 

@@ -1,9 +1,7 @@
 package revi1337.onsquad.infrastructure.aws.s3.client;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
@@ -15,30 +13,27 @@ import software.amazon.awssdk.services.s3.model.S3Error;
 @RequiredArgsConstructor
 public class S3StorageCleaner {
 
-    public static final int BATCH_SIZE = 1000;
-
     private final S3Client s3Client;
     private final String bucketName;
 
-    @Async("s3DeletionExecutor")
-    public CompletableFuture<DeletedResult> deleteInBatch(List<String> paths) {
+    public DeletedResult deleteInBatch(List<String> paths) {
         List<ObjectIdentifier> objectIdentifiers = createObjectIdentifiers(paths);
         DeleteObjectsResponse deleteResponse = deleteBatch(objectIdentifiers, false);
 
         List<String> deletedPaths = getDeletedPaths(deleteResponse);
         List<String> failedPaths = getFailedPaths(deleteResponse);
 
-        return CompletableFuture.completedFuture(new DeletedResult(deletedPaths, failedPaths));
+        return new DeletedResult(deletedPaths, failedPaths);
     }
 
-    @Async("s3DeletionExecutor")
-    public CompletableFuture<List<String>> deleteInBatch(List<String> paths, boolean quiet) {
+    public DeletedResult deleteInBatchQuietly(List<String> paths) {
         List<ObjectIdentifier> objectIdentifiers = createObjectIdentifiers(paths);
-        DeleteObjectsResponse deleteResponse = deleteBatch(objectIdentifiers, quiet);
+        DeleteObjectsResponse deleteResponse = deleteBatch(objectIdentifiers, true);
 
+        List<String> deletedPaths = getDeletedPaths(deleteResponse);
         List<String> failedPaths = getFailedPaths(deleteResponse);
 
-        return CompletableFuture.completedFuture(failedPaths);
+        return new DeletedResult(deletedPaths, failedPaths);
     }
 
     private List<ObjectIdentifier> createObjectIdentifiers(List<String> paths) {

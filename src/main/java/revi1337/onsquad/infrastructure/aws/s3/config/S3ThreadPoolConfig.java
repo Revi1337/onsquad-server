@@ -1,10 +1,11 @@
-package revi1337.onsquad.infrastructure.aws.s3.client;
+package revi1337.onsquad.infrastructure.aws.s3.config;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import revi1337.onsquad.infrastructure.aws.s3.client.S3StorageCleaner;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEventListener;
 
 @Configuration
@@ -36,6 +37,7 @@ public class S3ThreadPoolConfig {
         executor.setQueueCapacity(0);
         executor.setKeepAliveSeconds(60);
         executor.setThreadNamePrefix("s3-cleaner-");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;
     }

@@ -149,14 +149,14 @@ onsquad:
       delete-batch-cron: 0 0 0 * * *
       access-key: access-key
       secret-key: secret-key
-      bucket: onsquad
+      bucket: onsquad-bucket
       region: ap-northeast-2
       directory:
-        root: root
+        root: onsquad
         directories:
-          crew-directory: dummy1
-          squad-directory: dummy2
-          member-directory: dummy3
+          member-directory: member
+          crew-directory: crew
+          squad-directory: squad
 
   api:
     crew-leaderboard:

@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockMultipartFile;
-import revi1337.onsquad.common.application.file.FileStorageManager;
 import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 
@@ -27,7 +26,7 @@ class MemberCommandServiceFacadeTest {
     private MemberCommandService memberCommandService;
 
     @Mock
-    private FileStorageManager memberS3StorageManager;
+    private MemberFileStorageManager memberFileStorageManager;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -40,7 +39,7 @@ class MemberCommandServiceFacadeTest {
     void updateImage() {
         MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
         String uploadedUrl = "https://s3.url/test.png";
-        given(memberS3StorageManager.upload(any())).willReturn(uploadedUrl);
+        given(memberFileStorageManager.upload(any())).willReturn(uploadedUrl);
         willThrow(CrewBusinessException.NotFound.class)
                 .given(memberCommandService).updateImage(anyLong(), anyString());
 

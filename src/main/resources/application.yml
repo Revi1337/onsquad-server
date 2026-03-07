@@ -141,14 +141,14 @@ onsquad:
       delete-batch-cron: 0 0 0 * * *
       access-key: s3-access-key
       secret-key: s3-secret-key
-      bucket: dummy-bucket
+      bucket: onsquad-bucket
       region: ap-northeast-2
       directory:
-        root: root-dir
+        root: onsquad
         directories:
-          crew-directory: crew-dir
-          squad-directory: squad-dir
-          member-directory: member-dir
+          member-directory: member
+          crew-directory: crew
+          squad-directory: squad
 
   discord:
     webhook:

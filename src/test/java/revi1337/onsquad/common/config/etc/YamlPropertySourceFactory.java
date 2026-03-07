@@ -1,4 +1,4 @@
-package revi1337.onsquad.common.config;
+package revi1337.onsquad.common.config.etc;
 
 import jakarta.annotation.Nullable;
 import java.util.Objects;
