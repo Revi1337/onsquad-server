@@ -1,0 +1,28 @@
+networks:
+  redis-net:
+    name: aws-net
+
+services:
+  localstack:
+    container_name: onsquad-aws
+    image: localstack/localstack:3.4.0
+    ports:
+      - '127.0.0.1:4566:4566'
+      - '127.0.0.1:4510-4559:4510-4559'
+    environment:
+      - AWS_ACCESS_KEY_ID=access-key
+      - AWS_SECRET_ACCESS_KEY=secret-key
+      - AWS_DEFAULT_REGION=ap-northeast-2
+      - DEBUG=1
+      - SSL_DISABLE=0
+
+      - S3_BUCKET_NAME=onsquad-bucket
+      - S3_BUCKET_ROOT_DIR=onsquad
+      - S3_BUCKET_MEMBER_DIR=onsquad/member/
+      - S3_BUCKET_CREW_DIR=onsquad/crew/
+      - S3_BUCKET_SQUAD_DIR=onsquad/squad/
+    volumes:
+      - ./data:/var/lib/localstack
+      - ./init/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
