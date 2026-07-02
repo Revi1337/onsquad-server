@@ -16,7 +16,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.token.domain.model.RefreshToken;
 import revi1337.onsquad.auth.token.domain.model.RefreshTokens;
-import revi1337.onsquad.auth.token.infrastructure.persistence.ExpiringMapRefreshTokenStorage;
+import revi1337.onsquad.auth.token.infrastructure.persistence.CaffeineRefreshTokenStorage;
 import revi1337.onsquad.common.util.ObjectMapperUtils;
 
 @Slf4j
@@ -30,12 +30,12 @@ public class RefreshTokenReloader {
     private static final String WRITING_LOG = "Backup Refresh Tokens";
 
     private final String backupPath;
-    private final ExpiringMapRefreshTokenStorage refreshTokenStorage;
+    private final CaffeineRefreshTokenStorage refreshTokenStorage;
     private final ObjectMapper objectMapper;
 
     public RefreshTokenReloader(
             @Value("${onsquad.token.refresh-token.backup-path}") String backupPath,
-            ExpiringMapRefreshTokenStorage refreshTokenStorage,
+            CaffeineRefreshTokenStorage refreshTokenStorage,
             ObjectMapper objectMapper
     ) {
         this.backupPath = backupPath;

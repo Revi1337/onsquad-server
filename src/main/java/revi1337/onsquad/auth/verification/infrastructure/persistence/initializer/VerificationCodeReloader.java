@@ -16,7 +16,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.verification.domain.VerificationCode;
 import revi1337.onsquad.auth.verification.domain.VerificationCodes;
-import revi1337.onsquad.auth.verification.infrastructure.persistence.ExpiringMapVerificationCodeStorage;
+import revi1337.onsquad.auth.verification.infrastructure.persistence.CaffeineVerificationCodeStorage;
 import revi1337.onsquad.common.util.ObjectMapperUtils;
 
 @Slf4j
@@ -30,12 +30,12 @@ public class VerificationCodeReloader {
     private static final String WRITING_LOG = "Backup Verification Codes";
 
     private final String backupPath;
-    private final ExpiringMapVerificationCodeStorage verificationCodeStorage;
+    private final CaffeineVerificationCodeStorage verificationCodeStorage;
     private final ObjectMapper objectMapper;
 
     public VerificationCodeReloader(
             @Value("${spring.mail.verification-code-backup-path}") String backupPath,
-            ExpiringMapVerificationCodeStorage verificationCodeStorage,
+            CaffeineVerificationCodeStorage verificationCodeStorage,
             ObjectMapper objectMapper
     ) {
         this.backupPath = backupPath;

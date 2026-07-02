@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import net.jodah.expiringmap.ExpiringMap;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,12 +29,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.auth.token.domain.model.RefreshToken;
 import revi1337.onsquad.auth.token.domain.model.RefreshTokens;
-import revi1337.onsquad.auth.token.infrastructure.persistence.ExpiringMapRefreshTokenStorage;
+import revi1337.onsquad.auth.token.infrastructure.persistence.CaffeineRefreshTokenStorage;
+import revi1337.onsquad.infrastructure.storage.caffeine.TimedEntry;
 import revi1337.onsquad.common.config.web.ObjectMapperConfig;
 
 @ActiveProfiles("local")
 @TestPropertySource(properties = "onsquad.token.refresh-token.backup-path=dummy-path")
-@ContextConfiguration(classes = {RefreshTokenReloader.class, ExpiringMapRefreshTokenStorage.class, ObjectMapperConfig.class})
+@ContextConfiguration(classes = {RefreshTokenReloader.class, CaffeineRefreshTokenStorage.class, ObjectMapperConfig.class})
 @ImportAutoConfiguration(JacksonAutoConfiguration.class)
 @ExtendWith(SpringExtension.class)
 class RefreshTokenReloaderTest {
@@ -43,7 +44,7 @@ class RefreshTokenReloaderTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ExpiringMapRefreshTokenStorage expiringMapRefreshTokenStorage;
+    private CaffeineRefreshTokenStorage caffeineRefreshTokenStorage;
 
     @Autowired
     private RefreshTokenReloader refreshTokenReloader;
@@ -52,11 +53,12 @@ class RefreshTokenReloaderTest {
     private ApplicationContext applicationContext;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setUp() {
-        ExpiringMap<String, RefreshToken> refreshStore = (ExpiringMap<String, RefreshToken>) ReflectionTestUtils
-                .getField(expiringMapRefreshTokenStorage, "refreshStore");
+        Cache<String, TimedEntry<RefreshToken>> refreshStore = (Cache<String, TimedEntry<RefreshToken>>) ReflectionTestUtils
+                .getField(caffeineRefreshTokenStorage, "refreshStore");
         if (refreshStore != null) {
-            refreshStore.clear();
+            refreshStore.invalidateAll();
         }
     }
 
@@ -74,7 +76,7 @@ class RefreshTokenReloaderTest {
         refreshTokenReloader.restore();
 
         assertSoftly(softly -> {
-            RefreshTokens restoredTokens = expiringMapRefreshTokenStorage.getTokens();
+            RefreshTokens restoredTokens = caffeineRefreshTokenStorage.getTokens();
             softly.assertThat(restoredTokens.refreshTokens()).hasSize(2);
             softly.assertThat(restoredTokens.refreshTokens())
                     .extracting(RefreshToken::value)
@@ -89,8 +91,8 @@ class RefreshTokenReloaderTest {
         Path backupFile = subDir.resolve("refresh-token-backup.json");
         ReflectionTestUtils.setField(refreshTokenReloader, "backupPath", backupFile.toString());
         Instant now = Instant.now();
-        expiringMapRefreshTokenStorage.saveToken(1L, new RefreshToken(1L, "token-1", Date.from(now.plus(Duration.ofMinutes(10)))), Duration.ofMinutes(10));
-        expiringMapRefreshTokenStorage.saveToken(2L, new RefreshToken(2L, "token-2", Date.from(now.plus(Duration.ofMinutes(10)))), Duration.ofMinutes(10));
+        caffeineRefreshTokenStorage.saveToken(1L, new RefreshToken(1L, "token-1", Date.from(now.plus(Duration.ofMinutes(10)))), Duration.ofMinutes(10));
+        caffeineRefreshTokenStorage.saveToken(2L, new RefreshToken(2L, "token-2", Date.from(now.plus(Duration.ofMinutes(10)))), Duration.ofMinutes(10));
 
         refreshTokenReloader.backup(new ContextClosedEvent(applicationContext));
 

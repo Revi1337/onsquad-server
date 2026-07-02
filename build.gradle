@@ -60,7 +60,6 @@ dependencies {
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:cloudfront'
 
-    implementation 'net.jodah:expiringmap:0.5.10'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.2.0'
 
     implementation 'org.xerial:sqlite-jdbc:3.45.1.0'

@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.jodah.expiringmap.ExpiringMap;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,8 @@ import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
 import revi1337.onsquad.auth.verification.application.VerificationMailService;
 import revi1337.onsquad.auth.verification.domain.VerificationCode;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
-import revi1337.onsquad.auth.verification.infrastructure.persistence.ExpiringMapVerificationCodeStorage;
+import revi1337.onsquad.auth.verification.infrastructure.persistence.CaffeineVerificationCodeStorage;
+import revi1337.onsquad.infrastructure.storage.caffeine.TimedEntry;
 import revi1337.onsquad.auth.verification.infrastructure.persistence.RdbVerificationCodeStorage;
 import revi1337.onsquad.auth.verification.infrastructure.persistence.RedisVerificationCodeStorage;
 import revi1337.onsquad.common.application.mail.EmailSender;
@@ -119,17 +120,18 @@ class VerificationMailServiceConcurrencyTest {
     }
 
     @Nested
-    @DisplayName("VerificationMailService 가 ExpiringMap 을 사용할 경우를 테스트한다.")
-    class whenExpiringMap {
+    @DisplayName("VerificationMailService 가 Caffeine 을 사용할 경우를 테스트한다.")
+    class whenCaffeine {
 
         @Autowired
-        private ExpiringMapVerificationCodeStorage expiringMapVerificationCodeStorage;
+        private CaffeineVerificationCodeStorage caffeineVerificationCodeStorage;
 
         @BeforeEach
+        @SuppressWarnings("unchecked")
         void setUp() {
-            ((ExpiringMap<String, VerificationCode>) ReflectionTestUtils.getField(expiringMapVerificationCodeStorage, "verificationStore")).clear();
-            verificationCodeStorage = expiringMapVerificationCodeStorage;
-            verificationMailService = new VerificationMailService(emailSender, expiringMapVerificationCodeStorage, verificationCodeGenerator);
+            ((Cache<String, TimedEntry<VerificationCode>>) ReflectionTestUtils.getField(caffeineVerificationCodeStorage, "verificationStore")).invalidateAll();
+            verificationCodeStorage = caffeineVerificationCodeStorage;
+            verificationMailService = new VerificationMailService(emailSender, caffeineVerificationCodeStorage, verificationCodeGenerator);
         }
 
         @Test

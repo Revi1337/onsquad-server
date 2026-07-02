@@ -3,9 +3,9 @@ package revi1337.onsquad.auth.verification.infrastructure.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import net.jodah.expiringmap.ExpiringMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,19 +14,22 @@ import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.auth.verification.domain.VerificationCode;
 import revi1337.onsquad.auth.verification.domain.VerificationCodes;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
+import revi1337.onsquad.infrastructure.storage.caffeine.TimedEntry;
 
-class ExpiringMapVerificationCodeStorageTest {
+class CaffeineVerificationCodeStorageTest {
 
-    private final ExpiringMapVerificationCodeStorage storage = new ExpiringMapVerificationCodeStorage();
-    private final ExpiringMap<String, VerificationCode> verificationStore =
-            (ExpiringMap<String, VerificationCode>) ReflectionTestUtils.getField(storage, "verificationStore");
+    private final CaffeineVerificationCodeStorage storage = new CaffeineVerificationCodeStorage();
+
+    @SuppressWarnings("unchecked")
+    private final Cache<String, TimedEntry<VerificationCode>> verificationStore =
+            (Cache<String, TimedEntry<VerificationCode>>) ReflectionTestUtils.getField(storage, "verificationStore");
 
     private final String email = "user@test.com";
     private final String key = "onsquad:verification-code:user@test.com";
 
     @BeforeEach
     void setUp() {
-        verificationStore.clear();
+        verificationStore.invalidateAll();
     }
 
     @Nested
@@ -42,7 +45,7 @@ class ExpiringMapVerificationCodeStorageTest {
 
             storage.saveVerificationCode(email, code, status, duration);
 
-            VerificationCode result = verificationStore.get(key);
+            VerificationCode result = verificationStore.getIfPresent(key).value();
             assertSoftly(softly -> {
                 softly.assertThat(result).isNotNull();
                 softly.assertThat(result.getEmail()).isEqualTo(email);
@@ -89,7 +92,7 @@ class ExpiringMapVerificationCodeStorageTest {
             boolean marked = storage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
 
             assertSoftly(softly -> {
-                VerificationCode result = verificationStore.get(key);
+                VerificationCode result = verificationStore.getIfPresent(key).value();
                 softly.assertThat(marked).isTrue();
                 softly.assertThat(result.getCode()).isEqualTo("123456");
                 softly.assertThat(result.getStatus()).isSameAs(VerificationStatus.SUCCESS);
@@ -202,7 +205,7 @@ class ExpiringMapVerificationCodeStorageTest {
 
             Thread.sleep(200);
 
-            assertThat(verificationStore.containsKey(key)).isFalse();
+            assertThat(verificationStore.getIfPresent(key)).isNull();
         }
     }
 }

@@ -3,11 +3,11 @@ package revi1337.onsquad.auth.token.infrastructure.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
-import net.jodah.expiringmap.ExpiringMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,18 +15,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.auth.token.domain.model.RefreshToken;
 import revi1337.onsquad.auth.token.domain.model.RefreshTokens;
+import revi1337.onsquad.infrastructure.storage.caffeine.TimedEntry;
 
-class ExpiringMapRefreshTokenStorageTest {
+class CaffeineRefreshTokenStorageTest {
 
-    private final ExpiringMapRefreshTokenStorage storage = new ExpiringMapRefreshTokenStorage();
-    private final ExpiringMap<String, RefreshToken> refreshStore = (ExpiringMap<String, RefreshToken>) ReflectionTestUtils.getField(storage, "refreshStore");
+    private final CaffeineRefreshTokenStorage storage = new CaffeineRefreshTokenStorage();
+
+    @SuppressWarnings("unchecked")
+    private final Cache<String, TimedEntry<RefreshToken>> refreshStore =
+            (Cache<String, TimedEntry<RefreshToken>>) ReflectionTestUtils.getField(storage, "refreshStore");
 
     private final Long memberId = 1L;
     private final String key = "onsquad:refresh-token:user:1";
 
     @BeforeEach
     void setUp() {
-        refreshStore.clear();
+        refreshStore.invalidateAll();
     }
 
     @Nested
@@ -44,7 +48,7 @@ class ExpiringMapRefreshTokenStorageTest {
             storage.saveToken(memberId, refreshToken, duration);
 
             assertSoftly(softly -> {
-                RefreshToken result = refreshStore.get(key);
+                RefreshToken result = refreshStore.getIfPresent(key).value();
                 softly.assertThat(result).isNotNull();
                 softly.assertThat(result.identifier()).isEqualTo(memberId);
                 softly.assertThat(result.value()).isEqualTo(tokenValue);
@@ -90,7 +94,7 @@ class ExpiringMapRefreshTokenStorageTest {
 
             storage.deleteTokenBy(memberId);
 
-            assertThat(refreshStore.containsKey(key)).isFalse();
+            assertThat(refreshStore.getIfPresent(key)).isNull();
         }
 
         @Test
@@ -101,7 +105,7 @@ class ExpiringMapRefreshTokenStorageTest {
 
             storage.deleteAll();
 
-            assertThat(refreshStore.isEmpty()).isTrue();
+            assertThat(refreshStore.asMap().isEmpty()).isTrue();
         }
     }
 
@@ -126,13 +130,13 @@ class ExpiringMapRefreshTokenStorageTest {
     class DataExpiration {
 
         @Test
-        @DisplayName("설정된 유효 시간이 지나면 ExpiringMap 정책에 의해 데이터가 자동 삭제된다")
+        @DisplayName("설정된 유효 시간이 지나면 Caffeine 정책에 의해 데이터가 자동 삭제된다")
         void autoRemoveAfterExpiration() throws InterruptedException {
             storage.saveToken(memberId, new RefreshToken(memberId, "token", new Date()), Duration.ofMillis(100));
 
             Thread.sleep(200);
 
-            assertThat(refreshStore.containsKey(key)).isFalse();
+            assertThat(storage.findTokenBy(memberId)).isEmpty();
         }
     }
 }
