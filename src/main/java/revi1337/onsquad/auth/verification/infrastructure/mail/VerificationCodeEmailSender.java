@@ -5,7 +5,6 @@ import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,9 +26,7 @@ public class VerificationCodeEmailSender implements EmailSender<VerificationCode
     private static final String CLASSPATH_MAIL_TEMPLATE = "template/mail/verification-code.html";
     private static final String MIME_SETTING_ERROR_LOG = "MimeMessage 설정 중 예외 발생 - 메일 발송 중단";
     private static final String SEND_VERIFICATION_CODE_ERROR_LOG = "이메일 인증코드 발송 중 예외 발생";
-    private static final String ONSQUAD_MAIL_BACKGROUND = "/onsquad/mail/background.jpg";
-    private static final String ONSQUAD_PRIMARY_LOGO = "/onsquad/mail/logo-row-primary.png";
-    private static final String ONSQUAD_SQUARE_LOGO = "/onsquad/mail/logo-square-primary.png";
+    private static final String ONSQUAD_MAIL_ASSET_BASE = "/onsquad/mail";
     private static final DateTimeFormatter VERIFICATION_CODE_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final JavaMailSender javaMailSender;
@@ -69,14 +66,10 @@ public class VerificationCodeEmailSender implements EmailSender<VerificationCode
     }
 
     private String buildEmailBody(VerificationCode verificationCode) {
-        return MessageFormat.format(
-                emailTemplate,
-                cloudfrontBaseDomain + ONSQUAD_MAIL_BACKGROUND,
-                cloudfrontBaseDomain + ONSQUAD_PRIMARY_LOGO,
-                verificationCode.getCode(),
-                verificationCode.getExpiredAt().format(VERIFICATION_CODE_DATETIME_FORMATTER),
-                cloudfrontBaseDomain + ONSQUAD_SQUARE_LOGO
-        );
+        return emailTemplate
+                .replace("{{ASSET_BASE_URL}}", cloudfrontBaseDomain + ONSQUAD_MAIL_ASSET_BASE)
+                .replace("{{AUTH_CODE}}", verificationCode.getCode())
+                .replace("{{EXPIRES_AT}}", verificationCode.getExpiredAt().format(VERIFICATION_CODE_DATETIME_FORMATTER));
     }
 
     private String loadTemplate() {

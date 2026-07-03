@@ -48,7 +48,9 @@ class VerificationCodeEmailSenderTest {
         verify(javaMailSender).send(captor.capture());
         String sentContent = (String) captor.getValue().getContent();
         assertSoftly(softly -> {
-            softly.assertThat(sentContent).contains(cloudfrontDomain + "/onsquad/mail/background.jpg");
+            softly.assertThat(sentContent).contains(cloudfrontDomain + "/onsquad/mail/bg.jpg");
+            softly.assertThat(sentContent).contains(cloudfrontDomain + "/onsquad/mail/logo-wordmark.png");
+            softly.assertThat(sentContent).contains(cloudfrontDomain + "/onsquad/mail/logo-mark.png");
             softly.assertThat(sentContent).contains("123456");
         });
     }
