@@ -38,17 +38,19 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
 /**
- * Baseline {@code CrewLeaderboardUpdateService.refreshLeaderboards()}는 4/4-1과 달리 원본 테이블
- * (crew_member/squad/squad_member/squad_comment)을 전혀 지우지 않고, 결과 캐시 테이블(crew_ranker)만
- * 지웠다가 다시 채운다. 이 테스트는 "조회 도중 동시에 새로운 크루 가입이 커밋돼도, 그 원본 데이터가
- * refreshLeaderboards()에 의해 유실되지 않는다"를 진짜 스레드 두 개(ExecutorService + CountDownLatch)로
- * 실증한다 — 4/4-1의 "블라인드 시간범위 DELETE" 레이스가 baseline에는 구조적으로 존재하지 않음을 확인.
+ * 2번(GROUP BY 전환) 시점의 {@code CrewLeaderboardUpdateService.refreshLeaderboards()}는 baseline과
+ * 동일하게 원본 테이블(crew_member/squad/squad_member/squad_comment)을 전혀 지우지 않고, 결과 캐시
+ * 테이블(crew_ranker)만 지웠다가 다시 채운다(이 커밋이 바꾼 건 집계 쿼리 내부의 DISTINCT+윈도우함수 ->
+ * GROUP BY 뿐, 서비스 구조는 baseline과 동일). 이 테스트는 "조회 도중 동시에 새로운 크루 가입이 커밋돼도,
+ * 그 원본 데이터가 refreshLeaderboards()에 의해 유실되지 않는다"를 진짜 스레드 두 개
+ * ({@code ExecutorService} + {@code CountDownLatch})로 실증한다 — 4/4-1의 "블라인드 시간범위 DELETE"
+ * 레이스가 2번에도 구조적으로 존재하지 않음을 확인(baseline의 동일 테스트와 같은 결론).
  */
 @Sql({"/mysql-truncate.sql"})
 @Import({ApplicationLayerConfiguration.class})
 @ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@DisplayName("Baseline 리더보드 갱신 동시성: 조회 중 새로 커밋된 가입 활동이 refreshLeaderboards()에 의해 유실되지 않는다")
+@DisplayName("2번(GROUP BY) 리더보드 갱신 동시성: 조회 중 새로 커밋된 가입 활동이 refreshLeaderboards()에 의해 유실되지 않는다")
 class CrewRankerRefreshConcurrencyTest {
 
     @MockBean
@@ -125,7 +127,7 @@ class CrewRankerRefreshConcurrencyTest {
                     .isEmpty();
 
             softly.assertThat(crewMemberJpaRepository.findAll())
-                    .as("baseline은 crew_member 원본을 지우지 않으므로, 동시에 커밋된 가입 행이 유실되지 않는다")
+                    .as("2번은 baseline과 동일하게 crew_member 원본을 지우지 않으므로, 동시에 커밋된 가입 행이 유실되지 않는다")
                     .anyMatch(cm -> cm.getMember().getId().equals(joiner.getId()));
 
             List<CrewRanker> rankers = crewRankerRepository.findAllByCrewId(crew.getId());
