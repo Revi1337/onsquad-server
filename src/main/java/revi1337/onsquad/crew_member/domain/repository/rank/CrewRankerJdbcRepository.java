@@ -50,13 +50,13 @@ public class CrewRankerJdbcRepository {
                             crew_id, mem_id, mem_nickname, mem_mbti, last_activity_time, total_score,
                             DENSE_RANK() OVER (PARTITION BY crew_id ORDER BY total_score DESC, last_activity_time DESC) AS ranks
                         FROM (
-                            SELECT DISTINCT
+                            SELECT
                                 raw_activities.crew_id AS crew_id,
                                 m.id AS mem_id,
                                 m.nickname AS mem_nickname,
                                 m.mbti AS mem_mbti,
-                                MAX(raw_activities.created_at) OVER (PARTITION BY raw_activities.crew_id, m.id) AS last_activity_time,
-                                SUM(raw_activities.point) OVER (PARTITION BY raw_activities.crew_id, m.id) AS total_score
+                                MAX(raw_activities.created_at) AS last_activity_time,
+                                SUM(raw_activities.point) AS total_score
                             FROM (
                                 -- crew participant (Weight: 5)
                                 SELECT cm.crew_id, cm.member_id, cm.participate_at AS created_at, 5 AS point
@@ -81,6 +81,7 @@ public class CrewRankerJdbcRepository {
                                 WHERE sc.created_at BETWEEN :from AND :to
                             ) AS raw_activities
                             INNER JOIN member m ON m.id = raw_activities.member_id
+                            GROUP BY raw_activities.crew_id, m.id, m.nickname, m.mbti
                         ) AS aggregated_activities
                     ) AS ranked_activities
                     WHERE ranks <= :rankLimit
