@@ -6,10 +6,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreRepository;
 import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad_comment.domain.SquadCommentPolicy;
@@ -30,17 +29,16 @@ public class SquadCommentCommandService {
     private final SquadMemberAccessor squadMemberAccessor;
     private final SquadCommentAccessor squadCommentAccessor;
     private final SquadCommentRepository squadCommentRepository;
-    private final CrewActivityLogRepository crewActivityLogRepository;
+    private final CrewActivityScoreRepository crewActivityScoreRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public void add(Long memberId, Long squadId, String content) {
         Squad squad = squadAccessor.getById(squadId);
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrew().getId());
         SquadComment comment = squadCommentRepository.save(SquadComment.create(content, squad, me.getMember()));
-        crewActivityLogRepository.save(new CrewActivityLog(
-                squad.getCrew().getId(), memberId,
-                CrewActivity.SQUAD_COMMENT, CrewActivity.SQUAD_COMMENT.getWeight(), LocalDateTime.now()
-        ));
+        crewActivityScoreRepository.upsertScore(
+                squad.getCrew().getId(), memberId, CrewActivity.SQUAD_COMMENT.getWeight(), LocalDateTime.now()
+        );
         eventPublisher.publishEvent(new CommentAdded(memberId, comment.getId()));
     }
 
@@ -51,10 +49,9 @@ public class SquadCommentCommandService {
         SquadCommentPolicy.ensureParent(parent);
         CrewMember me = crewMemberAccessor.getByMemberIdAndCrewId(memberId, parent.getSquad().getCrew().getId());
         SquadComment reply = squadCommentRepository.save(SquadComment.createReply(parent, content, parent.getSquad(), me.getMember()));
-        crewActivityLogRepository.save(new CrewActivityLog(
-                parent.getSquad().getCrew().getId(), memberId,
-                CrewActivity.SQUAD_COMMENT_REPLY, CrewActivity.SQUAD_COMMENT_REPLY.getWeight(), LocalDateTime.now()
-        ));
+        crewActivityScoreRepository.upsertScore(
+                parent.getSquad().getCrew().getId(), memberId, CrewActivity.SQUAD_COMMENT_REPLY.getWeight(), LocalDateTime.now()
+        );
         eventPublisher.publishEvent(new CommentReplyAdded(parentId, memberId, reply.getId()));
     }
 

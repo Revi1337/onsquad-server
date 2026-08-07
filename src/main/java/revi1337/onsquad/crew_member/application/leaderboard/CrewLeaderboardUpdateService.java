@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.domain.model.CrewMembership;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreRepository;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 
@@ -25,18 +25,18 @@ public class CrewLeaderboardUpdateService {
 
     private final CrewRankerRepository crewRankerRepository;
     private final CrewMemberRepository crewMemberRepository;
-    private final CrewActivityLogRepository crewActivityLogRepository;
+    private final CrewActivityScoreRepository crewActivityScoreRepository;
 
     @Transactional
     public void refreshLeaderboards(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
-        List<CrewRankerCandidate> overFetchedCandidates = crewActivityLogRepository.fetchAggregatedRankedMembers(from, to, OVER_FETCH_LIMIT);
+        List<CrewRankerCandidate> overFetchedCandidates = crewActivityScoreRepository.fetchAggregatedRankedMembers(from, to, OVER_FETCH_LIMIT);
         Set<CrewMembership> candidateMemberships = extractMemberships(overFetchedCandidates);
         Set<CrewMembership> activeMemberships = crewMemberRepository.fetchActiveMemberships(candidateMemberships);
 
         List<CrewRankerCandidate> candidates = reselectTopRankers(overFetchedCandidates, activeMemberships, rankLimit);
 
         crewRankerRepository.deleteAllInBatch();
-        crewActivityLogRepository.deleteByCreatedAtBetween(from, to);
+        crewActivityScoreRepository.deleteByLastActivityAtBetween(from, to);
         crewRankerRepository.insertBatch(candidates);
         log.info(
                 "[LeaderboardUpdate] Leaderboard refreshed. ({} over-fetched -> {} rankers)",

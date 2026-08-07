@@ -9,11 +9,10 @@ import revi1337.onsquad.common.aspect.Throttling;
 import revi1337.onsquad.crew.application.CrewAccessor;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
-import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreRepository;
 import revi1337.onsquad.crew_request.domain.CrewRequestPolicy;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.event.RequestAccepted;
@@ -33,7 +32,7 @@ public class CrewRequestCommandService {
     private final CrewMemberAccessor crewMemberAccessor;
     private final CrewRequestAccessor crewRequestAccessor;
     private final CrewRequestRepository crewRequestRepository;
-    private final CrewActivityLogRepository crewActivityLogRepository;
+    private final CrewActivityScoreRepository crewActivityScoreRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Throttling(name = "throttle-crew-req", key = "'crew:' + #crewId + ':member:' + #memberId", during = 1)
@@ -55,10 +54,9 @@ public class CrewRequestCommandService {
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
         crew.addCrewMember(CrewMemberFactory.general(crew, request.getMember(), LocalDateTime.now()));
         crewRequestRepository.delete(request);
-        crewActivityLogRepository.save(new CrewActivityLog(
-                crewId, request.getRequesterId(),
-                CrewActivity.CREW_PARTICIPANT, CrewActivity.CREW_PARTICIPANT.getWeight(), LocalDateTime.now()
-        ));
+        crewActivityScoreRepository.upsertScore(
+                crewId, request.getRequesterId(), CrewActivity.CREW_PARTICIPANT.getWeight(), LocalDateTime.now()
+        );
         eventPublisher.publishEvent(new RequestAccepted(crewId, memberId, request.getRequesterId()));
     }
 

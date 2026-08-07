@@ -21,11 +21,10 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
+import revi1337.onsquad.crew_member.domain.entity.CrewActivityScore;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
-import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreJpaRepository;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.error.CrewRequestBusinessException;
@@ -48,7 +47,7 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
     private CrewMemberJpaRepository crewMemberRepository;
 
     @Autowired
-    private CrewActivityLogJpaRepository crewActivityLogRepository;
+    private CrewActivityScoreJpaRepository crewActivityScoreRepository;
 
     @Autowired
     private CrewRequestCommandService crewRequestCommandService;
@@ -105,11 +104,11 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
             assertThat(crewRequestRepository.findAll().size()).isZero();
             assertThat(crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), andong.getId())).isPresent();
 
-            List<CrewActivityLog> activityLogs = crewActivityLogRepository.findAll();
-            assertThat(activityLogs).hasSize(1);
-            assertThat(activityLogs.get(0).getCrewId()).isEqualTo(crew.getId());
-            assertThat(activityLogs.get(0).getMemberId()).isEqualTo(andong.getId());
-            assertThat(activityLogs.get(0).getActivityType()).isSameAs(CrewActivity.CREW_PARTICIPANT);
+            List<CrewActivityScore> activityScores = crewActivityScoreRepository.findAll();
+            assertThat(activityScores).hasSize(1);
+            assertThat(activityScores.get(0).getCrewId()).isEqualTo(crew.getId());
+            assertThat(activityScores.get(0).getMemberId()).isEqualTo(andong.getId());
+            assertThat(activityScores.get(0).getWeight()).isEqualTo(5);
         }
 
         @Test

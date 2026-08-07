@@ -23,11 +23,10 @@ import org.springframework.test.context.event.ApplicationEvents;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
+import revi1337.onsquad.crew_member.domain.entity.CrewActivityScore;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
-import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreJpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
@@ -61,7 +60,7 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
     private SquadRequestRepository squadRequestRepository;
 
     @Autowired
-    private CrewActivityLogJpaRepository crewActivityLogRepository;
+    private CrewActivityScoreJpaRepository crewActivityScoreRepository;
 
     @Autowired
     private SquadRequestCommandService squadRequestCommandService;
@@ -134,11 +133,11 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
                 softly.assertThat(squadRequestJpaRepository.findById(request.getId())).isEmpty();
                 softly.assertThat(events.stream(RequestAccepted.class).count()).isEqualTo(1);
 
-                List<CrewActivityLog> activityLogs = crewActivityLogRepository.findAll();
-                softly.assertThat(activityLogs).hasSize(1);
-                softly.assertThat(activityLogs.get(0).getCrewId()).isEqualTo(crew.getId());
-                softly.assertThat(activityLogs.get(0).getMemberId()).isEqualTo(andong.getId());
-                softly.assertThat(activityLogs.get(0).getActivityType()).isSameAs(CrewActivity.SQUAD_PARTICIPANT);
+                List<CrewActivityScore> activityScores = crewActivityScoreRepository.findAll();
+                softly.assertThat(activityScores).hasSize(1);
+                softly.assertThat(activityScores.get(0).getCrewId()).isEqualTo(crew.getId());
+                softly.assertThat(activityScores.get(0).getMemberId()).isEqualTo(andong.getId());
+                softly.assertThat(activityScores.get(0).getWeight()).isEqualTo(3);
             });
         }
 

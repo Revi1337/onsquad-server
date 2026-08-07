@@ -1,24 +1,24 @@
 package revi1337.onsquad.crew_member.domain.entity;
 
-import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class CrewActivityLog {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"crew_id", "member_id"}))
+public class CrewActivityScore {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -30,22 +30,17 @@ public class CrewActivityLog {
     @Column(nullable = false)
     private Long memberId;
 
-    @Enumerated(STRING)
-    @Column(nullable = false)
-    private CrewActivity activityType;
-
     @Column(nullable = false)
     private int weight;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime lastActivityAt;
 
-    public CrewActivityLog(Long crewId, Long memberId, CrewActivity activityType, int weight, LocalDateTime createdAt) {
+    public CrewActivityScore(Long crewId, Long memberId, int weight, LocalDateTime lastActivityAt) {
         this.crewId = crewId;
         this.memberId = memberId;
-        this.activityType = activityType;
         this.weight = weight;
-        this.createdAt = createdAt;
+        this.lastActivityAt = lastActivityAt;
     }
 
     @Override
@@ -53,7 +48,7 @@ public class CrewActivityLog {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CrewActivityLog that)) {
+        if (!(o instanceof CrewActivityScore that)) {
             return false;
         }
         return id != null && Objects.equals(id, that.id);

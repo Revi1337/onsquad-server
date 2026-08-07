@@ -19,11 +19,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
-import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
+import revi1337.onsquad.crew_member.domain.entity.CrewActivityScore;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
-import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogJpaRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreJpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
@@ -52,7 +51,7 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
     private SquadCommentJpaRepository squadCommentRepository;
 
     @Autowired
-    private CrewActivityLogJpaRepository crewActivityLogRepository;
+    private CrewActivityScoreJpaRepository crewActivityScoreRepository;
 
     @Autowired
     private SquadCommentCommandService squadCommentCommandService;
@@ -81,11 +80,11 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
                 softly.assertThat(squadCommentRepository.findAll()).hasSize(1);
                 softly.assertThat(events.stream(CommentAdded.class).count()).isEqualTo(1);
 
-                List<CrewActivityLog> activityLogs = crewActivityLogRepository.findAll();
-                softly.assertThat(activityLogs).hasSize(1);
-                softly.assertThat(activityLogs.get(0).getCrewId()).isEqualTo(crew.getId());
-                softly.assertThat(activityLogs.get(0).getMemberId()).isEqualTo(writer.getId());
-                softly.assertThat(activityLogs.get(0).getActivityType()).isSameAs(CrewActivity.SQUAD_COMMENT);
+                List<CrewActivityScore> activityScores = crewActivityScoreRepository.findAll();
+                softly.assertThat(activityScores).hasSize(1);
+                softly.assertThat(activityScores.get(0).getCrewId()).isEqualTo(crew.getId());
+                softly.assertThat(activityScores.get(0).getMemberId()).isEqualTo(writer.getId());
+                softly.assertThat(activityScores.get(0).getWeight()).isEqualTo(1);
             });
         }
     }
@@ -112,11 +111,11 @@ class SquadCommentCommandServiceTest extends ApplicationLayerTestSupport {
                 softly.assertThat(squadCommentRepository.findAll()).hasSize(2);
                 softly.assertThat(events.stream(CommentReplyAdded.class).count()).isEqualTo(1);
 
-                List<CrewActivityLog> activityLogs = crewActivityLogRepository.findAll();
-                softly.assertThat(activityLogs).hasSize(1);
-                softly.assertThat(activityLogs.get(0).getCrewId()).isEqualTo(crew.getId());
-                softly.assertThat(activityLogs.get(0).getMemberId()).isEqualTo(replyWriter.getId());
-                softly.assertThat(activityLogs.get(0).getActivityType()).isSameAs(CrewActivity.SQUAD_COMMENT_REPLY);
+                List<CrewActivityScore> activityScores = crewActivityScoreRepository.findAll();
+                softly.assertThat(activityScores).hasSize(1);
+                softly.assertThat(activityScores.get(0).getCrewId()).isEqualTo(crew.getId());
+                softly.assertThat(activityScores.get(0).getMemberId()).isEqualTo(replyWriter.getId());
+                softly.assertThat(activityScores.get(0).getWeight()).isEqualTo(1);
             });
         }
 

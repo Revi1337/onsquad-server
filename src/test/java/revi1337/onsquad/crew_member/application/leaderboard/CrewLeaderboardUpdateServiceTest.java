@@ -224,10 +224,10 @@ class CrewLeaderboardUpdateServiceTest extends ApplicationLayerTestSupport {
         });
     }
 
-    private void saveActivityLog(Long crewId, Long memberId, CrewActivity activityType, LocalDateTime createdAt) {
+    private void saveActivityLog(Long crewId, Long memberId, CrewActivity activityType, LocalDateTime lastActivityAt) {
         jdbcTemplate.update(
-                "INSERT INTO crew_activity_log (crew_id, member_id, activity_type, weight, created_at) VALUES (?, ?, ?, ?, ?)",
-                crewId, memberId, activityType.name(), activityType.getWeight(), createdAt
+                "INSERT INTO crew_activity_score (crew_id, member_id, weight, last_activity_at) VALUES (?, ?, ?, ?)",
+                crewId, memberId, activityType.getWeight(), lastActivityAt
         );
     }
 

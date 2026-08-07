@@ -12,9 +12,18 @@ import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 
 @Repository
 @RequiredArgsConstructor
-public class CrewActivityLogJdbcRepository {
+public class CrewActivityScoreJdbcRepository {
 
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
+
+    public void upsertScore(Long crewId, Long memberId, int weight, LocalDateTime lastActivityAt) {
+        String sql = """
+                INSERT INTO crew_activity_score(crew_id, member_id, weight, last_activity_at)
+                VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE weight = weight + VALUES(weight), last_activity_at = GREATEST(last_activity_at, VALUES(last_activity_at))
+                """;
+        namedJdbcTemplate.getJdbcOperations().update(sql, crewId, memberId, weight, lastActivityAt);
+    }
 
     public List<CrewRankerCandidate> aggregateRankedMembersGivenActivityWeight(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         String sql = """
@@ -33,16 +42,15 @@ public class CrewActivityLogJdbcRepository {
                             DENSE_RANK() OVER (PARTITION BY crew_id ORDER BY total_score DESC, last_activity_time DESC) AS ranks
                         FROM (
                             SELECT
-                                crew_activity_log.crew_id AS crew_id,
+                                crew_activity_score.crew_id AS crew_id,
                                 m.id AS mem_id,
                                 m.nickname AS mem_nickname,
                                 m.mbti AS mem_mbti,
-                                MAX(crew_activity_log.created_at) AS last_activity_time,
-                                SUM(crew_activity_log.weight) AS total_score
-                            FROM crew_activity_log
-                            INNER JOIN member m ON m.id = crew_activity_log.member_id
-                            WHERE crew_activity_log.created_at BETWEEN :from AND :to
-                            GROUP BY crew_activity_log.crew_id, m.id, m.nickname, m.mbti
+                                crew_activity_score.last_activity_at AS last_activity_time,
+                                crew_activity_score.weight AS total_score
+                            FROM crew_activity_score
+                            INNER JOIN member m ON m.id = crew_activity_score.member_id
+                            WHERE crew_activity_score.last_activity_at BETWEEN :from AND :to
                         ) AS aggregated_activities
                     ) AS ranked_activities
                     WHERE ranks <= :rankLimit

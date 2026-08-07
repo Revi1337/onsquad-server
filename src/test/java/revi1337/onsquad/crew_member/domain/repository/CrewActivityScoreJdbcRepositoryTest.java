@@ -31,17 +31,17 @@ import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 @Sql({"/mysql-truncate.sql"})
-@Import({PersistenceLayerConfiguration.class, CrewActivityLogJdbcRepository.class})
+@Import({PersistenceLayerConfiguration.class, CrewActivityScoreJdbcRepository.class})
 @ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest(showSql = false)
-class CrewActivityLogJdbcRepositoryTest {
+class CrewActivityScoreJdbcRepositoryTest {
 
     private static final LocalDateTime WINDOW_FROM = LocalDateTime.of(2026, 1, 5, 0, 0);
     private static final LocalDateTime WINDOW_TO = LocalDateTime.of(2026, 1, 12, 0, 0);
 
     @Autowired
-    private CrewActivityLogJdbcRepository jdbcRepository;
+    private CrewActivityScoreJdbcRepository jdbcRepository;
 
     @Autowired
     private MemberJpaRepository memberJpaRepository;
@@ -56,7 +56,7 @@ class CrewActivityLogJdbcRepositoryTest {
     private EntityManager entityManager;
 
     @Test
-    @DisplayName("crew_activity_log 에 쌓인 여러 활동 타입의 가중치를 멤버별로 합산하여 점수/순위/최근활동시각을 집계한다")
+    @DisplayName("crew_activity_score 에 쌓인 여러 활동 타입의 가중치를 멤버별로 합산하여 점수/순위/최근활동시각을 집계한다")
     void aggregateRankedMembersGivenActivityWeight() {
         // given
         Member owner = memberJpaRepository.save(createRevi());
@@ -190,10 +190,13 @@ class CrewActivityLogJdbcRepositoryTest {
         });
     }
 
-    private void saveActivityLog(Long crewId, Long memberId, CrewActivity activityType, LocalDateTime createdAt) {
+    private void saveActivityLog(Long crewId, Long memberId, CrewActivity activityType, LocalDateTime lastActivityAt) {
         jdbcTemplate.update(
-                "INSERT INTO crew_activity_log (crew_id, member_id, activity_type, weight, created_at) VALUES (?, ?, ?, ?, ?)",
-                crewId, memberId, activityType.name(), activityType.getWeight(), createdAt
+                """
+                INSERT INTO crew_activity_score (crew_id, member_id, weight, last_activity_at) VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE weight = weight + VALUES(weight), last_activity_at = GREATEST(last_activity_at, VALUES(last_activity_at))
+                """,
+                crewId, memberId, activityType.getWeight(), lastActivityAt
         );
     }
 
