@@ -5,9 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreRepository;
 import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.application.SquadAccessor;
@@ -32,7 +31,7 @@ public class SquadRequestCommandService {
     private final SquadMemberAccessor squadMemberAccessor;
     private final SquadRequestAccessor squadRequestAccessor;
     private final SquadRequestRepository squadRequestRepository;
-    private final CrewActivityLogRepository crewActivityLogRepository;
+    private final CrewActivityScoreRepository crewActivityScoreRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public void request(Long memberId, Long squadId) {
@@ -53,10 +52,9 @@ public class SquadRequestCommandService {
         Squad squad = request.getSquad();
         squad.addMembers(SquadMemberFactory.general(squad, request.getMember(), LocalDateTime.now()));
         squadRequestRepository.deleteById(requestId);
-        crewActivityLogRepository.save(new CrewActivityLog(
-                squad.getCrew().getId(), request.getMember().getId(),
-                CrewActivity.SQUAD_PARTICIPANT, CrewActivity.SQUAD_PARTICIPANT.getWeight(), LocalDateTime.now()
-        ));
+        crewActivityScoreRepository.upsertScore(
+                squad.getCrew().getId(), request.getMember().getId(), CrewActivity.SQUAD_PARTICIPANT.getWeight(), LocalDateTime.now()
+        );
         eventPublisher.publishEvent(new RequestAccepted(squadId, request.getMember().getId(), memberId));
     }
 

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
-import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogRepository;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreRepository;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 
 @Slf4j
@@ -16,12 +16,12 @@ import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 public class CrewLeaderboardUpdateService {
 
     private final CrewRankerRepository crewRankerRepository;
-    private final CrewActivityLogRepository crewActivityLogRepository;
+    private final CrewActivityScoreRepository crewActivityScoreRepository;
 
     @Transactional
     public void refreshLeaderboards(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
-        List<CrewRankerCandidate> candidates = crewActivityLogRepository.fetchAggregatedRankedMembers(from, to, rankLimit);
-        crewActivityLogRepository.deleteByCreatedAtBetween(from, to);
+        List<CrewRankerCandidate> candidates = crewActivityScoreRepository.fetchAggregatedRankedMembers(from, to, rankLimit);
+        crewActivityScoreRepository.deleteByLastActivityAtBetween(from, to);
 
         crewRankerRepository.deleteAllInBatch();
         crewRankerRepository.insertBatch(candidates);
