@@ -1,6 +1,5 @@
 package revi1337.onsquad.crew_member.domain.repository.rank;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,11 +23,6 @@ public class CrewRankerRepositoryImpl implements CrewRankerRepository {
     @Override
     public List<CrewRanker> findAllByCrewId(Long crewId) {
         return crewRankerJpaRepository.findAllByCrewIdAndRankLessThanEqualOrderByRankAsc(crewId, crewLeaderboardProperties.rankLimit());
-    }
-
-    @Override
-    public List<CrewRankerCandidate> fetchAggregatedRankedMembers(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
-        return crewRankerJdbcRepository.aggregateRankedMembersGivenActivityWeight(from, to, rankLimit);
     }
 
     @Override

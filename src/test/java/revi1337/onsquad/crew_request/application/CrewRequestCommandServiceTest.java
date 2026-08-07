@@ -12,6 +12,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createKwangwon;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,11 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.crew_member.domain.model.CrewActivity;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogJpaRepository;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.error.CrewRequestBusinessException;
@@ -42,6 +46,9 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private CrewMemberJpaRepository crewMemberRepository;
+
+    @Autowired
+    private CrewActivityLogJpaRepository crewActivityLogRepository;
 
     @Autowired
     private CrewRequestCommandService crewRequestCommandService;
@@ -97,6 +104,12 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
             clearPersistenceContext();
             assertThat(crewRequestRepository.findAll().size()).isZero();
             assertThat(crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), andong.getId())).isPresent();
+
+            List<CrewActivityLog> activityLogs = crewActivityLogRepository.findAll();
+            assertThat(activityLogs).hasSize(1);
+            assertThat(activityLogs.get(0).getCrewId()).isEqualTo(crew.getId());
+            assertThat(activityLogs.get(0).getMemberId()).isEqualTo(andong.getId());
+            assertThat(activityLogs.get(0).getActivityType()).isSameAs(CrewActivity.CREW_PARTICIPANT);
         }
 
         @Test

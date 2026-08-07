@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
@@ -24,6 +25,7 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.entity.CrewRanker;
+import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
@@ -51,6 +53,9 @@ class CrewLeaderboardUpdateSchedulerTest {
     @Autowired
     private CrewLeaderboardUpdateScheduler leaderboardRefreshScheduler;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Test
     @DisplayName("스케줄러 실행 시 기존 랭킹은 사라지고, 지난 한 주간의 활동을 집계한 새로운 랭킹이 DB에 반영된다")
     void refreshLeaderboard() {
@@ -69,6 +74,8 @@ class CrewLeaderboardUpdateSchedulerTest {
         LocalDateTime withinLastWeek = LocalDate.now().minusDays(3).atTime(10, 0);
         crewMemberJpaRepository.save(CrewMemberFactory.general(crew, andong, withinLastWeek));
         crewMemberJpaRepository.save(CrewMemberFactory.general(crew, kwangwon, withinLastWeek.plusHours(1)));
+        saveActivityLog(crew.getId(), andong.getId(), CrewActivity.CREW_PARTICIPANT, withinLastWeek);
+        saveActivityLog(crew.getId(), kwangwon.getId(), CrewActivity.CREW_PARTICIPANT, withinLastWeek.plusHours(1));
 
         // when
         leaderboardRefreshScheduler.updateLeaderboards();
@@ -84,6 +91,13 @@ class CrewLeaderboardUpdateSchedulerTest {
             softly.assertThat(currentRankedMembers).extracting(CrewRanker::getMemberId)
                     .doesNotContain(revi.getId());
         });
+    }
+
+    private void saveActivityLog(Long crewId, Long memberId, CrewActivity activityType, LocalDateTime createdAt) {
+        jdbcTemplate.update(
+                "INSERT INTO crew_activity_log (crew_id, member_id, activity_type, weight, created_at) VALUES (?, ?, ?, ?, ?)",
+                crewId, memberId, activityType.name(), activityType.getWeight(), createdAt
+        );
     }
 
     private static CrewRankerCandidate createCrewRankerCandidate(Long crewId, int rank, long score, Member member) {

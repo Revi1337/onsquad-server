@@ -27,4 +27,8 @@ public record CrewRankerCandidate(
                 lastActivityTime
         );
     }
+
+    public CrewRankerCandidate withRank(int rank) {
+        return new CrewRankerCandidate(crewId, rank, score, memberId, nickname, mbti, lastActivityTime);
+    }
 }

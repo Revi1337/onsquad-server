@@ -2,12 +2,14 @@ package revi1337.onsquad.crew_member.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.model.CrewMembers;
+import revi1337.onsquad.crew_member.domain.model.CrewMembership;
 import revi1337.onsquad.crew_member.domain.model.MyParticipantCrew;
 
 @Repository
@@ -16,6 +18,7 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
 
     private final CrewMemberQueryDslRepository crewMemberQueryDslRepository;
     private final CrewMemberJpaRepository crewMemberJpaRepository;
+    private final CrewMemberJdbcRepository crewMemberJdbcRepository;
 
     @Override
     public Optional<CrewMember> findByCrewIdAndMemberId(Long crewId, Long memberId) {
@@ -55,5 +58,10 @@ public class CrewMemberRepositoryImpl implements CrewMemberRepository {
     @Override
     public int deleteByCrewIdIn(List<Long> crewIds) {
         return crewMemberJpaRepository.deleteByCrewIdIn(crewIds);
+    }
+
+    @Override
+    public Set<CrewMembership> fetchActiveMemberships(Set<CrewMembership> candidates) {
+        return crewMemberJdbcRepository.findActiveMemberships(candidates);
     }
 }

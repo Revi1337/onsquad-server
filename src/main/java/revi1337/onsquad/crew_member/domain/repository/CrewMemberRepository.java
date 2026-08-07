@@ -2,10 +2,12 @@ package revi1337.onsquad.crew_member.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.model.CrewMembers;
+import revi1337.onsquad.crew_member.domain.model.CrewMembership;
 import revi1337.onsquad.crew_member.domain.model.MyParticipantCrew;
 
 public interface CrewMemberRepository {
@@ -19,6 +21,8 @@ public interface CrewMemberRepository {
     Page<CrewMember> fetchParticipantsByCrewId(Long crewId, Pageable pageable);
 
     Page<MyParticipantCrew> fetchParticipantCrews(Long memberId, Pageable pageable);
+
+    Set<CrewMembership> fetchActiveMemberships(Set<CrewMembership> candidates);
 
     void delete(CrewMember me);
 
