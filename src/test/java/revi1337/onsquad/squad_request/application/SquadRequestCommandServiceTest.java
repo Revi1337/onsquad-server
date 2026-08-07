@@ -13,6 +13,7 @@ import static revi1337.onsquad.common.fixture.SquadFixture.createSquad;
 import static revi1337.onsquad.common.fixture.SquadMemberFixture.createGeneralSquadMember;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,11 @@ import org.springframework.test.context.event.ApplicationEvents;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewActivityLog;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.crew_member.domain.model.CrewActivity;
+import revi1337.onsquad.crew_member.domain.repository.CrewActivityLogJpaRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
@@ -55,6 +59,9 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
 
     @SpyBean
     private SquadRequestRepository squadRequestRepository;
+
+    @Autowired
+    private CrewActivityLogJpaRepository crewActivityLogRepository;
 
     @Autowired
     private SquadRequestCommandService squadRequestCommandService;
@@ -126,6 +133,12 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
                 softly.assertThat(squadMemberJpaRepository.findAll()).hasSize(2);
                 softly.assertThat(squadRequestJpaRepository.findById(request.getId())).isEmpty();
                 softly.assertThat(events.stream(RequestAccepted.class).count()).isEqualTo(1);
+
+                List<CrewActivityLog> activityLogs = crewActivityLogRepository.findAll();
+                softly.assertThat(activityLogs).hasSize(1);
+                softly.assertThat(activityLogs.get(0).getCrewId()).isEqualTo(crew.getId());
+                softly.assertThat(activityLogs.get(0).getMemberId()).isEqualTo(andong.getId());
+                softly.assertThat(activityLogs.get(0).getActivityType()).isSameAs(CrewActivity.SQUAD_PARTICIPANT);
             });
         }
 
