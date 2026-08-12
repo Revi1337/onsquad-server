@@ -19,7 +19,20 @@ public class CrewCommandServiceFacade {
     private final ApplicationEventPublisher eventPublisher;
 
     public void newCrew(Long memberId, CrewCreateDto dto, MultipartFile file) {
-        crewCommandService.newCrew(memberId, dto, file);
+        if (file == null || file.isEmpty()) {
+            crewCommandService.newCrew(memberId, dto, null);
+            return;
+        }
+        String imageUrl = null;
+        try {
+            imageUrl = fileStorageManager.upload(file);
+            crewCommandService.newCrew(memberId, dto, imageUrl);
+        } catch (CrewBusinessException exception) {
+            if (imageUrl != null) {
+                eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
+            }
+            throw exception;
+        }
     }
 
     public void updateCrew(Long memberId, Long crewId, CrewUpdateDto dto) {

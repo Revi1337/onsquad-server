@@ -6,14 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
 import revi1337.onsquad.crew.domain.CrewPolicy;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.model.CrewCreateSpec;
 import revi1337.onsquad.crew.domain.repository.CrewRepository;
-import revi1337.onsquad.crew.infrastructure.CrewFileStorageManager;
 import revi1337.onsquad.crew_hashtag.domain.repository.CrewHashtagRepository;
 import revi1337.onsquad.hashtag.domain.entity.Hashtag;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
@@ -30,13 +28,11 @@ public class CrewCommandService {
     private final CrewRepository crewRepository;
     private final CrewHashtagRepository crewHashtagRepository;
     private final CrewContextHandler crewContextHandler;
-    private final CrewFileStorageManager fileStorageManager;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Long newCrew(Long memberId, CrewCreateDto dto, MultipartFile file) {
+    public Long newCrew(Long memberId, CrewCreateDto dto, String imageUrl) {
         Member owner = memberAccessor.getById(memberId);
         crewAccessor.validateCrewNameIsDuplicate(dto.name());
-        String imageUrl = (file == null || file.isEmpty()) ? null : fileStorageManager.upload(file);
         CrewCreateSpec spec = dto.toSpec(owner, imageUrl);
         Crew crew = crewRepository.save(Crew.create(spec, LocalDateTime.now()));
         crewHashtagRepository.insertBatch(crew.getId(), Hashtag.fromHashtagTypes(spec.getHashtags()));

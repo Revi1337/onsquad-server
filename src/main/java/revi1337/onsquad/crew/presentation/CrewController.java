@@ -25,7 +25,6 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.DuplicateResponse;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
-import revi1337.onsquad.crew.application.CrewCommandService;
 import revi1337.onsquad.crew.application.CrewCommandServiceFacade;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
@@ -38,7 +37,6 @@ import revi1337.onsquad.crew.presentation.request.CrewUpdateRequest;
 @RequiredArgsConstructor
 public class CrewController {
 
-    private final CrewCommandService crewCommandService;
     private final CrewCommandServiceFacade crewCommandServiceFacade;
     private final CrewQueryService crewQueryService;
 
@@ -58,7 +56,7 @@ public class CrewController {
             @RequestPart(required = false) MultipartFile file,
             @Authenticate CurrentMember currentMember
     ) {
-        crewCommandService.newCrew(currentMember.id(), request.toDto(), file);
+        crewCommandServiceFacade.newCrew(currentMember.id(), request.toDto(), file);
 
         return ResponseEntity.ok().body(RestResponse.created());
     }
