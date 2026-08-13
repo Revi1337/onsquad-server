@@ -30,6 +30,8 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--web.external-url=http://localhost:9090/prometheus/"
       - "--web.route-prefix=/prometheus"
+      - "--web.enable-remote-write-receiver"
+      - "--enable-feature=native-histograms"
     volumes:
       - ./prometheus/config:/etc/prometheus
       - ./prometheus/prometheus-volume:/prometheus
@@ -47,10 +49,10 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: "default-password"
       GF_SERVER_ROOT_URL: "http://localhost:3000/grafana"
       GF_SERVER_SERVE_FROM_SUB_PATH: true
-
     volumes:
-      - ./grafana:/var/lib/grafana
+      - ./grafana/data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboard:/dashboard
     restart: always
     networks:
       - monitor-net
