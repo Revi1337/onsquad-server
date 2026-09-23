@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_member.domain.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import revi1337.onsquad.crew_member.domain.model.CrewActivityScoreSnapshot;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 
 public interface CrewActivityScoreRepository {
@@ -10,6 +11,10 @@ public interface CrewActivityScoreRepository {
 
     List<CrewRankerCandidate> fetchAggregatedRankedMembers(LocalDateTime from, LocalDateTime to, Integer rankLimit);
 
-    void deleteByLastActivityAtBetween(LocalDateTime from, LocalDateTime to);
+    List<CrewActivityScoreSnapshot> fetchSnapshot(LocalDateTime from, LocalDateTime to);
+
+    void subtractCountedWeight(List<CrewActivityScoreSnapshot> snapshot);
+
+    void deleteZeroWeightRows();
 
 }

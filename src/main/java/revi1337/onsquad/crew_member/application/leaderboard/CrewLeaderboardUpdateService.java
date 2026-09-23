@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.crew_member.domain.model.CrewActivityScoreSnapshot;
 import revi1337.onsquad.crew_member.domain.model.CrewMembership;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreRepository;
@@ -29,6 +30,7 @@ public class CrewLeaderboardUpdateService {
 
     @Transactional
     public void refreshLeaderboards(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
+        List<CrewActivityScoreSnapshot> snapshot = crewActivityScoreRepository.fetchSnapshot(from, to);
         List<CrewRankerCandidate> overFetchedCandidates = crewActivityScoreRepository.fetchAggregatedRankedMembers(from, to, OVER_FETCH_LIMIT);
         Set<CrewMembership> candidateMemberships = extractMemberships(overFetchedCandidates);
         Set<CrewMembership> activeMemberships = crewMemberRepository.fetchActiveMemberships(candidateMemberships);
@@ -36,8 +38,9 @@ public class CrewLeaderboardUpdateService {
         List<CrewRankerCandidate> candidates = reselectTopRankers(overFetchedCandidates, activeMemberships, rankLimit);
 
         crewRankerRepository.deleteAllInBatch();
-        crewActivityScoreRepository.deleteByLastActivityAtBetween(from, to);
         crewRankerRepository.insertBatch(candidates);
+        crewActivityScoreRepository.subtractCountedWeight(snapshot);
+        crewActivityScoreRepository.deleteZeroWeightRows();
         log.info(
                 "[LeaderboardUpdate] Leaderboard refreshed. ({} over-fetched -> {} rankers)",
                 overFetchedCandidates.size(), candidates.size()

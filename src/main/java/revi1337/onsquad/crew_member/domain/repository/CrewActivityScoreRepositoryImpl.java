@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_member.domain.model.CrewActivityScoreSnapshot;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 
 @Repository
 @RequiredArgsConstructor
 public class CrewActivityScoreRepositoryImpl implements CrewActivityScoreRepository {
 
-    private final CrewActivityScoreJpaRepository crewActivityScoreJpaRepository;
     private final CrewActivityScoreJdbcRepository crewActivityScoreJdbcRepository;
 
     @Override
@@ -24,7 +24,17 @@ public class CrewActivityScoreRepositoryImpl implements CrewActivityScoreReposit
     }
 
     @Override
-    public void deleteByLastActivityAtBetween(LocalDateTime from, LocalDateTime to) {
-        crewActivityScoreJpaRepository.deleteByLastActivityAtBetween(from, to);
+    public List<CrewActivityScoreSnapshot> fetchSnapshot(LocalDateTime from, LocalDateTime to) {
+        return crewActivityScoreJdbcRepository.fetchSnapshot(from, to);
+    }
+
+    @Override
+    public void subtractCountedWeight(List<CrewActivityScoreSnapshot> snapshot) {
+        crewActivityScoreJdbcRepository.subtractCountedWeight(snapshot);
+    }
+
+    @Override
+    public void deleteZeroWeightRows() {
+        crewActivityScoreJdbcRepository.deleteZeroWeightRows();
     }
 }

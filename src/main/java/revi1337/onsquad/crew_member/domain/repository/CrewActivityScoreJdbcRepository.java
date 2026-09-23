@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import revi1337.onsquad.crew_member.domain.model.CrewActivityScoreSnapshot;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
 
 @Repository
@@ -63,6 +64,41 @@ public class CrewActivityScoreJdbcRepository {
                 .addValue("rankLimit", rankLimit);
 
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankerCandidateMapper());
+    }
+
+    public List<CrewActivityScoreSnapshot> fetchSnapshot(LocalDateTime from, LocalDateTime to) {
+        String sql = "SELECT crew_id, member_id, weight FROM crew_activity_score WHERE last_activity_at BETWEEN :from AND :to";
+        SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
+                .addValue("from", from)
+                .addValue("to", to);
+
+        return namedJdbcTemplate.query(sql, sqlParameterSource, (rs, rowNum) -> new CrewActivityScoreSnapshot(
+                rs.getLong("crew_id"),
+                rs.getLong("member_id"),
+                rs.getInt("weight")
+        ));
+    }
+
+    public void subtractCountedWeight(List<CrewActivityScoreSnapshot> snapshot) {
+        if (snapshot.isEmpty()) {
+            return;
+        }
+        String sql = "UPDATE crew_activity_score SET weight = weight - ? WHERE crew_id = ? AND member_id = ? AND weight >= ?";
+        namedJdbcTemplate.getJdbcOperations().batchUpdate(
+                sql,
+                snapshot,
+                snapshot.size(),
+                (ps, row) -> {
+                    ps.setInt(1, row.weight());
+                    ps.setLong(2, row.crewId());
+                    ps.setLong(3, row.memberId());
+                    ps.setInt(4, row.weight());
+                }
+        );
+    }
+
+    public void deleteZeroWeightRows() {
+        namedJdbcTemplate.getJdbcOperations().update("DELETE FROM crew_activity_score WHERE weight = 0");
     }
 
     private RowMapper<CrewRankerCandidate> crewRankerCandidateMapper() {
