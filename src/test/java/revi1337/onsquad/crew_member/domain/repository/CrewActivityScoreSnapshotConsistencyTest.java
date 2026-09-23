@@ -8,7 +8,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +22,23 @@ import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewActivityScore;
+import revi1337.onsquad.crew_member.domain.model.CrewActivityScoreSnapshot;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
 /**
- * 4-1 단계(UPSERT 사전 집계) 시점의 리더보드 배치 정리 로직은
- * {@link CrewActivityScoreRepository#deleteByLastActivityAtBetween(LocalDateTime, LocalDateTime)} 로
- * {@code crew_activity_score} 행을 "시간 범위" 기준으로 통째로 삭제한다.
+ * 리더보드 배치가 crew_activity_score 스냅샷을 읽은 시점과, 그 스냅샷을 근거로
+ * subtractCountedWeight/deleteZeroWeightRows 를 실행하는 시점 사이에 새로운 UPSERT 가
+ * 끼어드는 레이스를 단일 스레드에서 "의도적으로 나쁜 순서"로 메서드를 호출해 결정론적으로 재현한다.
  * <p>
- * 배치가 {@code fetchAggregatedRankedMembers}로 랭킹을 읽은 뒤, 정리를 위해
- * {@code deleteByLastActivityAtBetween}을 호출하기까지의 사이에 실시간 이벤트로 같은
- * (crew_id, member_id) 행에 새 UPSERT가 끼어들면, 그 행은 현재 weight 값과 무관하게
- * 시간 범위에 걸렸다는 이유만으로 통째로 삭제되어 새로 들어온 활동 점수가 유실된다.
+ * 4-2 시점: {@code crew_ranker} 갱신은 Shadow Table 없이 4-1과 동일하게
+ * {@code deleteAllInBatch()}+{@code insertBatch()}로 처리한다. 이 클래스가 검증하는 레이스는
+ * {@code crew_ranker} 갱신 방식과 무관하게, {@code crew_activity_score} 정리 로직 자체
+ * (subtractCountedWeight/deleteZeroWeightRows)만으로 막힌다는 것을 보여준다.
  * <p>
- * 이 클래스의 첫 번째 테스트는 그 유실을 실제로 재현하고, "이 시점엔 이게 실제 동작이다"는 것을
- * assertion으로 그대로 기록한다 — 즉 버그가 있는 채로 통과(GREEN)한다.
+ * 검증 대상 버그는 (crew_id, member_id) 단위의 호출 순서 문제이므로 대량 시드 데이터나
+ * 진짜 멀티스레드(ExecutorService/CountDownLatch)는 필요하지 않다.
+ * 진짜 동시 UPSERT 경합 자체의 정합성은 {@code CrewActivityScoreUpsertConcurrencyTest} 가 별도로 검증한다.
  */
 @Sql({"/mysql-truncate.sql"})
 @Import({PersistenceLayerConfiguration.class, CrewActivityScoreRepositoryImpl.class, CrewActivityScoreJdbcRepository.class})
@@ -61,73 +62,87 @@ class CrewActivityScoreSnapshotConsistencyTest {
     @Autowired
     private CrewActivityScoreJpaRepository crewActivityScoreJpaRepository;
 
-    /**
-     * 4-1 시점의 {@code deleteByLastActivityAtBetween(from, to)}는 행의 "현재 weight 값"을 보지 않고
-     * "시간 범위"만으로 삭제하기 때문에, 배치가 랭킹을 읽은 이후 정리를 실행하기 전 사이에 새로
-     * UPSERT된 활동(weight 10)까지 통째로 사라진다.
-     * <p>
-     * 아래 assertion은 "이 시점에 실제로 일어나는 동작"을 그대로 표현한다 — 즉 새로 들어온 10점이
-     * 유실되어 행 자체가 사라진다는 것을 기대값으로 명시하고, 그 기대대로 동작하므로 이 테스트는
-     * 통과(GREEN)한다. 이건 "버그가 없다"는 뜻이 아니라 "이 시점엔 이게 알려진, 문서화된 버그였다"는
-     * 뜻이다.
-     */
     @Test
-    @DisplayName("[알려진 버그] 랭킹 조회와 삭제 사이에 새 UPSERT가 끼어들면, deleteByLastActivityAtBetween이 새로 들어온 활동까지 통째로 삭제해 유실시킨다")
-    void deleteByLastActivityAtBetween_losesRaceInsertedActivity_whenNewUpsertHappensBetweenReadAndDelete() {
-        // given: 특정 (crew_id, member_id) 행을 weight=5 로 만들어둔다 (activityTime 은 [from, to] 범위 안)
+    @DisplayName("스냅샷을 읽은 직후 같은 (crew_id, member_id)에 새 UPSERT가 들어와도, 배치는 스냅샷에 담긴 만큼만 정확히 차감하여 새로 들어온 활동을 유실시키지 않는다")
+    void subtractCountedWeight_preservesNewlyUpsertedWeight_whenUpsertHappensAfterSnapshotIsFetched() {
+        // given: 특정 (crew_id, member_id) 행을 weight=5 로 만들어둔다
         Member member = memberJpaRepository.save(createRevi());
         Crew crew = crewJpaRepository.save(createCrew(member));
         LocalDateTime activityTime = LocalDateTime.of(2026, 1, 6, 12, 0);
-        LocalDateTime from = activityTime.minusDays(1);
-        LocalDateTime to = activityTime.plusDays(1);
-
         crewActivityScoreRepository.upsertScore(crew.getId(), member.getId(), 5, activityTime);
         clearPersistenceContext();
 
-        // when: 배치가 먼저 랭킹 집계를 읽는다 (프로덕션 흐름상 정리보다 먼저 일어남)
-        crewActivityScoreRepository.fetchAggregatedRankedMembers(from, to, 10);
+        // when: 배치가 스냅샷을 읽는다 (이 시점 weight=5 가 스냅샷에 담긴다)
+        List<CrewActivityScoreSnapshot> snapshot = crewActivityScoreRepository
+                .fetchSnapshot(activityTime.minusDays(1), activityTime.plusDays(1));
 
-        // 그 사이 실시간 이벤트로 같은 행에 새 활동이 들어온다 (weight 5 -> 15, last_activity_at 도 갱신되어 여전히 [from, to] 범위 안)
+        // 스냅샷을 얻은 직후, 배치가 아직 삭제/차감을 실행하기 전에 같은 행에 새 활동이 UPSERT 된다
+        // (이벤트리스너가 실시간으로 호출하는 경로를 시뮬레이션. 이 시점 실제 DB weight 는 15)
         crewActivityScoreRepository.upsertScore(crew.getId(), member.getId(), 10, activityTime.plusMinutes(1));
         clearPersistenceContext();
 
-        // 배치가 뒤늦게 정리 단계로 시간 범위 기준 통째 삭제를 수행한다
-        crewActivityScoreRepository.deleteByLastActivityAtBetween(from, to);
+        // 배치가 뒤늦게 스냅샷 기준으로 차감/정리를 수행한다
+        crewActivityScoreRepository.subtractCountedWeight(snapshot);
+        crewActivityScoreRepository.deleteZeroWeightRows();
         clearPersistenceContext();
 
-        // then: 4-1 시점엔 새로 들어온 10점까지 deleteByLastActivityAtBetween에 의해 행째로 유실되는 게 "실제 동작"이다 (알려진 버그를 그대로 기록)
-        Optional<CrewActivityScore> found = crewActivityScoreJpaRepository.findAll().stream()
-                .filter(row -> row.getCrewId().equals(crew.getId()) && row.getMemberId().equals(member.getId()))
-                .findFirst();
-
-        assertSoftly(softly -> softly.assertThat(found)
-                .as("그 사이 새로 들어온 활동(weight 10)까지 deleteByLastActivityAtBetween에 의해 행째로 유실된다 (알려진 버그)")
-                .isEmpty());
-    }
-
-    @Test
-    @DisplayName("[대조군] 레이스 없이 정리하면 deleteByLastActivityAtBetween은 범위 내 행을 정상적으로 삭제한다")
-    void deleteByLastActivityAtBetween_removesRow_whenNoRaceHappensBeforeDelete() {
-        // given: weight=5, 이후 추가 활동 없음
-        Member member = memberJpaRepository.save(createRevi());
-        Crew crew = crewJpaRepository.save(createCrew(member));
-        LocalDateTime activityTime = LocalDateTime.of(2026, 1, 6, 12, 0);
-        LocalDateTime from = activityTime.minusDays(1);
-        LocalDateTime to = activityTime.plusDays(1);
-
-        crewActivityScoreRepository.upsertScore(crew.getId(), member.getId(), 5, activityTime);
-        clearPersistenceContext();
-
-        // when: 레이스 없이 바로 정리 단계를 수행한다
-        crewActivityScoreRepository.deleteByLastActivityAtBetween(from, to);
-        clearPersistenceContext();
-
-        // then: 레이스가 없었으므로 이 삭제 방식 자체는 문제없이 행이 삭제된다
+        // then: 행이 삭제되지 않고 남아있어야 하며, weight 는 정확히 10(15-5) 이어야 한다
         List<CrewActivityScore> found = crewActivityScoreJpaRepository.findAll();
         assertSoftly(softly -> {
             softly.assertThat(found)
-                    .as("레이스가 없는 정상 케이스에서는 시간 범위 삭제가 의도대로 동작해야 한다")
+                    .as("새로 들어온 활동은 deleteZeroWeightRows 에 의해 삭제되면 안 된다")
+                    .hasSize(1);
+            softly.assertThat(found.get(0).getWeight())
+                    .as("기존 5점만 정확히 차감되고, 그 사이 들어온 10점은 유실 없이 보존되어야 한다 (15-5=10)")
+                    .isEqualTo(10);
+        });
+    }
+
+    @Test
+    @DisplayName("스냅샷을 읽은 이후 새로운 활동이 전혀 없으면, 차감된 weight는 정확히 0이 되어 해당 행이 삭제된다")
+    void subtractCountedWeightAndDeleteZeroWeightRows_removesRow_whenNoNewActivityAfterSnapshot() {
+        // given
+        Member member = memberJpaRepository.save(createRevi());
+        Crew crew = crewJpaRepository.save(createCrew(member));
+        LocalDateTime activityTime = LocalDateTime.of(2026, 1, 6, 12, 0);
+        crewActivityScoreRepository.upsertScore(crew.getId(), member.getId(), 5, activityTime);
+        clearPersistenceContext();
+
+        List<CrewActivityScoreSnapshot> snapshot = crewActivityScoreRepository
+                .fetchSnapshot(activityTime.minusDays(1), activityTime.plusDays(1));
+
+        // when: 스냅샷을 읽은 후 레이스 없이(추가 활동 없이) 그대로 정리를 수행한다
+        crewActivityScoreRepository.subtractCountedWeight(snapshot);
+        crewActivityScoreRepository.deleteZeroWeightRows();
+        clearPersistenceContext();
+
+        // then: weight 가 정확히 0이 되어 행 자체가 삭제된다
+        List<CrewActivityScore> found = crewActivityScoreJpaRepository.findAll();
+        assertSoftly(softly -> {
+            softly.assertThat(found)
+                    .as("레이스가 없었으므로 weight 는 정확히 0이 되고, 0-weight 행은 삭제되어야 한다")
                     .isEmpty();
+        });
+    }
+
+    @Test
+    @DisplayName("빈 스냅샷으로 subtractCountedWeight를 호출해도 기존 행에는 아무 영향을 주지 않는다")
+    void subtractCountedWeight_doesNothing_whenSnapshotIsEmpty() {
+        // given
+        Member member = memberJpaRepository.save(createRevi());
+        Crew crew = crewJpaRepository.save(createCrew(member));
+        crewActivityScoreRepository.upsertScore(crew.getId(), member.getId(), 7, LocalDateTime.now());
+        clearPersistenceContext();
+
+        // when: 빈 스냅샷으로 호출한다 (가드에 의해 아무 것도 하지 않아야 한다)
+        crewActivityScoreRepository.subtractCountedWeight(List.of());
+        clearPersistenceContext();
+
+        // then: 기존 행은 그대로 남아있고 weight 도 변하지 않는다
+        List<CrewActivityScore> found = crewActivityScoreJpaRepository.findAll();
+        assertSoftly(softly -> {
+            softly.assertThat(found).hasSize(1);
+            softly.assertThat(found.get(0).getWeight()).isEqualTo(7);
         });
     }
 

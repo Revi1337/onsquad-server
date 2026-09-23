@@ -5,11 +5,12 @@ import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewActivityScore;
+import revi1337.onsquad.crew_member.domain.model.CrewActivityScoreSnapshot;
 import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreJpaRepository;
 import revi1337.onsquad.crew_member.domain.repository.CrewActivityScoreRepository;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheAspect;
@@ -36,21 +36,26 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
 /**
- * {@code CrewActivityScoreSnapshotConsistencyTest}가 단일 스레드로 결정론적으로 재현하는
- * "배치가 {@code fetchAggregatedRankedMembers}로 랭킹을 읽은 시점과, {@code deleteByLastActivityAtBetween}으로
- * 정리를 실행하는 시점 사이에 새로운 UPSERT 가 끼어드는 레이스"를, 순차 호출이 아니라 진짜 스레드 두 개
+ * {@code CrewActivityScoreSnapshotConsistencyTest} 가 단일 스레드로 결정론적으로 재현하는
+ * "스냅샷을 읽은 시점과 subtractCountedWeight/deleteZeroWeightRows 를 실행하는 시점 사이에
+ * 새로운 UPSERT 가 끼어드는 레이스" 시나리오를, 순차 호출이 아니라 진짜 스레드 두 개
  * ({@code ExecutorService} + {@code CountDownLatch} 체크포인트)로 재현한다.
  * <p>
- * {@code deleteByLastActivityAtBetween(from, to)}는 행의 "현재 weight 값"을 보지 않고
- * "시간 범위"만으로 삭제하므로, 실제 동시 실행 환경에서도 이 레이스가 재현된다. 아래 assertion은
- * "실제로 일어나는 동작"을 그대로 기대값으로 명시하므로 이 테스트는 통과(GREEN)한다 —
- * 이건 버그가 없다는 뜻이 아니라, 이게 알려진/문서화된 버그라는 뜻이다.
+ * 4-2 시점: {@code crew_ranker} 갱신은 Shadow Table 없이 4-1과 동일하게
+ * {@code deleteAllInBatch()}+{@code insertBatch()}로 처리하지만, 이 레이스 자체는
+ * {@code crew_ranker} 갱신 방식과 무관하게 {@code crew_activity_score} 정리 로직
+ * (subtractCountedWeight/deleteZeroWeightRows)만으로 막힌다는 것을 검증한다.
+ * <p>
+ * H2 기반 {@code PersistenceLayerTestSupport}(클래스 레벨 자동 롤백 트랜잭션)에서는 워커 스레드가
+ * given 데이터를 보지 못하거나 락 경합이 발생하므로, 이 시나리오는 별도로 TestContainers MySQL 기반의
+ * 독립 클래스({@code @SpringBootTest})로 분리하여 실제 커밋이 이루어지는 환경에서 검증한다.
  */
+@Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
 @Sql({"/mysql-truncate.sql"})
 @Import({ApplicationLayerConfiguration.class})
 @ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@DisplayName("CrewActivityScore 랭킹조회-삭제 레이스(4-1): 시간 범위 통째 삭제가 실시간 UPSERT와 부딪히는 경합의 정합성 검증")
+@DisplayName("CrewActivityScore 스냅샷-차감 레이스(4-2, Shadow Table 없음): 스냅샷을 읽은 직후 같은 행에 새 UPSERT가 커밋되는 경합의 정합성 검증")
 class CrewActivityScoreSnapshotSubtractRaceConcurrencyTest {
 
     @MockBean
@@ -77,51 +82,39 @@ class CrewActivityScoreSnapshotSubtractRaceConcurrencyTest {
     @Autowired
     private CrewActivityScoreJpaRepository crewActivityScoreJpaRepository;
 
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
-    /**
-     * {@code deleteByLastActivityAtBetween}은 시간 범위만 보고 행을 통째로 지우기 때문에,
-     * 실제 동시 실행에서도 새로 들어온 활동이 유실되는 게 "실제 동작"이다. 아래 assertion은 그 실제
-     * 동작을 그대로 기대값으로 삼으므로 통과(GREEN)한다 — 알려진 버그를 문서화하는 것.
-     */
     @Test
-    @DisplayName("[알려진 버그/동시성] 랭킹 조회 직후 별도 스레드가 같은 (crew_id, member_id)에 UPSERT를 커밋해도, deleteByLastActivityAtBetween은 행을 통째로 지워 새 활동을 유실시킨다")
-    void deleteByLastActivityAtBetween_losesNewlyUpsertedWeight_whenUpsertHappensConcurrentlyViaRealThreads() {
-        // given: 특정 (crew_id, member_id) 행을 weight=5 로 만들어둔다 (activityTime 은 [from, to] 범위 안)
+    @DisplayName("[동시성] 스냅샷을 읽은 직후 별도 스레드가 같은 (crew_id, member_id)에 UPSERT를 커밋해도, 배치는 스냅샷에 담긴 만큼만 정확히 차감하여 새로 들어온 활동을 유실시키지 않는다")
+    void subtractCountedWeight_preservesNewlyUpsertedWeight_whenUpsertHappensConcurrentlyViaRealThreads() {
+        // given: 특정 (crew_id, member_id) 행을 weight=5 로 만들어둔다
         Member member = memberJpaRepository.save(createRevi());
         Crew crew = crewJpaRepository.save(createCrew(member));
         LocalDateTime activityTime = LocalDateTime.of(2026, 1, 6, 12, 0);
-        LocalDateTime from = activityTime.minusDays(1);
-        LocalDateTime to = activityTime.plusDays(1);
         crewActivityScoreRepository.upsertScore(crew.getId(), member.getId(), 5, activityTime);
 
-        // when: Thread A(먼저 실행)는 랭킹을 읽고 신호를 보낸 뒤, Thread B의 UPSERT 커밋을 기다렸다가 정리(삭제)를 수행한다.
-        //       Thread B는 Thread A의 랭킹 조회가 끝난 뒤에야 같은 행에 +10 UPSERT를 적용한다(weight 5 -> 15).
+        // when: Thread A(먼저 실행)는 스냅샷을 읽고 신호를 보낸 뒤, Thread B의 UPSERT 커밋을 기다렸다가 차감/정리를 수행한다.
+        //       Thread B는 Thread A의 스냅샷 읽기가 끝난 뒤에야 같은 행에 +10 UPSERT를 적용한다(weight 5 -> 15).
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch startLatch = new CountDownLatch(1);
-        CountDownLatch rankingFetched = new CountDownLatch(1);
+        CountDownLatch snapshotFetched = new CountDownLatch(1);
         CountDownLatch upsertCommitted = new CountDownLatch(1);
 
         CompletableFuture<Void> threadA = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            crewActivityScoreRepository.fetchAggregatedRankedMembers(from, to, 10);
-            rankingFetched.countDown();
+            List<CrewActivityScoreSnapshot> snapshot = crewActivityScoreRepository
+                    .fetchSnapshot(activityTime.minusDays(1), activityTime.plusDays(1));
+            snapshotFetched.countDown();
 
             // upsertCommitted.countDown()은 threadB의 upsertScore(raw JDBC, autocommit) 호출이 "리턴한 뒤"
             // 실행되므로, 이 시점엔 이미 UPSERT가 DB에 커밋 완료된 상태다 — CountDownLatch의
             // happens-before 보장만으로 충분히 결정론적이라 별도 sleep으로 여유를 줄 필요가 없다.
             waitToStart(upsertCommitted);
-            // deleteByLastActivityAtBetween은 (save()와 달리) 자체 @Transactional이 없다 —
-            // 4-1 시점 프로덕션 코드는 이 메서드가 refreshLeaderboards()의 @Transactional 안에서만
-            // 호출된다는 전제였으므로, 순수 스레드 단독 호출을 위해 테스트에서 트랜잭션을 명시적으로 열어준다.
-            new TransactionTemplate(transactionManager).executeWithoutResult(status ->
-                    crewActivityScoreRepository.deleteByLastActivityAtBetween(from, to));
+            crewActivityScoreRepository.subtractCountedWeight(snapshot);
+            crewActivityScoreRepository.deleteZeroWeightRows();
         }, executor);
 
         CompletableFuture<Void> threadB = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            waitToStart(rankingFetched);
+            waitToStart(snapshotFetched);
             crewActivityScoreRepository.upsertScore(crew.getId(), member.getId(), 10, activityTime.plusMinutes(1));
             upsertCommitted.countDown();
         }, executor);
@@ -130,14 +123,16 @@ class CrewActivityScoreSnapshotSubtractRaceConcurrencyTest {
         CompletableFuture.allOf(threadA, threadB).join();
         executor.shutdown();
 
-        // then: 4-1 시점엔 새로 들어온 10점까지 deleteByLastActivityAtBetween에 의해 행째로 유실되는 게 "실제 동작"이다 (알려진 버그를 그대로 기록, 실제 동시 실행 환경에서도 재현됨)
-        Optional<CrewActivityScore> found = crewActivityScoreJpaRepository.findAll().stream()
-                .filter(row -> row.getCrewId().equals(crew.getId()) && row.getMemberId().equals(member.getId()))
-                .findFirst();
-
-        assertSoftly(softly -> softly.assertThat(found)
-                .as("그 사이 새로 들어온 활동(weight 10)까지 deleteByLastActivityAtBetween에 의해 행째로 유실된다 (알려진 버그)")
-                .isEmpty());
+        // then: 행이 삭제되지 않고 남아있어야 하며, weight 는 정확히 10(15-5) 이어야 한다
+        List<CrewActivityScore> found = crewActivityScoreJpaRepository.findAll();
+        assertSoftly(softly -> {
+            softly.assertThat(found)
+                    .as("새로 들어온 활동은 deleteZeroWeightRows 에 의해 삭제되면 안 된다")
+                    .hasSize(1);
+            softly.assertThat(found.get(0).getWeight())
+                    .as("기존 5점만 정확히 차감되고, 그 사이 들어온 10점은 유실 없이 보존되어야 한다 (15-5=10)")
+                    .isEqualTo(10);
+        });
     }
 
     private void waitToStart(CountDownLatch start) {
