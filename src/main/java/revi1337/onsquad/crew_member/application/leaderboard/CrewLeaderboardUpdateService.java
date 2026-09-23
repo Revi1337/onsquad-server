@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.crew_member.domain.model.CrewActivityScoreSnapshot;
 import revi1337.onsquad.crew_member.domain.model.CrewMembership;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
@@ -28,7 +27,6 @@ public class CrewLeaderboardUpdateService {
     private final CrewMemberRepository crewMemberRepository;
     private final CrewActivityScoreRepository crewActivityScoreRepository;
 
-    @Transactional
     public void refreshLeaderboards(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
         List<CrewActivityScoreSnapshot> snapshot = crewActivityScoreRepository.fetchSnapshot(from, to);
         List<CrewRankerCandidate> overFetchedCandidates = crewActivityScoreRepository.fetchAggregatedRankedMembers(from, to, OVER_FETCH_LIMIT);
@@ -37,8 +35,7 @@ public class CrewLeaderboardUpdateService {
 
         List<CrewRankerCandidate> candidates = reselectTopRankers(overFetchedCandidates, activeMemberships, rankLimit);
 
-        crewRankerRepository.deleteAllInBatch();
-        crewRankerRepository.insertBatch(candidates);
+        crewRankerRepository.swapSnapshot(candidates);
         crewActivityScoreRepository.subtractCountedWeight(snapshot);
         crewActivityScoreRepository.deleteZeroWeightRows();
         log.info(
