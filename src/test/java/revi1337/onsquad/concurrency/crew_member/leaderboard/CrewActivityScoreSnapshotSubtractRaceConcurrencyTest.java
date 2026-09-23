@@ -41,11 +41,6 @@ import revi1337.onsquad.notification.application.listener.NotificationEventListe
  * 새로운 UPSERT 가 끼어드는 레이스" 시나리오를, 순차 호출이 아니라 진짜 스레드 두 개
  * ({@code ExecutorService} + {@code CountDownLatch} 체크포인트)로 재현한다.
  * <p>
- * 4-2 시점: {@code crew_ranker} 갱신은 Shadow Table 없이 4-1과 동일하게
- * {@code deleteAllInBatch()}+{@code insertBatch()}로 처리하지만, 이 레이스 자체는
- * {@code crew_ranker} 갱신 방식과 무관하게 {@code crew_activity_score} 정리 로직
- * (subtractCountedWeight/deleteZeroWeightRows)만으로 막힌다는 것을 검증한다.
- * <p>
  * H2 기반 {@code PersistenceLayerTestSupport}(클래스 레벨 자동 롤백 트랜잭션)에서는 워커 스레드가
  * given 데이터를 보지 못하거나 락 경합이 발생하므로, 이 시나리오는 별도로 TestContainers MySQL 기반의
  * 독립 클래스({@code @SpringBootTest})로 분리하여 실제 커밋이 이루어지는 환경에서 검증한다.
@@ -55,7 +50,7 @@ import revi1337.onsquad.notification.application.listener.NotificationEventListe
 @Import({ApplicationLayerConfiguration.class})
 @ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@DisplayName("CrewActivityScore 스냅샷-차감 레이스(4-2, Shadow Table 없음): 스냅샷을 읽은 직후 같은 행에 새 UPSERT가 커밋되는 경합의 정합성 검증")
+@DisplayName("CrewActivityScore 스냅샷-차감 레이스: 스냅샷을 읽은 직후 같은 행에 새 UPSERT가 커밋되는 경합의 정합성 검증")
 class CrewActivityScoreSnapshotSubtractRaceConcurrencyTest {
 
     @MockBean

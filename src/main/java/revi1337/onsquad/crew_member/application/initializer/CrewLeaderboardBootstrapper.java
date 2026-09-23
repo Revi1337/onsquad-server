@@ -31,9 +31,8 @@ public class CrewLeaderboardBootstrapper {
         LocalDateTime from = to.toLocalDate().minusDays(crewLeaderboardProperties.during().toDays()).atStartOfDay();
 
         log.info("[Crew Leaderboard Bootstrap] Starting ranking data aggregation and table initialization for local environment.");
-        crewRankerRepository.deleteAllInBatch();
         List<CrewRankerCandidate> candidates = crewActivityScoreRepository.fetchAggregatedRankedMembers(from, to, crewLeaderboardProperties.rankLimit());
-        crewRankerRepository.insertBatch(candidates);
+        crewRankerRepository.swapSnapshot(candidates);
         log.info("[Crew Leaderboard Bootstrap] Ranking table initialized with {} records.", candidates.size());
     }
 }

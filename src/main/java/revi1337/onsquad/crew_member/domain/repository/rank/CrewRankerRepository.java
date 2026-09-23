@@ -14,4 +14,6 @@ public interface CrewRankerRepository {
 
     void deleteAllInBatch();
 
+    void swapSnapshot(List<CrewRankerCandidate> candidates);
+
 }

@@ -34,4 +34,9 @@ public class CrewRankerRepositoryImpl implements CrewRankerRepository {
     public void insertBatch(List<CrewRankerCandidate> candidates) {
         crewRankerJdbcRepository.insertBatch(candidates);
     }
+
+    @Override
+    public void swapSnapshot(List<CrewRankerCandidate> candidates) {
+        crewRankerJdbcRepository.swapSnapshot(candidates);
+    }
 }
