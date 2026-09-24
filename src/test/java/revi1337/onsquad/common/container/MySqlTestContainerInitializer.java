@@ -7,14 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.mysql.MySQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
 public class MySqlTestContainerInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MySqlTestContainerInitializer.class);
-    private static final MySQLContainer<?> MYSQL = new MySQLContainer<>(DockerImageName.parse("mysql:8.0"))
+    private static final MySQLContainer MYSQL = new MySQLContainer(DockerImageName.parse("mysql:8.0"))
             .withCommand("--lower_case_table_names=1", "--innodb_redo_log_capacity=1G")
             .withReuse(true)
             .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("testcontainers.mysql")));

@@ -28,7 +28,6 @@ import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandServiceFacade;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_member.domain.CrewRole;
@@ -47,9 +46,6 @@ class CrewMemberConcurrencyCommandServiceTest {
 
     @MockBean
     private NotificationEventListener notificationEventListener;
-
-    @MockBean
-    private CrewLeaderboardService crewLeaderboardService;
 
     @MockBean
     private FileRecycleBinRepository fileRecycleBinRepository;

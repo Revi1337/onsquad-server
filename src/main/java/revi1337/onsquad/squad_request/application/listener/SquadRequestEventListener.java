@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
-import revi1337.onsquad.crew_member.domain.event.ScoreIncreased;
-import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 import revi1337.onsquad.notification.domain.Notification;
 import revi1337.onsquad.squad_request.application.history.RequestAcceptHistory;
 import revi1337.onsquad.squad_request.application.history.RequestAddHistory;
@@ -38,7 +36,6 @@ public class SquadRequestEventListener {
     public void onRequestAccepted(RequestAccepted accepted) {
         contextReader.readAcceptedContext(accepted.squadId(), accepted.accepterId(), accepted.requesterId())
                 .ifPresent(context -> {
-                    eventPublisher.publishEvent(new ScoreIncreased(context.crewId(), context.requesterId(), CrewActivity.SQUAD_PARTICIPANT));
                     eventPublisher.publishEvent(new RequestAcceptHistory(context));
                     sendNotificationIfPossible(new RequestAcceptNotification(context));
                 });
