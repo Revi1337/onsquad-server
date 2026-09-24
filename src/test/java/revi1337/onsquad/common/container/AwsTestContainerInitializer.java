@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.localstack.LocalStackContainer;
+import org.testcontainers.localstack.LocalStackContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -26,7 +26,7 @@ public class AwsTestContainerInitializer implements ApplicationContextInitialize
             .withEnv("AWS_DEFAULT_REGION", DEFAULT_REGION)
             .withEnv("DEBUG", "1")
             .withEnv("SSL_DISABLE", "1")
-            .withServices(LocalStackContainer.Service.S3)
+            .withServices("s3")
             .withReuse(true)
             .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("testcontainers.aws")));
 

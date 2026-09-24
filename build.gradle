@@ -8,6 +8,9 @@ plugins {
 group = 'revi1337'
 version = '0.0.1-SNAPSHOT'
 
+ext['testcontainers.version'] = '2.0.2'
+ext['commons-lang3.version'] = '3.18.0'
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -67,10 +70,10 @@ dependencies {
 
     implementation 'org.springframework.retry:spring-retry'
 
-    testImplementation platform('org.testcontainers:testcontainers-bom:1.21.4')
-    testImplementation 'org.testcontainers:localstack'
-    testImplementation 'org.testcontainers:mysql'
-    testImplementation 'com.redis:testcontainers-redis:2.2.2'
+    testImplementation platform('org.testcontainers:testcontainers-bom:2.0.2')
+    testImplementation 'org.testcontainers:testcontainers-localstack'
+    testImplementation 'org.testcontainers:testcontainers-mysql'
+    testImplementation 'com.redis:testcontainers-redis:2.2.4'
 
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
