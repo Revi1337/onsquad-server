@@ -10,7 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
 import revi1337.onsquad.common.fixture.CrewFixture;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
@@ -23,6 +26,8 @@ import revi1337.onsquad.crew_member.domain.repository.rank.CrewRankerRepository;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 
+@Sql({"/mysql-truncate.sql"})
+@ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 class CrewLeaderboardUpdateServiceTest extends ApplicationLayerTestSupport {
 
     private static final LocalDateTime WINDOW_FROM = LocalDateTime.of(2026, 1, 5, 0, 0);
