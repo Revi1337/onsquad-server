@@ -83,18 +83,35 @@ public class CrewActivityScoreJdbcRepository {
         if (snapshot.isEmpty()) {
             return;
         }
-        String sql = "UPDATE crew_activity_score SET weight = weight - ? WHERE crew_id = ? AND member_id = ? AND weight >= ?";
-        namedJdbcTemplate.getJdbcOperations().batchUpdate(
-                sql,
-                snapshot,
-                snapshot.size(),
-                (ps, row) -> {
-                    ps.setInt(1, row.weight());
-                    ps.setLong(2, row.crewId());
-                    ps.setLong(3, row.memberId());
-                    ps.setInt(4, row.weight());
-                }
-        );
+        namedJdbcTemplate.getJdbcOperations().execute("""
+                CREATE TEMPORARY TABLE tmp_activity_score_snapshot (
+                    crew_id   BIGINT NOT NULL,
+                    member_id BIGINT NOT NULL,
+                    weight    INT    NOT NULL,
+                    PRIMARY KEY (crew_id, member_id)
+                ) ENGINE = MEMORY
+                """);
+        try {
+            namedJdbcTemplate.getJdbcOperations().batchUpdate(
+                    "INSERT INTO tmp_activity_score_snapshot (crew_id, member_id, weight) VALUES (?, ?, ?)",
+                    snapshot,
+                    snapshot.size(),
+                    (ps, row) -> {
+                        ps.setLong(1, row.crewId());
+                        ps.setLong(2, row.memberId());
+                        ps.setInt(3, row.weight());
+                    }
+            );
+            namedJdbcTemplate.getJdbcOperations().update("""
+                    UPDATE crew_activity_score cas
+                    INNER JOIN tmp_activity_score_snapshot s
+                        ON cas.crew_id = s.crew_id AND cas.member_id = s.member_id
+                    SET cas.weight = cas.weight - s.weight
+                    WHERE cas.weight >= s.weight
+                    """);
+        } finally {
+            namedJdbcTemplate.getJdbcOperations().execute("DROP TEMPORARY TABLE tmp_activity_score_snapshot");
+        }
     }
 
     public void deleteZeroWeightRows() {
