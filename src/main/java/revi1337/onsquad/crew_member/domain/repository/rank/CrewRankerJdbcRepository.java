@@ -1,10 +1,7 @@
 package revi1337.onsquad.crew_member.domain.repository.rank;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -12,8 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew_member.domain.model.CrewRankerCandidate;
-import revi1337.onsquad.crew_member.domain.model.RankerProfile;
-import revi1337.onsquad.member.domain.vo.Nickname;
 
 @Repository
 @RequiredArgsConstructor
@@ -37,114 +32,6 @@ public class CrewRankerJdbcRepository {
                     ps.setInt(7, candidate.rank());
                 }
         );
-    }
-
-    public void insertBatchToShadowTable(List<CrewRankerCandidate> candidates) {
-        String sql = "INSERT INTO crew_ranker_shadow(crew_id, member_id, nickname, mbti, last_activity_time, score, ranks) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        namedJdbcTemplate.getJdbcOperations().batchUpdate(
-                sql,
-                candidates,
-                candidates.size(),
-                (ps, candidate) -> {
-                    ps.setLong(1, candidate.crewId());
-                    ps.setLong(2, candidate.memberId());
-                    ps.setString(3, candidate.nickname());
-                    ps.setString(4, candidate.mbti());
-                    ps.setObject(5, candidate.lastActivityTime());
-                    ps.setLong(6, candidate.score());
-                    ps.setInt(7, candidate.rank());
-                }
-        );
-    }
-
-    public void prepareShadowTable() {
-        namedJdbcTemplate.getJdbcOperations().execute("CREATE TABLE IF NOT EXISTS crew_ranker_shadow LIKE crew_ranker");
-        namedJdbcTemplate.getJdbcOperations().execute("TRUNCATE TABLE crew_ranker_shadow");
-    }
-
-    public void switchTables() {
-        namedJdbcTemplate.getJdbcOperations().execute("""
-                RENAME TABLE
-                        crew_ranker TO crew_ranker_swapping,
-                        crew_ranker_shadow TO crew_ranker,
-                        crew_ranker_swapping TO crew_ranker_shadow;
-                """);
-    }
-
-    public void dropShadowTable() {
-        namedJdbcTemplate.getJdbcOperations().execute("DROP TABLE IF EXISTS crew_ranker_shadow");
-    }
-
-    public void truncate() {
-        namedJdbcTemplate.getJdbcOperations().execute("TRUNCATE TABLE crew_ranker");
-    }
-
-    /**
-     * For more information, visit <a href="https://www.h2database.com/html/functions-window.html">this link</a>.
-     *
-     * @see #aggregateRankedMembersGivenActivityWeight(LocalDateTime, LocalDateTime, Integer)
-     * @deprecated
-     */
-    @Deprecated
-    public List<CrewRankerCandidate> aggregateRankedMembersByActivityOccurrence(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
-        String sql = """
-                    \n
-                    SELECT
-                        ranked_activities.crew_id AS crew_id,
-                        ranked_activities.mem_id AS mem_id,
-                        ranked_activities.mem_nickname AS mem_nickname,
-                        ranked_activities.mem_mbti AS mem_mbti,
-                        ranked_activities.last_activity_time AS mem_last_activity_time,
-                        ranked_activities.counter AS score,
-                        ranked_activities.ranks AS ranks
-                    FROM (
-                        SELECT
-                            crew_id, mem_id, mem_nickname, mem_mbti, last_activity_time, counter,
-                            DENSE_RANK() OVER (PARTITION BY crew_id ORDER BY counter DESC, last_activity_time DESC) AS ranks
-                        FROM (
-                            SELECT DISTINCT
-                                raw_activities.crew_id AS crew_id,
-                                m.id AS mem_id,
-                                m.nickname AS mem_nickname,
-                                m.mbti AS mem_mbti,
-                                MAX(raw_activities.created_at) OVER (PARTITION BY raw_activities.crew_id, m.id) AS last_activity_time,
-                                COUNT(*) OVER (PARTITION BY raw_activities.crew_id, m.id) AS counter
-                            FROM (
-                                -- crew participant
-                                SELECT cm.crew_id, cm.member_id, cm.participate_at AS created_at
-                                FROM crew_member cm
-                                WHERE cm.participate_at BETWEEN :from AND :to
-                                UNION ALL
-                                -- squad create
-                                SELECT s.crew_id, s.member_id, s.created_at AS created_at
-                                FROM squad s
-                                WHERE s.created_at BETWEEN :from AND :to
-                                UNION ALL
-                                -- squad participant
-                                SELECT s.crew_id, sm.member_id, sm.participate_at AS created_at
-                                FROM squad_member sm
-                                INNER JOIN squad s ON s.id = sm.squad_id
-                                WHERE sm.participate_at BETWEEN :from AND :to
-                                UNION ALL
-                                -- squad comment create
-                                SELECT s.crew_id, sc.member_id, sc.created_at AS created_at
-                                FROM squad_comment sc
-                                INNER JOIN squad s ON s.id = sc.squad_id
-                                WHERE sc.created_at BETWEEN :from AND :to
-                            ) AS raw_activities
-                            INNER JOIN member m ON m.id = raw_activities.member_id
-                        ) AS aggregated_activities
-                    ) AS ranked_activities
-                    WHERE ranks <= :rankLimit
-                    ORDER BY crew_id, ranks;
-                """;
-
-        SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
-                .addValue("from", from)
-                .addValue("to", to)
-                .addValue("rankLimit", rankLimit);
-
-        return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankerCandidateMapper());
     }
 
     public List<CrewRankerCandidate> aggregateRankedMembersGivenActivityWeight(LocalDateTime from, LocalDateTime to, Integer rankLimit) {
@@ -206,29 +93,6 @@ public class CrewRankerJdbcRepository {
                 .addValue("rankLimit", rankLimit);
 
         return namedJdbcTemplate.query(sql, sqlParameterSource, crewRankerCandidateMapper());
-    }
-
-    public Map<Long, RankerProfile> findActiveRankersWithProfile(List<CrewRankerCandidate> candidates) {
-        String inClause = candidates.stream()
-                .map(r -> "(" + r.crewId() + "," + r.memberId() + ")")
-                .collect(Collectors.joining(","));
-
-        String sql = """
-                SELECT m.id as member_id, m.nickname, m.mbti \
-                FROM crew_member cm \
-                INNER JOIN member m ON cm.member_id = m.id \
-                WHERE (cm.crew_id, cm.member_id) IN (%s) \
-                """.formatted(inClause);
-
-        return namedJdbcTemplate.query(sql, rs -> {
-            Map<Long, RankerProfile> result = new HashMap<>((int) (candidates.size() / 0.75f) + 1);
-            while (rs.next()) {
-                result.put(rs.getLong("member_id"), new RankerProfile(
-                        new Nickname(rs.getString("nickname")), rs.getString("mbti"))
-                );
-            }
-            return result;
-        });
     }
 
     private RowMapper<CrewRankerCandidate> crewRankerCandidateMapper() {
