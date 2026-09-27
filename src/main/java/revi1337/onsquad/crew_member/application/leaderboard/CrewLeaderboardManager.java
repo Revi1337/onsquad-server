@@ -2,18 +2,15 @@ package revi1337.onsquad.crew_member.application.leaderboard;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
-import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
@@ -31,7 +28,6 @@ import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils;
 public class CrewLeaderboardManager {
 
     public static final int RANKING_OVER_FETCH_SIZE = 50;
-    private static final RedisScript<Long> APPLY_SCORE_SCRIPT = RedisScript.of(new ClassPathResource("db/redis/apply_score.lua"), Long.class);
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -39,15 +35,13 @@ public class CrewLeaderboardManager {
         String namedSortedSet = CrewLeaderboardKeyMapper.toLeaderboardKey(crewId);
         String specificName = CrewLeaderboardKeyMapper.toMemberKey(memberId);
 
-        stringRedisTemplate.execute(
-                APPLY_SCORE_SCRIPT,
-                Collections.singletonList(namedSortedSet),
-                specificName,
-                String.valueOf(crewActivity.getScore()),
-                String.valueOf(applyAt.getEpochSecond()),
-                String.valueOf(CompositeScore.MULTIPLIER),
-                String.valueOf(CompositeScore.BASE_EPOCH_TIME)
-        );
+        // baseline(Lua 도입 전, 비원자적 조회->계산->저장 3단계) 재현.
+        Double currentRedisScore = stringRedisTemplate.opsForZSet().score(namedSortedSet, specificName);
+        long currentScore = currentRedisScore == null ? 0L : CompositeScore.from(currentRedisScore).getActualScore();
+        long nextScore = currentScore + crewActivity.getScore();
+        CompositeScore nextCompositeScore = CompositeScore.of(nextScore, applyAt);
+
+        stringRedisTemplate.opsForZSet().add(namedSortedSet, specificName, nextCompositeScore.toRedisScore());
     }
 
     public CrewLeaderboard getLeaderboard(Long crewId, int topNInclusive) {
