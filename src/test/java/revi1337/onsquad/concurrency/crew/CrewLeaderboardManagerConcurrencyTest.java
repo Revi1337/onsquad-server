@@ -21,8 +21,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import revi1337.onsquad.common.container.RedisTestContainerInitializer;
-import revi1337.onsquad.crew_member.application.leaderboard.CompositeScore;
-import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardKeyMapper;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardManager;
 import revi1337.onsquad.crew_member.domain.model.CrewActivity;
 
@@ -47,12 +45,10 @@ class CrewLeaderboardManagerConcurrencyTest {
     }
 
     @Test
-    @DisplayName("비원자적 조회->계산->저장 3단계 상황에서의 Lost Update 상황을 검증한다.")
-    void lostUpdateVerificationTest() {
+    @DisplayName("비원자적 조회->계산->저장 3단계 상황을 루아스크립트 기반으로 변경하여 Lost Update 이 발생하지 않음을 검증한다.")
+    void notLostUpdateVerification() {
         Long crewId = 1L;
         Long memberId = 2L;
-        String namedSortedSet = CrewLeaderboardKeyMapper.toLeaderboardKey(crewId);
-        String specificName = CrewLeaderboardKeyMapper.toMemberKey(memberId);
         Instant applyAt = Instant.now();
         CrewActivity baseActivity = CrewActivity.SQUAD_COMMENT; // SCORE: 1
         CrewActivity activity1 = CrewActivity.CREW_PARTICIPANT; // SCORE: 5
@@ -61,30 +57,15 @@ class CrewLeaderboardManagerConcurrencyTest {
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch startLatch = new CountDownLatch(1);
-        CountDownLatch readLatch = new CountDownLatch(2);
 
         CompletableFuture<Void> staleThreadFuture = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            Double currentScore = stringRedisTemplate.opsForZSet().score(namedSortedSet, specificName);
-            readLatch.countDown();
-            waitToStart(readLatch);
-
-            long score = currentScore == null ? 0L : CompositeScore.from(currentScore).getActualScore();
-            long nextScore = score + activity1.getScore();
-            CompositeScore staleNextCompositeScore = CompositeScore.of(nextScore, applyAt);
-            stringRedisTemplate.opsForZSet().add(namedSortedSet, specificName, staleNextCompositeScore.toRedisScore());
+            crewLeaderboardManager.applyActivity(crewId, memberId, applyAt, activity1);
         }, executor);
 
         CompletableFuture<Void> concurrentThreadFuture = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            Double currentScore = stringRedisTemplate.opsForZSet().score(namedSortedSet, specificName);
-            readLatch.countDown();
-            waitToStart(readLatch);
-
-            long score = currentScore == null ? 0L : CompositeScore.from(currentScore).getActualScore();
-            long nextScore = score + activity2.getScore();
-            CompositeScore staleNextCompositeScore = CompositeScore.of(nextScore, applyAt);
-            stringRedisTemplate.opsForZSet().add(namedSortedSet, specificName, staleNextCompositeScore.toRedisScore());
+            crewLeaderboardManager.applyActivity(crewId, memberId, applyAt, activity2);
         }, executor);
 
         startLatch.countDown();
@@ -96,10 +77,10 @@ class CrewLeaderboardManagerConcurrencyTest {
 
         assertThat(actualScore)
                 .as(String.format(
-                        "원래라면 %s점이어야하는데, Lost Update 로 인해 %s점 또는 %s점이 나오게 된다.",
+                        "루아스크립트 기반으로 연산을 원자적으로 변경했으니,Lost Update 가 발생하지 않고, %s점 또는 %s점이 나오게 된다.",
                         expectScore, baseActivity.getScore() + activity1.getScore(), baseActivity.getScore() + activity2.getScore()
                 ))
-                .isNotEqualTo(expectScore);
+                .isEqualTo(expectScore);
     }
 
     private void waitToStart(CountDownLatch latch) {
