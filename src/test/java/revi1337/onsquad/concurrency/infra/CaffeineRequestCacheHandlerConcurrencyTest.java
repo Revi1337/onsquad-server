@@ -2,6 +2,7 @@ package revi1337.onsquad.concurrency.infra;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +17,7 @@ import revi1337.onsquad.infrastructure.support.request.CaffeineRequestCacheHandl
 class CaffeineRequestCacheHandlerConcurrencyTest {
 
     @Test
-    @DisplayName("같은 key로 두 요청이 동시에 들어오면 체크-저장 원자성이 없어 둘 다 첫 요청으로 통과할 수 있다")
+    @DisplayName("같은 key로 두 요청이 동시에 들어와도 체크-저장 원자성이 보장되어 하나만 첫 요청으로 통과한다")
     void test() {
         CaffeineRequestCacheHandler handler = new CaffeineRequestCacheHandler();
         String key = "duplicate-request-key";
@@ -35,12 +36,9 @@ class CaffeineRequestCacheHandlerConcurrencyTest {
         CompletableFuture.allOf(future1, future2).join();
         executor.shutdown();
 
-        assertThat(future1.join())
-                .as("체크-저장 원자성이 없으면 두 스레드 모두 첫 요청으로 통과할 수 있다")
-                .isTrue();
-        assertThat(future2.join())
-                .as("체크-저장 원자성이 없으면 두 스레드 모두 첫 요청으로 통과할 수 있다")
-                .isTrue();
+        assertThat(List.of(future1.join(), future2.join()))
+                .as("원자적 putIfAbsent로 두 스레드 중 정확히 하나만 첫 요청으로 통과해야 한다")
+                .containsExactlyInAnyOrder(true, false);
     }
 
     private void waitToStart(CountDownLatch start) {

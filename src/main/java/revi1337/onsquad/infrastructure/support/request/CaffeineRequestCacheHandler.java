@@ -46,12 +46,7 @@ public final class CaffeineRequestCacheHandler implements RequestCacheHandler {
 
     @Override
     public Boolean isFirstRequest(String key, String value, long timeout, TimeUnit unit) {
-        TimedEntry<String> existing = REQUEST_CACHE.getIfPresent(key);
-        if (existing == null) {
-            REQUEST_CACHE.put(key, new TimedEntry<>(value, unit.toNanos(timeout)));
-            return true;
-        }
-
-        return false;
+        TimedEntry<String> entry = new TimedEntry<>(value, unit.toNanos(timeout));
+        return REQUEST_CACHE.asMap().putIfAbsent(key, entry) == null;
     }
 }
