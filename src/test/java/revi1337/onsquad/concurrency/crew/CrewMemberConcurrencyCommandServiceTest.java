@@ -91,11 +91,11 @@ class CrewMemberConcurrencyCommandServiceTest {
             CountDownLatch startLatch = new CountDownLatch(1);
             CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
+                commandService.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
             }, executor);
             CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
+                commandService.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
             }, executor);
             startLatch.countDown();
             CompletableFuture.allOf(future1, future2).join();
