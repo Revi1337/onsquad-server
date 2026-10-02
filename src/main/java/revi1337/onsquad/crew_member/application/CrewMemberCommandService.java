@@ -33,7 +33,7 @@ public class CrewMemberCommandService {
     }
 
     public void leaveCrew(Long memberId, Long crewId) {
-        Crew crew = crewAccessor.getById(crewId);
+        Crew crew = crewAccessor.getByIdForUpdate(crewId);
         CrewMember leaver = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         if (CrewPolicy.isLastMemberRemaining(crew)) {
             crewContextHandler.disposeContextWithSquads(crew);

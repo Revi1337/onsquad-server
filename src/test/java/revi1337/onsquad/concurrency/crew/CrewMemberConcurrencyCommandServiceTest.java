@@ -1,10 +1,12 @@
 package revi1337.onsquad.concurrency.crew;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberFixture.createMember;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +25,7 @@ import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.common.aspect.ThrottlingAspect;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandServiceFacade;
@@ -140,8 +143,8 @@ class CrewMemberConcurrencyCommandServiceTest {
     class leaveCrew {
 
         @Test
-        @DisplayName("락 없이 두 멤버가 동시에 탈퇴하면 Lost Update로 currentSize 감소분이 유실된다")
-        void leaveCrewWithoutLock_losesUpdate() {
+        @DisplayName("크루원 탈퇴 시 동시 요청이 발생해도, Pessimistic Lock을 통해 잔류 인원수 정합성을 보장한다.")
+        void leaveCrew() {
             // given
             Member owner = memberRepository.save(createMember(1));
             Member manager = memberRepository.save(createMember(2));
@@ -175,8 +178,104 @@ class CrewMemberConcurrencyCommandServiceTest {
                         .as("general 는 탈퇴했기 때문에 조회되지 않는다.")
                         .isEmpty();
                 softly.assertThat(finalCrew.getCurrentSize())
-                        .as("Lost Update: 기대값 1(3명 - 2명 탈퇴) 대신 2로 귀결 — 한쪽의 decreaseSize()가 유실됨")
-                        .isEqualTo(2);
+                        .as("3명에서 2명이 나가 잔류인원은 1명이 된다.")
+                        .isEqualTo(1);
+            });
+        }
+
+        @Test
+        @DisplayName("[Write Skew 방지] 앞선 멤버의 탈퇴로 인한 상태 변화를 인지하여, Owner가 낡은 정보로 헛발질하지 않고 정상 해체한다.")
+        void leaveCrew2() {
+            // given
+            Member owner = memberRepository.save(createMember(1));
+            Member manager = memberRepository.save(createMember(2));
+            Crew crew = createCrew(owner);
+            crew.addCrewMember(createManagerCrewMember(crew, manager));
+            Crew savedCrew = crewRepository.save(crew);
+
+            // when
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CountDownLatch managerStarted = new CountDownLatch(1);
+            CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                managerStarted.countDown();
+                commandService.leaveCrew(manager.getId(), savedCrew.getId());
+            }, executor);
+            CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                waitToStart(managerStarted);
+                sleep(100);
+                commandService.leaveCrew(owner.getId(), savedCrew.getId());
+            }, executor);
+            startLatch.countDown();
+            CompletableFuture.allOf(future1, future2).join();
+            executor.shutdown();
+
+            // then
+            assertSoftly(softly -> {
+                Optional<Crew> crewOpt = crewRepository.findById(savedCrew.getId());
+                boolean managerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), manager.getId()).isPresent();
+                boolean ownerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).isPresent();
+
+                softly.assertThat(managerExists)
+                        .as("manager 는 가장 먼저 탈퇴했다.")
+                        .isFalse();
+                softly.assertThat(ownerExists)
+                        .as("owner 도 manager 탈퇴 후(잔류 인원1) 탈퇴했기 때문에 탈퇴에 성공했다.")
+                        .isFalse();
+                softly.assertThat(crewOpt)
+                        .as("owner 가 탈퇴했기 때문에, crew 도 삭제되었다.")
+                        .isEmpty();
+            });
+        }
+
+        @Test
+        @DisplayName("[Stale Read 방지] Owner가 먼저 선점한 경우, 최신 인원 상태를 고정하여 도메인 정책(위임 필요)에 따른 정당한 거절을 수행한다.")
+        void leaveCrew3() {
+            // given
+            Member owner = memberRepository.save(createMember(1));
+            Member manager = memberRepository.save(createMember(2));
+            Crew crew = createCrew(owner);
+            crew.addCrewMember(createManagerCrewMember(crew, manager));
+            Crew savedCrew = crewRepository.save(crew);
+
+            // when
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CountDownLatch ownerStarted = new CountDownLatch(1);
+            CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                ownerStarted.countDown();
+                assertThatThrownBy(() -> commandService
+                        .leaveCrew(owner.getId(), savedCrew.getId()))
+                        .isExactlyInstanceOf(CrewBusinessException.InsufficientAuthority.class);
+            }, executor);
+            CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+                waitToStart(startLatch);
+                waitToStart(ownerStarted);
+                sleep(100);
+                commandService.leaveCrew(manager.getId(), savedCrew.getId());
+            }, executor);
+            startLatch.countDown();
+            CompletableFuture.allOf(future2, future1).join();
+            executor.shutdown();
+
+            // then
+            assertSoftly(softly -> {
+                Optional<Crew> crewOpt = crewRepository.findById(savedCrew.getId());
+                boolean ownerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).isPresent();
+                boolean managerExists = crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), manager.getId()).isPresent();
+
+                softly.assertThat(ownerExists)
+                        .as("owner 는 manager 보다 먼저 탈퇴하려 했기 때문에 탈퇴하지 못했다.")
+                        .isTrue();
+                softly.assertThat(managerExists)
+                        .as("manager 는 크루 잔류인원 수에 상관없이 탈퇴에 성공했다.")
+                        .isFalse();
+                softly.assertThat(crewOpt)
+                        .as("owner 가 탈퇴하지 못했기 떄문에 crew 도 삭제되지 않았다.")
+                        .isPresent();
             });
         }
     }
@@ -230,6 +329,14 @@ class CrewMemberConcurrencyCommandServiceTest {
             start.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
