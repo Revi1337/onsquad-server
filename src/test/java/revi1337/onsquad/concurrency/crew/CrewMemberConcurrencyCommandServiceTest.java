@@ -185,7 +185,7 @@ class CrewMemberConcurrencyCommandServiceTest {
     class kickOutMember {
 
         @Test
-        @DisplayName("[Baseline] 락 없이 두 멤버를 동시에 추방하면 Lost Update로 currentSize 감소분이 유실된다")
+        @DisplayName("락 없이 두 멤버를 동시에 추방하면 Lost Update로 currentSize 감소분이 유실된다")
         void kickOutMemberWithoutLock_losesUpdate() {
             // given
             Member owner = memberRepository.save(createMember(1));
