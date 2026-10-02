@@ -44,7 +44,7 @@ public class CrewRequestCommandService {
     }
 
     public void acceptRequest(Long memberId, Long crewId, Long requestId) {
-        Crew crew = crewAccessor.getByIdForUpdate(crewId);
+        Crew crew = crewAccessor.getById(crewId);
         CrewMember acceptor = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewRequestPolicy.ensureAcceptable(acceptor);
         CrewRequest request = crewRequestAccessor.getById(requestId);

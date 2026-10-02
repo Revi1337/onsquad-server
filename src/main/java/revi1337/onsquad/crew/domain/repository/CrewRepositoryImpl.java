@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew.domain.vo.Name;
 import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.crew.domain.model.CrewStatistic;
 import revi1337.onsquad.crew.domain.model.CrewWithOwnerState;
+import revi1337.onsquad.crew.domain.vo.Name;
 
 @Repository
 @RequiredArgsConstructor
@@ -78,11 +78,6 @@ public class CrewRepositoryImpl implements CrewRepository {
     @Override
     public int deleteByIdIn(List<Long> ids) {
         return crewJpaRepository.deleteByIdIn(ids);
-    }
-
-    @Override
-    public int decrementCountById(Long id) {
-        return crewJpaRepository.decrementCountById(id);
     }
 
     @Override

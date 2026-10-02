@@ -7,7 +7,6 @@ import revi1337.onsquad.crew.application.CrewAccessor;
 import revi1337.onsquad.crew.application.CrewContextHandler;
 import revi1337.onsquad.crew.domain.CrewPolicy;
 import revi1337.onsquad.crew.domain.entity.Crew;
-import revi1337.onsquad.crew.domain.repository.CrewRepository;
 import revi1337.onsquad.crew_member.domain.CrewMemberPolicy;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
@@ -20,7 +19,6 @@ public class CrewMemberCommandService {
     private final CrewAccessor crewAccessor;
     private final CrewMemberAccessor crewMemberAccessor;
     private final CrewContextHandler crewContextHandler;
-    private final CrewRepository crewRepository;
     private final CrewMemberRepository crewMemberRepository;
 
     public void delegateOwner(Long memberId, Long crewId, Long targetMemberId) {
@@ -33,7 +31,7 @@ public class CrewMemberCommandService {
     }
 
     public void leaveCrew(Long memberId, Long crewId) {
-        Crew crew = crewAccessor.getByIdForUpdate(crewId);
+        Crew crew = crewAccessor.getById(crewId);
         CrewMember leaver = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         if (CrewPolicy.isLastMemberRemaining(crew)) {
             crewContextHandler.disposeContextWithSquads(crew);
@@ -49,7 +47,7 @@ public class CrewMemberCommandService {
         CrewMemberPolicy.ensureNotSelfTargeting(memberId, targetMemberId);
         CrewMember targetMember = crewMemberAccessor.getByMemberIdAndCrewId(targetMemberId, crewId);
         CrewMemberPolicy.ensureKickable(kicker, targetMember);
-        crewRepository.decrementCountById(crewId);
+        targetMember.leaveCrew();
         crewMemberRepository.delete(targetMember);
     }
 }
