@@ -185,8 +185,8 @@ class CrewMemberConcurrencyCommandServiceTest {
     class kickOutMember {
 
         @Test
-        @DisplayName("락 없이 두 멤버를 동시에 추방하면 Lost Update로 currentSize 감소분이 유실된다")
-        void kickOutMemberWithoutLock_losesUpdate() {
+        @DisplayName("크루 추방 시 동시 요청이 발생해도 Optimistic Lock(+Retry)을 통해 인원수 정합성을 보장한다")
+        void kickOutMember() {
             // given
             Member owner = memberRepository.save(createMember(1));
             Member manager = memberRepository.save(createMember(2));
@@ -219,8 +219,8 @@ class CrewMemberConcurrencyCommandServiceTest {
                         .as("general 는 추방되었기 때문에 조회되지 않는다.")
                         .isEmpty();
                 softly.assertThat(crewRepository.findById(savedCrew.getId()).get().getCurrentSize())
-                        .as("Lost Update: 기대값 1(3명 - 2명 추방) 대신 2로 귀결 — 한쪽의 decreaseSize()가 유실됨")
-                        .isEqualTo(2);
+                        .as("Optimistic Lock(+Retry)으로 인해 정상적으로 Crew 잔류인원 정합성이 맞다. (1명남음)")
+                        .isEqualTo(1);
             });
         }
     }
