@@ -35,7 +35,6 @@ import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardServi
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
-import revi1337.onsquad.crew_request.application.CrewRequestCommandServiceFacade;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestJpaRepository;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheAspect;
@@ -77,13 +76,10 @@ class CrewRequestConcurrencyCommandServiceTest {
     @Autowired
     private CrewRequestCommandService commandService;
 
-    @Autowired
-    private CrewRequestCommandServiceFacade commandServiceFacade;
-
     @Test
     @DisplayName("""
-            Optimistic Lock: 크루 owner 와 manager 가 동시에 서로 다른 참여자의 요청을 수락해도 crew 의 정합성은 보장된다.
-            [Total Time: 169ms, RetryCount: 2, FailCount: 0]
+            Pessimistic Lock: 크루 owner 와 manager 가 동시에 서로 다른 참여자의 요청을 수락해도 crew 의 정합성은 보장된다.
+            [Total Time: 75ms, FailCount: 0]
             """)
     void accept() {
         // given
@@ -102,11 +98,11 @@ class CrewRequestConcurrencyCommandServiceTest {
         CountDownLatch startLatch = new CountDownLatch(1);
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandServiceFacade.acceptRequest(revi.getId(), crew.getId(), request1.getId());
+            commandService.acceptRequest(revi.getId(), crew.getId(), request1.getId());
         }, executor);
         CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandServiceFacade.acceptRequest(andong.getId(), crew.getId(), request2.getId());
+            commandService.acceptRequest(andong.getId(), crew.getId(), request2.getId());
         }, executor);
         stopWatch(TimeUnit.MILLISECONDS, () -> {
             startLatch.countDown();
@@ -120,9 +116,9 @@ class CrewRequestConcurrencyCommandServiceTest {
 
     @Test
     @DisplayName("""
-            Optimistic Lock: 운영진 6명이 각 10건씩 총 60건의 가입 요청을 동시에 수락하면, 재시도(4회, 20~100ms)를 소진한 일부 요청이 실패한다.
-            비관적 락 버전과 운영진 수,요청 수,스레드 수,재시도 설정까지 동일한 조건으로 구성해, 락 전략만 바꿨을 때의 결과 차이(정합성 보장 여부,처리시간)를 그대로 대조할 수 있다.
-            [Total Time: 341ms, RetryCount: 176, FailCount: 18]
+            Pessimistic Lock: 운영진 6명이 각 10건씩 총 60건의 가입 요청을 동시에 수락해도, 비관적 락을 통해 크루 인원수의 정합성이 완벽히 보장된다.
+            낙관적 락 버전과 운영진 수,요청 수,스레드 수까지 동일한 조건으로 구성해, 락 전략만 바꿨을 때의 결과 차이(정합성 보장 여부,처리시간)를 그대로 대조할 수 있다.
+            [Total Time: 122ms, FailCount: 0]
             """)
     void accept2() {
         // given
@@ -165,7 +161,7 @@ class CrewRequestConcurrencyCommandServiceTest {
             chunks.get(i).forEach(requestId -> {
                 futures.add(CompletableFuture.runAsync(() -> {
                     waitToStart(startLatch);
-                    commandServiceFacade.acceptRequest(acceptorId, crew.getId(), requestId);
+                    commandService.acceptRequest(acceptorId, crew.getId(), requestId);
                 }, executor));
             });
         }
