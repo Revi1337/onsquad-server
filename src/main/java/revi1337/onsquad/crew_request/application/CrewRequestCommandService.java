@@ -44,10 +44,10 @@ public class CrewRequestCommandService {
     }
 
     public void acceptRequest(Long memberId, Long crewId, Long requestId) {
-        Crew crew = crewAccessor.getById(crewId);
         CrewMember acceptor = crewMemberAccessor.getByMemberIdAndCrewId(memberId, crewId);
         CrewRequestPolicy.ensureAcceptable(acceptor);
         CrewRequest request = crewRequestAccessor.getById(requestId);
+        Crew crew = request.getCrew();
         CrewRequestPolicy.ensureMatchCrew(request, crewId);
         crew.addCrewMember(CrewMemberFactory.general(crew, request.getMember(), LocalDateTime.now()));
         crewRequestRepository.delete(request);

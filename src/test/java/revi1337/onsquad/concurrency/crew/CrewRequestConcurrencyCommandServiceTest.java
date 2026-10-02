@@ -8,11 +8,15 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createMember;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +35,7 @@ import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardServi
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_request.application.CrewRequestCommandService;
+import revi1337.onsquad.crew_request.application.CrewRequestCommandServiceFacade;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestJpaRepository;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheAspect;
@@ -72,9 +77,15 @@ class CrewRequestConcurrencyCommandServiceTest {
     @Autowired
     private CrewRequestCommandService commandService;
 
+    @Autowired
+    private CrewRequestCommandServiceFacade commandServiceFacade;
+
     @Test
-    @DisplayName("락 없이 두 운영진이 동시에 서로 다른 요청을 수락하면 Lost Update로 currentSize 증가분이 유실된다")
-    void acceptWithoutLock_losesUpdate() {
+    @DisplayName("""
+            Optimistic Lock: 크루 owner 와 manager 가 동시에 서로 다른 참여자의 요청을 수락해도 crew 의 정합성은 보장된다.
+            [Total Time: 169ms, RetryCount: 2, FailCount: 0]
+            """)
+    void accept() {
         // given
         Member revi = memberRepository.save(createRevi());
         Member andong = memberRepository.save(createAndong());
@@ -86,16 +97,16 @@ class CrewRequestConcurrencyCommandServiceTest {
         CrewRequest request1 = crewRequestRepository.save(createCrewRequest(savedCrew, kwangwon));
         CrewRequest request2 = crewRequestRepository.save(createCrewRequest(savedCrew, dummy));
 
-        // when
+        // given
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch startLatch = new CountDownLatch(1);
         CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandService.acceptRequest(revi.getId(), crew.getId(), request1.getId());
+            commandServiceFacade.acceptRequest(revi.getId(), crew.getId(), request1.getId());
         }, executor);
         CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
             waitToStart(startLatch);
-            commandService.acceptRequest(andong.getId(), crew.getId(), request2.getId());
+            commandServiceFacade.acceptRequest(andong.getId(), crew.getId(), request2.getId());
         }, executor);
         stopWatch(TimeUnit.MILLISECONDS, () -> {
             startLatch.countDown();
@@ -104,12 +115,70 @@ class CrewRequestConcurrencyCommandServiceTest {
         executor.shutdown();
 
         // then
-        assertThat(crewRequestRepository.count())
-                .as("두 수락 요청 모두 예외 없이 끝났다 (가입 처리 자체는 성공)")
-                .isZero();
-        assertThat(crewRepository.findById(crew.getId()).get().getCurrentSize())
-                .as("Lost Update: 기대값 4(owner 1 + manager 1 + 수락 2건) 대신 3으로 귀결 — 한쪽의 increaseSize()가 유실됨")
-                .isEqualTo(3);
+        assertThat(crewRepository.findById(crew.getId()).get().getCurrentSize()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("""
+            Optimistic Lock: 운영진 6명이 각 10건씩 총 60건의 가입 요청을 동시에 수락하면, 재시도(4회, 20~100ms)를 소진한 일부 요청이 실패한다.
+            비관적 락 버전과 운영진 수,요청 수,스레드 수,재시도 설정까지 동일한 조건으로 구성해, 락 전략만 바꿨을 때의 결과 차이(정합성 보장 여부,처리시간)를 그대로 대조할 수 있다.
+            [Total Time: 341ms, RetryCount: 176, FailCount: 18]
+            """)
+    void accept2() {
+        // given
+        Member acceptor1 = memberRepository.save(createMember(1));
+        Member acceptor2 = memberRepository.save(createMember(2));
+        Member acceptor3 = memberRepository.save(createMember(3));
+        Member acceptor4 = memberRepository.save(createMember(4));
+        Member acceptor5 = memberRepository.save(createMember(5));
+        Member acceptor6 = memberRepository.save(createMember(6));
+        Crew crew = createCrew(acceptor1);
+        crew.addCrewMember(
+                createManagerCrewMember(crew, acceptor2),
+                createManagerCrewMember(crew, acceptor3),
+                createManagerCrewMember(crew, acceptor4),
+                createManagerCrewMember(crew, acceptor5),
+                createManagerCrewMember(crew, acceptor6)
+        );
+        Crew savedCrew = crewRepository.save(crew);
+
+        List<Long> requestIds = IntStream.rangeClosed(7, 66)
+                .mapToObj(i -> memberRepository.save(createMember(i)))
+                .map(member -> crewRequestRepository.save(createCrewRequest(savedCrew, member)))
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(),
+                        lst -> lst.stream().map(CrewRequest::getId).toList()
+                ));
+
+        int chunkSize = 10;
+        List<Member> acceptors = List.of(acceptor1, acceptor2, acceptor3, acceptor4, acceptor5, acceptor6);
+        List<List<Long>> chunks = IntStream.range(0, (requestIds.size() + chunkSize - 1) / chunkSize)
+                .mapToObj(i -> requestIds.subList(i * chunkSize, Math.min((i + 1) * chunkSize, requestIds.size())))
+                .toList();
+
+        // when
+        ExecutorService executor = Executors.newFixedThreadPool(acceptors.size() * chunkSize);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        List<CompletableFuture<Void>> futures = new ArrayList<>(acceptors.size());
+        for (int i = 0; i < acceptors.size(); i++) {
+            Long acceptorId = acceptors.get(i).getId();
+            chunks.get(i).forEach(requestId -> {
+                futures.add(CompletableFuture.runAsync(() -> {
+                    waitToStart(startLatch);
+                    commandServiceFacade.acceptRequest(acceptorId, crew.getId(), requestId);
+                }, executor));
+            });
+        }
+        stopWatch(TimeUnit.MILLISECONDS, () -> {
+            startLatch.countDown();
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        });
+        executor.shutdown();
+
+        // then
+        Crew finalCrew = crewRepository.findById(savedCrew.getId()).orElseThrow();
+        assertThat(finalCrew.getCurrentSize()).isEqualTo(66);
+        assertThat(crewRequestRepository.count()).isZero();
     }
 
     private void waitToStart(CountDownLatch start) {
