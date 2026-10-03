@@ -81,6 +81,11 @@ public class CrewRepositoryImpl implements CrewRepository {
     }
 
     @Override
+    public int decrementCountById(Long id) {
+        return crewJpaRepository.decrementCountById(id);
+    }
+
+    @Override
     public int decrementCountByMemberId(Long memberId) {
         int deleted = crewJpaRepository.decrementCountByMemberId(memberId);
         if (deleted == 0) {

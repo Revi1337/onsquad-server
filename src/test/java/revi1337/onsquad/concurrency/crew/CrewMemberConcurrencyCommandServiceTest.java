@@ -185,7 +185,7 @@ class CrewMemberConcurrencyCommandServiceTest {
     class kickOutMember {
 
         @Test
-        @DisplayName("크루 추방 시 동시 요청이 발생해도 Optimistic Lock(+Retry)을 통해 인원수 정합성을 보장한다")
+        @DisplayName("크루 추방 시 동시 요청이 발생해도 Atomic Update(+Manually Version Update)를 통해 인원수 정합성을 보장한다.")
         void kickOutMember() {
             // given
             Member owner = memberRepository.save(createMember(1));
@@ -219,7 +219,7 @@ class CrewMemberConcurrencyCommandServiceTest {
                         .as("general 는 추방되었기 때문에 조회되지 않는다.")
                         .isEmpty();
                 softly.assertThat(crewRepository.findById(savedCrew.getId()).get().getCurrentSize())
-                        .as("Optimistic Lock(+Retry)으로 인해 정상적으로 Crew 잔류인원 정합성이 맞다. (1명남음)")
+                        .as("Atomic Update 로 인해 정상적으로 Crew 잔류인원 정합성이 맞다. (1명남음)")
                         .isEqualTo(1);
             });
         }
