@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -76,8 +77,8 @@ class CrewMemberConcurrencyCommandServiceTest {
     class delegateOwner {
 
         @Test
-        @DisplayName("락 없이 두 후보에게 동시에 방장을 위임하면 중복 OWNER가 발생한다")
-        void delegateOwnerWithoutLock_duplicatesOwner() {
+        @DisplayName("방장 위임 동시 요청 시, Optimistic Lock 과 Retry를 통해 중복 방장 발생을 방지하고 정합성을 유지한다")
+        void delegateOwner() {
             // given
             Member owner = memberRepository.save(createMember(1));
             Member nextOwnerCandidate1 = memberRepository.save(createMember(2));
@@ -89,13 +90,23 @@ class CrewMemberConcurrencyCommandServiceTest {
             // when
             ExecutorService executor = Executors.newFixedThreadPool(2);
             CountDownLatch startLatch = new CountDownLatch(1);
+            AtomicBoolean candidate1Success = new AtomicBoolean(false);
+            AtomicBoolean candidate2Success = new AtomicBoolean(false);
             CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandService.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
+                try {
+                    commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
+                    candidate1Success.set(true);
+                } catch (Exception ignored) {
+                }
             }, executor);
             CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandService.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
+                try {
+                    commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
+                    candidate2Success.set(true);
+                } catch (Exception ignored) {
+                }
             }, executor);
             startLatch.countDown();
             CompletableFuture.allOf(future1, future2).join();
@@ -103,15 +114,24 @@ class CrewMemberConcurrencyCommandServiceTest {
 
             // then
             assertSoftly(softly -> {
+                softly.assertThat(candidate1Success.get() ^ candidate2Success.get())
+                        .as("동시에 위임 요청이 오면 정확히 한쪽만 성공해야 하고, 나머지는 재시도 후에도 권한이 없어져 실패해야 한다")
+                        .isTrue();
+
+                Crew finalCrew = crewRepository.findById(savedCrew.getId()).orElseThrow();
                 CrewMember delegatedOwner1 = crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), nextOwnerCandidate1.getId()).get();
                 CrewMember delegatedOwner2 = crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), nextOwnerCandidate2.getId()).get();
 
                 softly.assertThat(delegatedOwner1.getRole())
-                        .as("락 없이 두 스레드 모두 currentOwner.isOwner()==true를 보고 각자 자기 후보를 OWNER로 승격시켜, 두 후보 모두 OWNER가 된다")
-                        .isSameAs(CrewRole.OWNER);
-                softly.assertThat(delegatedOwner2.getRole())
-                        .as("락 없이 두 스레드 모두 currentOwner.isOwner()==true를 보고 각자 자기 후보를 OWNER로 승격시켜, 두 후보 모두 OWNER가 된다")
-                        .isSameAs(CrewRole.OWNER);
+                        .as("owner 위임 대상이었던 두명의 role 은 다를 수 밖에 없다.")
+                        .isNotSameAs(delegatedOwner2.getRole());
+                softly.assertThat(finalCrew.getMember().getId())
+                        .as("crew 의 실제 member 와 crewmember 의 member 는 같을 수 밖에 없다.")
+                        .isSameAs((delegatedOwner1.getRole() == CrewRole.OWNER ? delegatedOwner1 : delegatedOwner2).getMember().getId());
+
+                System.out.printf("Actual Crew Owner: %d\n", finalCrew.getMember().getId());
+                System.out.printf("nextOwnerCandidate1: %d role: %s%n", nextOwnerCandidate1.getId(), delegatedOwner1.getRole());
+                System.out.printf("nextOwnerCandidate2: %d role: %s%n", nextOwnerCandidate2.getId(), delegatedOwner2.getRole());
             });
         }
     }
