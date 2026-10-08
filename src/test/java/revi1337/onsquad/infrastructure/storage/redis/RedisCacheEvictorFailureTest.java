@@ -10,11 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import revi1337.onsquad.common.container.UnreachableRedis;
 import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils.ScanSize;
 
-/**
- * 공용 유틸은 Redis 장애를 삼키지 않고 호출부(어댑터/초기화 코드)에 그대로 전파해야 한다.
- */
 class RedisCacheEvictorFailureTest {
-
     private final StringRedisTemplate brokenRedisTemplate = UnreachableRedis.stringRedisTemplate();
 
     @Test

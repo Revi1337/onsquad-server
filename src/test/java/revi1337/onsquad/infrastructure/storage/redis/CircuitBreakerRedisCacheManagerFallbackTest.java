@@ -34,7 +34,6 @@ import revi1337.onsquad.member.domain.entity.Member;
 @Import(CircuitBreakerRedisCacheManagerFallbackTest.BrokenRedisCacheManagerConfig.class)
 @ContextConfiguration(initializers = RedisTestContainerInitializer.class)
 class CircuitBreakerRedisCacheManagerFallbackTest extends ApplicationLayerTestSupport {
-
     private static final String CIRCUIT_BREAKER_NAME = "redisCacheCircuitBreaker";
 
     @SpyBean
@@ -83,10 +82,6 @@ class CircuitBreakerRedisCacheManagerFallbackTest extends ApplicationLayerTestSu
 
     @TestConfiguration
     static class BrokenRedisCacheManagerConfig {
-
-        /**
-         * 운영 {@code RedisCacheManagerConfig.redisCacheManager()} 빈을, 아무도 수신 대기하지 않는 포트로 바라보도록 덮어써서 Redis 연결 실패를 강제로 유발한다.
-         */
         @Bean
         public CircuitBreakerRedisCacheManager redisCacheManager(CircuitBreakerRegistry circuitBreakerRegistry) {
             RedisStandaloneConfiguration standaloneConfiguration = new RedisStandaloneConfiguration("127.0.0.1", 54321);

@@ -28,11 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import revi1337.onsquad.announce.domain.model.AnnounceReference;
 import revi1337.onsquad.common.container.UnreachableRedis;
 
-/**
- * Redis 연결이 불가능한 상황에서 {@link RedisAnnounceCacheEvictor} 가 예외를 전파하지 않고, 서킷브레이커가 OPEN 되면 Redis 를 더 이상 시도하지 않는지 검증한다.
- */
 class RedisAnnounceCacheEvictorFallbackTest {
-
     private static final String CIRCUIT_BREAKER_NAME = "redisCacheCircuitBreaker";
     private static final int MINIMUM_NUMBER_OF_CALLS = 6;
 
@@ -68,7 +64,6 @@ class RedisAnnounceCacheEvictorFallbackTest {
     @Nested
     @DisplayName("서킷 CLOSED 상태에서 Redis 가 불가능한 경우")
     class WhenRedisIsDown {
-
         @Test
         @DisplayName("evictAnnounce 는 예외를 던지지 않는다")
         void evictAnnounce() {
@@ -126,7 +121,6 @@ class RedisAnnounceCacheEvictorFallbackTest {
     @Nested
     @DisplayName("서킷 OPEN 상태")
     class WhenCircuitIsOpen {
-
         @BeforeEach
         void openCircuit() {
             for (int i = 0; i < MINIMUM_NUMBER_OF_CALLS; i++) {

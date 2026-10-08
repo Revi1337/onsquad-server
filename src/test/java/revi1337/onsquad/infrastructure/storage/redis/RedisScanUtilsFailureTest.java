@@ -20,11 +20,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import revi1337.onsquad.common.container.UnreachableRedis;
 import revi1337.onsquad.infrastructure.storage.redis.RedisScanUtils.ScanSize;
 
-/**
- * 스캔 유틸은 Redis 장애를 삼키지 않고 호출부에 그대로 전파해야 한다. 연결 실패뿐 아니라 스캔 도중(콜백 내부)의 실패도 포함한다.
- */
 class RedisScanUtilsFailureTest {
-
     @Test
     @DisplayName("scanKeys(pattern) 는 Redis 연결 불가 시 예외를 던진다")
     void scanKeysByPattern_throws_whenRedisIsUnreachable() {
