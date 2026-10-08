@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import revi1337.onsquad.auth.token.domain.error.TokenException;
 import revi1337.onsquad.auth.token.domain.model.AccessToken;
@@ -29,7 +28,7 @@ public class JsonWebTokenManager {
             TokenProperties tokenProperties,
             JsonWebTokenProvider jsonWebTokenProvider,
             JsonWebTokenEvaluator jsonWebTokenEvaluator,
-            @Qualifier("redisRefreshTokenStorage") RefreshTokenStorage refreshTokenStorage
+            RefreshTokenStorage refreshTokenStorage
     ) {
         this.tokenProperties = tokenProperties;
         this.jsonWebTokenProvider = jsonWebTokenProvider;
