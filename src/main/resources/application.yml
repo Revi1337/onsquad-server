@@ -165,6 +165,26 @@ onsquad:
         expression:
           0 0 0 * * 1
 
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 7
+      slidingWindowSize: 10
+
+      failureRateThreshold: 40
+      waitDurationInOpenState: 10s
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      permittedNumberOfCallsInHalfOpenState: 5
+
+      eventConsumerBufferSize: 10
+
+      recordExceptions:
+        - org.springframework.dao.DataAccessException
+  instances:
+    redisThrottleCircuitBreaker:
+      baseConfig: default
+
 management:
   server:
     port: 9097
