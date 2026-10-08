@@ -29,6 +29,11 @@ public class CrewLeaderboardCacheEvictor {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationEvent() {
         log.info("[Cache-Evict] Evicting Crew ranking caches on startup. Patterns: {}", DESTROY_KEY_PATTERNS);
-        RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, DESTROY_KEY_PATTERNS);
+        try {
+            RedisCacheEvictor.scanKeysAndUnlink(stringRedisTemplate, DESTROY_KEY_PATTERNS);
+        } catch (RuntimeException e) {
+            log.error("[Cache-Evict] Failed to evict caches on startup. Patterns: {}, {}: {}",
+                    DESTROY_KEY_PATTERNS, e.getClass().getSimpleName(), e.getMessage(), e);
+        }
     }
 }

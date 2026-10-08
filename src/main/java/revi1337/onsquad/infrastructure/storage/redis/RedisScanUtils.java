@@ -9,13 +9,11 @@ import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-@Slf4j
 @NoArgsConstructor(access = PRIVATE)
 public final class RedisScanUtils {
 
@@ -74,7 +72,7 @@ public final class RedisScanUtils {
      * <ul>
      * <li>Uses {@link RedisCallback} directly to ensure efficient Redis connection pool management.</li>
      * <li>Utilizes a try-with-resources block with {@link Cursor} to prevent connection leaks by ensuring the cursor is closed after iteration.</li>
-     * <li>Gracefully handles exceptions by logging errors, ensuring that a single scan failure does not crash the application.</li>
+     * <li>Does not swallow exceptions. Redis failures (connection or scan errors) propagate to the caller, so the caller decides whether to degrade or fail.</li>
      * </ul>
      *
      * @param stringRedisTemplate the Redis template to execute commands
@@ -93,8 +91,6 @@ public final class RedisScanUtils {
                 while (cursor.hasNext()) {
                     consumer.accept(new String(cursor.next(), StandardCharsets.UTF_8));
                 }
-            } catch (Exception e) {
-                log.error("Redis scan execution failed. pattern: {}, count: {}", pattern, scanSize.getCount(), e);
             }
             return null;
         });

@@ -44,6 +44,8 @@ public final class RedisCacheEvictor {
      * Scans for keys matching the given pattern and deletes them asynchronously using the {@code UNLINK} command with a specified {@link ScanSize} strategy.
      * <p>
      * This method utilizes a cursor-based scan to identify keys safely without blocking the Redis event loop.
+     * <p>
+     * Redis failures are <b>not</b> swallowed; they propagate to the caller, which knows whether the eviction is best-effort or must succeed.
      *
      * @param stringRedisTemplate the Redis template for execution
      * @param pattern             the key pattern to match
@@ -53,18 +55,16 @@ public final class RedisCacheEvictor {
         if (ObjectUtils.isEmpty(pattern)) {
             return;
         }
-        try {
-            List<String> keys = RedisScanUtils.scanKeys(stringRedisTemplate, pattern, scanSize);
-            unlinkKeys(stringRedisTemplate, keys);
-        } catch (RuntimeException e) {
-            log.error("{}: cannot destroy redis-cache for pattern {}", RedisHealthLoggingIndicator.REDIS_HEALTH_CHECK_ERROR_LOG, pattern);
-        }
+        List<String> keys = RedisScanUtils.scanKeys(stringRedisTemplate, pattern, scanSize);
+        unlinkKeys(stringRedisTemplate, keys);
     }
 
     /**
      * Scans for keys matching multiple patterns and performs a bulk non-blocking deletion.
      * <p>
      * Identifies unique keys matching any of the provided patterns and reclaims memory in a background thread.
+     * <p>
+     * Redis failures are <b>not</b> swallowed; they propagate to the caller, which knows whether the eviction is best-effort or must succeed.
      *
      * @param stringRedisTemplate the Redis template for execution
      * @param patterns            the list of patterns to scan (e.g., ["crew:*", "announcement:*"])
@@ -73,12 +73,8 @@ public final class RedisCacheEvictor {
         if (CollectionUtils.isEmpty(patterns)) {
             return;
         }
-        try {
-            List<String> keys = RedisScanUtils.scanKeys(stringRedisTemplate, patterns);
-            unlinkKeys(stringRedisTemplate, keys);
-        } catch (RuntimeException e) {
-            log.error("{}: cannot destroy redis-cache for patterns {}", RedisHealthLoggingIndicator.REDIS_HEALTH_CHECK_ERROR_LOG, patterns);
-        }
+        List<String> keys = RedisScanUtils.scanKeys(stringRedisTemplate, patterns);
+        unlinkKeys(stringRedisTemplate, keys);
     }
 
     /**
