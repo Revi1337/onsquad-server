@@ -90,7 +90,6 @@ onsquad:
         secret-key: secret-key
 
     refresh-token:
-      backup-path: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
       attributes:
         expired: 365d
         secret-key: secret-key
