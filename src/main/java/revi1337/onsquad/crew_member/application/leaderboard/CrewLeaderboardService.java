@@ -16,6 +16,7 @@ import revi1337.onsquad.crew_member.infrastructure.discord.ApplyScoreFailNotific
 public class CrewLeaderboardService {
 
     public static final int MAX_RETRY_COUNT = 3;
+    private static final String RECOVER_LOG_FORMAT = "[Leaderboard 점수 반영 최종 실패] crewId={}, memberId={}, activity={}, applyAt={}, {}: {}";
 
     private final CrewLeaderboardManager delegate;
     private final ApplyScoreFailNotificationProvider notificationProvider;
@@ -27,7 +28,7 @@ public class CrewLeaderboardService {
 
     @Recover
     public void recover(Throwable throwable, Long crewId, Long memberId, Instant applyAt, CrewActivity crewActivity) {
-        log.error("Final failure updating ranking score...");
+        log.error(RECOVER_LOG_FORMAT, crewId, memberId, crewActivity.name(), applyAt, throwable.getClass().getSimpleName(), throwable.getMessage(), throwable);
         notificationProvider.sendExceedRetryAlert(crewId, memberId, crewActivity);
     }
 }
