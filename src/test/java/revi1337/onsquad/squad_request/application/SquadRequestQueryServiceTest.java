@@ -18,6 +18,7 @@ import static revi1337.onsquad.common.fixture.SquadMemberFixture.createGeneralSq
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,14 +26,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import revi1337.onsquad.category.domain.vo.CategoryType;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
@@ -45,7 +50,11 @@ import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
 import revi1337.onsquad.squad_request.domain.repository.SquadRequestJpaRepository;
 
 @Sql({"/h2-truncate.sql", "/h2-category.sql"})
+@ContextConfiguration(initializers = RedisTestContainerInitializer.class)
 class SquadRequestQueryServiceTest extends ApplicationLayerTestSupport {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private MemberJpaRepository memberRepository;
@@ -67,6 +76,11 @@ class SquadRequestQueryServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private SquadRequestQueryService squadRequestQueryService;
+
+    @BeforeEach
+    void setUp() {
+        RedisCacheEvictor.flushAll(stringRedisTemplate);
+    }
 
     @Nested
     @DisplayName("스쿼드별 전체 신청 목록 조회")

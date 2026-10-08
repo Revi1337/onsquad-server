@@ -8,18 +8,23 @@ import static revi1337.onsquad.common.fixture.SquadMemberFixture.createGeneralSq
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.application.response.SquadWithLeaderStateResponse;
@@ -27,7 +32,11 @@ import revi1337.onsquad.squad.application.response.SquadWithStatesResponse;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 
+@ContextConfiguration(initializers = RedisTestContainerInitializer.class)
 class SquadQueryServiceTest extends ApplicationLayerTestSupport {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private MemberJpaRepository memberRepository;
@@ -40,6 +49,11 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private SquadQueryService squadQueryService;
+
+    @BeforeEach
+    void setUp() {
+        RedisCacheEvictor.flushAll(stringRedisTemplate);
+    }
 
     @Nested
     @DisplayName("스쿼드 상세 조회")

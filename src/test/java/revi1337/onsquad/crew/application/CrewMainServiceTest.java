@@ -9,10 +9,14 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
+import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 import revi1337.onsquad.crew.application.dto.response.CrewManageResponse;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
@@ -20,13 +24,18 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
 import revi1337.onsquad.crew_request.domain.entity.CrewRequest;
 import revi1337.onsquad.crew_request.domain.repository.CrewRequestJpaRepository;
+import revi1337.onsquad.infrastructure.storage.redis.RedisCacheEvictor;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.model.SquadCreateSpec;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 
+@ContextConfiguration(initializers = RedisTestContainerInitializer.class)
 class CrewMainServiceTest extends ApplicationLayerTestSupport {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private MemberJpaRepository memberJpaRepository;
@@ -42,6 +51,11 @@ class CrewMainServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private CrewMainService crewMainService;
+
+    @BeforeEach
+    void setUp() {
+        RedisCacheEvictor.flushAll(stringRedisTemplate);
+    }
 
     @Test
     @DisplayName("매니저 권한의 유저가 크루 관리 정보를 조회하면 수정/삭제 권한은 없지만 통계 정보는 정상 조회된다.")
