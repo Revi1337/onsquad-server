@@ -23,11 +23,11 @@ public class NotificationService {
     private final RedisNotificationMessageManager redisMessageManager;
 
     public NamedSseEmitter connect(Long userId, @Nullable Long lastEventId) {
+        redisMessageManager.subscribe(userId, RedisTopic.SSE_NOTIFICATION);
         NamedSseEmitter emitter = sseEmitterManager.createEmitter(userId, SseTopic.USER,
                 () -> redisMessageManager.disableSubscribe(userId, RedisTopic.SSE_NOTIFICATION));
         sseEmitterManager.send(emitter, notificationMessageMapper.from(new ConnectionNotification()));
         sseEmitterManager.sends(emitter, notificationMessageRecoverer.recover(userId, lastEventId));
-        redisMessageManager.subscribe(userId, RedisTopic.SSE_NOTIFICATION);
         return emitter;
     }
 
