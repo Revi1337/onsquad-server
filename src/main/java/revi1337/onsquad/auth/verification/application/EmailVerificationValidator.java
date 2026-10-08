@@ -10,10 +10,10 @@ import revi1337.onsquad.auth.verification.domain.error.VerificationException;
 @RequiredArgsConstructor
 public class EmailVerificationValidator {
 
-    private final VerificationCodeStorage redisVerificationCodeStorage;
+    private final VerificationCodeStorage verificationCodeStorage;
 
     public void ensureEmailVerified(String email) {
-        if (!redisVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)) {
+        if (!verificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)) {
             throw new VerificationException.UnAuthenticateVerificationCode(VerificationErrorCode.EMAIL_UNAUTHENTICATE);
         }
     }

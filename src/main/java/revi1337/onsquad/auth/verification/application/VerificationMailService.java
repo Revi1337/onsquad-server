@@ -27,11 +27,11 @@ public class VerificationMailService {
 
     public VerificationMailService(
             @Qualifier("verificationCodeEmailSender") EmailSender emailSender,
-            VerificationCodeStorage redisVerificationCodeStorage,
+            VerificationCodeStorage verificationCodeStorage,
             VerificationCodeGenerator verificationCodeGenerator
     ) {
         this.emailSender = emailSender;
-        this.verificationCodeStorage = redisVerificationCodeStorage;
+        this.verificationCodeStorage = verificationCodeStorage;
         this.verificationCodeGenerator = verificationCodeGenerator;
     }
 

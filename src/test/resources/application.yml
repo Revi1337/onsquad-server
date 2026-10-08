@@ -186,6 +186,8 @@ resilience4j.circuitbreaker:
       baseConfig: default
     redisCacheCircuitBreaker:
       baseConfig: default
+    redisAuthCircuitBreaker:
+      baseConfig: default
 
 logging:
   level:

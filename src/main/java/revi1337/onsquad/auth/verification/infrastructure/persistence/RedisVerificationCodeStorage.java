@@ -12,7 +12,6 @@ import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
-import revi1337.onsquad.infrastructure.storage.redis.RedisSafeExecutor;
 
 @Component
 @RequiredArgsConstructor
@@ -57,11 +56,11 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
         String redisKey = getKey(email);
         long expiredTime = getExpectExpiredTime(expireDuration);
 
-        RedisSafeExecutor.run(() -> stringRedisTemplate.execute(
+        stringRedisTemplate.execute(
                 ATOMIC_SAVE_VERIFICATION_SCRIPT,
                 Collections.singletonList(redisKey),
                 email, code, status.name(), String.valueOf(expiredTime), String.valueOf(expireDuration.toMillis())
-        ));
+        );
 
         return expiredTime;
     }
@@ -69,9 +68,7 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     @Override
     public boolean isValidVerificationCode(String email, String code) {
         String redisKey = getKey(email);
-        Object extractedCode = RedisSafeExecutor.supply(
-                () -> stringRedisTemplate.opsForHash().get(redisKey, "code")
-        );
+        Object extractedCode = stringRedisTemplate.opsForHash().get(redisKey, "code");
 
         return Objects.equals(extractedCode, code);
     }
@@ -80,12 +77,12 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     public boolean markVerificationStatus(String email, VerificationStatus status, Duration expireDuration) {
         String redisKey = getKey(email);
 
-        return RedisSafeExecutor.supply(() -> stringRedisTemplate.execute(
+        return stringRedisTemplate.execute(
                 ATOMIC_MARK_VERIFICATION_SCRIPT,
                 Collections.singletonList(redisKey),
                 status.name(),
                 String.valueOf(expireDuration.toMillis())
-        ));
+        );
     }
 
     @Override
@@ -104,9 +101,7 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     public boolean isMarkedVerificationStatusWith(String email, VerificationStatus status) {
         String redisKey = getKey(email);
 
-        return RedisSafeExecutor.supply(() ->
-                Objects.equals(stringRedisTemplate.opsForHash().get(redisKey, "status"), status.name())
-        );
+        return Objects.equals(stringRedisTemplate.opsForHash().get(redisKey, "status"), status.name());
     }
 
     private String getKey(String email) {
