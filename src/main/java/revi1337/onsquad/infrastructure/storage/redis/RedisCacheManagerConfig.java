@@ -4,15 +4,15 @@ import static org.springframework.data.redis.serializer.RedisSerializationContex
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -22,6 +22,8 @@ import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 @Configuration
 public class RedisCacheManagerConfig {
 
+    private static final String REDIS_CACHE_CIRCUIT_BREAKER_NAME = "redisCacheCircuitBreaker";
+
     private final ObjectMapper collectionObjectMapper;
 
     public RedisCacheManagerConfig(@Qualifier("collectionObjectMapper") ObjectMapper collectionObjectMapper) {
@@ -29,11 +31,16 @@ public class RedisCacheManagerConfig {
     }
 
     @Bean
-    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(defaultConfigurationWithoutDefaultTyping())
-                .withInitialCacheConfigurations(initConfiguration())
-                .build();
+    public CircuitBreakerRedisCacheManager redisCacheManager(
+            RedisConnectionFactory redisConnectionFactory,
+            CircuitBreakerRegistry circuitBreakerRegistry
+    ) {
+        return new CircuitBreakerRedisCacheManager(
+                RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),
+                defaultConfigurationWithoutDefaultTyping(),
+                initConfiguration(),
+                circuitBreakerRegistry.circuitBreaker(REDIS_CACHE_CIRCUIT_BREAKER_NAME)
+        );
     }
 
     private Map<String, RedisCacheConfiguration> initConfiguration() {

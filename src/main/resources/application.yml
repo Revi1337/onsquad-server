@@ -184,6 +184,8 @@ resilience4j.circuitbreaker:
   instances:
     redisThrottleCircuitBreaker:
       baseConfig: default
+    redisCacheCircuitBreaker:
+      baseConfig: default
 
 management:
   server:
