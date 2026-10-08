@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 import revi1337.onsquad.infrastructure.storage.redis.RedisSafeExecutor;
 
-@Order(1)
 @Component
 @RequiredArgsConstructor
 public class RedisVerificationCodeStorage implements VerificationCodeStorage {

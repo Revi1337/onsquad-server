@@ -68,10 +68,7 @@ jobs:
             if [[ ! -f $BACKUP_DIR/recycle_bin_backup.txt ]]; then
                 echo '' > $BACKUP_DIR/recycle_bin_backup.txt
             fi
-            if [[ ! -f $BACKUP_DIR/verification_backup.json ]]; then
-                echo '{"snapshots":[]}' > $BACKUP_DIR/verification_backup.json
-            fi
-            
+
             echo "SPRING_PROFILE=${{ secrets.SPRING_PROFILE }}" > $SOURCE_DIR/.env
             echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }}" >> $SOURCE_DIR/.env
             

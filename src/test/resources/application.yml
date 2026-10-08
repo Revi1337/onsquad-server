@@ -56,7 +56,6 @@ spring:
 
   mail:
     code-seed: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
-    verification-code-backup-path: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
     host: smtp.gmail.com
     port: 587
     username: aaaaa

@@ -10,7 +10,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.github.benmanes.caffeine.cache.Cache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -25,14 +24,10 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.auth.verification.application.VerificationCodeGenerator;
 import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
 import revi1337.onsquad.auth.verification.application.VerificationMailService;
-import revi1337.onsquad.auth.verification.domain.VerificationCode;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
-import revi1337.onsquad.auth.verification.infrastructure.persistence.CaffeineVerificationCodeStorage;
-import revi1337.onsquad.infrastructure.storage.caffeine.TimedEntry;
 import revi1337.onsquad.auth.verification.infrastructure.persistence.RdbVerificationCodeStorage;
 import revi1337.onsquad.auth.verification.infrastructure.persistence.RedisVerificationCodeStorage;
 import revi1337.onsquad.common.application.mail.EmailSender;
@@ -110,28 +105,6 @@ class VerificationMailServiceConcurrencyTest {
             });
             verificationCodeStorage = redisVerificationCodeStorage;
             verificationMailService = new VerificationMailService(emailSender, redisVerificationCodeStorage, verificationCodeGenerator);
-        }
-
-        @Test
-        @DisplayName("동시에 10개의 인증 요청이 올 때, 단 하나만 성공(true)을 반환해야 한다.")
-        void success() {
-            invokeConcurrencyTest();
-        }
-    }
-
-    @Nested
-    @DisplayName("VerificationMailService 가 Caffeine 을 사용할 경우를 테스트한다.")
-    class whenCaffeine {
-
-        @Autowired
-        private CaffeineVerificationCodeStorage caffeineVerificationCodeStorage;
-
-        @BeforeEach
-        @SuppressWarnings("unchecked")
-        void setUp() {
-            ((Cache<String, TimedEntry<VerificationCode>>) ReflectionTestUtils.getField(caffeineVerificationCodeStorage, "verificationStore")).invalidateAll();
-            verificationCodeStorage = caffeineVerificationCodeStorage;
-            verificationMailService = new VerificationMailService(emailSender, caffeineVerificationCodeStorage, verificationCodeGenerator);
         }
 
         @Test
