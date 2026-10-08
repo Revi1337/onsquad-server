@@ -17,7 +17,7 @@ import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.SquadPolicy;
 import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
-import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
+import revi1337.onsquad.squad_category.application.SquadCategoryCacheService;
 import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.response.MyParticipantSquadResponse;
 import revi1337.onsquad.squad_member.application.response.SquadMemberResponse;
@@ -33,7 +33,7 @@ public class SquadMemberQueryService {
     private final CrewAccessor crewAccessor;
     private final CrewMemberAccessor crewMemberAccessor;
     private final SquadAccessor squadAccessor;
-    private final SquadCategoryAccessor squadCategoryAccessor;
+    private final SquadCategoryCacheService squadCategoryCacheService;
     private final SquadMemberAccessor squadMemberAccessor;
 
     public PageResponse<SquadMemberResponse> fetchParticipants(Long memberId, Long squadId, Pageable pageable) {
@@ -54,7 +54,7 @@ public class SquadMemberQueryService {
         List<MyParticipantSquad> squads = squadMemberAccessor.fetchParticipantSquads(memberId);
         SquadLinkableGroup<MyParticipantSquad> squadGroup = new SquadLinkableGroup<>(squads);
         if (squadGroup.isNotEmpty()) {
-            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
+            SquadCategories categories = squadCategoryCacheService.getCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 

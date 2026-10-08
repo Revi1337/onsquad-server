@@ -20,7 +20,7 @@ import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.squad.application.SquadAccessor;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
-import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
+import revi1337.onsquad.squad_category.application.SquadCategoryCacheService;
 import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 
 @Service
@@ -33,7 +33,7 @@ public class CrewMainService {
     private final CrewRankerCacheService crewRankerCacheService;
     private final AnnounceCacheService announceCacheService;
     private final SquadAccessor squadAccessor;
-    private final SquadCategoryAccessor squadCategoryAccessor;
+    private final SquadCategoryCacheService squadCategoryCacheService;
 
     public CrewMainResponse fetchMain(Long memberId, Long crewId, Pageable pageable) {
         List<AnnounceResponse> announces = announceCacheService.getDefaultAnnounces(crewId);
@@ -60,7 +60,7 @@ public class CrewMainService {
     private SquadLinkableGroup<SquadDetail> getSquads(Long crewId, Pageable pageable) {
         Page<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, null, pageable);
         SquadLinkableGroup<SquadDetail> squadGroup = new SquadLinkableGroup<>(squads.getContent());
-        SquadCategories squadCategories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
+        SquadCategories squadCategories = squadCategoryCacheService.getCategoriesBySquadIdIn(squadGroup.getSquadIds());
         squadGroup.linkCategories(squadCategories);
 
         return squadGroup;

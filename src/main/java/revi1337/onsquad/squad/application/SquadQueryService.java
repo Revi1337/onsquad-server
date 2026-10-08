@@ -20,7 +20,7 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 import revi1337.onsquad.squad.domain.model.SimpleSquad;
 import revi1337.onsquad.squad.domain.model.SquadDetail;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
-import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
+import revi1337.onsquad.squad_category.application.SquadCategoryCacheService;
 import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.SquadMemberPolicy;
@@ -34,7 +34,7 @@ public class SquadQueryService {
 
     private final CrewMemberAccessor crewMemberAccessor;
     private final SquadAccessor squadAccessor;
-    private final SquadCategoryAccessor squadCategoryAccessor;
+    private final SquadCategoryCacheService squadCategoryCacheService;
     private final SquadRequestAccessor squadRequestAccessor;
     private final SquadMemberAccessor squadMemberAccessor;
 
@@ -69,7 +69,7 @@ public class SquadQueryService {
         Page<SquadDetail> squads = squadAccessor.fetchSquadsWithDetailByCrewIdAndCategory(crewId, categoryType, pageable);
         SquadLinkableGroup<SquadDetail> squadGroup = new SquadLinkableGroup<>(squads.getContent());
         if (squadGroup.isNotEmpty()) {
-            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
+            SquadCategories categories = squadCategoryCacheService.getCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 
@@ -86,7 +86,7 @@ public class SquadQueryService {
         Page<SimpleSquad> squads = squadAccessor.fetchSquadsByCrewId(crewId, pageable);
         SquadLinkableGroup<SimpleSquad> squadGroup = new SquadLinkableGroup<>(squads.getContent());
         if (squadGroup.isNotEmpty()) {
-            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(squadGroup.getSquadIds());
+            SquadCategories categories = squadCategoryCacheService.getCategoriesBySquadIdIn(squadGroup.getSquadIds());
             squadGroup.linkCategories(categories);
         }
 

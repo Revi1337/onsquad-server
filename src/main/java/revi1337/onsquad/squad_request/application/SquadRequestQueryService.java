@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.squad.domain.model.SquadLinkableGroup;
-import revi1337.onsquad.squad_category.application.SquadCategoryAccessor;
+import revi1337.onsquad.squad_category.application.SquadCategoryCacheService;
 import revi1337.onsquad.squad_category.domain.model.SquadCategories;
 import revi1337.onsquad.squad_member.application.SquadMemberAccessor;
 import revi1337.onsquad.squad_member.domain.entity.SquadMember;
@@ -22,7 +22,7 @@ public class SquadRequestQueryService {
 
     private final SquadRequestAccessor squadRequestAccessor;
     private final SquadMemberAccessor squadMemberAccessor;
-    private final SquadCategoryAccessor squadCategoryAccessor;
+    private final SquadCategoryCacheService squadCategoryCacheService;
 
     public PageResponse<SquadRequestResponse> fetchAllRequests(Long memberId, Long squadId, Pageable pageable) {
         SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
@@ -39,7 +39,7 @@ public class SquadRequestQueryService {
 
         SquadLinkableGroup<MySquadRequestResponse> group = new SquadLinkableGroup<>(response.getContent());
         if (group.isNotEmpty()) {
-            SquadCategories categories = squadCategoryAccessor.fetchCategoriesBySquadIdIn(group.getSquadIds());
+            SquadCategories categories = squadCategoryCacheService.getCategoriesBySquadIdIn(group.getSquadIds());
             group.linkCategories(categories);
         }
 
