@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
@@ -84,6 +85,22 @@ class CrewCommandServiceFacadeTest {
                     .isInstanceOf(CrewBusinessException.class);
             verify(eventPublisher, times(1)).publishEvent(any(FileDeleteEvent.class));
         }
+
+        @Test
+        @DisplayName("크루 생성 중 DB 예외가 발생해도 업로드된 S3 파일을 삭제하는 이벤트를 발행한다.")
+        void publishesFileDeleteEvent_whenUnexpectedExceptionOccurs() {
+            Long memberId = 1L;
+            CrewCreateDto dto = mock(CrewCreateDto.class);
+            MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
+            String uploadedUrl = "https://s3.url/test.png";
+            given(crewFileStorageManager.upload(file)).willReturn(uploadedUrl);
+            willThrow(new DataIntegrityViolationException("duplicate"))
+                    .given(crewCommandService).newCrew(memberId, dto, uploadedUrl);
+
+            assertThatThrownBy(() -> facade.newCrew(memberId, dto, file))
+                    .isInstanceOf(DataIntegrityViolationException.class);
+            verify(eventPublisher, times(1)).publishEvent(any(FileDeleteEvent.class));
+        }
     }
 
     @Nested
@@ -130,6 +147,22 @@ class CrewCommandServiceFacadeTest {
 
             assertThatThrownBy(() -> facade.updateImage(memberId, crewId, file))
                     .isInstanceOf(CrewBusinessException.class);
+            verify(eventPublisher, times(1)).publishEvent(any(FileDeleteEvent.class));
+        }
+
+        @Test
+        @DisplayName("이미지 업데이트 중 DB 예외가 발생해도 업로드된 S3 파일을 삭제하는 이벤트를 발행한다.")
+        void publishesFileDeleteEvent_whenUnexpectedExceptionOccurs() {
+            Long memberId = 1L;
+            Long crewId = 2L;
+            MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
+            String uploadedUrl = "https://s3.url/test.png";
+            given(crewFileStorageManager.upload(file)).willReturn(uploadedUrl);
+            willThrow(new DataIntegrityViolationException("conflict"))
+                    .given(crewCommandService).updateImage(memberId, crewId, uploadedUrl);
+
+            assertThatThrownBy(() -> facade.updateImage(memberId, crewId, file))
+                    .isInstanceOf(DataIntegrityViolationException.class);
             verify(eventPublisher, times(1)).publishEvent(any(FileDeleteEvent.class));
         }
     }

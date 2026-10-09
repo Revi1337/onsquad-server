@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import revi1337.onsquad.crew.application.dto.CrewCreateDto;
 import revi1337.onsquad.crew.application.dto.CrewUpdateDto;
-import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.crew.infrastructure.CrewFileStorageManager;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 
@@ -27,7 +26,7 @@ public class CrewCommandServiceFacade {
         try {
             imageUrl = fileStorageManager.upload(file);
             crewCommandService.newCrew(memberId, dto, imageUrl);
-        } catch (CrewBusinessException exception) {
+        } catch (RuntimeException exception) {
             if (imageUrl != null) {
                 eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
             }
@@ -47,7 +46,7 @@ public class CrewCommandServiceFacade {
         try {
             imageUrl = fileStorageManager.upload(file);
             crewCommandService.updateImage(memberId, crewId, imageUrl);
-        } catch (CrewBusinessException exception) {
+        } catch (RuntimeException exception) {
             if (imageUrl != null) {
                 eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
             }
