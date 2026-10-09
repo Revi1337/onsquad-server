@@ -25,6 +25,7 @@ import revi1337.onsquad.squad_member.domain.entity.SquadMember;
 public class SquadCommandService {
 
     private final CrewMemberAccessor crewMemberAccessor;
+    private final SquadAccessor squadAccessor;
     private final SquadRepository squadRepository;
     private final SquadCategoryRepository squadCategoryRepository;
     private final SquadMemberAccessor squadMemberAccessor;
@@ -41,9 +42,12 @@ public class SquadCommandService {
     }
 
     public void deleteSquad(Long memberId, Long squadId) {
-        SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
-        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, me.getSquad().getCrew().getId());
-        SquadPolicy.ensureDeletable(me, meInCrew);
+        Squad squad = squadAccessor.getById(squadId);
+        CrewMember meInCrew = crewMemberAccessor.getByMemberIdAndCrewId(memberId, squad.getCrew().getId());
+        if (!SquadPolicy.canDestroy(meInCrew)) {
+            SquadMember me = squadMemberAccessor.getByMemberIdAndSquadId(memberId, squadId);
+            SquadPolicy.ensureDeletable(me, meInCrew);
+        }
         squadContextHandler.disposeContext(squadId);
     }
 
