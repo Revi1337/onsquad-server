@@ -94,6 +94,7 @@ ext {
 }
 
 test {
+    maxHeapSize = '1g'
     jvmArgs(ENABLE_PREVIEW)
     systemProperty("spring.profiles.active", gradleProfile)
     useJUnitPlatform()
