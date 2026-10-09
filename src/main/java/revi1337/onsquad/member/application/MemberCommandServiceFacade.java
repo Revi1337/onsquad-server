@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
+import revi1337.onsquad.member.domain.error.MemberBusinessException;
 import revi1337.onsquad.member.infrastructure.MemberFileStorageManager;
 
 @Service
@@ -39,7 +39,7 @@ public class MemberCommandServiceFacade {
         try {
             imageUrl = fileStorageManager.upload(file);
             memberCommandService.updateImage(memberId, imageUrl);
-        } catch (CrewBusinessException exception) {
+        } catch (MemberBusinessException exception) {
             if (imageUrl != null) {
                 eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
             }

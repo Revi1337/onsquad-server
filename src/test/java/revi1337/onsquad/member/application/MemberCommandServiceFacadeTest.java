@@ -16,8 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockMultipartFile;
-import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
+import revi1337.onsquad.member.domain.error.MemberBusinessException;
 import revi1337.onsquad.member.infrastructure.MemberFileStorageManager;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,11 +41,11 @@ class MemberCommandServiceFacadeTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
         String uploadedUrl = "https://s3.url/test.png";
         given(memberFileStorageManager.upload(any())).willReturn(uploadedUrl);
-        willThrow(CrewBusinessException.NotFound.class)
+        willThrow(MemberBusinessException.NotFound.class)
                 .given(memberCommandService).updateImage(anyLong(), anyString());
 
         assertThatThrownBy(() -> facade.updateImage(1L, file))
-                .isInstanceOf(CrewBusinessException.class);
+                .isInstanceOf(MemberBusinessException.class);
         verify(eventPublisher).publishEvent(any(FileDeleteEvent.class));
     }
 }
