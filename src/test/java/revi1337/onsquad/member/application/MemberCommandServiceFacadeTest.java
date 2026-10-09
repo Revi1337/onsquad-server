@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mock.web.MockMultipartFile;
 import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.domain.error.MemberBusinessException;
@@ -46,6 +47,21 @@ class MemberCommandServiceFacadeTest {
 
         assertThatThrownBy(() -> facade.updateImage(1L, file))
                 .isInstanceOf(MemberBusinessException.class);
+        verify(eventPublisher).publishEvent(any(FileDeleteEvent.class));
+    }
+
+    @Test
+    @DisplayName("이미지 업데이트 중 DB 예외가 발생해도 업로드된 파일을 삭제하는 이벤트를 발행한다.")
+    void publishesFileDeleteEvent_whenUnexpectedExceptionOccurs() {
+        MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
+        String uploadedUrl = "https://s3.url/test.png";
+        given(memberFileStorageManager.upload(any())).willReturn(uploadedUrl);
+        willThrow(new DataIntegrityViolationException("conflict"))
+                .given(memberCommandService).updateImage(anyLong(), anyString());
+
+        assertThatThrownBy(() -> facade.updateImage(1L, file))
+                .isInstanceOf(DataIntegrityViolationException.class);
+
         verify(eventPublisher).publishEvent(any(FileDeleteEvent.class));
     }
 }

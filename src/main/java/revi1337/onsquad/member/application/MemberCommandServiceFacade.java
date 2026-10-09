@@ -8,7 +8,6 @@ import revi1337.onsquad.infrastructure.aws.s3.event.FileDeleteEvent;
 import revi1337.onsquad.member.application.dto.MemberCreateDto;
 import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
-import revi1337.onsquad.member.domain.error.MemberBusinessException;
 import revi1337.onsquad.member.infrastructure.MemberFileStorageManager;
 
 @Service
@@ -39,7 +38,7 @@ public class MemberCommandServiceFacade {
         try {
             imageUrl = fileStorageManager.upload(file);
             memberCommandService.updateImage(memberId, imageUrl);
-        } catch (MemberBusinessException exception) {
+        } catch (RuntimeException exception) {
             if (imageUrl != null) {
                 eventPublisher.publishEvent(new FileDeleteEvent(imageUrl));
             }
