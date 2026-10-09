@@ -190,6 +190,40 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
         }
     }
 
+    @Nested
+    class cancelMyRequest {
+
+        @Test
+        @DisplayName("본인이 신청한 내역을 취소하면 삭제된 건수를 반환한다.")
+        void success() {
+            Member revi = memberRepository.save(createRevi());
+            Member andong = memberRepository.save(createAndong());
+            Crew crew = crewRepository.save(createCrew(revi));
+            crewRequestRepository.save(createCrewRequest(crew, andong));
+            clearPersistenceContext();
+
+            int deleted = crewRequestCommandService.cancelMyRequest(andong.getId(), crew.getId());
+
+            assertThat(deleted).isEqualTo(1);
+            assertThat(crewRequestRepository.findAll()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("일치하는 신청 내역이 없으면 0을 반환한다.")
+        void returnsZero_whenNoRequestMatches() {
+            Member revi = memberRepository.save(createRevi());
+            Member andong = memberRepository.save(createAndong());
+            Crew crew = crewRepository.save(createCrew(revi));
+            crewRequestRepository.save(createCrewRequest(crew, andong));
+            clearPersistenceContext();
+
+            int deleted = crewRequestCommandService.cancelMyRequest(andong.getId(), 100L);
+
+            assertThat(deleted).isZero();
+            assertThat(crewRequestRepository.findAll()).hasSize(1);
+        }
+    }
+
     private CrewRequest createCrewRequest(Crew crew, Member andong) {
         return CrewRequest.of(crew, andong, LocalDateTime.now());
     }

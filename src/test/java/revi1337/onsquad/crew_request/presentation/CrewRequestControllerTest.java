@@ -174,7 +174,7 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
         @DisplayName("가입 신청 취소에 성공한다.")
         void success() throws Exception {
             Long crewId = 1L;
-            doNothing().when(crewRequestCommandService).cancelMyRequest(anyLong(), eq(crewId));
+            when(crewRequestCommandService.cancelMyRequest(anyLong(), eq(crewId))).thenReturn(1);
 
             mockMvc.perform(delete("/api/crews/{crewId}/requests/me", crewId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)

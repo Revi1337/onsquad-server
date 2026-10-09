@@ -27,6 +27,9 @@ public class CrewRequestCancelHistoryRecorder implements HistoryRecorder {
 
     @Override
     public void record(Object[] args, Object result) {
+        if ((int) result == 0) {
+            return;
+        }
         Crew crew = crewRepository.findById((Long) args[1]).orElseThrow();
         historyRepository.save(HistoryEntity.builder()
                 .memberId((Long) args[0])

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static revi1337.onsquad.common.fixture.CrewFixture.createCrew;
 import static revi1337.onsquad.common.fixture.MemberFixture.createMember;
 import static revi1337.onsquad.common.fixture.SquadFixture.createSquad;
@@ -72,5 +73,16 @@ class SquadRequestCancelHistoryRecorderTest {
             assertThat(entity.getMessage()).isEqualTo("[우리 크루 | 취소할 스쿼드] 스쿼드 합류 요청을 취소했습니다.");
             return true;
         }));
+    }
+
+    @Test
+    @DisplayName("취소된 신청이 없으면 이력을 저장하지 않는다")
+    void doesNotRecord_whenNothingWasCanceled() {
+        Object[] args = {1L, 10L};
+        Object result = 0;
+
+        historyRecorder.record(args, result);
+
+        verifyNoInteractions(squadRepository, historyRepository);
     }
 }

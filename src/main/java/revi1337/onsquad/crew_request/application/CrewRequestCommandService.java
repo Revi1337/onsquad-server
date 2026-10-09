@@ -63,7 +63,7 @@ public class CrewRequestCommandService {
         eventPublisher.publishEvent(new RequestRejected(crewId, memberId, request.getRequesterId()));
     }
 
-    public void cancelMyRequest(Long memberId, Long crewId) {
-        crewRequestRepository.deleteByCrewIdAndMemberId(crewId, memberId);
+    public int cancelMyRequest(Long memberId, Long crewId) {
+        return crewRequestRepository.deleteByCrewIdAndMemberId(crewId, memberId);
     }
 }

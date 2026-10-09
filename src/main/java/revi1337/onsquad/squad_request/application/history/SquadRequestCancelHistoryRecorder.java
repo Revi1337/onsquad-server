@@ -27,6 +27,9 @@ public class SquadRequestCancelHistoryRecorder implements HistoryRecorder {
 
     @Override
     public void record(Object[] args, Object result) {
+        if ((int) result == 0) {
+            return;
+        }
         Squad squad = squadRepository.findWithCrewById((Long) args[1]).orElseThrow();
         historyRepository.save(HistoryEntity.builder()
                 .memberId((Long) args[0])
