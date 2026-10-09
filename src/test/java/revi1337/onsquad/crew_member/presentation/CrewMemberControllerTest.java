@@ -36,6 +36,7 @@ import revi1337.onsquad.common.PresentationLayerTestSupport;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.crew.application.dto.response.SimpleCrewResponse;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
+import revi1337.onsquad.crew_member.application.CrewMemberCommandServiceFacade;
 import revi1337.onsquad.crew_member.application.CrewMemberQueryService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.crew_member.application.response.CrewMemberStates;
@@ -48,6 +49,9 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
 
     @MockBean
     private CrewMemberCommandService crewMemberCommandService;
+
+    @MockBean
+    private CrewMemberCommandServiceFacade crewMemberCommandServiceFacade;
 
     @MockBean
     private CrewMemberQueryService crewMemberQueryService;
@@ -95,7 +99,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long crewId = 1L;
             Long targetMemberId = 2L;
-            doNothing().when(crewMemberCommandService).delegateOwner(anyLong(), eq(crewId), eq(targetMemberId));
+            doNothing().when(crewMemberCommandServiceFacade).delegateOwner(anyLong(), eq(crewId), eq(targetMemberId));
 
             mockMvc.perform(patch("/api/crews/{crewId}/members/{targetMemberId}/owner", crewId, targetMemberId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
@@ -147,7 +151,7 @@ class CrewMemberControllerTest extends PresentationLayerTestSupport {
         void success() throws Exception {
             Long crewId = 1L;
             Long targetMemberId = 3L;
-            doNothing().when(crewMemberCommandService).kickOutMember(anyLong(), eq(crewId), eq(targetMemberId));
+            doNothing().when(crewMemberCommandServiceFacade).kickOutMember(anyLong(), eq(crewId), eq(targetMemberId));
 
             mockMvc.perform(delete("/api/crews/{crewId}/members/{targetMemberId}", crewId, targetMemberId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)

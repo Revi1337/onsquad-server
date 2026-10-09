@@ -15,6 +15,7 @@ import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.presentation.support.AdaptivePageable;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
+import revi1337.onsquad.crew_member.application.CrewMemberCommandServiceFacade;
 import revi1337.onsquad.crew_member.application.CrewMemberQueryService;
 import revi1337.onsquad.crew_member.application.response.CrewMemberResponse;
 import revi1337.onsquad.crew_member.application.response.MyParticipantCrewResponse;
@@ -25,6 +26,7 @@ import revi1337.onsquad.crew_member.application.response.MyParticipantCrewRespon
 public class CrewMemberController {
 
     private final CrewMemberCommandService crewMemberCommandService;
+    private final CrewMemberCommandServiceFacade crewMemberCommandServiceFacade;
     private final CrewMemberQueryService crewMemberQueryService;
 
     @GetMapping("/crews/{crewId}/members")
@@ -44,7 +46,7 @@ public class CrewMemberController {
             @PathVariable Long targetMemberId,
             @Authenticate CurrentMember currentMember
     ) {
-        crewMemberCommandService.delegateOwner(currentMember.id(), crewId, targetMemberId);
+        crewMemberCommandServiceFacade.delegateOwner(currentMember.id(), crewId, targetMemberId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
@@ -65,7 +67,7 @@ public class CrewMemberController {
             @PathVariable Long targetMemberId,
             @Authenticate CurrentMember currentMember
     ) {
-        crewMemberCommandService.kickOutMember(currentMember.id(), crewId, targetMemberId);
+        crewMemberCommandServiceFacade.kickOutMember(currentMember.id(), crewId, targetMemberId);
 
         return ResponseEntity.ok().body(RestResponse.noContent());
     }
