@@ -15,35 +15,35 @@ public abstract class MemberDomainException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class InvalidEmailFormat extends MemberBusinessException {
+    public static class InvalidEmailFormat extends MemberDomainException {
 
         public InvalidEmailFormat(ErrorCode errorCode) {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 
-    public static class InvalidPasswordFormat extends MemberBusinessException {
+    public static class InvalidPasswordFormat extends MemberDomainException {
 
         public InvalidPasswordFormat(ErrorCode errorCode) {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }
 
-    public static class InvalidNicknameLength extends MemberBusinessException {
+    public static class InvalidNicknameLength extends MemberDomainException {
 
         public InvalidNicknameLength(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
 
-    public static class InvalidIntroduceLength extends MemberBusinessException {
+    public static class InvalidIntroduceLength extends MemberDomainException {
 
         public InvalidIntroduceLength(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
         }
     }
 
-    public static class InvalidMbti extends MemberBusinessException {
+    public static class InvalidMbti extends MemberDomainException {
 
         public InvalidMbti(ErrorCode errorCode) {
             super(errorCode, errorCode.getDescription());
