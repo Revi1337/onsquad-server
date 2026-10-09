@@ -30,7 +30,8 @@ public class SquadCreateHistoryRecorder implements HistoryRecorder {
         Squad squad = squadRepository.findById((Long) result).orElseThrow();
         historyRepository.save(HistoryEntity.builder()
                 .memberId((Long) args[0])
-                .crewId(squad.getId())
+                .crewId(squad.getCrew().getId())
+                .squadId(squad.getId())
                 .type(HistoryType.SQUAD_CREATE)
                 .message(HistoryType.SQUAD_CREATE.formatMessage(squad.getCrew().getName().getValue(), squad.getTitle().getValue()))
                 .build());
