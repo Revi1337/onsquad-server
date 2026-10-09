@@ -35,9 +35,9 @@ public class MemberContextHandler {
         memberContextDisposer.disposeMemberActivityFromSquads(member.getId());
 
         crewContextHandler.disposeContexts(myCrews);
+        List<AnnounceReference> announcesInOtherCrews = crewContextHandler.findMyAnnouncesInOtherCrews(member.getId());
         memberContextDisposer.disposeMemberActivityFromCrews(member.getId());
 
-        List<AnnounceReference> announcesInOtherCrews = crewContextHandler.findMyAnnouncesInOtherCrews(member.getId());
         memberRepository.deleteById(member.getId());
         eventPublisher.publishEvent(new MemberContextDisposed(member.getId(), getMemberImage(member), announcesInOtherCrews));
     }
