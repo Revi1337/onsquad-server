@@ -35,6 +35,7 @@ import revi1337.onsquad.member.application.dto.MemberPasswordUpdateDto;
 import revi1337.onsquad.member.application.dto.MemberUpdateDto;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.error.MemberBusinessException;
+import revi1337.onsquad.member.domain.error.MemberDomainException;
 import revi1337.onsquad.member.domain.error.MemberErrorCode;
 import revi1337.onsquad.member.domain.repository.MemberRepository;
 import revi1337.onsquad.member.domain.vo.Email;
@@ -208,6 +209,21 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
             assertThatThrownBy(() -> memberCommandService.updatePassword(revi.getId(), dto))
                     .isExactlyInstanceOf(MemberBusinessException.WrongPassword.class);
+        }
+
+        @Test
+        @DisplayName("새 비밀번호가 규칙에 맞지 않으면 비밀번호 변경에 실패하고 기존 비밀번호가 유지된다")
+        void test3() {
+            Member revi = memberRepository.save(MemberFixture.createRevi());
+            MemberPasswordUpdateDto dto = new MemberPasswordUpdateDto(REVI_PASSWORD_VALUE, "a", "a");
+            clearPersistenceContext();
+
+            assertThatThrownBy(() -> memberCommandService.updatePassword(revi.getId(), dto))
+                    .isExactlyInstanceOf(MemberDomainException.InvalidPasswordFormat.class);
+
+            clearPersistenceContext();
+            Member unchanged = memberRepository.findById(revi.getId()).get();
+            assertThat(unchanged.getPassword().getValue()).isEqualTo(REVI_ENCRYPTED_PASSWORD_VALUE);
         }
     }
 
