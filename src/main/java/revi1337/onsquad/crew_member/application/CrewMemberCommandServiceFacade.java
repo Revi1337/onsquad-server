@@ -9,6 +9,8 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import revi1337.onsquad.crew_member.domain.error.CrewMemberBusinessException;
+import revi1337.onsquad.crew_member.domain.error.CrewMemberErrorCode;
 
 @Slf4j
 @Service
@@ -47,15 +49,34 @@ public class CrewMemberCommandServiceFacade {
 
     @Recover
     public void recoverDelegateOwner(Throwable throwable, Long memberId, Long crewId, Long targetMemberId) {
-        log.error("[DelegateOwner-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
-                throwable.getMessage(), crewId, memberId, targetMemberId);
-        throw new IllegalStateException("delegateOwner 재시도 소진으로 최종 실패", throwable);
+        if (isOptimisticLockFailure(throwable)) {
+            log.error("[DelegateOwner-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
+                    throwable.getMessage(), crewId, memberId, targetMemberId);
+            throw new CrewMemberBusinessException.ConcurrentModification(CrewMemberErrorCode.CONCURRENT_MODIFICATION, throwable);
+        }
+        throw propagate(throwable);
     }
 
     @Recover
     public void recoverKickOutMember(Throwable throwable, Long memberId, Long crewId, Long targetMemberId) {
-        log.error("[KickOutMember-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
-                throwable.getMessage(), crewId, memberId, targetMemberId);
-        throw new IllegalStateException("kickOutMember 재시도 소진으로 최종 실패", throwable);
+        if (isOptimisticLockFailure(throwable)) {
+            log.error("[KickOutMember-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
+                    throwable.getMessage(), crewId, memberId, targetMemberId);
+            throw new CrewMemberBusinessException.ConcurrentModification(CrewMemberErrorCode.CONCURRENT_MODIFICATION, throwable);
+        }
+        throw propagate(throwable);
+    }
+
+    private boolean isOptimisticLockFailure(Throwable throwable) {
+        return throwable instanceof OptimisticLockException
+                || throwable instanceof ObjectOptimisticLockingFailureException
+                || throwable instanceof StaleObjectStateException;
+    }
+
+    private RuntimeException propagate(Throwable throwable) {
+        if (throwable instanceof RuntimeException runtimeException) {
+            return runtimeException;
+        }
+        return new IllegalStateException(throwable);
     }
 }

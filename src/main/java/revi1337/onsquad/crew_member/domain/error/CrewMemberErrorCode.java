@@ -15,7 +15,8 @@ public enum CrewMemberErrorCode implements ErrorCode {
     MISMATCH_CREW_REFERENCE(400, "CRM005", "소속 크루가 서로 다른 멤버 간에는 해당 요청을 수행할 수 없습니다."),
     INSUFFICIENT_KICK_MEMBER_AUTHORITY(403, "CRM006", "크루원 추방은 크루 매니저 이상만 가능합니다."),
     CANNOT_KICK_EQUAL_OR_HIGHER_ROLE_MEMBER(403, "CRM007", "자신보다 같거나 높은 등급의 멤버는 추방할 수 없습니다."),
-    INSUFFICIENT_DELEGATE_OWNER_AUTHORITY(403, "CRM008", "크루장 위임은 크루장만 가능합니다.");
+    INSUFFICIENT_DELEGATE_OWNER_AUTHORITY(403, "CRM008", "크루장 위임은 크루장만 가능합니다."),
+    CONCURRENT_MODIFICATION(409, "CRM009", "동시에 처리된 요청과 충돌했습니다. 잠시 후 다시 시도해주세요.");
 
     private final int status;
     private final String code;

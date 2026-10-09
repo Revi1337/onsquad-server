@@ -56,4 +56,12 @@ public abstract class CrewMemberBusinessException extends RuntimeException {
             super(errorCode, errorCode.getDescription());
         }
     }
+
+    public static class ConcurrentModification extends CrewMemberBusinessException {
+
+        public ConcurrentModification(ErrorCode errorCode, Throwable cause) {
+            super(errorCode, errorCode.getDescription());
+            initCause(cause);
+        }
+    }
 }
