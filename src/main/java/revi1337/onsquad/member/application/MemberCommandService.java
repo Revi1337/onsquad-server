@@ -45,6 +45,7 @@ public class MemberCommandService {
         if (!passwordEncoder.matches(dto.currentPassword(), member.getPassword().getValue())) {
             throw new MemberBusinessException.WrongPassword(MemberErrorCode.WRONG_PASSWORD);
         }
+        PasswordPolicy.RAW.validate(dto.newPassword());
         member.updatePassword(passwordEncoder.encode(dto.newPassword()), PasswordPolicy.BCRYPT);
     }
 

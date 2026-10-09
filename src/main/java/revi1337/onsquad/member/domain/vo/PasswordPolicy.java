@@ -37,7 +37,7 @@ public enum PasswordPolicy {
                 .anyMatch(policy -> policy.matches(value));
     }
 
-    abstract void validate(String value);
+    public abstract void validate(String value);
 
     public boolean matches(String value) {
         return value != null && Pattern.matches(regex, value);
