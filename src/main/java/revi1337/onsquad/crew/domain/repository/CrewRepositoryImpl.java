@@ -5,7 +5,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.vo.Name;
@@ -87,13 +86,6 @@ public class CrewRepositoryImpl implements CrewRepository {
 
     @Override
     public int decrementCountByMemberId(Long memberId) {
-        int deleted = crewJpaRepository.decrementCountByMemberId(memberId);
-        if (deleted == 0) {
-            throw new ObjectOptimisticLockingFailureException(
-                    Crew.class,
-                    "The crew current size was not updated. It might have been modified by another transaction or does not exist."
-            );
-        }
-        return deleted;
+        return crewJpaRepository.decrementCountByMemberId(memberId);
     }
 }
