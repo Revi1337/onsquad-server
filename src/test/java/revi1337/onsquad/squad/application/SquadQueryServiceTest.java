@@ -140,6 +140,10 @@ class SquadQueryServiceTest extends ApplicationLayerTestSupport {
                 softly.assertThat(results.get(1).states().canDestroy()).isTrue();
                 softly.assertThat(results.get(2).states().isLeader()).isTrue();
                 softly.assertThat(results.get(2).states().canDestroy()).isTrue();
+                softly.assertThat(results).allSatisfy(result -> {
+                    softly.assertThat(result.capacity()).isEqualTo(10);
+                    softly.assertThat(result.remain()).isEqualTo(9);
+                });
             });
         }
 

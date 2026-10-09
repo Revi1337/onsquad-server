@@ -21,7 +21,7 @@ public record SquadWithLeaderStateResponse(
                 squad.id(),
                 squad.title().getValue(),
                 squad.capacity(),
-                squad.capacity(),
+                squad.remain(),
                 squad.categories().stream()
                         .map(CategoryType::getText)
                         .toList(),
