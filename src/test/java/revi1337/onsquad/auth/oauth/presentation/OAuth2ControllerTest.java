@@ -2,7 +2,10 @@ package revi1337.onsquad.auth.oauth.presentation;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -13,6 +16,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
@@ -62,17 +67,21 @@ class OAuth2ControllerTest extends PresentationLayerTestSupport {
                     .queryParam("response_type", "code")
                     .build()
                     .toUriString();
-            when(OAuth2ExchangeService.buildAuthorizationEndpoint(anyString(), eq(oAuth2Vendor)))
+            when(OAuth2ExchangeService.buildAuthorizationEndpoint(eq(oAuth2Vendor), anyString()))
                     .thenReturn(URI.create(baseUrl));
 
             mockMvc.perform(get("/api/login/oauth2/{vendor}", oAuth2Vendor)
                             .contentType(APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(header().string(LOCATION, baseUrl))
                     .andDo(document("auth/success/oauth2-endpoint",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             pathParameters(parameterWithName("vendor").description("OAuth 인증 Vendor")),
                             responseBody()
                     ));
+
+            verify(OAuth2ExchangeService, times(1)).buildAuthorizationEndpoint(eq(oAuth2Vendor), anyString());
         }
     }
 
@@ -91,12 +100,14 @@ class OAuth2ControllerTest extends PresentationLayerTestSupport {
                     .queryParam("refreshToken", REFRESH_TOKEN)
                     .build()
                     .toUriString();
-            when(OAuth2ExchangeService.handleOAuth2Login(anyString(), eq(oauth2Vendor), eq(authorizationCode)))
+            when(OAuth2ExchangeService.handleOAuth2Login(eq(oauth2Vendor), anyString(), eq(authorizationCode)))
                     .thenReturn(URI.create(redirectUri));
 
             mockMvc.perform(get("/api/login/oauth2/code/{vendor}", oauth2Vendor)
                             .queryParam("code", authorizationCode)
                             .contentType(APPLICATION_JSON))
+                    .andExpect(status().isFound())
+                    .andExpect(header().string(LOCATION, redirectUri))
                     .andDo(document("auth/success/oauth2-login",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
