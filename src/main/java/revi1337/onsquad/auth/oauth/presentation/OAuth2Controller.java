@@ -25,8 +25,6 @@ public class OAuth2Controller {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         URI authorizationEndpoint = oauth2Exchangeservice.buildAuthorizationEndpoint(vendor, baseUrl);
 
-        oauth2Exchangeservice.buildAuthorizationEndpoint(vendor, baseUrl);
-
         return ResponseEntity.ok().location(authorizationEndpoint).build();
     }
 
