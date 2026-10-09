@@ -49,11 +49,13 @@ public class CrewMemberCommandServiceFacade {
     public void recoverDelegateOwner(Throwable throwable, Long memberId, Long crewId, Long targetMemberId) {
         log.error("[DelegateOwner-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
                 throwable.getMessage(), crewId, memberId, targetMemberId);
+        throw new IllegalStateException("delegateOwner 재시도 소진으로 최종 실패", throwable);
     }
 
     @Recover
     public void recoverKickOutMember(Throwable throwable, Long memberId, Long crewId, Long targetMemberId) {
         log.error("[KickOutMember-Final-Failure] All retry attempts exhausted. Reason: {}, CrewId: {}, MemberId: {}, TargetMemberId: {}",
                 throwable.getMessage(), crewId, memberId, targetMemberId);
+        throw new IllegalStateException("kickOutMember 재시도 소진으로 최종 실패", throwable);
     }
 }
