@@ -17,8 +17,19 @@ public interface SquadCommentJpaRepository extends JpaRepository<SquadComment, L
     @Query("delete SquadComment sc where sc.member.id = :memberId")
     int deleteByMemberId(Long memberId);
 
+    @Query("select r.id from SquadComment r where r.parent.member.id = :memberId")
+    List<Long> findReplyIdsByParentWriterId(Long memberId);
+
     @Modifying
-    @Query("delete SquadComment sc where sc.squad.id in :squadIds")
-    int deleteBySquadIdIn(List<Long> squadIds);
+    @Query("delete SquadComment sc where sc.id in :ids")
+    int deleteByIdIn(List<Long> ids);
+
+    @Modifying
+    @Query("delete SquadComment sc where sc.squad.id in :squadIds and sc.parent is not null")
+    int deleteRepliesBySquadIdIn(List<Long> squadIds);
+
+    @Modifying
+    @Query("delete SquadComment sc where sc.squad.id in :squadIds and sc.parent is null")
+    int deleteParentsBySquadIdIn(List<Long> squadIds);
 
 }

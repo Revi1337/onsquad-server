@@ -42,11 +42,17 @@ public class SquadCommentRepositoryImpl implements SquadCommentRepository {
 
     @Override
     public int deleteByMemberId(Long memberId) {
-        return squadCommentJpaRepository.deleteByMemberId(memberId);
+        // TODO 부모 댓글에 타인의 답글이 있으면 함께 삭제하는 대신 마스킹 처리하는 방안 검토 (squad_comment.member_id nullable 전환과 조회 쿼리 leftJoin 필요)
+        List<Long> replyIds = squadCommentJpaRepository.findReplyIdsByParentWriterId(memberId);
+        int deletedReplies = replyIds.isEmpty() ? 0 : squadCommentJpaRepository.deleteByIdIn(replyIds);
+        int deletedOwnComments = squadCommentJpaRepository.deleteByMemberId(memberId);
+        return deletedReplies + deletedOwnComments;
     }
 
     @Override
     public int deleteBySquadIdIn(List<Long> squadIds) {
-        return squadCommentJpaRepository.deleteBySquadIdIn(squadIds);
+        int deletedReplies = squadCommentJpaRepository.deleteRepliesBySquadIdIn(squadIds);
+        int deletedParents = squadCommentJpaRepository.deleteParentsBySquadIdIn(squadIds);
+        return deletedReplies + deletedParents;
     }
 }
