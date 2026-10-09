@@ -1,90 +1,62 @@
 package revi1337.onsquad.common.constant;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 
 @Deprecated
-@RequiredArgsConstructor
 public enum SupportMediaType {
 
-    JPG_JPEG(
-            new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF},
-            new int[][]{}
-    ),
-    JPEG_JFIF(
-            new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, (byte) 0x00, (byte) 0x10, (byte) 0x4A,
-                    (byte) 0x46, (byte) 0x49, (byte) 0x46, (byte) 0x00, (byte) 0x01},
-            new int[][]{}
-    ),
-    JPEG_EXIF(
-            new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE1, (byte) 0x90, (byte) 0x90, (byte) 0x45,
-                    (byte) 0x78, (byte) 0x69, (byte) 0x66, (byte) 0x00, (byte) 0x00},
-            new int[][]{{4, 6}}
-    ),
-    PNG(
-            new byte[]{(byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47, (byte) 0x0D, (byte) 0x0A, (byte) 0x1A,
-                    (byte) 0x0A},
-            new int[][]{}
-    ),
-    SVG(
-            new byte[]{(byte) 0x3C, (byte) 0x3F, (byte) 0x78, (byte) 0x6D, (byte) 0x6C, (byte) 0x20, (byte) 0x76,
-                    (byte) 0x65, (byte) 0x72, (byte) 0x73, (byte) 0x69, (byte) 0x6F, (byte) 0x6E, (byte) 0x3D},
-            new int[][]{}
-    ),
-    SVG2(
-            new byte[]{(byte) 0x3c, (byte) 0x73, (byte) 0x76, (byte) 0x67},
-            new int[][]{}
-    ),
-    WEBP(
-            new byte[]{(byte) 0x52, (byte) 0x49, (byte) 0x46, (byte) 0x46, (byte) 0x90, (byte) 0x90, (byte) 0x90,
-                    (byte) 0x90, (byte) 0x57, (byte) 0x45, (byte) 0x42, (byte) 0x50},
-            new int[][]{{4, 8}}
-    );
+    JPG_JPEG(0xFF, 0xD8, 0xFF),
+    JPEG_JFIF(0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01),
+    JPEG_EXIF(0xFF, 0xD8, 0xFF, 0xE1, Wildcard.ANY, Wildcard.ANY, 0x45, 0x78, 0x69, 0x66, 0x00, 0x00),
+    PNG(0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A),
+    SVG(0x3C, 0x3F, 0x78, 0x6D, 0x6C, 0x20, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6F, 0x6E, 0x3D),
+    SVG2(0x3C, 0x73, 0x76, 0x67),
+    WEBP(0x52, 0x49, 0x46, 0x46, Wildcard.ANY, Wildcard.ANY, Wildcard.ANY, Wildcard.ANY, 0x57, 0x45, 0x42, 0x50);
 
-    private final byte[] magicByte;
-    private final int[][] partialOffsets;
+    private static final SupportMediaType[] VALUES = values();
+    public static final int MAX_SIGNATURE_LENGTH = Arrays.stream(VALUES)
+            .mapToInt(type -> type.signature.length)
+            .max()
+            .orElse(0);
+    private static final String SUPPORTED_TYPES = Arrays.stream(VALUES)
+            .map(type -> type.name().toLowerCase())
+            .collect(Collectors.joining(", "));
 
-    public byte[] getMagicByte() {
-        return magicByte.clone();
-    }
+    private final int[] signature;
 
-    public int[][] partialOffsets() {
-        return Arrays.stream(partialOffsets)
-                .map(int[]::clone)
-                .toArray(int[][]::new);
-    }
-
-    public static EnumSet<SupportMediaType> defaultEnumSet() {
-        return EnumSet.allOf(SupportMediaType.class);
+    SupportMediaType(int... signature) {
+        this.signature = signature;
     }
 
     public boolean matches(byte[] binary) {
-        byte[] magicByte = getMagicByte();
-        int[][] partialOffsets = partialOffsets();
-
-        if (partialOffsets.length == 0) {
-            return Arrays.equals(Arrays.copyOfRange(binary, 0, magicByte.length), magicByte);
+        if (binary.length < signature.length) {
+            return false;
         }
-        for (int[] partialOffset : partialOffsets) {
-            int start = partialOffset[0];
-            int end = partialOffset[1];
-            for (int i = 0; i < magicByte.length; i++) {
-                if (i < start || i >= end) {
-                    if (binary.length <= i || binary[i] != magicByte[i]) {
-                        return false;
-                    }
-                }
+        for (int i = 0; i < signature.length; i++) {
+            int expected = signature[i];
+            if (expected != Wildcard.ANY && (binary[i] & 0xFF) != expected) {
+                return false;
             }
         }
-
         return true;
     }
 
+    public static boolean matchesAny(byte[] binary) {
+        for (SupportMediaType type : VALUES) {
+            if (type.matches(binary)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static String convertSupportedTypeString() {
-        return defaultEnumSet().stream()
-                .map(type -> type.toString().toLowerCase())
-                .collect(Collectors.joining(", "));
+        return SUPPORTED_TYPES;
+    }
+
+    private static final class Wildcard {
+
+        private static final int ANY = -1;
     }
 }
