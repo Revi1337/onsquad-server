@@ -31,7 +31,7 @@ public final class AnnouncePolicy {
      * <ol>
      * <li>Crew Owners can modify any announcement.</li>
      * <li>Managers or higher can modify their own announcements.</li>
-     * <li>Managers or higher can modify announcements whose authors have withdrawn (orphan posts). In this case, the first person to edit the post becomes the new author.</li>
+     * <li>Announcements whose authors have withdrawn (no writer) can only be modified by the crew owner.</li>
      * </ol>
      */
     public static boolean canModify(CrewMember me, Long announceWriterId) {
@@ -40,9 +40,6 @@ public final class AnnouncePolicy {
         }
         if (CrewMemberPolicy.isGeneral(me)) {
             return false;
-        }
-        if (CrewMemberPolicy.isManagerOrHigher(me) && announceWriterId == null) {
-            return true;
         }
         if (CrewMemberPolicy.isManagerOrHigher(me) && matchWriter(me, announceWriterId)) {
             return true;
@@ -97,7 +94,8 @@ public final class AnnouncePolicy {
     }
 
     private static boolean mismatchWriter(Announce announce, CrewMember me) {
-        return !announce.getMember().getId().equals(me.getMember().getId());
+        Long writerId = announce.getWriterId();
+        return writerId == null || !writerId.equals(me.getMember().getId());
     }
 
     private static boolean mismatchCrew(Announce announce, CrewMember me) {

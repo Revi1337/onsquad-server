@@ -5,6 +5,7 @@ import static revi1337.onsquad.common.constant.CacheConst.CREW_ANNOUNCES;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
@@ -17,10 +18,8 @@ import revi1337.onsquad.announce.domain.error.AnnounceBusinessException;
 import revi1337.onsquad.announce.domain.error.AnnounceErrorCode;
 import revi1337.onsquad.announce.domain.model.AnnounceReference;
 import revi1337.onsquad.announce.domain.repository.AnnounceQueryDslRepository;
-import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.CrewRole;
-import revi1337.onsquad.crew_member.domain.error.CrewMemberBusinessException;
-import revi1337.onsquad.crew_member.domain.error.CrewMemberErrorCode;
+import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.model.CrewMembers;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberRepository;
 
@@ -111,16 +110,23 @@ public class AnnounceCacheService {
     private AnnounceResponse getAnnounceResponse(Long crewId, Long announceId) {
         Announce announce = announceQueryDslRepository.fetchByIdAndCrewId(announceId, crewId)
                 .orElseThrow(() -> new AnnounceBusinessException.NotFound(AnnounceErrorCode.NOT_FOUND));
-        CrewMember crewMember = crewMemberRepository.findByCrewIdAndMemberId(crewId, announce.getMember().getId())
-                .orElseThrow(() -> new CrewMemberBusinessException.NotParticipant(CrewMemberErrorCode.NOT_PARTICIPANT));
+        return AnnounceResponse.from(findWriterRole(crewId, announce.getWriterId()), announce);
+    }
 
-        return AnnounceResponse.from(crewMember.getRole(), announce);
+    private CrewRole findWriterRole(Long crewId, Long writerId) {
+        if (writerId == null) {
+            return null;
+        }
+        return crewMemberRepository.findByCrewIdAndMemberId(crewId, writerId)
+                .map(CrewMember::getRole)
+                .orElse(null);
     }
 
     private List<AnnounceResponse> getAnnounceResponses(Long crewId) {
         List<Announce> announces = announceQueryDslRepository.fetchAllInDefaultByCrewId(crewId, DEFAULT_FETCH_SIZE);
         List<Long> writerIds = announces.stream()
-                .map(announce -> announce.getMember().getId())
+                .map(Announce::getWriterId)
+                .filter(Objects::nonNull)
                 .distinct()
                 .toList();
 
@@ -128,7 +134,7 @@ public class AnnounceCacheService {
         Map<Long, CrewRole> memberRoleMap = crewMembers.splitRolesByMemberId();
 
         return announces.stream()
-                .map(announce -> AnnounceResponse.from(memberRoleMap.get(announce.getMember().getId()), announce))
+                .map(announce -> AnnounceResponse.from(memberRoleMap.get(announce.getWriterId()), announce))
                 .collect(Collectors.toList());
     }
 }

@@ -43,7 +43,7 @@ public class AnnounceQueryService {
 
         boolean canWrite = AnnouncePolicy.canWrite(me);
         List<AnnounceResponse> response = announces.values().stream()
-                .map(announce -> AnnounceResponse.from(memberRoleMap.get(announce.getMember().getId()), announce))
+                .map(announce -> AnnounceResponse.from(memberRoleMap.get(announce.getWriterId()), announce))
                 .toList();
 
         return AnnouncesWithWriteStateResponse.from(canWrite, response);

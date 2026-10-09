@@ -73,6 +73,10 @@ public class Announce extends BaseEntity {
         this.pinnedAt = null;
     }
 
+    public Long getWriterId() {
+        return member == null ? null : member.getId();
+    }
+
     public boolean isUnpinned() {
         return !isPinned();
     }

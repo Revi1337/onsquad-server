@@ -2,6 +2,7 @@ package revi1337.onsquad.announce.domain.model;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import revi1337.onsquad.announce.domain.entity.Announce;
 
 public class Announces {
@@ -14,7 +15,8 @@ public class Announces {
 
     public List<Long> getWriterIds() {
         return announces.stream()
-                .map(announce -> announce.getMember().getId())
+                .map(Announce::getWriterId)
+                .filter(Objects::nonNull)
                 .distinct()
                 .toList();
     }
