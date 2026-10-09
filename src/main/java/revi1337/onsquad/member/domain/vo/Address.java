@@ -14,14 +14,18 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class Address {
 
-    private static final String DEFAULT_VALUE = "공백";
-    private static final String DEFAULT_VALUE_DETAIL = "공백";
+    private static final String DEFAULT_VALUE = "";
+    private static final String DEFAULT_VALUE_DETAIL = "";
 
     @Column(name = "address", nullable = false)
     private String value;
 
     @Column(name = "address_detail", nullable = false)
     private String detail;
+
+    public static Address defaultValue() {
+        return new Address(DEFAULT_VALUE, DEFAULT_VALUE_DETAIL);
+    }
 
     public Address(String value, String detail) {
         validate(value, detail);

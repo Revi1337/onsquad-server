@@ -13,6 +13,7 @@ import revi1337.onsquad.member.application.dto.MemberSummary;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.member.domain.vo.Email;
+import revi1337.onsquad.member.domain.vo.Nickname;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class SocialMemberService {
         return Member.oauth2(
                 vendorUserProfile.getEmail(),
                 encryptedPassword,
-                vendorUserProfile.getNickname(),
+                Nickname.random().getValue(),
                 vendorUserProfile.getProfileImage(),
                 vendorUserProfile.getUserType()
         );

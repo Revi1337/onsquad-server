@@ -5,6 +5,7 @@ import static revi1337.onsquad.member.domain.error.MemberErrorCode.INVALID_NICKN
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,18 @@ public class Nickname {
     private static final int MIN_LENGTH = 2;
     private static final int MAX_LENGTH = 8;
     private static final int PERSIST_MAX_LENGTH = 8;
+    private static final String RANDOM_CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
 
     @Column(name = "nickname", length = PERSIST_MAX_LENGTH, nullable = false)
     private String value;
+
+    public static Nickname random() {
+        StringBuilder builder = new StringBuilder(PERSIST_MAX_LENGTH);
+        for (int i = 0; i < PERSIST_MAX_LENGTH; i++) {
+            builder.append(RANDOM_CHARACTERS.charAt(ThreadLocalRandom.current().nextInt(RANDOM_CHARACTERS.length())));
+        }
+        return new Nickname(builder.toString());
+    }
 
     public Nickname(String value) {
         validate(value);

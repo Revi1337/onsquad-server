@@ -79,6 +79,7 @@ public class Member extends BaseEntity {
                 .email(new Email(email))
                 .password(Password.of(password, PasswordPolicy.BCRYPT))
                 .nickname(new Nickname(nickname))
+                .address(Address.defaultValue())
                 .image(image)
                 .userType(userType)
                 .build();
