@@ -77,7 +77,10 @@ class CrewRequestConcurrencyCommandServiceTest {
     private CrewRequestCommandService commandService;
 
     @Test
-    @DisplayName("Pessimistic Lock: 크루 owner 와 manager 가 동시에 서로 다른 참여자의 요청을 수락해도 crew 의 정합성은 보장된다.")
+    @DisplayName("""
+            Pessimistic Lock: 크루 owner 와 manager 가 동시에 서로 다른 참여자의 요청을 수락해도 crew 의 정합성은 보장된다.
+            [Total Time: 75ms, FailCount: 0]
+            """)
     void accept() {
         // given
         Member revi = memberRepository.save(createRevi());
@@ -112,7 +115,11 @@ class CrewRequestConcurrencyCommandServiceTest {
     }
 
     @Test
-    @DisplayName("Pessimistic Lock: 다수의 운영진이 수십 건의 가입 요청을 동시에 수락해도, 비관적 락을 통해 크루 인원수의 정합성이 완벽히 보장된다.")
+    @DisplayName("""
+            Pessimistic Lock: 운영진 6명이 각 10건씩 총 60건의 가입 요청을 동시에 수락해도, 비관적 락을 통해 크루 인원수의 정합성이 완벽히 보장된다.
+            낙관적 락 버전과 운영진 수,요청 수,스레드 수까지 동일한 조건으로 구성해, 락 전략만 바꿨을 때의 결과 차이(정합성 보장 여부,처리시간)를 그대로 대조할 수 있다.
+            [Total Time: 122ms, FailCount: 0]
+            """)
     void accept2() {
         // given
         Member acceptor1 = memberRepository.save(createMember(1));

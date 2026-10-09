@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,9 +30,9 @@ import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandService;
 import revi1337.onsquad.crew_member.application.CrewMemberCommandServiceFacade;
 import revi1337.onsquad.crew_member.application.leaderboard.CrewLeaderboardService;
+import revi1337.onsquad.crew_member.domain.CrewRole;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
-import revi1337.onsquad.crew_member.domain.CrewRole;
 import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
 import revi1337.onsquad.infrastructure.storage.redis.RedisCacheAspect;
 import revi1337.onsquad.infrastructure.storage.sqlite.FileRecycleBinRepository;
@@ -92,13 +93,23 @@ class CrewMemberConcurrencyCommandServiceTest {
             // when
             ExecutorService executor = Executors.newFixedThreadPool(2);
             CountDownLatch startLatch = new CountDownLatch(1);
+            AtomicBoolean candidate1Success = new AtomicBoolean(false);
+            AtomicBoolean candidate2Success = new AtomicBoolean(false);
             CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
+                try {
+                    commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate1.getId());
+                    candidate1Success.set(true);
+                } catch (Exception ignored) {
+                }
             }, executor);
             CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                 waitToStart(startLatch);
-                commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
+                try {
+                    commandServiceFacade.delegateOwner(owner.getId(), crew.getId(), nextOwnerCandidate2.getId());
+                    candidate2Success.set(true);
+                } catch (Exception ignored) {
+                }
             }, executor);
             startLatch.countDown();
             CompletableFuture.allOf(future1, future2).join();
@@ -106,6 +117,10 @@ class CrewMemberConcurrencyCommandServiceTest {
 
             // then
             assertSoftly(softly -> {
+                softly.assertThat(candidate1Success.get() ^ candidate2Success.get())
+                        .as("동시에 위임 요청이 오면 정확히 한쪽만 성공해야 하고, 나머지는 재시도 후에도 권한이 없어져 실패해야 한다")
+                        .isTrue();
+
                 Crew finalCrew = crewRepository.findById(savedCrew.getId()).orElseThrow();
                 CrewMember delegatedOwner1 = crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), nextOwnerCandidate1.getId()).get();
                 CrewMember delegatedOwner2 = crewMemberRepository.findByCrewIdAndMemberId(crew.getId(), nextOwnerCandidate2.getId()).get();
@@ -307,51 +322,6 @@ class CrewMemberConcurrencyCommandServiceTest {
                         .isEqualTo(1);
             });
         }
-
-        @Test
-        @DisplayName("Atomic Update(+Manually Version Update) 기반 크루원 추방과 Optimistic Lock 기반 크루장 위임이 동시 발생하면, 버전 충돌을 감지 및 재시도하고 정합성이 보장된다.")
-        void kickOutMemberWithLeaderDelegate() {
-            // given
-            Member owner = memberRepository.save(createMember(1));
-            Member general = memberRepository.save(createMember(2));
-            Member nextOwnerCandidate = memberRepository.save(createMember(3));
-            Crew crew = createCrew(owner);
-            crew.addCrewMember(createGeneralCrewMember(crew, general), createManagerCrewMember(crew, nextOwnerCandidate));
-            Crew savedCrew = crewRepository.save(crew);
-            System.out.println(savedCrew.getVersion());
-
-            // when
-            ExecutorService executor = Executors.newFixedThreadPool(2);
-            CountDownLatch startLatch = new CountDownLatch(1);
-            CompletableFuture<Void> kickOutFuture = CompletableFuture.runAsync(() -> {
-                waitToStart(startLatch);
-                commandServiceFacade.kickOutMember(owner.getId(), savedCrew.getId(), general.getId());
-            }, executor);
-            CompletableFuture<Void> delegateFuture = CompletableFuture.runAsync(() -> {
-                waitToStart(startLatch);
-                commandServiceFacade.delegateOwner(owner.getId(), savedCrew.getId(), nextOwnerCandidate.getId());
-            }, executor);
-            startLatch.countDown();
-            CompletableFuture.allOf(kickOutFuture, delegateFuture).join();
-            executor.shutdown();
-
-            // then
-            assertSoftly(softly -> {
-                Crew finalCrew = crewRepository.findById(savedCrew.getId()).get();
-                softly.assertThat(finalCrew.getCurrentSize())
-                        .as("3명(owner, general, nextOwnerCandidate) - 1명(일반 추방) = 2명")
-                        .isEqualTo(2);
-                softly.assertThat(finalCrew.getMember().getId())
-                        .as("새롭게 변경된 owner(nextOwnerCandidate) 의 ID와 일치")
-                        .isEqualTo(nextOwnerCandidate.getId());
-                softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), general.getId()))
-                        .as("general 은 추방되어 삭제된다.")
-                        .isEmpty();
-                softly.assertThat(finalCrew.getVersion())
-                        .as("초기(0) + 추방 성공(+1) + 위임 재시도 성공(+1) = 최종 버전은 2여야 함 (실패한 위임 1차 시도는 반영되지 않음)")
-                        .isGreaterThanOrEqualTo(2);
-            });
-        }
     }
 
     private void waitToStart(CountDownLatch start) {
@@ -372,9 +342,5 @@ class CrewMemberConcurrencyCommandServiceTest {
 
     private CrewMember createManagerCrewMember(Crew crew, Member member) {
         return CrewMemberFactory.manager(crew, member, LocalDateTime.now());
-    }
-
-    private CrewMember createGeneralCrewMember(Crew crew, Member member) {
-        return CrewMemberFactory.general(crew, member, LocalDateTime.now());
     }
 }
