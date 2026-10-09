@@ -73,7 +73,7 @@ class MemberTest {
             softly.assertThat(revi.getProfileImage()).isEqualTo(REVI_OAUTH_PROFILE_IMAGE_LINK);
             softly.assertThat(revi.getUserType()).isSameAs(UserType.KAKAO);
 
-            softly.assertThat(revi.getAddress()).isNull();
+            softly.assertThat(revi.getAddress()).isEqualTo(Address.defaultValue());
             softly.assertThat(revi.getIntroduce()).isNull();
             softly.assertThat(revi.getKakaoLink()).isNull();
             softly.assertThat(revi.getMbti()).isNull();
