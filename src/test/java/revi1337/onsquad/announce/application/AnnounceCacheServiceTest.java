@@ -1,5 +1,11 @@
 package revi1337.onsquad.announce.application;
 
+import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;
+import revi1337.onsquad.crew_member.domain.repository.CrewMemberJpaRepository;
+import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import java.time.LocalDateTime;
+import static revi1337.onsquad.common.fixture.MemberFixture.createAndong;
+import static revi1337.onsquad.common.fixture.MemberFixture.createKwangwon;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,6 +44,9 @@ class AnnounceCacheServiceTest extends ApplicationLayerTestSupport {
 
     @Autowired
     private AnnounceRepository announceRepository;
+
+    @Autowired
+    private CrewMemberJpaRepository crewMemberRepository;
 
     @SpyBean
     private AnnounceQueryDslRepository announceQueryDslRepository;
@@ -82,6 +91,64 @@ class AnnounceCacheServiceTest extends ApplicationLayerTestSupport {
 
         verify(announceQueryDslRepository, times(1)).fetchAllInDefaultByCrewId(crew.getId(), 4);
         assertThat(results).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("작성자가 탈퇴한 공지사항도 단건 조회가 가능하고 작성자는 탈퇴한 회원, role 은 비어 있다.")
+    void getAnnounce_whenWriterWithdrawn() {
+        Member revi = memberRepository.save(createRevi());
+        Member kwangwon = memberRepository.save(createKwangwon());
+        Crew crew = crewRepository.save(createCrew(revi));
+        Announce announce = announceRepository.save(createCrewAnnounce(crew, kwangwon));
+        announceRepository.markMemberAsNull(kwangwon.getId());
+        clearPersistenceContext();
+
+        AnnounceResponse response = announceCacheService.getAnnounce(crew.getId(), announce.getId());
+
+        assertThat(response.writer()).isEqualTo(SimpleMemberResponse.DELETED_MEMBER);
+        assertThat(response.states().role()).isNull();
+    }
+
+    @Test
+    @DisplayName("작성자가 크루를 떠난 공지사항도 단건 조회가 가능하고 작성자 role 만 비어 있다.")
+    void getAnnounce_whenWriterLeftCrew() {
+        Member revi = memberRepository.save(createRevi());
+        Member kwangwon = memberRepository.save(createKwangwon());
+        Crew crew = createCrew(revi);
+        crew.addCrewMember(CrewMemberFactory.manager(crew, kwangwon, LocalDateTime.now()));
+        Crew savedCrew = crewRepository.save(crew);
+        Announce announce = announceRepository.save(createCrewAnnounce(savedCrew, kwangwon));
+        crewMemberRepository.deleteByMemberId(kwangwon.getId());
+        clearPersistenceContext();
+
+        AnnounceResponse response = announceCacheService.getAnnounce(savedCrew.getId(), announce.getId());
+
+        assertThat(response.writer().id()).isEqualTo(kwangwon.getId());
+        assertThat(response.states().role()).isNull();
+    }
+
+    @Test
+    @DisplayName("작성자가 탈퇴했거나 크루를 떠난 공지사항이 있어도 기본 공지 목록 조회가 가능하다.")
+    void getDefaultAnnounces_whenWriterWithdrawnOrLeft() {
+        Member revi = memberRepository.save(createRevi());
+        Member andong = memberRepository.save(createAndong());
+        Member kwangwon = memberRepository.save(createKwangwon());
+        Crew crew = createCrew(revi);
+        crew.addCrewMember(CrewMemberFactory.manager(crew, andong, LocalDateTime.now()));
+        crew.addCrewMember(CrewMemberFactory.manager(crew, kwangwon, LocalDateTime.now()));
+        Crew savedCrew = crewRepository.save(crew);
+        announceRepository.save(createCrewAnnounce(savedCrew, kwangwon));
+        announceRepository.save(createCrewAnnounce(savedCrew, andong));
+        announceRepository.save(createCrewAnnounce(savedCrew, revi));
+        announceRepository.markMemberAsNull(kwangwon.getId());
+        crewMemberRepository.deleteByMemberId(andong.getId());
+        clearPersistenceContext();
+
+        List<AnnounceResponse> results = announceCacheService.getDefaultAnnounces(savedCrew.getId());
+
+        assertThat(results).hasSize(3);
+        assertThat(results).filteredOn(r -> r.writer().equals(SimpleMemberResponse.DELETED_MEMBER)).hasSize(1);
+        assertThat(results).filteredOn(r -> r.states().role() == null).hasSize(2);
     }
 
     @Test

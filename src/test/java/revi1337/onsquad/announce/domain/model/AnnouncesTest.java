@@ -34,6 +34,30 @@ class AnnouncesTest {
     }
 
     @Test
+    @DisplayName("작성자가 탈퇴한 공지사항은 작성자 ID 리스트에서 제외한다.")
+    void getWriterIds_excludesWithdrawnWriters() {
+        Crew crew = createCrew(1L, createMember(3L));
+        Announces announces = new Announces(List.of(
+                createAnnounce(101L, crew, createMember(1L)),
+                createAnnounce(102L, crew, null),
+                createAnnounce(103L, crew, null)
+        ));
+
+        List<Long> writerIds = announces.getWriterIds();
+
+        assertThat(writerIds).containsExactly(1L);
+    }
+
+    @Test
+    @DisplayName("모든 공지사항의 작성자가 탈퇴했으면 작성자 ID 리스트는 비어 있다.")
+    void getWriterIds_isEmpty_whenAllWritersWithdrawn() {
+        Crew crew = createCrew(1L, createMember(3L));
+        Announces announces = new Announces(List.of(createAnnounce(101L, crew, null)));
+
+        assertThat(announces.getWriterIds()).isEmpty();
+    }
+
+    @Test
     @DisplayName("내부 리스트를 반환할 때 원본 리스트의 순서를 유지한다.")
     void values() {
         Crew crew = createCrew(1L, createMember(3L));

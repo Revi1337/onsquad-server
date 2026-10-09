@@ -30,6 +30,20 @@ class AnnounceTest {
     }
 
     @Test
+    void getWriterId() {
+        Member revi = createRevi(1L);
+        Crew crew = createCrew(2L, revi);
+
+        Announce announce = new Announce("title", "content", crew, revi);
+        Announce withdrawn = new Announce("title", "content", crew, null);
+
+        assertSoftly(softly -> {
+            softly.assertThat(announce.getWriterId()).isEqualTo(1L);
+            softly.assertThat(withdrawn.getWriterId()).isNull();
+        });
+    }
+
+    @Test
     void update() {
         Member revi = createRevi(1L);
         Crew crew = createCrew(2L, revi);

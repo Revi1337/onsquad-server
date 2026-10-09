@@ -1,5 +1,6 @@
 package revi1337.onsquad.announce.application;
 
+import static revi1337.onsquad.common.fixture.MemberFixture.createKwangwon;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -154,6 +155,92 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
             assertThatThrownBy(() -> announceCommandService
                     .updateAnnounce(andong.getId(), savedCrew.getId(), announce.getId(), dto))
                     .hasMessage(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY.getDescription());
+        }
+    }
+
+    @Nested
+    class withdrawnWriter {
+
+        @Test
+        @DisplayName("owner 는 작성자가 탈퇴한 공지사항을 수정할 수 있다.")
+        void owner_updatesAnnounce() {
+            Member revi = memberRepository.save(createRevi());
+            Member kwangwon = memberRepository.save(createKwangwon());
+            Crew crew = createCrew(revi);
+            crew.addCrewMember(createManagerCrewMember(crew, kwangwon));
+            Crew savedCrew = crewRepository.save(crew);
+            Announce announce = announceRepository.save(createCrewAnnounce(savedCrew, kwangwon));
+            announceRepository.markMemberAsNull(kwangwon.getId());
+            clearPersistenceContext();
+            AnnounceUpdateDto dto = new AnnounceUpdateDto("update-title", "update-content");
+
+            announceCommandService.updateAnnounce(revi.getId(), savedCrew.getId(), announce.getId(), dto);
+
+            assertSoftly(softly -> {
+                clearPersistenceContext();
+                softly.assertThat(announceRepository.findAll().get(0).getTitle().getValue()).isEqualTo(dto.title());
+                softly.assertThat(announceRepository.findAll().get(0).getMember()).isNull();
+                softly.assertThat(events.stream(AnnounceUpdateEvent.class).count()).isEqualTo(1);
+            });
+        }
+
+        @Test
+        @DisplayName("owner 는 작성자가 탈퇴한 공지사항을 삭제할 수 있다.")
+        void owner_deletesAnnounce() {
+            Member revi = memberRepository.save(createRevi());
+            Member kwangwon = memberRepository.save(createKwangwon());
+            Crew crew = createCrew(revi);
+            crew.addCrewMember(createManagerCrewMember(crew, kwangwon));
+            Crew savedCrew = crewRepository.save(crew);
+            Announce announce = announceRepository.save(createCrewAnnounce(savedCrew, kwangwon));
+            announceRepository.markMemberAsNull(kwangwon.getId());
+            clearPersistenceContext();
+
+            announceCommandService.deleteAnnounce(revi.getId(), savedCrew.getId(), announce.getId());
+
+            assertSoftly(softly -> {
+                clearPersistenceContext();
+                softly.assertThat(announceRepository.findAll()).isEmpty();
+                softly.assertThat(events.stream(AnnounceDeleteEvent.class).count()).isEqualTo(1);
+            });
+        }
+
+        @Test
+        @DisplayName("manager 는 작성자가 탈퇴한 공지사항을 수정할 수 없다.")
+        void manager_cannotUpdate() {
+            Member revi = memberRepository.save(createRevi());
+            Member andong = memberRepository.save(createAndong());
+            Member kwangwon = memberRepository.save(createKwangwon());
+            Crew crew = createCrew(revi);
+            crew.addCrewMember(createManagerCrewMember(crew, andong));
+            crew.addCrewMember(createManagerCrewMember(crew, kwangwon));
+            Crew savedCrew = crewRepository.save(crew);
+            Announce announce = announceRepository.save(createCrewAnnounce(savedCrew, kwangwon));
+            announceRepository.markMemberAsNull(kwangwon.getId());
+            clearPersistenceContext();
+
+            assertThatThrownBy(() -> announceCommandService
+                    .updateAnnounce(andong.getId(), savedCrew.getId(), announce.getId(), new AnnounceUpdateDto("t", "c")))
+                    .hasMessage(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY.getDescription());
+        }
+
+        @Test
+        @DisplayName("manager 는 작성자가 탈퇴한 공지사항을 삭제할 수 없다.")
+        void manager_cannotDelete() {
+            Member revi = memberRepository.save(createRevi());
+            Member andong = memberRepository.save(createAndong());
+            Member kwangwon = memberRepository.save(createKwangwon());
+            Crew crew = createCrew(revi);
+            crew.addCrewMember(createManagerCrewMember(crew, andong));
+            crew.addCrewMember(createManagerCrewMember(crew, kwangwon));
+            Crew savedCrew = crewRepository.save(crew);
+            Announce announce = announceRepository.save(createCrewAnnounce(savedCrew, kwangwon));
+            announceRepository.markMemberAsNull(kwangwon.getId());
+            clearPersistenceContext();
+
+            assertThatThrownBy(() -> announceCommandService
+                    .deleteAnnounce(andong.getId(), savedCrew.getId(), announce.getId()))
+                    .hasMessage(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY.getDescription());
         }
     }
 

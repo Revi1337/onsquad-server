@@ -1,5 +1,6 @@
 package revi1337.onsquad.announce.domain;
 
+import static revi1337.onsquad.common.fixture.MemberFixture.createKwangwon;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -115,22 +116,24 @@ class AnnouncePolicyTest {
         }
 
         @Test
-        @DisplayName("탈퇴한 사용자가 작성한 공지사항은 manager 이상이면 수정할 수 있다.")
+        @DisplayName("탈퇴한 사용자가 작성한 공지사항은 owner 만 수정할 수 있다.")
         void canModify3() {
             Member revi = createRevi(1L);
             Member andong = createAndong(2L);
+            Member kwangwon = createKwangwon(3L);
             Crew crew = createCrew(revi);
             CrewMember owner = crew.getCrewMembers().get(0);
             CrewMember manager = createManagerCrewMember(crew, andong);
-            Announce announce1 = createCrewAnnounce(crew, revi);
-            Announce announce2 = createCrewAnnounce(crew, andong);
+            CrewMember general = createGeneralCrewMember(crew, kwangwon);
 
             boolean canModify1 = AnnouncePolicy.canModify(owner, null);
             boolean canModify2 = AnnouncePolicy.canModify(manager, null);
+            boolean canModify3 = AnnouncePolicy.canModify(general, null);
 
             assertSoftly(softly -> {
                 softly.assertThat(canModify1).isTrue();
-                softly.assertThat(canModify2).isTrue();
+                softly.assertThat(canModify2).isFalse();
+                softly.assertThat(canModify3).isFalse();
             });
         }
 
@@ -238,6 +241,46 @@ class AnnouncePolicyTest {
     class ensureModifiable {
 
         @Test
+        @DisplayName("owner 는 작성자가 탈퇴한 공지사항을 수정할 수 있다.")
+        void success_ownerWhenWriterWithdrawn() {
+            Member revi = createRevi(1L);
+            Crew crew = createCrew(1L, revi);
+            CrewMember owner = crew.getCrewMembers().get(0);
+            Announce announce = createCrewAnnounce(crew, null);
+
+            assertThatCode(() -> AnnouncePolicy.ensureModifiable(announce, owner))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        @DisplayName("manager 는 작성자가 탈퇴한 공지사항을 수정할 수 없다.")
+        void fail_managerWhenWriterWithdrawn() {
+            Member revi = createRevi(1L);
+            Member andong = createAndong(2L);
+            Crew crew = createCrew(1L, revi);
+            CrewMember manager = createManagerCrewMember(crew, andong);
+            Announce announce = createCrewAnnounce(crew, null);
+
+            assertThatThrownBy(() -> AnnouncePolicy.ensureModifiable(announce, manager))
+                    .isExactlyInstanceOf(AnnounceBusinessException.InsufficientAuthority.class)
+                    .hasMessage(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY.getDescription());
+        }
+
+        @Test
+        @DisplayName("general 은 작성자가 탈퇴한 공지사항을 수정할 수 없다.")
+        void fail_generalWhenWriterWithdrawn() {
+            Member revi = createRevi(1L);
+            Member andong = createAndong(2L);
+            Crew crew = createCrew(1L, revi);
+            CrewMember general = createGeneralCrewMember(crew, andong);
+            Announce announce = createCrewAnnounce(crew, null);
+
+            assertThatThrownBy(() -> AnnouncePolicy.ensureModifiable(announce, general))
+                    .isExactlyInstanceOf(AnnounceBusinessException.InsufficientAuthority.class)
+                    .hasMessage(AnnounceErrorCode.INSUFFICIENT_UPDATE_AUTHORITY.getDescription());
+        }
+
+        @Test
         @DisplayName("owner 는 모든 공지사항을 수정할 수 있다.")
         void success1() {
             Member revi = createRevi(1L);
@@ -311,6 +354,46 @@ class AnnouncePolicyTest {
 
     @Nested
     class ensureDeletable {
+
+        @Test
+        @DisplayName("owner 는 작성자가 탈퇴한 공지사항을 삭제할 수 있다.")
+        void success_ownerWhenWriterWithdrawn() {
+            Member revi = createRevi(1L);
+            Crew crew = createCrew(1L, revi);
+            CrewMember owner = crew.getCrewMembers().get(0);
+            Announce announce = createCrewAnnounce(crew, null);
+
+            assertThatCode(() -> AnnouncePolicy.ensureDeletable(announce, owner))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        @DisplayName("manager 는 작성자가 탈퇴한 공지사항을 삭제할 수 없다.")
+        void fail_managerWhenWriterWithdrawn() {
+            Member revi = createRevi(1L);
+            Member andong = createAndong(2L);
+            Crew crew = createCrew(1L, revi);
+            CrewMember manager = createManagerCrewMember(crew, andong);
+            Announce announce = createCrewAnnounce(crew, null);
+
+            assertThatThrownBy(() -> AnnouncePolicy.ensureDeletable(announce, manager))
+                    .isExactlyInstanceOf(AnnounceBusinessException.InsufficientAuthority.class)
+                    .hasMessage(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY.getDescription());
+        }
+
+        @Test
+        @DisplayName("general 은 작성자가 탈퇴한 공지사항을 삭제할 수 없다.")
+        void fail_generalWhenWriterWithdrawn() {
+            Member revi = createRevi(1L);
+            Member andong = createAndong(2L);
+            Crew crew = createCrew(1L, revi);
+            CrewMember general = createGeneralCrewMember(crew, andong);
+            Announce announce = createCrewAnnounce(crew, null);
+
+            assertThatThrownBy(() -> AnnouncePolicy.ensureDeletable(announce, general))
+                    .isExactlyInstanceOf(AnnounceBusinessException.InsufficientAuthority.class)
+                    .hasMessage(AnnounceErrorCode.INSUFFICIENT_DELETE_AUTHORITY.getDescription());
+        }
 
         @Test
         @DisplayName("owner 는 모든 공지사항을 삭제할 수 있다.")
