@@ -106,6 +106,18 @@ class RestErrorResponseContractTest extends ApplicationLayerTestSupport {
         }
 
         @Test
+        @DisplayName("비밀번호를 빼고 가입하면 500 이 아니라 400 과 C001 로 응답하고 누락된 필드명을 알려준다")
+        void returns400_withMissingPassword_whenSignUpOmitsIt() throws Exception {
+            String body = "{\"email\":\"a@gmail.com\",\"passwordConfirm\":\"Abcd1234!\","
+                    + "\"nickname\":\"nick\",\"address\":\"a\",\"addressDetail\":\"b\"}";
+
+            Result result = send("POST", "/api/members", JSON, null, body);
+
+            assertError(result, 400, "C001");
+            assertThat(result.json().at("/error/parameters")).extracting(JsonNode::asText).containsExactly("password");
+        }
+
+        @Test
         @DisplayName("멀티파트 요청에 필수 파트가 없으면 400 과 C001 로 응답한다")
         void returns400_whenRequiredPartIsMissing() throws Exception {
             String body = "--" + BOUNDARY + "\r\nContent-Disposition: form-data; name=\"other\"\r\n\r\nx\r\n--" + BOUNDARY + "--\r\n";

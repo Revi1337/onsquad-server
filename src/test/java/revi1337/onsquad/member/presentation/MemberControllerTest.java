@@ -1,5 +1,6 @@
 package revi1337.onsquad.member.presentation;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -25,6 +26,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.partWith
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static revi1337.onsquad.common.fixture.MemberFixture.ANDONG_PASSWORD_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.KWANGWON_PASSWORD_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI_ADDRESS_DETAIL_VALUE;
@@ -147,6 +149,55 @@ class MemberControllerTest extends PresentationLayerTestSupport {
                             ),
                             responseBody()
                     ));
+        }
+
+        @Test
+        @DisplayName("비밀번호가 없으면 400 과 누락된 필드명을 응답한다.")
+        void fail_whenPasswordMissing() throws Exception {
+            String body = "{\"email\":\"%s\",\"passwordConfirm\":\"%s\",\"nickname\":\"%s\",\"address\":\"%s\",\"addressDetail\":\"%s\"}"
+                    .formatted(REVI_EMAIL_VALUE, REVI_PASSWORD_VALUE, REVI_NICKNAME_VALUE, REVI_ADDRESS_VALUE, REVI_ADDRESS_DETAIL_VALUE);
+
+            mockMvc.perform(post("/api/members")
+                            .content(body)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.error.code").value("C001"))
+                    .andExpect(jsonPath("$.error.parameters[0]").value("password"));
+        }
+
+        @Test
+        @DisplayName("비밀번호와 비밀번호 확인이 모두 없으면 400 과 누락된 필드명을 응답한다.")
+        void fail_whenPasswordAndConfirmMissing() throws Exception {
+            String body = "{\"email\":\"%s\",\"nickname\":\"%s\",\"address\":\"%s\",\"addressDetail\":\"%s\"}"
+                    .formatted(REVI_EMAIL_VALUE, REVI_NICKNAME_VALUE, REVI_ADDRESS_VALUE, REVI_ADDRESS_DETAIL_VALUE);
+
+            mockMvc.perform(post("/api/members")
+                            .content(body)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error.code").value("C001"))
+                    .andExpect(jsonPath("$.error.parameters", containsInAnyOrder("password", "passwordConfirm")));
+        }
+
+        @Test
+        @DisplayName("비밀번호와 비밀번호 확인이 다르면 400 과 두 필드명을 응답한다.")
+        void fail_whenPasswordMismatch() throws Exception {
+            MemberCreateRequest request = new MemberCreateRequest(
+                    REVI_EMAIL_VALUE,
+                    REVI_PASSWORD_VALUE,
+                    ANDONG_PASSWORD_VALUE,
+                    REVI_NICKNAME_VALUE,
+                    REVI_ADDRESS_VALUE,
+                    REVI_ADDRESS_DETAIL_VALUE
+            );
+
+            mockMvc.perform(post("/api/members")
+                            .content(objectMapper.writeValueAsString(request))
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error.code").value("C001"))
+                    .andExpect(jsonPath("$.error.parameters", containsInAnyOrder("password", "passwordConfirm")));
         }
     }
 
@@ -283,6 +334,37 @@ class MemberControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(400));
+        }
+
+        @Test
+        @DisplayName("새로운 비밀번호가 없으면 400 과 누락된 필드명을 응답한다.")
+        void fail_whenNewPasswordMissing() throws Exception {
+            String body = "{\"currentPassword\":\"%s\",\"newPasswordConfirm\":\"%s\"}"
+                    .formatted(REVI_PASSWORD_VALUE, ANDONG_PASSWORD_VALUE);
+
+            mockMvc.perform(patch("/api/members/me/password")
+                            .content(body)
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.error.code").value("C001"))
+                    .andExpect(jsonPath("$.error.parameters[0]").value("newPassword"));
+        }
+
+        @Test
+        @DisplayName("새로운 비밀번호 확인이 없으면 400 과 누락된 필드명을 응답한다.")
+        void fail_whenNewPasswordConfirmMissing() throws Exception {
+            String body = "{\"currentPassword\":\"%s\",\"newPassword\":\"%s\"}"
+                    .formatted(REVI_PASSWORD_VALUE, ANDONG_PASSWORD_VALUE);
+
+            mockMvc.perform(patch("/api/members/me/password")
+                            .content(body)
+                            .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error.code").value("C001"))
+                    .andExpect(jsonPath("$.error.parameters[0]").value("newPasswordConfirm"));
         }
     }
 
