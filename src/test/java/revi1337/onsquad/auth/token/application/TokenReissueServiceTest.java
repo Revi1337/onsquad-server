@@ -1,6 +1,5 @@
 package revi1337.onsquad.auth.token.application;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import revi1337.onsquad.auth.token.domain.error.TokenException;
 import revi1337.onsquad.auth.token.domain.model.JsonWebToken;
 import revi1337.onsquad.auth.token.domain.model.RefreshToken;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
@@ -72,12 +72,49 @@ class TokenReissueServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Test
-    @DisplayName("Redis에 저장된 토큰과 일치하지 않는 RefreshToken으로 재발급 요청 시 예외가 발생한다.")
+    @DisplayName("서명은 유효하지만 저장된 토큰과 값이 다른 RefreshToken으로 재발급을 요청하면 NotFoundRefresh 예외가 발생하고 저장된 토큰은 바뀌지 않는다.")
     void reissueFailByMismatchedToken() {
         Member member = memberRepository.save(createRevi());
-        jsonWebTokenManager.issueJsonWebToken(MemberSummary.from(member), Instant.now());
-        String fakeToken = "fake.refresh.token";
+        MemberSummary summary = MemberSummary.from(member);
+        JsonWebToken firstTokenPair = jsonWebTokenManager.issueJsonWebToken(summary, Instant.now());
+        JsonWebToken secondTokenPair = jsonWebTokenManager.issueJsonWebToken(summary, Instant.now());
 
-        assertThatThrownBy(() -> tokenReissueService.reissue(fakeToken));
+        assertSoftly(softly -> {
+            softly.assertThatThrownBy(() -> tokenReissueService.reissue(firstTokenPair.refreshToken()))
+                    .isExactlyInstanceOf(TokenException.NotFoundRefresh.class);
+            softly.assertThat(refreshTokenStorage.findTokenBy(member.getId()))
+                    .map(RefreshToken::value)
+                    .contains(secondTokenPair.refreshToken());
+        });
+    }
+
+    @Test
+    @DisplayName("이미 재발급으로 교체된 이전 RefreshToken으로 다시 재발급을 요청하면 NotFoundRefresh 예외가 발생하고 최신 토큰은 유지된다.")
+    void reissueFailByReplacedToken() {
+        Member member = memberRepository.save(createRevi());
+        JsonWebToken oldTokenPair = jsonWebTokenManager.issueJsonWebToken(MemberSummary.from(member), Instant.now());
+        JsonWebToken newTokenPair = tokenReissueService.reissue(oldTokenPair.refreshToken());
+
+        assertSoftly(softly -> {
+            softly.assertThatThrownBy(() -> tokenReissueService.reissue(oldTokenPair.refreshToken()))
+                    .isExactlyInstanceOf(TokenException.NotFoundRefresh.class);
+            softly.assertThat(refreshTokenStorage.findTokenBy(member.getId()))
+                    .map(RefreshToken::value)
+                    .contains(newTokenPair.refreshToken());
+        });
+    }
+
+    @Test
+    @DisplayName("JWT 형식이 아닌 RefreshToken으로 재발급을 요청하면 저장된 토큰을 바꾸지 않고 예외가 발생한다.")
+    void reissueFailByMalformedToken() {
+        Member member = memberRepository.save(createRevi());
+        JsonWebToken tokenPair = jsonWebTokenManager.issueJsonWebToken(MemberSummary.from(member), Instant.now());
+
+        assertSoftly(softly -> {
+            softly.assertThatThrownBy(() -> tokenReissueService.reissue("fake.refresh.token"));
+            softly.assertThat(refreshTokenStorage.findTokenBy(member.getId()))
+                    .map(RefreshToken::value)
+                    .contains(tokenPair.refreshToken());
+        });
     }
 }

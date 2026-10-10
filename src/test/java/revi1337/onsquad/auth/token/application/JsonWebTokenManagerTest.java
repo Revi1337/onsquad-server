@@ -120,8 +120,8 @@ class JsonWebTokenManagerTest {
     }
 
     @Test
-    @DisplayName("RefreshToken 검증 시, 저장소에 토큰이 없거나 값이 다르면 NotFoundRefresh 예외가 발생한다.")
-    void verifyRefreshTokenFail() {
+    @DisplayName("RefreshToken 검증 시, 저장소에 토큰이 없으면 NotFoundRefresh 예외가 발생한다.")
+    void verifyRefreshTokenFailWhenNotStored() {
         MemberSummary summary = new MemberSummary(1L, "revi1337@gmail.com", "password", UserType.GENERAL);
         JsonWebToken issuedToken = jsonWebTokenManager.issueJsonWebToken(summary, Instant.now());
 
@@ -129,5 +129,17 @@ class JsonWebTokenManagerTest {
 
         assertThatThrownBy(() -> jsonWebTokenManager.verifyRefreshToken(issuedToken.refreshToken()))
                 .isInstanceOf(TokenException.NotFoundRefresh.class);
+    }
+
+    @Test
+    @DisplayName("RefreshToken 검증 시, 서명은 유효하지만 저장소에 있는 값과 다르면 NotFoundRefresh 예외가 발생한다.")
+    void verifyRefreshTokenFailWhenValueMismatched() {
+        MemberSummary summary = new MemberSummary(1L, "revi1337@gmail.com", "password", UserType.GENERAL);
+        JsonWebToken firstToken = jsonWebTokenManager.issueJsonWebToken(summary, Instant.now());
+        JsonWebToken secondToken = jsonWebTokenManager.issueJsonWebToken(summary, Instant.now());
+
+        assertThatThrownBy(() -> jsonWebTokenManager.verifyRefreshToken(firstToken.refreshToken()))
+                .isInstanceOf(TokenException.NotFoundRefresh.class);
+        assertThat(jsonWebTokenManager.verifyRefreshToken(secondToken.refreshToken()).parseIdentity()).isEqualTo(summary.id());
     }
 }
