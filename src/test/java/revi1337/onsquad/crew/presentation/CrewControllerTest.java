@@ -85,7 +85,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
             DuplicateResponse response = new DuplicateResponse(true);
             when(crewQueryService.checkNameDuplicate(anyString())).thenReturn(response);
 
-            mockMvc.perform(get("/api/crews/check")
+            mockMvc.perform(get("/api/crews/check-name")
                             .param("name", crewName)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON_VALUE))
