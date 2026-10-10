@@ -36,6 +36,8 @@ public class HistoryQueryDslRepository {
                         historyTypeEq(type)
                 )
                 .orderBy(historyEntity.recordedAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
