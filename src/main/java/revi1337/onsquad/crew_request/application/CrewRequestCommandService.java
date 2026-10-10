@@ -34,11 +34,11 @@ public class CrewRequestCommandService {
 
     @Throttling(name = "throttle-crew-req", key = "'crew:' + #crewId + ':member:' + #memberId", during = 1)
     public void request(Long memberId, Long crewId) {
+        Crew crew = crewAccessor.getById(crewId);
         crewMemberAccessor.validateMemberNotInCrew(memberId, crewId);
         if (crewRequestAccessor.isRequestAbsent(memberId, crewId)) {
-            Crew crewRef = crewAccessor.getReferenceById(crewId);
             Member memberRef = memberAccessor.getReferenceById(memberId);
-            CrewRequest request = crewRequestRepository.save(CrewRequest.of(crewRef, memberRef, LocalDateTime.now()));
+            CrewRequest request = crewRequestRepository.save(CrewRequest.of(crew, memberRef, LocalDateTime.now()));
             eventPublisher.publishEvent(new RequestAdded(crewId, memberId, request.getId()));
         }
     }
