@@ -1,114 +1,245 @@
-:doctype: book
-:icons: font
-:source-highlighter: highlightjs
-:toc: left
-:toclevels: 4
-:sectlinks:
+[[member]]
+== 회원
 
-== 회원 도메인
+회원가입과 내 정보 관리 API 입니다.
 
-include::notification.adoc[]
-include::history.adoc[]
+.엔드포인트 목록
+[cols="1,4,4,1",options="header"]
+|===
+|Method|Path|설명|인증
 
-=== 크루
+|GET
+|`+/api/members/check-email+`
+|<<member-check-email,이메일 중복 확인>>
+|불필요
 
-==== 내가 참여중인 크루
+|GET
+|`+/api/members/check-nickname+`
+|<<member-check-nickname,닉네임 중복 확인>>
+|불필요
 
-[black]#Request#
+|POST
+|`+/api/members+`
+|<<member-signup,회원가입>>
+|불필요
 
-include::{snippets}/crew-member/success/my-participates/http-request.adoc[]
+|GET
+|`+/api/members/me+`
+|<<member-me,내 정보 조회>>
+|필수
 
-include::{snippets}/crew-member/success/my-participates/request-headers.adoc[]
+|PUT
+|`+/api/members/me+`
+|<<member-update,내 정보 수정>>
+|필수
 
-include::{snippets}/crew-member/success/my-participates/query-parameters.adoc[]
+|PATCH
+|`+/api/members/me/password+`
+|<<member-update-password,비밀번호 변경>>
+|필수
 
-[black]#Response#
+|PATCH
+|`+/api/members/me/image+`
+|<<member-update-image,프로필 이미지 변경>>
+|필수
 
-include::{snippets}/crew-member/success/my-participates/http-response.adoc[]
+|DELETE
+|`+/api/members/me/image+`
+|<<member-delete-image,프로필 이미지 삭제>>
+|필수
 
-==== 참가 신청
+|DELETE
+|`+/api/members/me+`
+|<<member-withdraw,회원 탈퇴>>
+|필수
 
-===== 나의 크루 가입 신청 내역
+|===
 
-[black]#Request#
+[[member-check-email]]
+=== 이메일 중복 확인
 
-include::{snippets}/crew-request/success/my-requests/http-request.adoc[]
+`+GET /api/members/check-email+`
 
-include::{snippets}/crew-request/success/my-requests/request-headers.adoc[]
+이메일이 이미 가입되어 있는지 확인합니다. `duplicate` 가 `true` 이면 사용할 수 없습니다.
 
-[black]#Response#
+[horizontal]
+인증:: 불필요
 
-include::{snippets}/crew-request/success/my-requests/http-response.adoc[]
+[discrete]
+==== 요청
 
-=== 스쿼드
+include::{snippets}/member/success/check-email/http-request.adoc[]
 
-==== 내가 참여중인 스쿼드
+include::{snippets}/member/success/check-email/query-parameters.adoc[]
 
-[black]#Request#
+[discrete]
+==== 응답
 
-include::{snippets}/squad-member/success/my-participating/http-request.adoc[]
+include::{snippets}/member/success/check-email/http-response.adoc[]
 
-include::{snippets}/squad-member/success/my-participating/request-headers.adoc[]
+[[member-check-nickname]]
+=== 닉네임 중복 확인
 
-[black]#Response#
+`+GET /api/members/check-nickname+`
 
-include::{snippets}/squad-member/success/my-participating/http-response.adoc[]
+닉네임이 이미 사용 중인지 확인합니다. `duplicate` 가 `true` 이면 사용할 수 없습니다.
 
-==== 참가 신청
+[horizontal]
+인증:: 불필요
 
-===== 나의 스쿼드 가입 신청 내역
+[discrete]
+==== 요청
 
-[black]#Request#
+include::{snippets}/member/success/check-nickname/http-request.adoc[]
 
-include::{snippets}/squad-request/success/my-requests/http-request.adoc[]
+include::{snippets}/member/success/check-nickname/query-parameters.adoc[]
 
-include::{snippets}/squad-request/success/my-requests/request-headers.adoc[]
+[discrete]
+==== 응답
 
-include::{snippets}/squad-request/success/my-requests/query-parameters.adoc[]
+include::{snippets}/member/success/check-nickname/http-response.adoc[]
 
-[black]#Response#
+[[member-signup]]
+=== 회원가입
 
-include::{snippets}/squad-request/success/my-requests/http-response.adoc[]
+`+POST /api/members+`
 
-=== 내 프로필
+이메일 인증을 마친 이메일로 회원가입합니다.
 
-[black]#Request#
+닉네임은 2~8자, 비밀번호는 영문/숫자/특수문자를 포함한 8~20자여야 하고 `passwordConfirm` 은 `password` 와 같아야 합니다. 비밀번호는 BCrypt 로 저장됩니다.
+
+[horizontal]
+인증:: 불필요
+
+[discrete]
+==== 요청
+
+include::{snippets}/member/success/new/http-request.adoc[]
+
+include::{snippets}/member/success/new/request-fields.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/member/success/new/http-response.adoc[]
+
+[[member-me]]
+=== 내 정보 조회
+
+`+GET /api/members/me+`
+
+로그인한 회원의 프로필을 조회합니다.
+
+[horizontal]
+인증:: 필수
+
+[discrete]
+==== 요청
 
 include::{snippets}/member/success/me/http-request.adoc[]
 
 include::{snippets}/member/success/me/request-headers.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/member/success/me/http-response.adoc[]
 
-=== 프로필 업데이트
+[[member-update]]
+=== 내 정보 수정
 
-[black]#Request#
+`+PUT /api/members/me+`
+
+프로필 정보를 수정합니다. 모든 필드가 필수입니다.
+
+[horizontal]
+인증:: 필수
+
+[discrete]
+==== 요청
 
 include::{snippets}/member/success/update/http-request.adoc[]
 
 include::{snippets}/member/success/update/request-headers.adoc[]
 
-[black]#Response#
+.Request Fields
+[cols="2,1,5,1",options="header"]
+|===
+|Field|Type|Description|Required
+
+|`+nickname+`
+|`+String+`
+|닉네임 (2~8자)
+|true
+
+|`+introduce+`
+|`+String+`
+|자기소개 (200자 이하)
+|true
+
+|`+mbti+`
+|`+String+`
+|MBTI
+|true
+
+|`+kakaoLink+`
+|`+String+`
+|카카오 오픈채팅 링크
+|true
+
+|`+address+`
+|`+String+`
+|주소
+|true
+
+|`+addressDetail+`
+|`+String+`
+|상세 주소
+|true
+
+|===
+
+[discrete]
+==== 응답
 
 include::{snippets}/member/success/update/http-response.adoc[]
 
+[[member-update-password]]
 === 비밀번호 변경
 
-[black]#Request#
+`+PATCH /api/members/me/password+`
+
+현재 비밀번호를 확인한 뒤 새 비밀번호로 변경합니다. 새 비밀번호는 영문/숫자/특수문자를 포함한 8~20자이며 확인 값과 같아야 합니다.
+
+[horizontal]
+인증:: 필수
+
+[discrete]
+==== 요청
 
 include::{snippets}/member/success/update-password/http-request.adoc[]
 
 include::{snippets}/member/success/update-password/request-headers.adoc[]
 
-[black]#Response#
+include::{snippets}/member/success/update-password/request-fields.adoc[]
+
+[discrete]
+==== 응답
 
 include::{snippets}/member/success/update-password/http-response.adoc[]
 
+[[member-update-image]]
 === 프로필 이미지 변경
 
-[black]#Request#
+`+PATCH /api/members/me/image+`
+
+프로필 이미지를 변경합니다(`multipart/form-data`). 이전 이미지는 S3 에서 삭제됩니다.
+
+[horizontal]
+인증:: 필수
+
+[discrete]
+==== 요청
 
 include::{snippets}/member/success/update-image/http-request.adoc[]
 
@@ -116,30 +247,59 @@ include::{snippets}/member/success/update-image/request-headers.adoc[]
 
 include::{snippets}/member/success/update-image/request-parts.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/member/success/update-image/http-response.adoc[]
 
+[[member-delete-image]]
 === 프로필 이미지 삭제
 
-[black]#Request#
+`+DELETE /api/members/me/image+`
+
+프로필 이미지를 삭제합니다.
+
+[horizontal]
+인증:: 필수
+
+[discrete]
+==== 요청
 
 include::{snippets}/member/success/delete-image/http-request.adoc[]
 
 include::{snippets}/member/success/delete-image/request-headers.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/member/success/delete-image/http-response.adoc[]
 
+[[member-withdraw]]
 === 회원 탈퇴
 
-[black]#Request#
+`+DELETE /api/members/me+`
+
+회원을 탈퇴 처리하고 연관 데이터를 정리합니다.
+
+[horizontal]
+인증:: 필수
+
+* 내가 크루장인 크루와 스쿼드 리더인 스쿼드는 다른 멤버가 있어도 함께 삭제됩니다.
+
+* 다른 크루/스쿼드에 남긴 참여 기록은 정리됩니다.
+
+* 내가 쓴 공지는 남고 작성자는 `탈퇴한 회원` 으로 표시됩니다.
+
+* 내가 쓴 스쿼드 댓글은 그 댓글에 달린 다른 회원의 답글과 함께 삭제됩니다.
+
+[discrete]
+==== 요청
 
 include::{snippets}/member/success/delete/http-request.adoc[]
 
 include::{snippets}/member/success/delete/request-headers.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/member/success/delete/http-response.adoc[]

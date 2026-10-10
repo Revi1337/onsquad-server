@@ -1,0 +1,42 @@
+[[history]]
+== 활동 이력
+
+회원의 활동 이력 조회 API 입니다.
+
+.엔드포인트 목록
+[cols="1,4,4,1",options="header"]
+|===
+|Method|Path|설명|인증
+
+|GET
+|`+/api/members/me/histories+`
+|<<history-list,내 활동 이력 조회>>
+|필수
+
+|===
+
+[[history-list]]
+=== 내 활동 이력 조회
+
+`+GET /api/members/me/histories+`
+
+내 활동 이력을 기간(`from` ~ `to`)과 유형(`type`)으로 조회합니다.
+
+크루 생성/가입 신청/승인/거절/취소, 스쿼드 생성/신청/승인/거절/취소, 댓글/대댓글(총 12종)이 자동으로 기록됩니다.
+
+[horizontal]
+인증:: 필수
+
+[discrete]
+==== 요청
+
+include::{snippets}/histories/success/me/http-request.adoc[]
+
+include::{snippets}/histories/success/me/request-headers.adoc[]
+
+include::{snippets}/histories/success/me/query-parameters.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/histories/success/me/http-response.adoc[]

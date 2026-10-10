@@ -1,16 +1,41 @@
+= OnSquad REST API 문서
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 5
+:toclevels: 2
+:sectnums:
+:sectnumlevels: 2
 :sectlinks:
+:idprefix:
+:idseparator: -
 
-= OnSquad REST API 문서
+include::overview/overview.adoc[]
 
 include::auth/auth.adoc[]
 
+include::member/member.adoc[]
+
 include::crew/crew.adoc[]
+
+include::crew/crew-member.adoc[]
+
+include::crew/crew-request.adoc[]
+
+include::crew/announce.adoc[]
 
 include::squad/squad.adoc[]
 
-include::member/member.adoc[]
+include::squad/squad-member.adoc[]
+
+include::squad/squad-request.adoc[]
+
+include::squad/squad-comment.adoc[]
+
+include::notification/notification.adoc[]
+
+include::history/history.adoc[]
+
+include::metadata/metadata.adoc[]
+
+include::overview/error-codes.adoc[]

@@ -1,15 +1,53 @@
-:doctype: book
-:icons: font
-:source-highlighter: highlightjs
-:toc: left
-:toclevels: 3
-:sectlinks:
+[[squad-member]]
+== 스쿼드 멤버
 
-=== 스쿼드 참여자
+스쿼드 참여자 관리 API 입니다. 스쿼드 안에서의 역할은 `LEADER`(리더), `GENERAL`(일반) 입니다.
 
-==== 스쿼드 참여자 목록
+.엔드포인트 목록
+[cols="1,4,4,1",options="header"]
+|===
+|Method|Path|설명|인증
 
-[black]#Request#
+|GET
+|`+/api/squads/{squadId}/members+`
+|<<squad-member-list,스쿼드 멤버 목록 조회>>
+|필수
+
+|PATCH
+|`+/api/squads/{squadId}/members/{targetMemberId}/leader+`
+|<<squad-member-delegate-leader,스쿼드 리더 위임>>
+|필수
+
+|DELETE
+|`+/api/squads/{squadId}/members/me+`
+|<<squad-member-leave,스쿼드 탈퇴>>
+|필수
+
+|DELETE
+|`+/api/squads/{squadId}/members/{targetMemberId}+`
+|<<squad-member-kick,스쿼드원 추방>>
+|필수
+
+|GET
+|`+/api/members/me/squad-participants+`
+|<<squad-member-my-squads,내가 참여 중인 스쿼드 조회>>
+|필수
+
+|===
+
+[[squad-member-list]]
+=== 스쿼드 멤버 목록 조회
+
+`+GET /api/squads/{squadId}/members+`
+
+스쿼드 참여자 목록을 조회합니다. 각 멤버에 대한 `isMe`, `canKick`, `canDelegateLeader` 상태가 함께 내려옵니다.
+
+[horizontal]
+인증:: 필수
+권한:: 스쿼드 참여자 또는 크루장
+
+[discrete]
+==== 요청
 
 include::{snippets}/squad-member/success/finds/http-request.adoc[]
 
@@ -19,47 +57,30 @@ include::{snippets}/squad-member/success/finds/path-parameters.adoc[]
 
 include::{snippets}/squad-member/success/finds/query-parameters.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
-본인이 스쿼드 참여자인 경우
+*스쿼드 참여자가 조회하는 경우*
 
 include::{snippets}/squad-member/success/finds/http-response.adoc[]
 
-본인이 스쿼드 참여하지 않은 경우(크루 오너) (isMe & canKick & canDelegateLeader 는 내려오지 않음)
+*스쿼드에 참여하지 않은 크루장이 조회하는 경우 (`isMe`, `canKick`, `canDelegateLeader` 는 내려오지 않음)*
 
 include::{snippets}/squad-member/success/finds2/http-response.adoc[]
 
-==== 스쿼드 탈퇴
+[[squad-member-delegate-leader]]
+=== 스쿼드 리더 위임
 
-[black]#Request#
+`+PATCH /api/squads/{squadId}/members/{targetMemberId}/leader+`
 
-include::{snippets}/squad-member/success/leave/http-request.adoc[]
+리더 권한을 다른 참여자에게 넘깁니다. 자기 자신에게는 위임할 수 없습니다.
 
-include::{snippets}/squad-member/success/leave/request-headers.adoc[]
+[horizontal]
+인증:: 필수
+권한:: 스쿼드 리더
 
-include::{snippets}/squad-member/success/leave/path-parameters.adoc[]
-
-[black]#Response#
-
-include::{snippets}/squad-member/success/leave/http-response.adoc[]
-
-==== 스쿼드 참여자 추방
-
-[black]#Request#
-
-include::{snippets}/squad-member/success/kick/http-request.adoc[]
-
-include::{snippets}/squad-member/success/kick/request-headers.adoc[]
-
-include::{snippets}/squad-member/success/kick/path-parameters.adoc[]
-
-[black]#Response#
-
-include::{snippets}/squad-member/success/kick/http-response.adoc[]
-
-==== 스쿼드 리더 위임
-
-[black]#Request#
+[discrete]
+==== 요청
 
 include::{snippets}/squad-member/success/delegate/http-request.adoc[]
 
@@ -67,6 +88,79 @@ include::{snippets}/squad-member/success/delegate/request-headers.adoc[]
 
 include::{snippets}/squad-member/success/delegate/path-parameters.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/squad-member/success/delegate/http-response.adoc[]
+
+[[squad-member-leave]]
+=== 스쿼드 탈퇴
+
+`+DELETE /api/squads/{squadId}/members/me+`
+
+스쿼드에서 탈퇴합니다. 리더는 권한을 위임한 뒤에만 탈퇴할 수 있고, 마지막 한 명이 탈퇴하면 스쿼드가 함께 삭제됩니다.
+
+[horizontal]
+인증:: 필수
+권한:: 스쿼드 참여자
+
+[discrete]
+==== 요청
+
+include::{snippets}/squad-member/success/leave/http-request.adoc[]
+
+include::{snippets}/squad-member/success/leave/request-headers.adoc[]
+
+include::{snippets}/squad-member/success/leave/path-parameters.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/squad-member/success/leave/http-response.adoc[]
+
+[[squad-member-kick]]
+=== 스쿼드원 추방
+
+`+DELETE /api/squads/{squadId}/members/{targetMemberId}+`
+
+스쿼드원을 추방합니다.
+
+[horizontal]
+인증:: 필수
+권한:: 스쿼드 리더
+
+[discrete]
+==== 요청
+
+include::{snippets}/squad-member/success/kick/http-request.adoc[]
+
+include::{snippets}/squad-member/success/kick/request-headers.adoc[]
+
+include::{snippets}/squad-member/success/kick/path-parameters.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/squad-member/success/kick/http-response.adoc[]
+
+[[squad-member-my-squads]]
+=== 내가 참여 중인 스쿼드 조회
+
+`+GET /api/members/me/squad-participants+`
+
+내가 참여 중인 스쿼드 목록을 조회합니다. 페이징 없이 전체 목록이 내려옵니다.
+
+[horizontal]
+인증:: 필수
+
+[discrete]
+==== 요청
+
+include::{snippets}/squad-member/success/my-participating/http-request.adoc[]
+
+include::{snippets}/squad-member/success/my-participating/request-headers.adoc[]
+
+[discrete]
+==== 응답
+
+include::{snippets}/squad-member/success/my-participating/http-response.adoc[]

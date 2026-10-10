@@ -1,0 +1,8 @@
+[[error-codes]]
+== 에러 코드
+
+에러 응답의 `error.code` 값입니다. 메시지에서 `N` 은 도메인 규칙에 따라 정해지는 숫자, `...` 는 상황에 따라 채워지는 값입니다.
+
+NOTE: 이 장의 표는 빌드할 때 `ErrorCode` 를 구현한 enum 에서 자동으로 만들어집니다. 새 에러 코드를 추가하면 문서에 반영됩니다.
+
+include::{snippets}/error-codes/error-codes.adoc[]

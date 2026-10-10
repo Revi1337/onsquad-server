@@ -1,112 +1,206 @@
-:doctype: book
-:icons: font
-:source-highlighter: highlightjs
-:toc: left
-:toclevels: 4
-:sectlinks:
+[[auth]]
+== 인증
 
-=== 회원가입 및 인증 인가
+회원가입을 위한 이메일 인증, 로그인(이메일/소셜), 토큰 재발급 API 입니다.
 
-==== 인증코드 발송
+.엔드포인트 목록
+[cols="1,4,4,1",options="header"]
+|===
+|Method|Path|설명|인증
 
-[black]#Request#
+|POST
+|`+/api/auth/send+`
+|<<auth-send-code,이메일 인증코드 발송>>
+|불필요
+
+|POST
+|`+/api/auth/verify+`
+|<<auth-verify-code,이메일 인증코드 검증>>
+|불필요
+
+|POST
+|`+/api/auth/login+`
+|<<auth-login,이메일 로그인>>
+|불필요
+
+|GET
+|`+/api/login/oauth2/{vendor}+`
+|<<auth-oauth2-url,소셜 로그인 주소 조회>>
+|불필요
+
+|GET
+|`+/api/login/oauth2/code/{vendor}+`
+|<<auth-oauth2-callback,소셜 로그인 콜백>>
+|불필요
+
+|POST
+|`+/api/auth/reissue+`
+|<<auth-reissue,토큰 재발급>>
+|불필요
+
+|===
+
+[[auth-send-code]]
+=== 이메일 인증코드 발송
+
+`+POST /api/auth/send+`
+
+입력한 이메일로 인증코드를 발송합니다. 메일 발송은 비동기로 처리되며, 인증코드의 유효 시간은 3분입니다.
+
+회원가입 전에 이메일 소유를 확인하는 첫 단계입니다. (발송 → 검증 → 회원가입)
+
+[horizontal]
+인증:: 불필요
+
+[discrete]
+==== 요청
 
 include::{snippets}/auth/success/verification-code/send/http-request.adoc[]
 
 include::{snippets}/auth/success/verification-code/send/query-parameters.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/auth/success/verification-code/send/http-response.adoc[]
 
-==== 인증코드 검증
+[[auth-verify-code]]
+=== 이메일 인증코드 검증
 
-[black]#Request#
+`+POST /api/auth/verify+`
+
+발송된 인증코드가 일치하면 해당 이메일을 인증 완료 상태로 바꾸고 `valid: true` 를 반환합니다.
+
+인증이 완료된 이메일은 5분 안에 회원가입해야 합니다. 이미 인증이 끝난 코드를 다시 검증하면 `valid: false` 가 반환됩니다.
+
+[horizontal]
+인증:: 불필요
+
+[discrete]
+==== 요청
 
 include::{snippets}/auth/success/verification-code/verify/http-request.adoc[]
 
 include::{snippets}/auth/success/verification-code/verify/request-fields.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/auth/success/verification-code/verify/http-response.adoc[]
 
-==== 이메일 중복 검사
+[[auth-login]]
+=== 이메일 로그인
 
-[black]#Request#
+`+POST /api/auth/login+`
 
-include::{snippets}/member/success/check-email/http-request.adoc[]
+이메일과 비밀번호로 로그인하고 Access Token 과 Refresh Token 을 발급받습니다.
 
-include::{snippets}/member/success/check-email/query-parameters.adoc[]
+[horizontal]
+인증:: 불필요
 
-[black]#Response#
+이메일 또는 비밀번호가 일치하지 않으면 `401` 과 함께 `A001` ~ `A003` 에러 코드가 내려옵니다.
 
-include::{snippets}/member/success/check-email/http-response.adoc[]
-
-==== 닉네임 중복 검사
-
-[black]#Request#
-
-include::{snippets}/member/success/check-nickname/http-request.adoc[]
-
-include::{snippets}/member/success/check-nickname/query-parameters.adoc[]
-
-[black]#Response#
-
-include::{snippets}/member/success/check-nickname/http-response.adoc[]
-
-==== 회원가입
-
-[black]#Request#
-
-include::{snippets}/member/success/new/http-request.adoc[]
-
-include::{snippets}/member/success/new/request-fields.adoc[]
-
-[black]#Response#
-
-include::{snippets}/member/success/new/http-response.adoc[]
-
-==== 일반 로그인
-
-[black]#Request#
+[discrete]
+==== 요청
 
 include::{snippets}/auth/success/login/http-request.adoc[]
 
-[black]#Response#
+.Request Fields
+[cols="2,1,5,1",options="header"]
+|===
+|Field|Type|Description|Required
+
+|`+email+`
+|`+String+`
+|로그인 이메일
+|true
+
+|`+password+`
+|`+String+`
+|비밀번호
+|true
+
+|===
+
+[discrete]
+==== 응답
 
 include::{snippets}/auth/success/login/http-response.adoc[]
 
-==== OAuth2 로그인
+[[auth-oauth2-url]]
+=== 소셜 로그인 주소 조회
 
-===== OAuth2 로그인 주소 반환
+`+GET /api/login/oauth2/{vendor}+`
 
-[black]#Request#
+소셜 로그인(카카오, 구글)을 시작할 인가 서버 주소를 `Location` 헤더로 돌려줍니다. 클라이언트는 이 주소로 이동합니다.
+
+`vendor` 는 `kakao`, `google` 이며 대소문자를 구분하지 않습니다. 지원하지 않는 값은 `400` 입니다.
+
+[horizontal]
+인증:: 불필요
+
+[discrete]
+==== 요청
 
 include::{snippets}/auth/success/oauth2-endpoint/http-request.adoc[]
 
-[black]#Response#
+include::{snippets}/auth/success/oauth2-endpoint/path-parameters.adoc[]
+
+[discrete]
+==== 응답
+
+응답 본문은 없고 `Location` 헤더에 인가 서버 주소가 담깁니다.
 
 include::{snippets}/auth/success/oauth2-endpoint/http-response.adoc[]
 
-===== OAuth2 로그인 (인가서버가 수행)
+[[auth-oauth2-callback]]
+=== 소셜 로그인 콜백
 
-[black]#Request#
+`+GET /api/login/oauth2/code/{vendor}+`
+
+인가 서버가 사용자를 되돌려 보내는 콜백 주소로, 클라이언트가 직접 호출하지 않습니다.
+
+인가 코드로 회원 정보를 조회하고, 처음 로그인하는 회원은 자동으로 가입시킵니다(닉네임은 랜덤 8자). 이후 프론트엔드 주소로 `302` 리다이렉트하며 토큰을 쿼리 파라미터로 전달합니다.
+
+[horizontal]
+인증:: 불필요
+
+[discrete]
+==== 요청
 
 include::{snippets}/auth/success/oauth2-login/http-request.adoc[]
 
-[black]#Response#
+include::{snippets}/auth/success/oauth2-login/path-parameters.adoc[]
+
+include::{snippets}/auth/success/oauth2-login/query-parameters.adoc[]
+
+[discrete]
+==== 응답
+
+응답 본문은 없고 `Location` 헤더의 `accessToken`, `refreshToken` 쿼리 파라미터로 토큰이 전달됩니다.
 
 include::{snippets}/auth/success/oauth2-login/http-response.adoc[]
 
-==== 토큰 재발급
+[[auth-reissue]]
+=== 토큰 재발급
 
-[black]#Request#
+`+POST /api/auth/reissue+`
+
+Refresh Token 으로 Access Token 과 Refresh Token 을 새로 발급합니다.
+
+Refresh Token Rotation 방식이라 재발급할 때마다 Refresh Token 도 교체되며, 한 번 사용한 Refresh Token 은 다시 쓸 수 없습니다. 회원당 가장 최근에 발급된 Refresh Token 하나만 유효합니다.
+
+[horizontal]
+인증:: 불필요
+
+[discrete]
+==== 요청
 
 include::{snippets}/auth/success/refresh-token/reissue/http-request.adoc[]
 
 include::{snippets}/auth/success/refresh-token/reissue/request-fields.adoc[]
 
-[black]#Response#
+[discrete]
+==== 응답
 
 include::{snippets}/auth/success/refresh-token/reissue/http-response.adoc[]
