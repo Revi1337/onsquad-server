@@ -2,14 +2,12 @@ package revi1337.onsquad.common.presentation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import revi1337.onsquad.common.dto.ProblemDetail;
 import revi1337.onsquad.common.dto.RestResponse;
 import revi1337.onsquad.common.error.CommonErrorCode;
-import revi1337.onsquad.common.error.ErrorCode;
 import revi1337.onsquad.common.error.RequestDispatcherResolver;
 
 @RestController
@@ -17,25 +15,9 @@ public class RestErrorHandler implements ErrorController {
 
     @RequestMapping("${server.error.path:${error.path:/error}}")
     public ResponseEntity<RestResponse<ProblemDetail>> handleError(HttpServletRequest httpServletRequest) {
-        HttpStatus httpStatus = new RequestDispatcherResolver(httpServletRequest).resolveHttpStatus();
-        return switch (httpStatus) {
-            case BAD_REQUEST -> {
-                ErrorCode errorCode = CommonErrorCode.INVALID_INPUT_VALUE;
-                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, ProblemDetail.of(errorCode));
-                yield ResponseEntity.status(restResponse.status()).body(restResponse);
-            }
-
-            case NOT_FOUND -> {
-                ErrorCode errorCode = CommonErrorCode.NOT_FOUND;
-                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, ProblemDetail.of(errorCode));
-                yield ResponseEntity.status(restResponse.status()).body(restResponse);
-            }
-
-            default -> {
-                ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
-                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, ProblemDetail.of(errorCode));
-                yield ResponseEntity.status(restResponse.status()).body(restResponse);
-            }
-        };
+        int status = new RequestDispatcherResolver(httpServletRequest).resolveHttpStatus().value();
+        CommonErrorCode errorCode = CommonErrorCode.fromStatus(status);
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(status, ProblemDetail.of(errorCode));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 }
