@@ -83,9 +83,11 @@ public class RdbVerificationCodeStorage implements VerificationCodeStorage {
 
     @Override
     public boolean isMarkedVerificationStatusWith(String email, VerificationStatus status) {
-        String sql = "SELECT status FROM verification_code WHERE email = :email";
+        String sql = "SELECT status FROM verification_code WHERE email = :email AND expired_at > :now";
 
-        MapSqlParameterSource params = new MapSqlParameterSource().addValue("email", email);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("email", email)
+                .addValue("now", Instant.now().toEpochMilli());
 
         try {
             String currentStatus = jdbcTemplate.queryForObject(sql, params, String.class);
