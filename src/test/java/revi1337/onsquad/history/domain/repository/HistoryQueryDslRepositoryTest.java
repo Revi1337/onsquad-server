@@ -110,4 +110,51 @@ class HistoryQueryDslRepositoryTest extends PersistenceLayerTestSupport {
                     .isSortedAccordingTo(Comparator.reverseOrder());
         });
     }
+
+    @Test
+    @DisplayName("이력이 페이지 크기보다 많으면 요청한 페이지에 해당하는 이력만 최신순으로 조회한다")
+    void findAllByMemberIdAndDateRangePaging() {
+        LocalDate baseRecordedAt = LocalDate.of(2026, 1, 4);
+        LocalDateTime baseDateTime = baseRecordedAt.atStartOfDay();
+        for (int i = 0; i < 5; i++) {
+            historyJpaRepository.save(createCrewCreateHistory(2L, 10L + i, "crew-name-" + i, baseDateTime.plusHours(i)));
+        }
+        clearPersistenceContext();
+
+        Page<HistoryEntity> firstPage = findPage(baseRecordedAt, PageRequest.of(0, 2));
+        Page<HistoryEntity> secondPage = findPage(baseRecordedAt, PageRequest.of(1, 2));
+        Page<HistoryEntity> lastPage = findPage(baseRecordedAt, PageRequest.of(2, 2));
+
+        assertSoftly(softly -> {
+            softly.assertThat(firstPage.getContent()).extracting(HistoryEntity::getRecordedAt)
+                    .containsExactly(baseDateTime.plusHours(4), baseDateTime.plusHours(3));
+            softly.assertThat(secondPage.getContent()).extracting(HistoryEntity::getRecordedAt)
+                    .containsExactly(baseDateTime.plusHours(2), baseDateTime.plusHours(1));
+            softly.assertThat(lastPage.getContent()).extracting(HistoryEntity::getRecordedAt)
+                    .containsExactly(baseDateTime);
+        });
+    }
+
+    @Test
+    @DisplayName("이력이 페이지 크기보다 많아도 전체 개수와 전체 페이지 수는 기간 내 전체 이력을 기준으로 계산한다")
+    void findAllByMemberIdAndDateRangePagingMetadata() {
+        LocalDate baseRecordedAt = LocalDate.of(2026, 1, 4);
+        LocalDateTime baseDateTime = baseRecordedAt.atStartOfDay();
+        for (int i = 0; i < 5; i++) {
+            historyJpaRepository.save(createCrewCreateHistory(2L, 10L + i, "crew-name-" + i, baseDateTime.plusHours(i)));
+        }
+        clearPersistenceContext();
+
+        Page<HistoryEntity> lastPage = findPage(baseRecordedAt, PageRequest.of(2, 2));
+
+        assertSoftly(softly -> {
+            softly.assertThat(lastPage.getTotalElements()).isEqualTo(5);
+            softly.assertThat(lastPage.getTotalPages()).isEqualTo(3);
+            softly.assertThat(lastPage.hasNext()).isFalse();
+        });
+    }
+
+    private Page<HistoryEntity> findPage(LocalDate date, PageRequest pageable) {
+        return historyQueryDslRepository.findAllByMemberIdAndDateRange(2L, date, date, HistoryType.CREW_CREATE, pageable);
+    }
 }
