@@ -24,22 +24,22 @@ public class OAuth2ExchangeService {
     private final SocialMemberService loginService;
     private final OAuth2VendorRegistry vendorRegistry;
 
-    public URI buildAuthorizationEndpoint(String platform, String baseUrl) {
-        OAuth2VendorProvider vendorProvider = vendorRegistry.getOAuth2Provider(platform);
+    public URI buildAuthorizationEndpoint(OAuth2Vendor vendor, String baseUrl) {
+        OAuth2VendorProvider vendorProvider = vendorRegistry.getOAuth2Provider(vendor);
         OAuth2VendorEndpointBuilder endpointBuilder = vendorProvider.endpointBuilder();
 
         return endpointBuilder.build(baseUrl, vendorProvider.properties());
     }
 
-    public URI handleOAuth2Login(String platform, String baseUrl, String code) {
-        OAuth2VendorUserProfile userProfile = fetchUserProfile(baseUrl, platform, code);
+    public URI handleOAuth2Login(OAuth2Vendor vendor, String baseUrl, String code) {
+        OAuth2VendorUserProfile userProfile = fetchUserProfile(baseUrl, vendor, code);
         JsonWebToken jsonWebToken = loginService.authenticate(userProfile);
 
         return buildRedirectUri(jsonWebToken);
     }
 
-    private OAuth2VendorUserProfile fetchUserProfile(String baseUrl, String platform, String authorizationCode) {
-        OAuth2VendorProvider vendorProvider = vendorRegistry.getOAuth2Provider(platform);
+    private OAuth2VendorUserProfile fetchUserProfile(String baseUrl, OAuth2Vendor vendor, String authorizationCode) {
+        OAuth2VendorProvider vendorProvider = vendorRegistry.getOAuth2Provider(vendor);
         OAuth2VendorAccessTokenFetcher tokenFetcher = vendorProvider.accessTokenFetcher();
         OAuth2VendorUserProfileResolver userProfileResolver = vendorProvider.userProfileResolver();
 

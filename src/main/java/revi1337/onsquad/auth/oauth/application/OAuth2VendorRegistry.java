@@ -17,12 +17,7 @@ public class OAuth2VendorRegistry {
                 .collect(Collectors.toUnmodifiableMap(OAuth2VendorProvider::platform, Function.identity()));
     }
 
-    public OAuth2VendorProvider getOAuth2Provider(String platform) {
-        try {
-            OAuth2Vendor key = OAuth2Vendor.valueOf(platform.toUpperCase());
-            return providers.get(key);
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("Unsupported OAuth2 platform: " + platform);
-        }
+    public OAuth2VendorProvider getOAuth2Provider(OAuth2Vendor vendor) {
+        return providers.get(vendor);
     }
 }

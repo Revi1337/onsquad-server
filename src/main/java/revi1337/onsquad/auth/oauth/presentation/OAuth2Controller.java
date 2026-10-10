@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import revi1337.onsquad.auth.oauth.application.OAuth2ExchangeService;
+import revi1337.onsquad.auth.oauth.application.OAuth2Vendor;
 
 @RestController
 @RequestMapping("/api")
@@ -21,7 +22,7 @@ public class OAuth2Controller {
     private final OAuth2ExchangeService oauth2Exchangeservice;
 
     @GetMapping("/login/oauth2/{vendor}")
-    public ResponseEntity<String> buildAuthorizationEndpoint(@PathVariable String vendor) {
+    public ResponseEntity<String> buildAuthorizationEndpoint(@PathVariable OAuth2Vendor vendor) {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         URI authorizationEndpoint = oauth2Exchangeservice.buildAuthorizationEndpoint(vendor, baseUrl);
 
@@ -30,7 +31,7 @@ public class OAuth2Controller {
 
     @GetMapping("/login/oauth2/code/{vendor}")
     public ResponseEntity<Void> handleOAuth2Login(
-            @PathVariable String vendor,
+            @PathVariable OAuth2Vendor vendor,
             @RequestParam String code
     ) {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
