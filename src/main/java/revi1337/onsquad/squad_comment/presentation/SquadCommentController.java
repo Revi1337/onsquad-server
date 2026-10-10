@@ -41,7 +41,7 @@ public class SquadCommentController {
         return RestResponse.created().toResponseEntity();
     }
 
-    @PostMapping("/squads/{squadId}/replies/{parentId}")
+    @PostMapping("/squads/{squadId}/comments/{parentId}/replies")
     public ResponseEntity<RestResponse<Void>> addReply(
             @PathVariable Long squadId,
             @PathVariable Long parentId,
