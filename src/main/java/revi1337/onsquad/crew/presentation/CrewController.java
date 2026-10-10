@@ -6,7 +6,6 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +24,7 @@ import revi1337.onsquad.auth.support.CurrentMember;
 import revi1337.onsquad.common.dto.DuplicateResponse;
 import revi1337.onsquad.common.dto.PageResponse;
 import revi1337.onsquad.common.dto.RestResponse;
+import revi1337.onsquad.common.presentation.support.AdaptivePageable;
 import revi1337.onsquad.crew.application.CrewCommandServiceFacade;
 import revi1337.onsquad.crew.application.CrewQueryService;
 import revi1337.onsquad.crew.application.dto.response.CrewResponse;
@@ -75,7 +75,7 @@ public class CrewController {
     @GetMapping
     public ResponseEntity<RestResponse<PageResponse<CrewResponse>>> fetchCrewsByName(
             @RequestParam(required = false) String name,
-            @PageableDefault Pageable pageable
+            @AdaptivePageable Pageable pageable
     ) {
         PageResponse<CrewResponse> response = crewQueryService.fetchCrewsByName(name, pageable);
 
