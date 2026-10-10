@@ -1,11 +1,14 @@
 package revi1337.onsquad.auth.token.application;
 
+import static revi1337.onsquad.auth.token.domain.error.TokenErrorCode.INVALID_TOKEN_FORMAT;
 import static revi1337.onsquad.auth.token.domain.error.TokenErrorCode.INVALID_TOKEN_SIGNATURE;
 import static revi1337.onsquad.auth.token.domain.error.TokenErrorCode.TOKEN_EXPIRED;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +34,8 @@ public class JsonWebTokenEvaluator {
             throw new TokenException.InvalidTokenSignature(INVALID_TOKEN_SIGNATURE);
         } catch (ExpiredJwtException e) {
             throw new TokenException.TokenExpired(TOKEN_EXPIRED);
+        } catch (MalformedJwtException | UnsupportedJwtException e) {
+            throw new TokenException.InvalidTokenFormat(INVALID_TOKEN_FORMAT);
         }
     }
 
