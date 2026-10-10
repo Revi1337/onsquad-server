@@ -1,8 +1,8 @@
 package revi1337.onsquad.notification.application;
 
-import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import revi1337.onsquad.notification.domain.ConnectionNotification;
 import revi1337.onsquad.notification.domain.model.NotificationMessage;

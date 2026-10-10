@@ -2,7 +2,7 @@ package revi1337.onsquad.crew.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
-import javax.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import revi1337.onsquad.crew.domain.model.CrewDetail;
 import revi1337.onsquad.hashtag.domain.HashtagType;
 import revi1337.onsquad.member.application.dto.response.SimpleMemberResponse;

@@ -1,10 +1,10 @@
 package revi1337.onsquad.history.application;
 
 import java.time.LocalDate;
-import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import revi1337.onsquad.common.dto.PageResponse;

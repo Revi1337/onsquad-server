@@ -1,9 +1,9 @@
 package revi1337.onsquad.history.domain.repository;
 
 import java.time.LocalDate;
-import javax.annotation.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
 
