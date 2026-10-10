@@ -21,6 +21,6 @@ public record MemberPasswordUpdateRequest(
     @JsonIgnore
     @Override
     public Map<String, String> getComparedFields() {
-        return Map.of("newPassword", newPassword, "newPasswordConfirm", newPasswordConfirm);
+        return StringComparator.fields("newPassword", newPassword, "newPasswordConfirm", newPasswordConfirm);
     }
 }

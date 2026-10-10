@@ -43,7 +43,7 @@ public class StringCompareValidator implements ConstraintValidator<StringCompare
             try {
                 String recordFieldName = recordComponent.getAccessor().getName();
                 Object recordFieldValue = recordComponent.getAccessor().invoke(comparator);
-                if (Objects.equals(entries.get(recordFieldName), recordFieldValue)) {
+                if (entries.containsKey(recordFieldName) && Objects.equals(entries.get(recordFieldName), recordFieldValue)) {
                     addAdditionalConstraintViolation(recordFieldName, context);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -61,7 +61,7 @@ public class StringCompareValidator implements ConstraintValidator<StringCompare
             declaredField.setAccessible(true);
             String declaredFieldName = declaredField.getName();
             Object declaredFieldValue = ReflectionUtils.getField(declaredField, comparator);
-            if (Objects.equals(entries.get(declaredFieldName), declaredFieldValue)) {
+            if (entries.containsKey(declaredFieldName) && Objects.equals(entries.get(declaredFieldName), declaredFieldValue)) {
                 addAdditionalConstraintViolation(declaredFieldName, context);
             }
         }

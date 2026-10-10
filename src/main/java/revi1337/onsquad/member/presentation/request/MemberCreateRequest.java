@@ -24,6 +24,6 @@ public record MemberCreateRequest(
     @JsonIgnore
     @Override
     public Map<String, String> getComparedFields() {
-        return Map.of("password", password, "passwordConfirm", passwordConfirm);
+        return StringComparator.fields("password", password, "passwordConfirm", passwordConfirm);
     }
 }
