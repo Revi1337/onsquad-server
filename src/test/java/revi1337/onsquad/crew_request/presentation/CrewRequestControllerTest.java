@@ -90,7 +90,7 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(patch("/api/crews/{crewId}/requests/{requestId}", crewId, requestId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew-request/success/accept",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -118,7 +118,7 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/crews/{crewId}/requests/{requestId}", crewId, requestId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew-request/success/reject",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -179,7 +179,7 @@ class CrewRequestControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/crews/{crewId}/requests/me", crewId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew-request/success/cancel",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

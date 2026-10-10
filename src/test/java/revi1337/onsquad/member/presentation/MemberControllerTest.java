@@ -204,7 +204,7 @@ class MemberControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(request))
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("member/success/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -226,7 +226,7 @@ class MemberControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/members/me")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("member/success/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -254,7 +254,7 @@ class MemberControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(request))
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("member/success/update-password",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -304,7 +304,7 @@ class MemberControllerTest extends PresentationLayerTestSupport {
                             })
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(MULTIPART_FORM_DATA_VALUE))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("member/success/update-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -325,7 +325,7 @@ class MemberControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/members/me/image")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("member/success/delete-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

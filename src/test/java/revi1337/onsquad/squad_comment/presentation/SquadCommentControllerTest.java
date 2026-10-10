@@ -259,7 +259,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("squad-comment/success/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -288,7 +288,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/squads/{squadId}/comments/{commentId}", squadId, commentId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("squad-comment/success/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

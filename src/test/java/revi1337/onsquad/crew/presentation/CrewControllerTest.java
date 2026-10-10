@@ -290,7 +290,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             .content(objectMapper.writeValueAsString(request))
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew/success/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -321,7 +321,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/crews/{crewId}", crewId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew/success/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -351,7 +351,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             })
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(MULTIPART_FORM_DATA_VALUE))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew/success/update-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -376,7 +376,7 @@ class CrewControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/crews/{crewId}/image", crewId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON_VALUE))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("crew/success/delete-image",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

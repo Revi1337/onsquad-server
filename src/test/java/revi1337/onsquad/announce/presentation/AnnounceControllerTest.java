@@ -212,7 +212,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("announce/success/update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -246,7 +246,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .queryParam("state", String.valueOf(pinState))
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("announce/success/pin",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -275,7 +275,7 @@ class AnnounceControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/crews/{crewId}/announces/{announceId}", crewId, announceId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("announce/success/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

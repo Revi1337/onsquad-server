@@ -262,7 +262,7 @@ class SquadControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(delete("/api/squads/{squadId}", squadId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("squad/success/delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

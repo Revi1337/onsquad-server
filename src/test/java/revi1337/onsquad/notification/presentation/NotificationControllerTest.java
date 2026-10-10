@@ -132,7 +132,7 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(patch("/api/notifications/{notificationId}/read", 1L)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("notifications/success/read",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -155,7 +155,7 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
             mockMvc.perform(patch("/api/notifications/read-all")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .contentType(APPLICATION_JSON))
-                    .andExpect(jsonPath("$.status").value(204))
+                    .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("notifications/success/reads",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
