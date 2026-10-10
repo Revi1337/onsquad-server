@@ -25,7 +25,7 @@ include::{snippets}/auth/success/verification-code/send/http-response.adoc[]
 
 include::{snippets}/auth/success/verification-code/verify/http-request.adoc[]
 
-include::{snippets}/auth/success/verification-code/verify/query-parameters.adoc[]
+include::{snippets}/auth/success/verification-code/verify/request-fields.adoc[]
 
 [black]#Response#
 

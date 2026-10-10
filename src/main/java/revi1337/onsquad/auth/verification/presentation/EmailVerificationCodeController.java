@@ -1,9 +1,10 @@
 package revi1337.onsquad.auth.verification.presentation;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,12 +28,11 @@ public class EmailVerificationCodeController {
         return RestResponse.created().toResponseEntity();
     }
 
-    @GetMapping("/auth/verify")
+    @PostMapping("/auth/verify")
     public ResponseEntity<RestResponse<EmailValidResponse>> verifyVerificationCode(
-            @RequestParam String email,
-            @RequestParam String code
+            @Valid @RequestBody EmailVerifyRequest request
     ) {
-        if (verificationMailService.validateVerificationCode(email, code)) {
+        if (verificationMailService.validateVerificationCode(request.email(), request.code())) {
             return RestResponse.success(EmailValidResponse.of(true)).toResponseEntity();
         }
 
