@@ -101,7 +101,7 @@ class NotificationControllerTest extends PresentationLayerTestSupport {
             PageResponse<NotificationResponse> pageResponse = PageResponse.from(new PageImpl<>(results, pageRequest, results.size()));
             given(queryService.fetchNotifications(any(), any(Pageable.class))).willReturn(pageResponse);
 
-            mockMvc.perform(get("/api/members/me/notifications")
+            mockMvc.perform(get("/api/notifications")
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .param("page", String.valueOf(pageRequest.getPageNumber()))
                             .param("size", String.valueOf(pageRequest.getPageSize()))
