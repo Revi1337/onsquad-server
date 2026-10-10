@@ -1,6 +1,7 @@
 package revi1337.onsquad.squad_request.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -24,9 +25,11 @@ import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
+import revi1337.onsquad.crew_member.domain.error.CrewMemberBusinessException;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.squad.domain.entity.Squad;
+import revi1337.onsquad.squad.domain.error.SquadBusinessException;
 import revi1337.onsquad.squad.domain.repository.SquadJpaRepository;
 import revi1337.onsquad.squad_member.domain.repository.SquadMemberJpaRepository;
 import revi1337.onsquad.squad_request.domain.entity.SquadRequest;
@@ -91,7 +94,9 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
         void success2() {
             Member revi = memberJpaRepository.save(createRevi());
             Member andong = memberJpaRepository.save(createAndong());
-            Crew crew = crewJpaRepository.save(createCrew(revi));
+            Crew crew = createCrew(revi);
+            crew.addCrewMember(createGeneralCrewMember(crew, andong));
+            crewJpaRepository.save(crew);
             Squad squad = squadJpaRepository.save(createSquad(crew, revi));
             squadRequestJpaRepository.save(createSquadRequest(squad, andong));
             clearPersistenceContext();
@@ -101,6 +106,55 @@ class SquadRequestCommandServiceTest extends ApplicationLayerTestSupport {
             assertSoftly(softly -> {
                 softly.assertThat(events.stream(RequestAdded.class).count()).isEqualTo(0);
                 verify(squadRequestRepository, never()).save(any(SquadRequest.class));
+            });
+        }
+
+        @Test
+        @DisplayName("스쿼드가 속한 크루의 멤버가 아니면 신청에 실패하고 신청이 저장되지 않으며 이벤트도 발행되지 않는다.")
+        void fail1() {
+            Member revi = memberJpaRepository.save(createRevi());
+            Member andong = memberJpaRepository.save(createAndong());
+            Crew crew = crewJpaRepository.save(createCrew(revi));
+            Squad squad = squadJpaRepository.save(createSquad(crew, revi));
+            clearPersistenceContext();
+
+            assertSoftly(softly -> {
+                softly.assertThatThrownBy(() -> squadRequestCommandService.request(andong.getId(), squad.getId()))
+                        .isExactlyInstanceOf(CrewMemberBusinessException.NotParticipant.class);
+                clearPersistenceContext();
+                softly.assertThat(squadRequestJpaRepository.findAll()).isEmpty();
+                softly.assertThat(events.stream(RequestAdded.class).count()).isEqualTo(0);
+            });
+        }
+
+        @Test
+        @DisplayName("다른 크루의 멤버는 스쿼드가 속한 크루의 멤버가 아니므로 신청에 실패한다.")
+        void fail2() {
+            Member revi = memberJpaRepository.save(createRevi());
+            Member andong = memberJpaRepository.save(createAndong());
+            Member kwangwon = memberJpaRepository.save(createKwangwon());
+            Crew crew = crewJpaRepository.save(createCrew(revi));
+            Crew otherCrew = createCrew(kwangwon);
+            otherCrew.addCrewMember(createGeneralCrewMember(otherCrew, andong));
+            crewJpaRepository.save(otherCrew);
+            Squad squad = squadJpaRepository.save(createSquad(crew, revi));
+            clearPersistenceContext();
+
+            assertThatThrownBy(() -> squadRequestCommandService.request(andong.getId(), squad.getId()))
+                    .isExactlyInstanceOf(CrewMemberBusinessException.NotParticipant.class);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 스쿼드에 신청하면 스쿼드를 찾을 수 없다는 예외가 발생하고 신청이 저장되지 않는다.")
+        void fail3() {
+            Member andong = memberJpaRepository.save(createAndong());
+            clearPersistenceContext();
+
+            assertSoftly(softly -> {
+                softly.assertThatThrownBy(() -> squadRequestCommandService.request(andong.getId(), 999_999L))
+                        .isExactlyInstanceOf(SquadBusinessException.NotFound.class);
+                softly.assertThat(squadRequestJpaRepository.findAll()).isEmpty();
+                softly.assertThat(events.stream(RequestAdded.class).count()).isEqualTo(0);
             });
         }
     }
