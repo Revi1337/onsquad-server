@@ -28,6 +28,9 @@ public class JsonWebTokenEvaluator {
     }
 
     private Claims verifyToken(String token, String secretKey) {
+        if (token == null || token.isBlank()) {
+            throw new TokenException.InvalidTokenFormat(INVALID_TOKEN_FORMAT);
+        }
         try {
             return extractAllClaims(token, secretKey);
         } catch (SignatureException e) {
