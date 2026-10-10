@@ -46,7 +46,7 @@ public class NotificationController {
         return notificationService.connect(claimsParser.parseIdentity(), lastEventId);
     }
 
-    @GetMapping("/members/me/notifications")
+    @GetMapping("/notifications")
     public ResponseEntity<RestResponse<PageResponse<NotificationResponse>>> fetchNotifications(
             @AdaptivePageable(defaultSort = "id") Pageable pageable,
             @Authenticate CurrentMember currentMember
