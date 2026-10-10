@@ -8,9 +8,11 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import revi1337.onsquad.auth.oauth.infrastructure.google.GoogleOAuth2UserProfile;
 import revi1337.onsquad.auth.oauth.infrastructure.kakao.KakaoOAuth2UserProfile;
 import revi1337.onsquad.auth.token.domain.model.JsonWebToken;
+import revi1337.onsquad.auth.token.infrastructure.persistence.ResilientRefreshTokenStorage;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
@@ -18,6 +20,9 @@ import revi1337.onsquad.member.domain.vo.Address;
 import revi1337.onsquad.member.domain.vo.UserType;
 
 class SocialMemberServiceTest extends ApplicationLayerTestSupport {
+
+    @MockBean
+    private ResilientRefreshTokenStorage refreshTokenStorage;
 
     @Autowired
     private MemberJpaRepository memberRepository;
