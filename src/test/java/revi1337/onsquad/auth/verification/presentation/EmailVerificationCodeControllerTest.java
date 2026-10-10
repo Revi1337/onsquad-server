@@ -2,13 +2,17 @@ package revi1337.onsquad.auth.verification.presentation;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
@@ -61,19 +65,31 @@ class EmailVerificationCodeControllerTest extends PresentationLayerTestSupport {
             String code = "123456";
             when(verificationMailService.validateVerificationCode(email, code)).thenReturn(true);
 
-            mockMvc.perform(get("/api/auth/verify")
-                            .queryParam("email", email)
-                            .queryParam("code", code))
+            mockMvc.perform(post("/api/auth/verify")
+                            .content(objectMapper.writeValueAsString(new EmailVerifyRequest(email, code)))
+                            .contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.status").value(200))
                     .andDo(document("auth/success/verification-code/verify",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("email").description("검증할 이메일 주소"),
-                                    parameterWithName("code").description("사용자가 입력한 인증 번호")
+                            requestFields(
+                                    fieldWithPath("email").description("검증할 이메일 주소"),
+                                    fieldWithPath("code").description("사용자가 입력한 인증 번호")
                             ),
                             responseBody()
                     ));
+        }
+
+        @Test
+        @DisplayName("이메일이나 인증 번호가 비어 있으면 400 을 반환하고 검증하지 않는다.")
+        void failWhenFieldIsEmpty() throws Exception {
+            mockMvc.perform(post("/api/auth/verify")
+                            .content(objectMapper.writeValueAsString(new EmailVerifyRequest("", "")))
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.success").value(false));
+
+            verify(verificationMailService, never()).validateVerificationCode(anyString(), anyString());
         }
     }
 }
