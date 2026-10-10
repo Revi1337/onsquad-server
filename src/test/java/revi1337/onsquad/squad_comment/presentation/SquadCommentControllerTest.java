@@ -96,7 +96,7 @@ class SquadCommentControllerTest extends PresentationLayerTestSupport {
             CommentCreateRequest request = new CommentCreateRequest("답글 내용입니다.");
             doNothing().when(squadCommentCommandService).addReply(anyLong(), eq(squadId), eq(parentId), anyString());
 
-            mockMvc.perform(post("/api/squads/{squadId}/replies/{parentId}", squadId, parentId)
+            mockMvc.perform(post("/api/squads/{squadId}/comments/{parentId}/replies", squadId, parentId)
                             .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(APPLICATION_JSON))
