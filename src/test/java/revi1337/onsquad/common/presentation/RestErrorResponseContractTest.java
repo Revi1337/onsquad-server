@@ -195,6 +195,14 @@ class RestErrorResponseContractTest extends ApplicationLayerTestSupport {
         }
 
         @Test
+        @DisplayName("JWT 형식이 아닌 RefreshToken 으로 재발급하면 500 이 아니라 401 과 T001 로 응답한다")
+        void returns401_whenRefreshTokenIsMalformed() throws Exception {
+            Result result = send("POST", "/api/auth/reissue", JSON, null, "{\"refreshToken\":\"fake.refresh.token\"}");
+
+            assertError(result, 401, "T001");
+        }
+
+        @Test
         @DisplayName("토큰 없이 인증이 필요한 API 를 호출하면 401 과 T004 로 응답한다")
         void returns401_whenTokenIsMissing() throws Exception {
             Result result = send("GET", "/api/members/me", null, null, null);

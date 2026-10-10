@@ -3,6 +3,7 @@ package revi1337.onsquad.auth.token.application;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import io.jsonwebtoken.Jwts;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
@@ -10,6 +11,8 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
@@ -101,5 +104,35 @@ class JsonWebTokenEvaluatorTest {
 
         assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyAccessToken(accessToken.value(), expiredAttributes.secretKey()))
                 .isInstanceOf(TokenException.TokenExpired.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"fake.refresh.token", "abc", "a.b.c", "header.payload"})
+    @DisplayName("JWT 형식이 아닌 AccessToken 검증 시 InvalidTokenFormat 예외가 발생한다.")
+    void verifyAccessTokenMalformed(String malformedToken) {
+        String secretKey = tokenProperties.accessToken().attributes().secretKey();
+
+        assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyAccessToken(malformedToken, secretKey))
+                .isInstanceOf(TokenException.InvalidTokenFormat.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"fake.refresh.token", "abc", "a.b.c", "header.payload"})
+    @DisplayName("JWT 형식이 아닌 RefreshToken 검증 시 InvalidTokenFormat 예외가 발생한다.")
+    void verifyRefreshTokenMalformed(String malformedToken) {
+        String secretKey = tokenProperties.refreshToken().attributes().secretKey();
+
+        assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyRefreshToken(malformedToken, secretKey))
+                .isInstanceOf(TokenException.InvalidTokenFormat.class);
+    }
+
+    @Test
+    @DisplayName("서명이 없는 JWT 검증 시 InvalidTokenFormat 예외가 발생한다.")
+    void verifyTokenUnsigned() {
+        String unsignedToken = Jwts.builder().setSubject(SUBJECT).compact();
+        String secretKey = tokenProperties.accessToken().attributes().secretKey();
+
+        assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyAccessToken(unsignedToken, secretKey))
+                .isInstanceOf(TokenException.InvalidTokenFormat.class);
     }
 }
