@@ -116,6 +116,25 @@ class RestErrorResponseContractTest extends ApplicationLayerTestSupport {
         }
 
         @Test
+        @DisplayName("지원하지 않는 Content-Type 은 415 와 C010 으로 응답한다")
+        void returns415_whenContentTypeIsNotSupported() throws Exception {
+            Result result = send("POST", "/api/members", "text/plain", null, "hello");
+
+            assertError(result, 415, "C010");
+        }
+
+        @Test
+        @DisplayName("업로드 파일이 허용 크기를 넘으면 413 과 C011 로 응답한다")
+        void returns413_whenUploadExceedsLimit() throws Exception {
+            String body = "--" + BOUNDARY + "\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a.png\"\r\n"
+                    + "Content-Type: image/png\r\n\r\n" + "x".repeat(6 * 1024 * 1024) + "\r\n--" + BOUNDARY + "--\r\n";
+
+            Result result = send("POST", "/api/crews", "multipart/form-data; boundary=" + BOUNDARY, null, body);
+
+            assertError(result, 413, "C011");
+        }
+
+        @Test
         @DisplayName("Accept 를 만족시킬 수 없으면 406 으로 응답하고 바디는 비어 있다")
         void returns406_withEmptyBody_whenAcceptIsNotSatisfiable() throws Exception {
             Result result = send("GET", "/api/categories", null, "application/xml", null);
