@@ -14,12 +14,12 @@ public enum SquadErrorCode implements ErrorCode {
 
     NOT_FOUND(404, "SQ004", "스쿼드를 찾을 수 없습니다."),
     NOT_ENOUGH_LEFT(400, "SQ005", "남은 정원이 없습니다."),
-    SQUAD_MEMBER_UNDERFLOW(400, "SQD006", "삭제할 인원이 없습니다."),
+    SQUAD_MEMBER_UNDERFLOW(400, "SQ006", "삭제할 인원이 없습니다."),
     MISMATCH_CREW_REFERENCE(400, "SQ007", "스쿼드가 속한 크루가 일치하지 않습니다."),
     MISMATCH_SQUAD_REFERENCE(400, "SQ008", "참가자가 속한 스쿼드가 일치하지 않습니다."),
     MISMATCH_MEMBER_REFERENCE(403, "SQ009", "스쿼드 작성자 정보가 일치하지 않습니다."),
     INSUFFICIENT_DELETE_AUTHORITY(403, "SQ010", "스쿼드 삭제는 크루장 또는 스쿼드 리더만 가능합니다."),
-    INSUFFICIENT_MANAGE_SQUAD_AUTHORITY(403, "SQ011", "스쿼드 관리는 스쿼드 리더만 가능합니다."),
+    INSUFFICIENT_MANAGE_SQUAD_AUTHORITY(403, "SQ011", "스쿼드 관리는 크루 매니저 이상만 가능합니다."),
     INSUFFICIENT_LEAVE_SQUAD_AUTHORITY(403, "SQ012", "스쿼드 리더는 권한 위임 후 탈퇴 가능합니다."),
     INSUFFICIENT_READ_PARTICIPANTS_AUTHORITY(403, "SQ013", "스쿼드 참가자 조회는 스쿼드 참가자 또는 크루장만 가능합니다.");
 

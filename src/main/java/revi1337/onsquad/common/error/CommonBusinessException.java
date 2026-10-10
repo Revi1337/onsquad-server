@@ -14,9 +14,9 @@ public abstract class CommonBusinessException extends RuntimeException {
         this.errorMessage = finalErrorMessage;
     }
 
-    public static class ToManyRequest extends CommonBusinessException {
+    public static class TooManyRequest extends CommonBusinessException {
 
-        public ToManyRequest(ErrorCode errorCode) {
+        public TooManyRequest(ErrorCode errorCode) {
             super(errorCode, String.format(errorCode.getDescription()));
         }
     }

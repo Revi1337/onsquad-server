@@ -240,7 +240,7 @@ class RestExceptionHandlerTest extends PresentationLayerTestSupport {
 
         @GetMapping("/trigger/business")
         String business() {
-            throw new CommonBusinessException.ToManyRequest(CommonErrorCode.TO_MANY_REQUEST);
+            throw new CommonBusinessException.TooManyRequest(CommonErrorCode.TOO_MANY_REQUEST);
         }
     }
 }

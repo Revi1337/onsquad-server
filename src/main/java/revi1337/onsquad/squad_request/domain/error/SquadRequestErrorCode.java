@@ -12,7 +12,7 @@ public enum SquadRequestErrorCode implements ErrorCode {
     MISMATCH_SQUAD_REFERENCE(400, "SP002", "신청한 스쿼드 정보가 일치하지 않습니다."),
     INSUFFICIENT_ACCEPT_AUTHORITY(403, "SP004", "스쿼드 신청 수락은 스쿼드 리더만 가능합니다."),
     INSUFFICIENT_REJECT_AUTHORITY(403, "SP005", "스쿼드 신청 거절은 스쿼드 리더만 가능합니다."),
-    INSUFFICIENT_READ_LIST_AUTHORITY(403, "SP006", "스쿼드 신정 목록 조회는 스쿼드 리더만 가능합니다.");
+    INSUFFICIENT_READ_LIST_AUTHORITY(403, "SP006", "스쿼드 신청 목록 조회는 스쿼드 리더만 가능합니다.");
 
     private final int status;
     private final String code;

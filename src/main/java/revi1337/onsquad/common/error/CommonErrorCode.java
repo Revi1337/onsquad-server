@@ -14,7 +14,7 @@ public enum CommonErrorCode implements ErrorCode {
     PARAMETER_TYPE_MISMATCH(400, "C004", "파라미터 타입 불일치"),
     NOT_FOUND(404, "C005", "존재하지 않는 API 요청"),
     INTERNAL_SERVER_ERROR(500, "C006", "서버에서 처리 불가한 요청"),
-    TO_MANY_REQUEST(429, "C007", "요청 한도가 초과되었습니다. 잠시 후 이용해 주세요."),
+    TOO_MANY_REQUEST(429, "C007", "요청 한도가 초과되었습니다. 잠시 후 이용해 주세요."),
     ALREADY_REQUEST(409, "C008", "이미 처리된 요청입니다. uri : %s"),
     MAINTENANCE_TIME(503, "C009", "시스템 점검 시간입니다."),
     UNSUPPORTED_MEDIA_TYPE(415, "C010", "지원하지 않는 요청 형식"),

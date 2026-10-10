@@ -92,7 +92,7 @@ class CrewRequestCommandServiceThrottlingTest {
         assertThat(crewRequestRepository.findAll()).hasSize(1);
         clearInvocations(dataSource);
         assertThatThrownBy(() -> crewRequestCommandService.request(andong.getId(), crew.getId()))
-                .isInstanceOf(CommonBusinessException.ToManyRequest.class);
+                .isInstanceOf(CommonBusinessException.TooManyRequest.class);
         verify(dataSource, never()).getConnection();
     }
 }
