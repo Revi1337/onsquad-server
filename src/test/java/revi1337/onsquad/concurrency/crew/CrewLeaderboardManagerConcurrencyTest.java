@@ -3,6 +3,7 @@ package revi1337.onsquad.concurrency.crew;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,31 +45,49 @@ class CrewLeaderboardManagerConcurrencyTest {
     }
 
     @Test
-    @DisplayName("멀티 스레드 경합 상황에서 원자적 스코어 업데이트를 수행하여 Lost Update 발생을 차단한다")
-    void success2() throws InterruptedException {
+    @DisplayName("비원자적 조회->계산->저장 3단계 상황을 루아스크립트 기반으로 변경하여 Lost Update 이 발생하지 않음을 검증한다.")
+    void notLostUpdateVerification() {
         Long crewId = 1L;
         Long memberId = 2L;
         Instant applyAt = Instant.now();
-        CrewActivity crewActivity = CrewActivity.SQUAD_CREATE; // SCORE: 10
-        int threadCount = 30;
+        CrewActivity baseActivity = CrewActivity.SQUAD_COMMENT; // SCORE: 1
+        CrewActivity activity1 = CrewActivity.CREW_PARTICIPANT; // SCORE: 5
+        CrewActivity activity2 = CrewActivity.SQUAD_CREATE; // SCORE: 10
+        crewLeaderboardManager.applyActivity(crewId, memberId, applyAt, baseActivity);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
-        for (int i = 0; i < threadCount; i++) {
-            executorService.submit(() -> {
-                try {
-                    crewLeaderboardManager.applyActivity(crewId, memberId, applyAt, crewActivity);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        latch.await();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        CountDownLatch startLatch = new CountDownLatch(1);
 
-        long expectedScore = (long) threadCount * crewActivity.getScore();
+        CompletableFuture<Void> staleThreadFuture = CompletableFuture.runAsync(() -> {
+            waitToStart(startLatch);
+            crewLeaderboardManager.applyActivity(crewId, memberId, applyAt, activity1);
+        }, executor);
+
+        CompletableFuture<Void> concurrentThreadFuture = CompletableFuture.runAsync(() -> {
+            waitToStart(startLatch);
+            crewLeaderboardManager.applyActivity(crewId, memberId, applyAt, activity2);
+        }, executor);
+
+        startLatch.countDown();
+        CompletableFuture.allOf(staleThreadFuture, concurrentThreadFuture).join();
+        executor.shutdown();
+
+        long expectScore = baseActivity.getScore() + activity1.getScore() + activity2.getScore(); // 16
         long actualScore = crewLeaderboardManager.getScore(crewId, memberId);
-        assertThat(actualScore).isEqualTo(expectedScore);
+
+        assertThat(actualScore)
+                .as(String.format(
+                        "루아스크립트 기반으로 연산을 원자적으로 변경했으니,Lost Update 가 발생하지 않고, %s점 또는 %s점이 나오게 된다.",
+                        expectScore, baseActivity.getScore() + activity1.getScore(), baseActivity.getScore() + activity2.getScore()
+                ))
+                .isEqualTo(expectScore);
+    }
+
+    private void waitToStart(CountDownLatch latch) {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

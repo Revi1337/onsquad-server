@@ -9,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+/**
+ * 2⁵³(9,007,199,254,740,992) 마지노선
+ */
 class CompositeScoreTest {
 
     @Nested
@@ -83,27 +86,88 @@ class CompositeScoreTest {
         }
 
         @Test
-        @DisplayName("최대 정밀도 한계 테스트: 점수가 900,718점일 때 초 단위(1의 자리) 정밀도를 유지하는 마지노선이다")
-        void test5() {
-            long originalRaw = (900_718L * CompositeScore.MULTIPLIER) + 9_999_999_999L;
+        @DisplayName("score: 900,719, relativeTime: 9,254,740,992 --> 9,007,199,254,740,992 최대 점수 기반 경계값")
+        void maxScoreBoundary() {
+            long originalRaw = (900_719L * CompositeScore.MULTIPLIER) + 9_254_740_992L;
             double redisScore = (double) originalRaw;
 
             CompositeScore result = CompositeScore.from(redisScore);
 
-            assertThat(result.getRawValue()).as("9,007,189,999,999,999").isEqualTo(originalRaw);
+            assertThat(result.getActualScore())
+                    .isEqualTo(900_719L);
         }
 
         @Test
-        @DisplayName("최대 정밀도 한계 테스트: 점수가 900,719점일 때 초 단위(1의 자리) 정밀도를 유지하지 못한다.")
-        void test6() {
-            long originalRaw = (900_719L * CompositeScore.MULTIPLIER) + 9_999_999_999L;
+        @DisplayName("최대 점수 기반 경계값 1-1: score=900,719 고정, relativeTime이 9,254,740,992를 넘으면 시간만 어긋난다")
+        void maxScoreBoundary_1() {
+            long originalRaw = (900_719L * CompositeScore.MULTIPLIER) + 9_254_740_993L;
+            double redisScore = (double) originalRaw;
+
+            CompositeScore result = CompositeScore.from(redisScore);
+
+            assertThat(result.getActualScore())
+                    .as("점수는 캐리 없이 900,719 그대로 유지됨")
+                    .isEqualTo(900_719L);
+            assertThat(result.getRawValue())
+                    .as("원래 9,254,740,993초여야 하는데 1초 어긋난 9,254,740,992초로 깨짐")
+                    .isEqualTo((900_719L * CompositeScore.MULTIPLIER) + 9_254_740_992L);
+        }
+
+        @Test
+        @DisplayName("최대 점수 기반 경계값 1-2: relativeTime=9,254,740,992 고정, score가 900,719를 넘어도 relativeTime이 짝수라 당분간 안 깨진다")
+        void maxScoreBoundary_2() {
+            long originalRaw = (900_720L * CompositeScore.MULTIPLIER) + 9_254_740_992L;
             double redisScore = (double) originalRaw;
 
             CompositeScore result = CompositeScore.from(redisScore);
 
             assertThat(result.getRawValue())
-                    .as("정밀도 손실 발생: original=%d, actual=%d", originalRaw, result.getRawValue())
-                    .isNotEqualTo(originalRaw);
+                    .as("relativeTime이 짝수라 score*MULTIPLIER+relativeTime도 짝수가 되어, 2^54 전까지는 정확히 보존됨")
+                    .isEqualTo(originalRaw);
+        }
+
+        @Test
+        @DisplayName("score: 900,718, relativeTime: 9,999,999,999 --> 9,007,189,999,999,999 최대 활동시간 기반 경계값")
+        void maxActivityTimeBoundary() {
+            long originalRaw = (900_718L * CompositeScore.MULTIPLIER) + 9_999_999_999L;
+            double redisScore = (double) originalRaw;
+
+            CompositeScore result = CompositeScore.from(redisScore);
+
+            assertThat(result.getActualScore())
+                    .isEqualTo(900_718L);
+        }
+
+        @Test
+        @DisplayName("최대 활동시간 기반 경계값 2-1: score=900,718 고정, relativeTime이 설계 한도(MULTIPLIER) 자체를 넘으면 점수까지 확정적으로 캐리된다")
+        void maxActivityTimeBoundary_1() {
+            long originalRaw = (900_718L * CompositeScore.MULTIPLIER) + CompositeScore.MULTIPLIER;
+            double redisScore = (double) originalRaw;
+
+            CompositeScore result = CompositeScore.from(redisScore);
+
+            assertThat(result.getActualScore())
+                    .as("double 정밀도 문제가 아니라, 자릿수 설계 자체를 넘어서 확정적으로 900,719로 캐리됨")
+                    .isEqualTo(900_719L);
+            assertThat(result.getActivityTime())
+                    .as("relativeTime이 통째로 0으로 리셋됨")
+                    .isEqualTo(LocalDateTime.of(2026, 1, 1, 0, 0, 0));
+        }
+
+        @Test
+        @DisplayName("최대 활동시간 기반 경계값 2-2: relativeTime=9,999,999,999 고정, score가 900,718을 넘으면 완충 없이 즉시 전면 붕괴한다")
+        void maxActivityTimeBoundary_2() {
+            long originalRaw = (900_719L * CompositeScore.MULTIPLIER) + 9_999_999_999L;
+            double redisScore = (double) originalRaw;
+
+            CompositeScore result = CompositeScore.from(redisScore);
+
+            assertThat(result.getActualScore())
+                    .as("점수와 시간이 동시에 깨짐: 900,720으로 캐리")
+                    .isEqualTo(900_720L);
+            assertThat(result.getActivityTime())
+                    .as("relativeTime도 동시에 0으로 리셋됨")
+                    .isEqualTo(LocalDateTime.of(2026, 1, 1, 0, 0, 0));
         }
     }
 
