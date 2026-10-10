@@ -107,7 +107,7 @@ Member ──가입/생성──▶ Crew (커뮤니티)
 | 영역                   | 내용                                                                                  |
 |----------------------|-------------------------------------------------------------------------------------|
 | Language / Framework | Java 17 (`--enable-preview`), Spring Boot 3.3.1, Gradle                             |
-| Persistence          | Spring Data JPA (Hibernate), QueryDSL 5.1.0, Blaze-Persistence 1.6.11               |
+| Persistence          | Spring Data JPA (Hibernate), QueryDSL 5.1.0                                         |
 | Database             | MySQL (운영), H2 (로컬), SQLite (파일 휴지통), Redis                                         |
 | Auth                 | Spring Security (Stateless), JWT (jjwt) + RTR, OAuth2 (Kakao, Google)               |
 | Storage              | AWS S3 + CloudFront                                                                 |
