@@ -18,8 +18,7 @@ public class CrewExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.fail(errorCode, problemDetail).toResponseEntity();
     }
 
     @ExceptionHandler(CrewDomainException.class)
@@ -28,7 +27,6 @@ public class CrewExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.fail(errorCode, problemDetail).toResponseEntity();
     }
 }

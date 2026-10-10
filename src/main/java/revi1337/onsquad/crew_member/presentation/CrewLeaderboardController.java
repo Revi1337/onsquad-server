@@ -26,8 +26,7 @@ public class CrewLeaderboardController {
             @Authenticate CurrentMember currentMember
     ) {
         List<CrewRankerResponse> response = crewRankerQueryService.findCrewRankers(currentMember.id(), crewId);
-        RestResponse<List<CrewRankerResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 }

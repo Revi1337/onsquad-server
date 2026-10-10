@@ -46,9 +46,8 @@ public class CrewController {
             @Authenticate CurrentMember ignored
     ) {
         DuplicateResponse response = crewQueryService.checkNameDuplicate(name);
-        RestResponse<DuplicateResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @PostMapping(consumes = {MULTIPART_FORM_DATA_VALUE, APPLICATION_JSON_VALUE})
@@ -58,9 +57,8 @@ public class CrewController {
             @Authenticate CurrentMember currentMember
     ) {
         crewCommandServiceFacade.newCrew(currentMember.id(), request.toDto(), file);
-        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.created().toResponseEntity();
     }
 
     @GetMapping("/{crewId}")
@@ -70,9 +68,8 @@ public class CrewController {
     ) {
         Long memberId = currentMember == null ? null : currentMember.id();
         CrewWithParticipantStateResponse response = crewQueryService.findCrewById(memberId, crewId);
-        RestResponse<CrewWithParticipantStateResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @GetMapping
@@ -81,9 +78,8 @@ public class CrewController {
             @PageableDefault Pageable pageable
     ) {
         PageResponse<CrewResponse> response = crewQueryService.fetchCrewsByName(name, pageable);
-        RestResponse<PageResponse<CrewResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @PutMapping("/{crewId}")
@@ -93,9 +89,8 @@ public class CrewController {
             @Authenticate CurrentMember currentMember
     ) {
         crewCommandServiceFacade.updateCrew(currentMember.id(), crewId, crewUpdateRequest.toDto());
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/{crewId}")
@@ -104,9 +99,8 @@ public class CrewController {
             @Authenticate CurrentMember currentMember
     ) {
         crewCommandServiceFacade.deleteCrew(currentMember.id(), crewId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @PatchMapping(value = "/{crewId}/image", consumes = MULTIPART_FORM_DATA_VALUE)
@@ -116,9 +110,8 @@ public class CrewController {
             @Authenticate CurrentMember currentMember
     ) {
         crewCommandServiceFacade.updateImage(currentMember.id(), crewId, file);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/{crewId}/image")
@@ -127,8 +120,7 @@ public class CrewController {
             @Authenticate CurrentMember currentMember
     ) {
         crewCommandServiceFacade.deleteImage(currentMember.id(), crewId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 }

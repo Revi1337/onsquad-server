@@ -18,7 +18,6 @@ public class HashtagController {
 
     @GetMapping
     public ResponseEntity<RestResponse<List<String>>> getAllCategories() {
-        RestResponse<List<String>> response = RestResponse.success(cachedHashtagService.findHashtags());
-        return ResponseEntity.status(response.status()).body(response);
+        return RestResponse.success(cachedHashtagService.findHashtags()).toResponseEntity();
     }
 }

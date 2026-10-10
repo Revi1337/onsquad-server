@@ -52,29 +52,26 @@ public class NotificationController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<NotificationResponse> response = notificationQueryService.fetchNotifications(currentMember.id(), pageable);
-        RestResponse<PageResponse<NotificationResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @PatchMapping("/notifications/{notificationId}/read")
-    public ResponseEntity<RestResponse<RestResponse<Void>>> readNotification(
+    public ResponseEntity<RestResponse<Void>> readNotification(
             @PathVariable Long notificationId,
             @Authenticate CurrentMember currentMember
     ) {
         notificationCommandService.read(currentMember.id(), notificationId);
-        RestResponse<RestResponse<Void>> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @PatchMapping("/notifications/read-all")
-    public ResponseEntity<RestResponse<RestResponse<Void>>> readNotifications(
+    public ResponseEntity<RestResponse<Void>> readNotifications(
             @Authenticate CurrentMember currentMember
     ) {
         notificationCommandService.readAll(currentMember.id());
-        RestResponse<RestResponse<Void>> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 }

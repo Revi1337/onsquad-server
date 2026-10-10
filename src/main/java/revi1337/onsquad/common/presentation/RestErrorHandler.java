@@ -17,7 +17,6 @@ public class RestErrorHandler implements ErrorController {
     public ResponseEntity<RestResponse<ProblemDetail>> handleError(HttpServletRequest httpServletRequest) {
         int status = new RequestDispatcherResolver(httpServletRequest).resolveHttpStatus().value();
         CommonErrorCode errorCode = CommonErrorCode.fromStatus(status);
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(status, ProblemDetail.of(errorCode));
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.fail(status, ProblemDetail.of(errorCode)).toResponseEntity();
     }
 }

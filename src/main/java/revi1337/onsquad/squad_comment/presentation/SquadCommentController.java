@@ -37,9 +37,8 @@ public class SquadCommentController {
             @Authenticate CurrentMember currentMember
     ) {
         squadCommentCommandService.add(currentMember.id(), squadId, request.content());
-        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.created().toResponseEntity();
     }
 
     @PostMapping("/squads/{squadId}/replies/{parentId}")
@@ -50,9 +49,8 @@ public class SquadCommentController {
             @Authenticate CurrentMember currentMember
     ) {
         squadCommentCommandService.addReply(currentMember.id(), squadId, parentId, request.content());
-        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.created().toResponseEntity();
     }
 
     @GetMapping("/squads/{squadId}/comments")
@@ -62,9 +60,8 @@ public class SquadCommentController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadCommentResponse> response = squadCommentQueryService.fetchInitialComments(currentMember.id(), squadId, pageable);
-        RestResponse<PageResponse<SquadCommentResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @GetMapping("/squads/{squadId}/comments/{parentId}/replies")
@@ -75,9 +72,8 @@ public class SquadCommentController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadCommentResponse> response = squadCommentQueryService.fetchMoreChildren(currentMember.id(), squadId, parentId, pageable);
-        RestResponse<PageResponse<SquadCommentResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @PatchMapping("/squads/{squadId}/comments/{commentId}")
@@ -88,9 +84,8 @@ public class SquadCommentController {
             @Authenticate CurrentMember currentMember
     ) {
         squadCommentCommandService.update(currentMember.id(), squadId, commentId, request.content());
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/squads/{squadId}/comments/{commentId}")
@@ -100,8 +95,7 @@ public class SquadCommentController {
             @Authenticate CurrentMember currentMember
     ) {
         squadCommentCommandService.delete(currentMember.id(), squadId, commentId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 }

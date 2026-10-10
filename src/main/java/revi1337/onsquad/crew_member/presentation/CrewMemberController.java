@@ -36,9 +36,8 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<CrewMemberResponse> response = crewMemberQueryService.fetchParticipants(currentMember.id(), crewId, pageable);
-        RestResponse<PageResponse<CrewMemberResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @PatchMapping("/crews/{crewId}/members/{targetMemberId}/owner")
@@ -48,9 +47,8 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         crewMemberCommandServiceFacade.delegateOwner(currentMember.id(), crewId, targetMemberId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/crews/{crewId}/members/me")
@@ -59,9 +57,8 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         crewMemberCommandService.leaveCrew(currentMember.id(), crewId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/crews/{crewId}/members/{targetMemberId}")
@@ -71,9 +68,8 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         crewMemberCommandServiceFacade.kickOutMember(currentMember.id(), crewId, targetMemberId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @GetMapping("/members/me/crew-participants")
@@ -82,8 +78,7 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<MyParticipantCrewResponse> response = crewMemberQueryService.fetchMyParticipatingCrews(currentMember.id(), pageable);
-        RestResponse<PageResponse<MyParticipantCrewResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 }

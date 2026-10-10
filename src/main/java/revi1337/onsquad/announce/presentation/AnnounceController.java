@@ -38,9 +38,8 @@ public class AnnounceController {
             @Valid @RequestBody AnnounceCreateRequest createRequest
     ) {
         announceCommandService.newAnnounce(currentMember.id(), crewId, createRequest.toDto());
-        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.created().toResponseEntity();
     }
 
     @GetMapping("/{crewId}/announces/{announceId}")
@@ -50,9 +49,8 @@ public class AnnounceController {
             @Authenticate CurrentMember currentMember
     ) {
         AnnounceWithPinAndModifyStateResponse response = announceQueryService.findAnnounce(currentMember.id(), crewId, announceId);
-        RestResponse<AnnounceWithPinAndModifyStateResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @GetMapping("/{crewId}/announces")
@@ -61,9 +59,8 @@ public class AnnounceController {
             @Authenticate CurrentMember currentMember
     ) {
         AnnouncesWithWriteStateResponse response = announceQueryService.findAnnounces(currentMember.id(), crewId);
-        RestResponse<AnnouncesWithWriteStateResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @PutMapping("/{crewId}/announces/{announceId}")
@@ -74,9 +71,8 @@ public class AnnounceController {
             @Authenticate CurrentMember currentMember
     ) {
         announceCommandService.updateAnnounce(currentMember.id(), crewId, announceId, updateRequest.toDto());
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @PatchMapping("/{crewId}/announces/{announceId}/pin")
@@ -87,9 +83,8 @@ public class AnnounceController {
             @Authenticate CurrentMember currentMember
     ) {
         announceCommandService.changePinState(currentMember.id(), crewId, announceId, state);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/{crewId}/announces/{announceId}")
@@ -99,8 +94,7 @@ public class AnnounceController {
             @Authenticate CurrentMember currentMember
     ) {
         announceCommandService.deleteAnnounce(currentMember.id(), crewId, announceId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 }

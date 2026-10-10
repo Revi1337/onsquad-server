@@ -34,9 +34,8 @@ public class SquadRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         squadRequestCommandService.request(currentMember.id(), squadId);
-        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.created().toResponseEntity();
     }
 
     @PatchMapping("/squads/{squadId}/requests/{requestId}")
@@ -46,9 +45,8 @@ public class SquadRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         squadRequestCommandService.acceptRequest(currentMember.id(), squadId, requestId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/squads/{squadId}/requests/{requestId}")
@@ -58,9 +56,8 @@ public class SquadRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         squadRequestCommandService.rejectRequest(currentMember.id(), squadId, requestId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/squads/{squadId}/requests/me")
@@ -69,9 +66,8 @@ public class SquadRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         squadRequestCommandService.cancelMyRequest(currentMember.id(), squadId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @GetMapping("/squads/{squadId}/requests")
@@ -81,9 +77,8 @@ public class SquadRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadRequestResponse> response = squadRequestQueryService.fetchAllRequests(currentMember.id(), squadId, pageable);
-        RestResponse<PageResponse<SquadRequestResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @GetMapping("/members/me/squad-requests")
@@ -92,8 +87,7 @@ public class SquadRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<MySquadRequestResponse> response = squadRequestQueryService.fetchMyRequests(currentMember.id(), pageable);
-        RestResponse<PageResponse<MySquadRequestResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 }

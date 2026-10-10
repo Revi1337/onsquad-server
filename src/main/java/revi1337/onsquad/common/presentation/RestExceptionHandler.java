@@ -64,8 +64,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         CommonErrorCode commonErrorCode = CommonErrorCode.INVALID_INPUT_VALUE;
         ProblemDetail problemDetail = new ValidationExceptionTranslator()
                 .translate(commonErrorCode, exception);
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(commonErrorCode, problemDetail);
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.fail(commonErrorCode, problemDetail).toResponseEntity();
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -75,8 +74,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         CommonErrorCode commonErrorCode = CommonErrorCode.ALREADY_REQUEST;
         ProblemDetail problemDetail = ProblemDetail.withFormat(commonErrorCode, httpServletRequest.getRequestURI());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(commonErrorCode, problemDetail);
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.fail(commonErrorCode, problemDetail).toResponseEntity();
     }
 
     @ExceptionHandler(CommonBusinessException.class)
@@ -85,8 +83,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
-        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.fail(errorCode, problemDetail).toResponseEntity();
     }
 
     private boolean isSizeLimitExceeded(Throwable throwable) {

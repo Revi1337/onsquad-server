@@ -2,6 +2,7 @@ package revi1337.onsquad.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import revi1337.onsquad.common.error.ErrorCode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -15,20 +16,17 @@ public record RestResponse<T>(
         this(status, true, data, null);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> RestResponse<T> ok() {
-        return new RestResponse<>(200, (T) "");
+    public static RestResponse<Void> ok() {
+        return emptyData(200);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> RestResponse<T> created() {
-        return new RestResponse<>(201, (T) "");
+    public static RestResponse<Void> created() {
+        return emptyData(201);
     }
 
     public static <T> RestResponse<T> created(T data) {
         return new RestResponse<>(201, data);
     }
-
 
     public static <T> RestResponse<T> success(T data) {
         return new RestResponse<>(200, data);
@@ -44,5 +42,14 @@ public record RestResponse<T>(
 
     public static <T extends ProblemDetail> RestResponse<T> fail(int status, T problemDetail) {
         return new RestResponse<>(status, false, null, problemDetail);
+    }
+
+    public ResponseEntity<RestResponse<T>> toResponseEntity() {
+        return ResponseEntity.status(status).body(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> RestResponse<T> emptyData(int status) {
+        return new RestResponse<>(status, (T) "");
     }
 }

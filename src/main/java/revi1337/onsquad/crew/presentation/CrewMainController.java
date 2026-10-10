@@ -29,9 +29,8 @@ public class CrewMainController {
             @Authenticate CurrentMember currentMember
     ) {
         CrewMainResponse response = crewMainService.fetchMain(currentMember.id(), crewId, pageable);
-        RestResponse<CrewMainResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @GetMapping("/crews/{crewId}/manage")
@@ -40,8 +39,7 @@ public class CrewMainController {
             @Authenticate CurrentMember currentMember
     ) {
         CrewManageResponse response = crewMainService.fetchManageInfo(currentMember.id(), crewId);
-        RestResponse<CrewManageResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 }

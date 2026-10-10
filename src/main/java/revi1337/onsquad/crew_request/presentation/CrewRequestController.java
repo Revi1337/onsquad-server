@@ -34,9 +34,8 @@ public class CrewRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         crewRequestCommandService.request(currentMember.id(), crewId);
-        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.created().toResponseEntity();
     }
 
     @PatchMapping("/crews/{crewId}/requests/{requestId}")
@@ -46,9 +45,8 @@ public class CrewRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         crewRequestCommandService.acceptRequest(currentMember.id(), crewId, requestId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/crews/{crewId}/requests/{requestId}")
@@ -58,9 +56,8 @@ public class CrewRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         crewRequestCommandService.rejectRequest(currentMember.id(), crewId, requestId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @GetMapping("/crews/{crewId}/requests")
@@ -70,9 +67,8 @@ public class CrewRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<CrewRequestResponse> response = crewRequestQueryService.fetchAllRequests(currentMember.id(), crewId, pageable);
-        RestResponse<PageResponse<CrewRequestResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @DeleteMapping("/crews/{crewId}/requests/me")
@@ -81,9 +77,8 @@ public class CrewRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         crewRequestCommandService.cancelMyRequest(currentMember.id(), crewId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @GetMapping("/members/me/crew-requests")
@@ -92,8 +87,7 @@ public class CrewRequestController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<CrewRequestWithCrewResponse> response = crewRequestQueryService.fetchAllCrewRequests(currentMember.id(), pageable);
-        RestResponse<PageResponse<CrewRequestWithCrewResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 }

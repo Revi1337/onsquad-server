@@ -35,9 +35,8 @@ public class SquadMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadMemberResponse> response = squadMemberQueryService.fetchParticipants(currentMember.id(), squadId, pageable);
-        RestResponse<PageResponse<SquadMemberResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 
     @PatchMapping("/squads/{squadId}/members/{targetMemberId}/leader")
@@ -47,9 +46,8 @@ public class SquadMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         squadMemberCommandService.delegateLeader(currentMember.id(), squadId, targetMemberId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/squads/{squadId}/members/me")
@@ -58,9 +56,8 @@ public class SquadMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         squadMemberCommandService.leaveSquad(currentMember.id(), squadId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @DeleteMapping("/squads/{squadId}/members/{targetMemberId}")
@@ -70,9 +67,8 @@ public class SquadMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         squadMemberCommandService.kickOutMember(currentMember.id(), squadId, targetMemberId);
-        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.ok().toResponseEntity();
     }
 
     @GetMapping("/members/me/squad-participants")
@@ -80,8 +76,7 @@ public class SquadMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         List<MyParticipantSquadResponse> response = squadMemberQueryService.fetchMyParticipatingSquads(currentMember.id());
-        RestResponse<List<MyParticipantSquadResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.status(restResponse.status()).body(restResponse);
+        return RestResponse.success(response).toResponseEntity();
     }
 }
