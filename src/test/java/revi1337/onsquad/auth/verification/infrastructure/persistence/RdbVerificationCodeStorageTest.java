@@ -176,6 +176,25 @@ class RdbVerificationCodeStorageTest {
             assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
             assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.PENDING)).isFalse();
         }
+
+        @Test
+        @DisplayName("요청한 상태와 일치하더라도 만료 시간이 지났으면 거짓을 반환한다")
+        void returnFalseWhenExpired() {
+            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.SUCCESS, Duration.ofMillis(-1000));
+
+            assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isFalse();
+        }
+
+        @Test
+        @DisplayName("요청한 상태와 일치하고 만료되지 않았으면 참을 반환하고, 데이터가 없으면 거짓을 반환한다")
+        void returnTrueWhenNotExpiredAndFalseWhenAbsent() {
+            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+
+            assertSoftly(softly -> {
+                softly.assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
+                softly.assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith("none@test.com", VerificationStatus.SUCCESS)).isFalse();
+            });
+        }
     }
 
     @Nested
