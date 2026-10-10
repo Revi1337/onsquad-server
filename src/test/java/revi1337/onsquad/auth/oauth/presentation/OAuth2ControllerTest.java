@@ -1,7 +1,9 @@
 package revi1337.onsquad.auth.oauth.presentation;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +19,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
@@ -67,7 +70,7 @@ class OAuth2ControllerTest extends PresentationLayerTestSupport {
                     .queryParam("response_type", "code")
                     .build()
                     .toUriString();
-            when(OAuth2ExchangeService.buildAuthorizationEndpoint(eq(oAuth2Vendor), anyString()))
+            when(OAuth2ExchangeService.buildAuthorizationEndpoint(eq(OAuth2Vendor.KAKAO), anyString()))
                     .thenReturn(URI.create(baseUrl));
 
             mockMvc.perform(get("/api/login/oauth2/{vendor}", oAuth2Vendor)
@@ -81,7 +84,38 @@ class OAuth2ControllerTest extends PresentationLayerTestSupport {
                             responseBody()
                     ));
 
-            verify(OAuth2ExchangeService, times(1)).buildAuthorizationEndpoint(eq(oAuth2Vendor), anyString());
+            verify(OAuth2ExchangeService, times(1)).buildAuthorizationEndpoint(eq(OAuth2Vendor.KAKAO), anyString());
+        }
+
+        @Test
+        @DisplayName("벤더는 대소문자를 구분하지 않는다.")
+        void success_whenVendorIsUpperCase() throws Exception {
+            URI endpoint = URI.create("https://kauth.kakao.com/oauth/authorize");
+            when(OAuth2ExchangeService.buildAuthorizationEndpoint(eq(OAuth2Vendor.KAKAO), anyString()))
+                    .thenReturn(endpoint);
+
+            mockMvc.perform(get("/api/login/oauth2/{vendor}", "KAKAO"))
+                    .andExpect(status().isOk())
+                    .andExpect(header().string(LOCATION, endpoint.toString()));
+        }
+
+        @Test
+        @DisplayName("지원하지 않는 벤더면 서비스를 호출하지 않고 400 과 C004 로 응답한다.")
+        void fail_whenVendorIsNotSupported() throws Exception {
+            mockMvc.perform(get("/api/login/oauth2/{vendor}", "naver"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.error.code").value("C004"));
+
+            verify(OAuth2ExchangeService, never()).buildAuthorizationEndpoint(any(), anyString());
+        }
+
+        @Test
+        @DisplayName("벤더 자리에 code 가 오면 지원하지 않는 벤더로 400 과 C004 로 응답한다.")
+        void fail_whenVendorIsCodeSegment() throws Exception {
+            mockMvc.perform(get("/api/login/oauth2/code"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.error.code").value("C004"));
         }
     }
 
@@ -100,7 +134,7 @@ class OAuth2ControllerTest extends PresentationLayerTestSupport {
                     .queryParam("refreshToken", REFRESH_TOKEN)
                     .build()
                     .toUriString();
-            when(OAuth2ExchangeService.handleOAuth2Login(eq(oauth2Vendor), anyString(), eq(authorizationCode)))
+            when(OAuth2ExchangeService.handleOAuth2Login(eq(OAuth2Vendor.KAKAO), anyString(), eq(authorizationCode)))
                     .thenReturn(URI.create(redirectUri));
 
             mockMvc.perform(get("/api/login/oauth2/code/{vendor}", oauth2Vendor)
@@ -115,6 +149,18 @@ class OAuth2ControllerTest extends PresentationLayerTestSupport {
                             queryParameters(parameterWithName("code").description("인가코드")),
                             responseBody()
                     ));
+        }
+
+        @Test
+        @DisplayName("지원하지 않는 벤더면 서비스를 호출하지 않고 400 과 C004 로 응답한다.")
+        void fail_whenVendorIsNotSupported() throws Exception {
+            mockMvc.perform(get("/api/login/oauth2/code/{vendor}", "naver")
+                            .queryParam("code", "authorization-code"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.error.code").value("C004"));
+
+            verify(OAuth2ExchangeService, never()).handleOAuth2Login(any(), anyString(), anyString());
         }
     }
 }

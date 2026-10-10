@@ -85,6 +85,14 @@ class RestErrorResponseContractTest extends ApplicationLayerTestSupport {
         }
 
         @Test
+        @DisplayName("지원하지 않는 OAuth 벤더는 500 이 아니라 400 과 C004 로 응답한다")
+        void returns400_whenOAuthVendorIsNotSupported() throws Exception {
+            Result result = send("GET", "/api/login/oauth2/naver", null, null, null);
+
+            assertError(result, 400, "C004");
+        }
+
+        @Test
         @DisplayName("깨진 JSON 본문은 400 과 C001 로 응답한다")
         void returns400_whenBodyIsNotReadable() throws Exception {
             Result result = send("POST", "/api/members", JSON, null, "{not-json");
@@ -115,6 +123,22 @@ class RestErrorResponseContractTest extends ApplicationLayerTestSupport {
 
             assertError(result, 400, "C001");
             assertThat(result.json().at("/error/parameters")).extracting(JsonNode::asText).containsExactly("password");
+        }
+
+        @Test
+        @DisplayName("지원하지 않는 OAuth 벤더는 500 이 아니라 400 과 C004 로 응답한다")
+        void returns400_whenOAuth2VendorIsNotSupported() throws Exception {
+            Result result = send("GET", "/api/login/oauth2/naver", null, null, null);
+
+            assertError(result, 400, "C004");
+        }
+
+        @Test
+        @DisplayName("OAuth 콜백도 지원하지 않는 벤더는 400 과 C004 로 응답한다")
+        void returns400_whenOAuth2CallbackVendorIsNotSupported() throws Exception {
+            Result result = send("GET", "/api/login/oauth2/code/naver?code=abc", null, null, null);
+
+            assertError(result, 400, "C004");
         }
 
         @Test
