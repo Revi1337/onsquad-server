@@ -40,7 +40,7 @@ public class CrewController {
     private final CrewCommandServiceFacade crewCommandServiceFacade;
     private final CrewQueryService crewQueryService;
 
-    @GetMapping("/check")
+    @GetMapping("/check-name")
     public ResponseEntity<RestResponse<DuplicateResponse>> checkNameDuplicate(
             @RequestParam String name,
             @Authenticate CurrentMember ignored
