@@ -203,6 +203,22 @@ class RestErrorResponseContractTest extends ApplicationLayerTestSupport {
         }
 
         @Test
+        @DisplayName("Authorization 헤더의 토큰이 비어 있으면 500 이 아니라 401 과 T001 로 응답한다")
+        void returns401_whenBearerTokenIsEmpty() throws Exception {
+            Result result = sendWithAuthorization("/api/members/me", "Bearer  abc");
+
+            assertError(result, 401, "T001");
+        }
+
+        @Test
+        @DisplayName("SSE 의 accessToken 이 비어 있으면 500 이 아니라 401 과 T001 로 응답한다")
+        void returns401_whenSseAccessTokenIsEmpty() throws Exception {
+            Result result = send("GET", "/api/notifications/sse?accessToken=", null, null, null);
+
+            assertError(result, 401, "T001");
+        }
+
+        @Test
         @DisplayName("토큰 없이 인증이 필요한 API 를 호출하면 401 과 T004 로 응답한다")
         void returns401_whenTokenIsMissing() throws Exception {
             Result result = send("GET", "/api/members/me", null, null, null);
@@ -246,6 +262,18 @@ class RestErrorResponseContractTest extends ApplicationLayerTestSupport {
         }
         builder.method(method, body == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body));
 
+        return execute(builder);
+    }
+
+    private Result sendWithAuthorization(String path, String authorization) throws Exception {
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
+                .header("Authorization", authorization)
+                .GET();
+
+        return execute(builder);
+    }
+
+    private Result execute(HttpRequest.Builder builder) throws Exception {
         HttpResponse<String> response = HttpClient.newHttpClient().send(builder.build(), HttpResponse.BodyHandlers.ofString());
         String responseBody = response.body() == null ? "" : response.body();
         JsonNode json = responseBody.isBlank() ? OBJECT_MAPPER.createObjectNode() : OBJECT_MAPPER.readTree(responseBody);

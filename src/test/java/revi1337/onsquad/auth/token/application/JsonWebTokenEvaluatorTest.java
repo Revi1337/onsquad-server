@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -123,6 +124,28 @@ class JsonWebTokenEvaluatorTest {
         String secretKey = tokenProperties.refreshToken().attributes().secretKey();
 
         assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyRefreshToken(malformedToken, secretKey))
+                .isInstanceOf(TokenException.InvalidTokenFormat.class);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "   "})
+    @DisplayName("비어 있거나 공백뿐인 AccessToken 검증 시 InvalidTokenFormat 예외가 발생한다.")
+    void verifyAccessTokenBlank(String blankToken) {
+        String secretKey = tokenProperties.accessToken().attributes().secretKey();
+
+        assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyAccessToken(blankToken, secretKey))
+                .isInstanceOf(TokenException.InvalidTokenFormat.class);
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "   "})
+    @DisplayName("비어 있거나 공백뿐인 RefreshToken 검증 시 InvalidTokenFormat 예외가 발생한다.")
+    void verifyRefreshTokenBlank(String blankToken) {
+        String secretKey = tokenProperties.refreshToken().attributes().secretKey();
+
+        assertThatThrownBy(() -> jsonWebTokenEvaluator.verifyRefreshToken(blankToken, secretKey))
                 .isInstanceOf(TokenException.InvalidTokenFormat.class);
     }
 
