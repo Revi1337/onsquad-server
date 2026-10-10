@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import revi1337.onsquad.common.ApplicationLayerTestSupport;
 import revi1337.onsquad.crew.domain.entity.Crew;
+import revi1337.onsquad.crew.domain.error.CrewBusinessException;
 import revi1337.onsquad.crew.domain.repository.CrewJpaRepository;
 import revi1337.onsquad.crew_member.domain.entity.CrewMember;
 import revi1337.onsquad.crew_member.domain.entity.CrewMemberFactory;
@@ -77,6 +78,19 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
 
             clearPersistenceContext();
             verify(crewRequestRepository, never()).save(any(CrewRequest.class));
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 크루에 신청하면 크루를 찾을 수 없다는 예외가 발생하고 신청이 저장되지 않는다.")
+        void fail2() {
+            Member andong = memberRepository.save(createAndong());
+            clearPersistenceContext();
+
+            assertThatThrownBy(() -> crewRequestCommandService.request(andong.getId(), 999_999L))
+                    .isExactlyInstanceOf(CrewBusinessException.NotFound.class);
+
+            clearPersistenceContext();
+            assertThat(crewRequestRepository.findAll()).isEmpty();
         }
     }
 
