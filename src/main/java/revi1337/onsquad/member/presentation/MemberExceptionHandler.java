@@ -19,7 +19,7 @@ public class MemberExceptionHandler {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
         RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @ExceptionHandler(MemberBusinessException.class)
@@ -29,6 +29,6 @@ public class MemberExceptionHandler {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
         RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 }

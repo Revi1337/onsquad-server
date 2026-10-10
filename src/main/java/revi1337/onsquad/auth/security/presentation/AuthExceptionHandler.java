@@ -21,7 +21,7 @@ public class AuthExceptionHandler {
         ErrorCode errorCode = AuthErrorCode.INVALID_CREDENTIALS;
         ProblemDetail problemDetail = ProblemDetail.of(errorCode);
         RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @Deprecated(forRemoval = true)
@@ -33,14 +33,14 @@ public class AuthExceptionHandler {
                 ErrorCode errorCode = AuthErrorCode.USERNAME_NOT_FOUND;
                 ProblemDetail problemDetail = ProblemDetail.of(errorCode);
                 RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-                yield ResponseEntity.ok().body(restResponse);
+                yield ResponseEntity.status(restResponse.status()).body(restResponse);
             }
 
             case BadCredentialsException ignored -> {
                 ErrorCode errorCode = AuthErrorCode.BAD_CREDENTIAL;
                 ProblemDetail problemDetail = ProblemDetail.of(errorCode);
                 RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-                yield ResponseEntity.ok().body(restResponse);
+                yield ResponseEntity.status(restResponse.status()).body(restResponse);
             }
 
             default -> throw new RuntimeException("unexpected authenticated exception");

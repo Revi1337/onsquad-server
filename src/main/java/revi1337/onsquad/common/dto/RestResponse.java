@@ -29,10 +29,6 @@ public record RestResponse<T>(
         return new RestResponse<>(201, data);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> RestResponse<T> noContent() {
-        return new RestResponse<>(204, (T) "");
-    }
 
     public static <T> RestResponse<T> success(T data) {
         return new RestResponse<>(200, data);

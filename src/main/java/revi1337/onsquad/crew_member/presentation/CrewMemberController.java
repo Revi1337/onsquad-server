@@ -36,8 +36,9 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<CrewMemberResponse> response = crewMemberQueryService.fetchParticipants(currentMember.id(), crewId, pageable);
+        RestResponse<PageResponse<CrewMemberResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok().body(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @PatchMapping("/crews/{crewId}/members/{targetMemberId}/owner")
@@ -47,8 +48,9 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         crewMemberCommandServiceFacade.delegateOwner(currentMember.id(), crewId, targetMemberId);
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @DeleteMapping("/crews/{crewId}/members/me")
@@ -57,8 +59,9 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         crewMemberCommandService.leaveCrew(currentMember.id(), crewId);
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @DeleteMapping("/crews/{crewId}/members/{targetMemberId}")
@@ -68,8 +71,9 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         crewMemberCommandServiceFacade.kickOutMember(currentMember.id(), crewId, targetMemberId);
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @GetMapping("/members/me/crew-participants")
@@ -78,7 +82,8 @@ public class CrewMemberController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<MyParticipantCrewResponse> response = crewMemberQueryService.fetchMyParticipatingCrews(currentMember.id(), pageable);
+        RestResponse<PageResponse<MyParticipantCrewResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok().body(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 }

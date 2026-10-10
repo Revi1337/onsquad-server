@@ -40,8 +40,9 @@ public class MemberController {
             @RequestParam String value
     ) {
         DuplicateResponse response = memberQueryService.checkDuplicateNickname(value);
+        RestResponse<DuplicateResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @GetMapping("/check-email")
@@ -49,8 +50,9 @@ public class MemberController {
             @RequestParam String value
     ) {
         DuplicateResponse response = memberQueryService.checkDuplicateEmail(value);
+        RestResponse<DuplicateResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @PostMapping
@@ -58,8 +60,9 @@ public class MemberController {
             @Valid @RequestBody MemberCreateRequest memberCreateRequest
     ) {
         memberCommandServiceFacade.newMember(memberCreateRequest.toDto());
+        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.ok().body(RestResponse.created());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @GetMapping("/me")
@@ -67,8 +70,9 @@ public class MemberController {
             @Authenticate CurrentMember currentMember
     ) {
         MemberResponse response = memberQueryService.findMember(currentMember.id());
+        RestResponse<MemberResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok().body(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @PutMapping("/me")
@@ -77,8 +81,9 @@ public class MemberController {
             @Authenticate CurrentMember currentMember
     ) {
         memberCommandServiceFacade.updateProfile(currentMember.id(), request.toDto());
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @DeleteMapping("/me")
@@ -86,8 +91,9 @@ public class MemberController {
             @Authenticate CurrentMember currentMember
     ) {
         memberCommandServiceFacade.deleteMember(currentMember.id());
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @PatchMapping("/me/password")
@@ -96,8 +102,9 @@ public class MemberController {
             @Authenticate CurrentMember currentMember
     ) {
         memberCommandServiceFacade.updatePassword(currentMember.id(), request.toDto());
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @PatchMapping(value = "/me/image", consumes = MULTIPART_FORM_DATA_VALUE)
@@ -106,8 +113,9 @@ public class MemberController {
             @Authenticate CurrentMember currentMember
     ) {
         memberCommandServiceFacade.updateImage(currentMember.id(), file);
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @DeleteMapping("/me/image")
@@ -115,7 +123,8 @@ public class MemberController {
             @Authenticate CurrentMember currentMember
     ) {
         memberCommandServiceFacade.deleteImage(currentMember.id());
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 }

@@ -21,20 +21,20 @@ public class RestErrorHandler implements ErrorController {
         return switch (httpStatus) {
             case BAD_REQUEST -> {
                 ErrorCode errorCode = CommonErrorCode.INVALID_INPUT_VALUE;
-                yield ResponseEntity.ok()
-                        .body(RestResponse.fail(errorCode, ProblemDetail.of(errorCode)));
+                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, ProblemDetail.of(errorCode));
+                yield ResponseEntity.status(restResponse.status()).body(restResponse);
             }
 
             case NOT_FOUND -> {
                 ErrorCode errorCode = CommonErrorCode.NOT_FOUND;
-                yield ResponseEntity.ok()
-                        .body(RestResponse.fail(errorCode, ProblemDetail.of(errorCode)));
+                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, ProblemDetail.of(errorCode));
+                yield ResponseEntity.status(restResponse.status()).body(restResponse);
             }
 
             default -> {
                 ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
-                yield ResponseEntity.ok()
-                        .body(RestResponse.fail(errorCode, ProblemDetail.of(errorCode)));
+                RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, ProblemDetail.of(errorCode));
+                yield ResponseEntity.status(restResponse.status()).body(restResponse);
             }
         };
     }

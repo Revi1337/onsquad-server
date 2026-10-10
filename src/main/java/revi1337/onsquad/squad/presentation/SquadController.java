@@ -40,8 +40,9 @@ public class SquadController {
             @Authenticate CurrentMember currentMember
     ) {
         squadCommandService.newSquad(currentMember.id(), crewId, request.toDomainSpec());
+        RestResponse<Void> restResponse = RestResponse.created();
 
-        return ResponseEntity.ok(RestResponse.created());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @GetMapping("/crews/{crewId}/squads")
@@ -52,8 +53,9 @@ public class SquadController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadResponse> response = squadQueryService.fetchSquadsByCrewId(currentMember.id(), crewId, category, pageable);
+        RestResponse<PageResponse<SquadResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @GetMapping("/squads/{squadId}")
@@ -62,8 +64,9 @@ public class SquadController {
             @Authenticate CurrentMember currentMember
     ) {
         SquadWithStatesResponse response = squadQueryService.fetchSquad(currentMember.id(), squadId);
+        RestResponse<SquadWithStatesResponse> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @DeleteMapping("/squads/{squadId}")
@@ -72,8 +75,9 @@ public class SquadController {
             @Authenticate CurrentMember currentMember
     ) {
         squadCommandService.deleteSquad(currentMember.id(), squadId);
+        RestResponse<Void> restResponse = RestResponse.ok();
 
-        return ResponseEntity.ok().body(RestResponse.noContent());
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @GetMapping("/crews/{crewId}/squads/manage")
@@ -83,7 +87,8 @@ public class SquadController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<SquadWithLeaderStateResponse> response = squadQueryService.fetchManageList(currentMember.id(), crewId, pageable);
+        RestResponse<PageResponse<SquadWithLeaderStateResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok().body(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 }

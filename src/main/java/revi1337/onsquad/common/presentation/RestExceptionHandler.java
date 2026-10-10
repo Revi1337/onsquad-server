@@ -31,7 +31,7 @@ public class RestExceptionHandler {
         ProblemDetail problemDetail = new ValidationExceptionTranslator()
                 .translate(commonErrorCode, exception);
         RestResponse<ProblemDetail> restResponse = RestResponse.fail(commonErrorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @ExceptionHandler({
@@ -50,8 +50,8 @@ public class RestExceptionHandler {
         } else if (exception instanceof HttpRequestMethodNotSupportedException) {
             errorcode = CommonErrorCode.METHOD_NOT_SUPPORT;
         }
-        return ResponseEntity.ok()
-                .body(RestResponse.fail(errorcode, ProblemDetail.of(errorcode)));
+        RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorcode, ProblemDetail.of(errorcode));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -62,7 +62,7 @@ public class RestExceptionHandler {
         CommonErrorCode commonErrorCode = CommonErrorCode.ALREADY_REQUEST;
         ProblemDetail problemDetail = ProblemDetail.withFormat(commonErrorCode, httpServletRequest.getRequestURI());
         RestResponse<ProblemDetail> restResponse = RestResponse.fail(commonErrorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 
     @ExceptionHandler(CommonBusinessException.class)
@@ -72,6 +72,6 @@ public class RestExceptionHandler {
         ErrorCode errorCode = exception.getErrorCode();
         ProblemDetail problemDetail = ProblemDetail.of(errorCode, exception.getErrorMessage());
         RestResponse<ProblemDetail> restResponse = RestResponse.fail(errorCode, problemDetail);
-        return ResponseEntity.ok().body(restResponse);
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 }

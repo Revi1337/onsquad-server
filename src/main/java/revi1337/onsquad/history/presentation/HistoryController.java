@@ -33,7 +33,8 @@ public class HistoryController {
             @Authenticate CurrentMember currentMember
     ) {
         PageResponse<HistoryResponse> response = historyQueryService.fetchHistories(currentMember.id(), from, to, type, pageable);
+        RestResponse<PageResponse<HistoryResponse>> restResponse = RestResponse.success(response);
 
-        return ResponseEntity.ok(RestResponse.success(response));
+        return ResponseEntity.status(restResponse.status()).body(restResponse);
     }
 }

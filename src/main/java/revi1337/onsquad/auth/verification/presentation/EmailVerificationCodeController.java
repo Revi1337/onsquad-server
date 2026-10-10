@@ -23,8 +23,9 @@ public class EmailVerificationCodeController {
             @RequestParam String email
     ) {
         verificationMailService.sendVerificationCode(email);
+        RestResponse<String> response = RestResponse.created();
 
-        return ResponseEntity.ok(RestResponse.created());
+        return ResponseEntity.status(response.status()).body(response);
     }
 
     @GetMapping("/auth/verify")
@@ -33,9 +34,11 @@ public class EmailVerificationCodeController {
             @RequestParam String code
     ) {
         if (verificationMailService.validateVerificationCode(email, code)) {
-            return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(true)));
+            RestResponse<EmailValidResponse> response = RestResponse.success(EmailValidResponse.of(true));
+            return ResponseEntity.status(response.status()).body(response);
         }
 
-        return ResponseEntity.ok(RestResponse.success(EmailValidResponse.of(false)));
+        RestResponse<EmailValidResponse> response = RestResponse.success(EmailValidResponse.of(false));
+        return ResponseEntity.status(response.status()).body(response);
     }
 }

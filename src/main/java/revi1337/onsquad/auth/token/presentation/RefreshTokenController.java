@@ -23,7 +23,8 @@ public class RefreshTokenController {
             @Valid @RequestBody ReissueRequest reissueRequest
     ) {
         JsonWebToken jsonWebToken = tokenReissueService.reissue(reissueRequest.refreshToken());
+        RestResponse<JsonWebToken> response = RestResponse.created(jsonWebToken);
 
-        return ResponseEntity.ok().body(RestResponse.created(jsonWebToken));
+        return ResponseEntity.status(response.status()).body(response);
     }
 }
