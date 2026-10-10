@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -266,6 +267,24 @@ class CrewControllerTest extends PresentationLayerTestSupport {
                             ),
                             responseBody()
                     ));
+        }
+
+        @Test
+        @DisplayName("클라이언트가 보낸 sort 파라미터는 무시하고 정렬 없는 페이지 요청을 서비스에 전달한다.")
+        void ignoresSortParameter() throws Exception {
+            PageRequest pageRequest = PageRequest.of(0, 2);
+            PageResponse<CrewResponse> pageResponse = PageResponse.from(new PageImpl<>(List.of(), pageRequest, 0));
+            when(crewQueryService.fetchCrewsByName(eq("crew-name"), eq(pageRequest))).thenReturn(pageResponse);
+
+            mockMvc.perform(get("/api/crews")
+                            .param("name", "crew-name")
+                            .param("page", "0")
+                            .param("size", "2")
+                            .param("sort", "nope,desc")
+                            .contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.status").value(200));
+
+            verify(crewQueryService).fetchCrewsByName(eq("crew-name"), eq(pageRequest));
         }
     }
 

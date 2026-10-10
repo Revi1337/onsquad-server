@@ -3,6 +3,7 @@ package revi1337.onsquad.crew.presentation;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -15,6 +16,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import revi1337.onsquad.announce.application.dto.response.AnnounceResponse;
 import revi1337.onsquad.announce.application.dto.response.AnnounceStates;
 import revi1337.onsquad.category.domain.vo.CategoryType;
@@ -50,7 +54,7 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
     @DisplayName("크루 메인을 문서화한다.")
     void fetchMain() throws Exception {
         Long crewId = 1L;
-        PageRequest pageRequest = PageRequest.of(0, 2);
+        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "createdAt"));
         LocalDateTime baseTime = LocalDate.of(2026, 1, 4).atStartOfDay();
         CrewMainResponse response = getMainResponse(crewId, baseTime);
         given(crewMainService.fetchMain(anyLong(), eq(crewId), eq(pageRequest))).willReturn(response);
@@ -71,6 +75,26 @@ class CrewMainControllerTest extends PresentationLayerTestSupport {
                         ),
                         responseBody()
                 ));
+    }
+
+    @Test
+    @DisplayName("크루 메인은 클라이언트가 보낸 sort 파라미터를 무시하고 createdAt 내림차순 정렬로 서비스에 전달한다.")
+    void fetchMain_ignoresSortParameter() throws Exception {
+        Long crewId = 1L;
+        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "createdAt"));
+        given(crewMainService.fetchMain(anyLong(), eq(crewId), eq(pageRequest)))
+                .willReturn(getMainResponse(crewId, LocalDate.of(2026, 1, 4).atStartOfDay()));
+
+        mockMvc.perform(get("/api/crews/{crewId}/main", crewId)
+                        .header(AUTHORIZATION_HEADER_KEY, AUTHORIZATION_HEADER_VALUE)
+                        .param("page", "0")
+                        .param("size", "2")
+                        .param("sort", "nope,desc")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200));
+
+        verify(crewMainService).fetchMain(anyLong(), eq(crewId), eq(pageRequest));
     }
 
     @Test
