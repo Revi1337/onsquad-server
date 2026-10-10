@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import revi1337.onsquad.crew_member.application.CrewMemberAccessor;
 import revi1337.onsquad.member.application.MemberAccessor;
 import revi1337.onsquad.member.domain.entity.Member;
 import revi1337.onsquad.squad.application.SquadAccessor;
@@ -25,6 +26,7 @@ import revi1337.onsquad.squad_request.domain.repository.SquadRequestRepository;
 public class SquadRequestCommandService {
 
     private final MemberAccessor memberAccessor;
+    private final CrewMemberAccessor crewMemberAccessor;
     private final SquadAccessor squadAccessor;
     private final SquadMemberAccessor squadMemberAccessor;
     private final SquadRequestAccessor squadRequestAccessor;
@@ -32,11 +34,12 @@ public class SquadRequestCommandService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void request(Long memberId, Long squadId) {
+        Squad squad = squadAccessor.getById(squadId);
+        crewMemberAccessor.validateMemberInCrew(memberId, squad.getCrew().getId());
         squadMemberAccessor.validateMemberNotInSquad(memberId, squadId);
         if (squadRequestAccessor.isRequestAbsent(memberId, squadId)) {
-            Squad squadRef = squadAccessor.getReferenceById(squadId);
             Member memberRef = memberAccessor.getReferenceById(memberId);
-            SquadRequest request = squadRequestRepository.save(SquadRequest.of(squadRef, memberRef, LocalDateTime.now()));
+            SquadRequest request = squadRequestRepository.save(SquadRequest.of(squad, memberRef, LocalDateTime.now()));
             eventPublisher.publishEvent(new RequestAdded(squadId, memberId, request.getId()));
         }
     }
