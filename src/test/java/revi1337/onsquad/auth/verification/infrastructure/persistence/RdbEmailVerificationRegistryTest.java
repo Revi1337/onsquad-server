@@ -19,14 +19,14 @@ import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
 
-@Import(RdbVerificationCodeStorage.class)
+@Import(RdbEmailVerificationRegistry.class)
 @ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @JdbcTest
-class RdbVerificationCodeStorageTest {
+class RdbEmailVerificationRegistryTest {
 
     @Autowired
-    private RdbVerificationCodeStorage rdbVerificationCodeStorage;
+    private RdbEmailVerificationRegistry rdbEmailVerificationRegistry;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -49,7 +49,7 @@ class RdbVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("인증 코드 저장")
-    class SaveVerificationCode {
+    class Register {
 
         @Test
         @DisplayName("인증 코드를 저장하면 DB에 레코드가 기록되며 만료 시간이 Milliseconds로 저장된다")
@@ -58,7 +58,7 @@ class RdbVerificationCodeStorageTest {
             Duration duration = Duration.ofMinutes(5);
             VerificationStatus status = VerificationStatus.PENDING;
 
-            rdbVerificationCodeStorage.saveVerificationCode(email, code, status, duration);
+            rdbEmailVerificationRegistry.register(email, code, status, duration);
 
             assertSoftly(softly -> {
                 Map<String, Object> result = jdbcTemplate.queryForMap("SELECT * FROM verification_code WHERE email = ?", email);
@@ -72,39 +72,39 @@ class RdbVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("인증 코드 유효성 검증")
-    class IsValidVerificationCode {
+    class IsCodeMatched {
 
         @Test
         @DisplayName("DB에 저장된 코드와 입력값이 일치하고 만료되지 않았으면 참을 반환한다")
         void returnTrueWhenCodeMatchesAndNotExpired() {
             String code = "123456";
-            rdbVerificationCodeStorage.saveVerificationCode(email, code, VerificationStatus.PENDING, Duration.ofMinutes(5));
+            rdbEmailVerificationRegistry.register(email, code, VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            assertThat(rdbVerificationCodeStorage.isValidVerificationCode(email, code)).isTrue();
+            assertThat(rdbEmailVerificationRegistry.isCodeMatched(email, code)).isTrue();
         }
 
         @Test
         @DisplayName("코드가 다르거나 만료 시간이 지난 경우 거짓을 반환한다")
         void returnFalseWhenMismatchedOrExpired() {
-            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMillis(-1000)); // 이미 만료
+            rdbEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMillis(-1000)); // 이미 만료
 
             assertSoftly(softly -> {
-                softly.assertThat(rdbVerificationCodeStorage.isValidVerificationCode(email, "123456")).isFalse();
-                softly.assertThat(rdbVerificationCodeStorage.isValidVerificationCode(email, "wrong")).isFalse();
+                softly.assertThat(rdbEmailVerificationRegistry.isCodeMatched(email, "123456")).isFalse();
+                softly.assertThat(rdbEmailVerificationRegistry.isCodeMatched(email, "wrong")).isFalse();
             });
         }
     }
 
     @Nested
     @DisplayName("인증 상태 마킹")
-    class MarkVerificationStatus {
+    class ChangeStatus {
 
         @Test
         @DisplayName("기존 레코드가 존재하면 상태와 유효 시간을 갱신하고 참을 반환한다")
         void updateStatusAndExpiration() {
-            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
+            rdbEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            boolean marked = rdbVerificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
+            boolean marked = rdbEmailVerificationRegistry.changeStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
 
             assertSoftly(softly -> {
                 Map<String, Object> result = jdbcTemplate.queryForMap("SELECT * FROM verification_code WHERE email = ?", email);
@@ -116,7 +116,7 @@ class RdbVerificationCodeStorageTest {
         @Test
         @DisplayName("데이터가 존재하지 않으면 거짓을 반환한다")
         void returnFalseWhenRecordNotFound() {
-            boolean marked = rdbVerificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
+            boolean marked = rdbEmailVerificationRegistry.changeStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
 
             assertThat(marked).isFalse();
         }
@@ -124,15 +124,15 @@ class RdbVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("원자적 인증 성공 마킹 (Atomic Update Query)")
-    class MarkVerificationStatusAsSuccess {
+    class Confirm {
 
         @Test
         @DisplayName("이메일, 코드, 만료 여부 조건을 모두 만족하고 아직 성공 상태가 아니면, SUCCESS로 변경하고 참을 반환한다")
         void returnTrueAndUpdateWhenConditionsMet() {
             String authCode = "123456";
-            rdbVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
+            rdbEmailVerificationRegistry.register(email, authCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            boolean result = rdbVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+            boolean result = rdbEmailVerificationRegistry.confirm(email, authCode, Duration.ofMinutes(10));
 
             assertSoftly(softly -> {
                 Map<String, Object> data = jdbcTemplate.queryForMap("SELECT * FROM verification_code WHERE email = ?", email);
@@ -144,9 +144,9 @@ class RdbVerificationCodeStorageTest {
         @Test
         @DisplayName("코드가 틀리거나 이미 만료된 경우 업데이트가 수행되지 않고 거짓을 반환한다")
         void returnFalseWhenCodeIsWrongOrExpired() {
-            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMillis(-1000));
+            rdbEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMillis(-1000));
 
-            boolean result = rdbVerificationCodeStorage.markVerificationStatusAsSuccess(email, "wrong_code", Duration.ofMinutes(10));
+            boolean result = rdbEmailVerificationRegistry.confirm(email, "wrong_code", Duration.ofMinutes(10));
 
             assertThat(result).isFalse();
         }
@@ -155,9 +155,9 @@ class RdbVerificationCodeStorageTest {
         @DisplayName("이미 SUCCESS 상태인 경우 WHERE 조건(status != SUCCESS)에 의해 업데이트되지 않고 거짓을 반환한다")
         void returnFalseWhenAlreadySuccessStatus() {
             String authCode = "123456";
-            rdbVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+            rdbEmailVerificationRegistry.register(email, authCode, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
 
-            boolean result = rdbVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+            boolean result = rdbEmailVerificationRegistry.confirm(email, authCode, Duration.ofMinutes(10));
 
             assertThat(result).isFalse();
         }
@@ -165,34 +165,34 @@ class RdbVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("특정 상태 마킹 여부 조회")
-    class IsMarkedVerificationStatusWith {
+    class HasStatus {
 
         @Test
         @DisplayName("DB의 status 컬럼 값이 요청한 상태와 일치하는지 검증한다")
         void verifyStatusColumnMatches() {
-            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
-            rdbVerificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+            rdbEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
+            rdbEmailVerificationRegistry.changeStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
 
-            assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
-            assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.PENDING)).isFalse();
+            assertThat(rdbEmailVerificationRegistry.hasStatus(email, VerificationStatus.SUCCESS)).isTrue();
+            assertThat(rdbEmailVerificationRegistry.hasStatus(email, VerificationStatus.PENDING)).isFalse();
         }
 
         @Test
         @DisplayName("요청한 상태와 일치하더라도 만료 시간이 지났으면 거짓을 반환한다")
         void returnFalseWhenExpired() {
-            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.SUCCESS, Duration.ofMillis(-1000));
+            rdbEmailVerificationRegistry.register(email, "123456", VerificationStatus.SUCCESS, Duration.ofMillis(-1000));
 
-            assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isFalse();
+            assertThat(rdbEmailVerificationRegistry.hasStatus(email, VerificationStatus.SUCCESS)).isFalse();
         }
 
         @Test
         @DisplayName("요청한 상태와 일치하고 만료되지 않았으면 참을 반환하고, 데이터가 없으면 거짓을 반환한다")
         void returnTrueWhenNotExpiredAndFalseWhenAbsent() {
-            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+            rdbEmailVerificationRegistry.register(email, "123456", VerificationStatus.SUCCESS, Duration.ofMinutes(5));
 
             assertSoftly(softly -> {
-                softly.assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
-                softly.assertThat(rdbVerificationCodeStorage.isMarkedVerificationStatusWith("none@test.com", VerificationStatus.SUCCESS)).isFalse();
+                softly.assertThat(rdbEmailVerificationRegistry.hasStatus(email, VerificationStatus.SUCCESS)).isTrue();
+                softly.assertThat(rdbEmailVerificationRegistry.hasStatus("none@test.com", VerificationStatus.SUCCESS)).isFalse();
             });
         }
     }
@@ -206,11 +206,11 @@ class RdbVerificationCodeStorageTest {
         void deleteOnlyExpiredRecordsBasedOnBaseTime() {
             long now = Instant.now().toEpochMilli();
             long baseTime = now;
-            rdbVerificationCodeStorage.saveVerificationCode("expired1@test.com", "111", VerificationStatus.PENDING, Duration.ofMillis(-10000));
-            rdbVerificationCodeStorage.saveVerificationCode("expired2@test.com", "222", VerificationStatus.PENDING, Duration.ofMillis(-5000));
-            rdbVerificationCodeStorage.saveVerificationCode("valid@test.com", "333", VerificationStatus.PENDING, Duration.ofDays(1));
+            rdbEmailVerificationRegistry.register("expired1@test.com", "111", VerificationStatus.PENDING, Duration.ofMillis(-10000));
+            rdbEmailVerificationRegistry.register("expired2@test.com", "222", VerificationStatus.PENDING, Duration.ofMillis(-5000));
+            rdbEmailVerificationRegistry.register("valid@test.com", "333", VerificationStatus.PENDING, Duration.ofDays(1));
 
-            int deletedCount = rdbVerificationCodeStorage.removeExpiredCodes(baseTime);
+            int deletedCount = rdbEmailVerificationRegistry.removeExpiredCodes(baseTime);
 
             assertSoftly(softly -> {
                 softly.assertThat(deletedCount).isEqualTo(2);
@@ -225,9 +225,9 @@ class RdbVerificationCodeStorageTest {
         @DisplayName("만료된 데이터가 하나도 없는 경우 0을 반환하며 아무 데이터도 삭제하지 않는다")
         void returnZeroWhenNoExpiredRecords() {
             long now = Instant.now().toEpochMilli();
-            rdbVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(10));
+            rdbEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(10));
 
-            int deletedCount = rdbVerificationCodeStorage.removeExpiredCodes(now);
+            int deletedCount = rdbEmailVerificationRegistry.removeExpiredCodes(now);
 
             assertSoftly(softly -> {
                 softly.assertThat(deletedCount).isEqualTo(0);

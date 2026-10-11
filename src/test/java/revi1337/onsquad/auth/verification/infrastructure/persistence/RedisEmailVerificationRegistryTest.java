@@ -17,16 +17,16 @@ import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.container.RedisTestContainerInitializer;
 
-@Import(RedisVerificationCodeStorage.class)
+@Import(RedisEmailVerificationRegistry.class)
 @ContextConfiguration(initializers = RedisTestContainerInitializer.class)
 @DataRedisTest
-class RedisVerificationCodeStorageTest {
+class RedisEmailVerificationRegistryTest {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    private RedisVerificationCodeStorage redisVerificationCodeStorage;
+    private RedisEmailVerificationRegistry redisEmailVerificationRegistry;
 
     private final String email = "user@test.com";
     private final String key = "onsquad:verification-code:user@test.com";
@@ -41,7 +41,7 @@ class RedisVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("인증 코드 저장")
-    class SaveVerificationCode {
+    class Register {
 
         @Test
         @DisplayName("인증 코드를 저장하면 Redis Hash 구조로 모든 필드가 기록되며 설정된 TTL이 적용된다")
@@ -50,7 +50,7 @@ class RedisVerificationCodeStorageTest {
             Duration duration = Duration.ofMinutes(5);
             VerificationStatus status = VerificationStatus.PENDING;
 
-            redisVerificationCodeStorage.saveVerificationCode(email, code, status, duration);
+            redisEmailVerificationRegistry.register(email, code, status, duration);
 
             assertSoftly(softly -> {
                 softly.assertThat(stringRedisTemplate.opsForHash().get(key, "code")).isEqualTo(code);
@@ -63,36 +63,36 @@ class RedisVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("인증 코드 유효성 검증")
-    class IsValidVerificationCode {
+    class IsCodeMatched {
 
         @Test
         @DisplayName("Redis Hash에 저장된 'code' 필드 값이 입력값과 일치하면 참을 반환한다")
         void returnTrueWhenHashFieldMatches() {
-            redisVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            assertThat(redisVerificationCodeStorage.isValidVerificationCode(email, "123456")).isTrue();
+            assertThat(redisEmailVerificationRegistry.isCodeMatched(email, "123456")).isTrue();
         }
 
         @Test
         @DisplayName("데이터가 존재하지 않거나 저장된 코드와 다르면 거짓을 반환한다")
         void returnFalseWhenDataMissingOrMismatched() {
-            redisVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            assertThat(redisVerificationCodeStorage.isValidVerificationCode(email, "wrong")).isFalse();
-            assertThat(redisVerificationCodeStorage.isValidVerificationCode("other@test.com", "123456")).isFalse();
+            assertThat(redisEmailVerificationRegistry.isCodeMatched(email, "wrong")).isFalse();
+            assertThat(redisEmailVerificationRegistry.isCodeMatched("other@test.com", "123456")).isFalse();
         }
     }
 
     @Nested
     @DisplayName("인증 상태 마킹")
-    class MarkVerificationStatus {
+    class ChangeStatus {
 
         @Test
         @DisplayName("기존 Hash 데이터가 존재하는 경우 status 필드만 성공 상태로 갱신하고 유효 시간을 재설정한다")
         void updateStatusFieldAndResetTTL() {
-            redisVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            boolean marked = redisVerificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
+            boolean marked = redisEmailVerificationRegistry.changeStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
 
             assertSoftly(softly -> {
                 softly.assertThat(marked).isTrue();
@@ -104,7 +104,7 @@ class RedisVerificationCodeStorageTest {
         @Test
         @DisplayName("데이터가 이미 만료되어 존재하지 않으면 상태 변경 요청을 무시하고 거짓을 반환한다")
         void failWhenKeyAlreadyExpired() {
-            boolean marked = redisVerificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
+            boolean marked = redisEmailVerificationRegistry.changeStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(10));
 
             assertThat(marked).isFalse();
         }
@@ -112,15 +112,15 @@ class RedisVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("원자적 인증 성공 마킹 (Lua Script)")
-    class MarkVerificationStatusAsSuccess {
+    class Confirm {
 
         @Test
         @DisplayName("코드가 일치하고 아직 성공 상태가 아니면, 상태를 SUCCESS로 변경하고 TTL을 갱신하며 참을 반환한다")
         void returnTrueAndUpdateWhenConditionsMet() {
             String authCode = "123456";
-            redisVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.register(email, authCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+            boolean result = redisEmailVerificationRegistry.confirm(email, authCode, Duration.ofMinutes(10));
 
             assertSoftly(softly -> {
                 softly.assertThat(result).isTrue();
@@ -133,9 +133,9 @@ class RedisVerificationCodeStorageTest {
         @DisplayName("코드가 일치하지 않으면 상태를 변경하지 않고 거짓을 반환한다")
         void returnFalseWhenCodeIsWrong() {
             String realCode = "123456";
-            redisVerificationCodeStorage.saveVerificationCode(email, realCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.register(email, realCode, VerificationStatus.PENDING, Duration.ofMinutes(5));
 
-            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, "wrong_code", Duration.ofMinutes(10));
+            boolean result = redisEmailVerificationRegistry.confirm(email, "wrong_code", Duration.ofMinutes(10));
 
             assertSoftly(softly -> {
                 softly.assertThat(result).isFalse();
@@ -147,10 +147,10 @@ class RedisVerificationCodeStorageTest {
         @DisplayName("데이터가 이미 만료되어 존재하지 않으면 거짓을 반환한다")
         void returnFalseWhenKeyDoesNotExist() throws InterruptedException {
             String authCode = "123456";
-            redisVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, Duration.ofMillis(100));
+            redisEmailVerificationRegistry.register(email, authCode, VerificationStatus.PENDING, Duration.ofMillis(100));
             Thread.sleep(200);
 
-            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+            boolean result = redisEmailVerificationRegistry.confirm(email, authCode, Duration.ofMinutes(10));
 
             assertThat(result).isFalse();
         }
@@ -159,9 +159,9 @@ class RedisVerificationCodeStorageTest {
         @DisplayName("이미 SUCCESS 상태인 경우, Lua 스크립트 조건(status ~= SUCCESS)에 의해 변경 없이 거짓을 반환한다")
         void returnFalseWhenAlreadySuccessStatus() {
             String authCode = "123456";
-            redisVerificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.register(email, authCode, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
 
-            boolean result = redisVerificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, Duration.ofMinutes(10));
+            boolean result = redisEmailVerificationRegistry.confirm(email, authCode, Duration.ofMinutes(10));
 
             assertThat(result).isFalse();
         }
@@ -169,16 +169,16 @@ class RedisVerificationCodeStorageTest {
 
     @Nested
     @DisplayName("특정 상태 마킹 여부 조회")
-    class IsMarkedVerificationStatusWith {
+    class HasStatus {
 
         @Test
         @DisplayName("Redis Hash의 'status' 필드 값이 요청한 상태와 일치하는지 검증한다")
         void verifyStatusFieldMatchesInRedis() {
-            redisVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
-            redisVerificationCodeStorage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5));
+            redisEmailVerificationRegistry.changeStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(5));
 
-            assertThat(redisVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
-            assertThat(redisVerificationCodeStorage.isMarkedVerificationStatusWith(email, VerificationStatus.PENDING)).isFalse();
+            assertThat(redisEmailVerificationRegistry.hasStatus(email, VerificationStatus.SUCCESS)).isTrue();
+            assertThat(redisEmailVerificationRegistry.hasStatus(email, VerificationStatus.PENDING)).isFalse();
         }
     }
 
@@ -189,7 +189,7 @@ class RedisVerificationCodeStorageTest {
         @Test
         @DisplayName("설정된 유효 시간(TTL)이 경과하면 Redis 엔진에 의해 해당 Hash 키가 완전히 삭제된다")
         void autoPurgeByKeyExpiration() throws InterruptedException {
-            redisVerificationCodeStorage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMillis(100));
+            redisEmailVerificationRegistry.register(email, "123456", VerificationStatus.PENDING, Duration.ofMillis(100));
 
             Thread.sleep(200);
 

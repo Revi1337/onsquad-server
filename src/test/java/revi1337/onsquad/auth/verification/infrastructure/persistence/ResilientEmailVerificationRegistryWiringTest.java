@@ -17,49 +17,49 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import revi1337.onsquad.auth.verification.application.EmailVerificationValidator;
-import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
+import revi1337.onsquad.auth.verification.application.EmailVerificationRegistry;
 
-@SpringJUnitConfig(ResilientVerificationCodeStorageWiringTest.WiringConfiguration.class)
-class ResilientVerificationCodeStorageWiringTest {
+@SpringJUnitConfig(ResilientEmailVerificationRegistryWiringTest.WiringConfiguration.class)
+class ResilientEmailVerificationRegistryWiringTest {
 
     @Autowired
-    private VerificationCodeStorage verificationCodeStorage;
+    private EmailVerificationRegistry emailVerificationRegistry;
 
     @Autowired
     private EmailVerificationValidator emailVerificationValidator;
 
     @Test
-    @DisplayName("VerificationCodeStorage 타입 주입은 ResilientVerificationCodeStorage 이다")
+    @DisplayName("EmailVerificationRegistry 타입 주입은 ResilientEmailVerificationRegistry 이다")
     void primaryIsResilient() {
-        assertThat(verificationCodeStorage).isInstanceOf(ResilientVerificationCodeStorage.class);
+        assertThat(emailVerificationRegistry).isInstanceOf(ResilientEmailVerificationRegistry.class);
     }
 
     @Test
-    @DisplayName("ResilientVerificationCodeStorage 에는 redis 필드에 Redis 구현체, rdb 필드에 RDB 구현체가 주입된다")
+    @DisplayName("ResilientEmailVerificationRegistry 에는 redis 필드에 Redis 구현체, rdb 필드에 RDB 구현체가 주입된다")
     void delegatesAreWiredByQualifier() {
-        Object redis = ReflectionTestUtils.getField(verificationCodeStorage, "redisVerificationCodeStorage");
-        Object rdb = ReflectionTestUtils.getField(verificationCodeStorage, "rdbVerificationCodeStorage");
+        Object redis = ReflectionTestUtils.getField(emailVerificationRegistry, "redisEmailVerificationRegistry");
+        Object rdb = ReflectionTestUtils.getField(emailVerificationRegistry, "rdbEmailVerificationRegistry");
 
-        assertThat(redis).isInstanceOf(RedisVerificationCodeStorage.class);
-        assertThat(rdb).isInstanceOf(RdbVerificationCodeStorage.class);
+        assertThat(redis).isInstanceOf(RedisEmailVerificationRegistry.class);
+        assertThat(rdb).isInstanceOf(RdbEmailVerificationRegistry.class);
     }
 
     @Test
-    @DisplayName("EmailVerificationValidator 는 ResilientVerificationCodeStorage 를 주입받는다")
+    @DisplayName("EmailVerificationValidator 는 ResilientEmailVerificationRegistry 를 주입받는다")
     void validatorReceivesResilient() {
-        Object injected = ReflectionTestUtils.getField(emailVerificationValidator, "verificationCodeStorage");
+        Object injected = ReflectionTestUtils.getField(emailVerificationValidator, "emailVerificationRegistry");
 
-        assertThat(injected).isSameAs(verificationCodeStorage);
+        assertThat(injected).isSameAs(emailVerificationRegistry);
     }
 
     @Configuration
     @ComponentScan(
-            basePackageClasses = {ResilientVerificationCodeStorage.class, EmailVerificationValidator.class},
+            basePackageClasses = {ResilientEmailVerificationRegistry.class, EmailVerificationValidator.class},
             useDefaultFilters = false,
             includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-                    ResilientVerificationCodeStorage.class,
-                    RedisVerificationCodeStorage.class,
-                    RdbVerificationCodeStorage.class,
+                    ResilientEmailVerificationRegistry.class,
+                    RedisEmailVerificationRegistry.class,
+                    RdbEmailVerificationRegistry.class,
                     EmailVerificationValidator.class
             })
     )

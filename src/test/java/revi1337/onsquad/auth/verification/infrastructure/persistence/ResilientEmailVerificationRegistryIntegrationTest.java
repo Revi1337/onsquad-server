@@ -24,16 +24,16 @@ import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
 import revi1337.onsquad.common.container.UnreachableRedis;
 
 @Sql("classpath:db/mysql/verification_code_ddl.sql")
-@Import(RdbVerificationCodeStorage.class)
+@Import(RdbEmailVerificationRegistry.class)
 @ContextConfiguration(initializers = MySqlTestContainerInitializer.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @JdbcTest
-class ResilientVerificationCodeStorageIntegrationTest {
+class ResilientEmailVerificationRegistryIntegrationTest {
 
     private static final int MINIMUM_NUMBER_OF_CALLS = 4;
 
     @Autowired
-    private RdbVerificationCodeStorage rdbVerificationCodeStorage;
+    private RdbEmailVerificationRegistry rdbEmailVerificationRegistry;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -42,7 +42,7 @@ class ResilientVerificationCodeStorageIntegrationTest {
     private final String code = "123456";
 
     private CircuitBreaker circuitBreaker;
-    private ResilientVerificationCodeStorage storage;
+    private ResilientEmailVerificationRegistry storage;
 
     @BeforeEach
     void setUp() {
@@ -54,25 +54,25 @@ class ResilientVerificationCodeStorageIntegrationTest {
                 .recordExceptions(DataAccessException.class)
                 .build());
         circuitBreaker = registry.circuitBreaker("redisAuthCircuitBreaker");
-        RedisVerificationCodeStorage unreachableRedisStorage = new RedisVerificationCodeStorage(UnreachableRedis.stringRedisTemplate());
-        storage = new ResilientVerificationCodeStorage(unreachableRedisStorage, rdbVerificationCodeStorage, registry);
+        RedisEmailVerificationRegistry unreachableRedisStorage = new RedisEmailVerificationRegistry(UnreachableRedis.stringRedisTemplate());
+        storage = new ResilientEmailVerificationRegistry(unreachableRedisStorage, rdbEmailVerificationRegistry, registry);
     }
 
     @Test
     @DisplayName("Redis 가 불가능해도 발송, 검증, 가입 확인 흐름이 RDB 로 끝까지 동작한다")
     void fullFlowWorksOnRdbWhenRedisIsDown() {
-        long expiredAt = storage.saveVerificationCode(email, code, VerificationStatus.PENDING, Duration.ofMinutes(3));
-        boolean codeValid = storage.isValidVerificationCode(email, code);
-        boolean wrongCodeValid = storage.isValidVerificationCode(email, "000000");
-        boolean marked = storage.markVerificationStatusAsSuccess(email, code, Duration.ofMinutes(5));
-        boolean markedAgain = storage.markVerificationStatusAsSuccess(email, code, Duration.ofMinutes(5));
+        long expiredAt = storage.register(email, code, VerificationStatus.PENDING, Duration.ofMinutes(3));
+        boolean codeValid = storage.isCodeMatched(email, code);
+        boolean wrongCodeValid = storage.isCodeMatched(email, "000000");
+        boolean marked = storage.confirm(email, code, Duration.ofMinutes(5));
+        boolean markedAgain = storage.confirm(email, code, Duration.ofMinutes(5));
 
         assertThat(expiredAt).isGreaterThan(Instant.now().toEpochMilli());
         assertThat(codeValid).isTrue();
         assertThat(wrongCodeValid).isFalse();
         assertThat(marked).isTrue();
         assertThat(markedAgain).isFalse();
-        assertThat(storage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
+        assertThat(storage.hasStatus(email, VerificationStatus.SUCCESS)).isTrue();
         assertThat(jdbcTemplate.queryForObject("SELECT status FROM verification_code WHERE email = ?", String.class, email))
                 .isEqualTo(VerificationStatus.SUCCESS.name());
     }
@@ -81,14 +81,14 @@ class ResilientVerificationCodeStorageIntegrationTest {
     @DisplayName("Redis 실패가 누적되어 서킷이 열린 뒤에도 흐름이 RDB 로 동작한다")
     void flowWorksAfterCircuitOpens() {
         for (int i = 0; i < MINIMUM_NUMBER_OF_CALLS; i++) {
-            storage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS);
+            storage.hasStatus(email, VerificationStatus.SUCCESS);
         }
         assertThat(circuitBreaker.getState()).isEqualTo(State.OPEN);
 
-        storage.saveVerificationCode(email, code, VerificationStatus.PENDING, Duration.ofMinutes(3));
-        boolean marked = storage.markVerificationStatusAsSuccess(email, code, Duration.ofMinutes(5));
+        storage.register(email, code, VerificationStatus.PENDING, Duration.ofMinutes(3));
+        boolean marked = storage.confirm(email, code, Duration.ofMinutes(5));
 
         assertThat(marked).isTrue();
-        assertThat(storage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS)).isTrue();
+        assertThat(storage.hasStatus(email, VerificationStatus.SUCCESS)).isTrue();
     }
 }

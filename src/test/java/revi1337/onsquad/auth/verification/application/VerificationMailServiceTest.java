@@ -22,7 +22,7 @@ class VerificationMailServiceTest {
     private EmailSender emailSender;
 
     @Mock
-    private VerificationCodeStorage verificationCodeStorage;
+    private EmailVerificationRegistry emailVerificationRegistry;
 
     @Mock
     private VerificationCodeGenerator verificationCodeGenerator;
@@ -39,7 +39,7 @@ class VerificationMailServiceTest {
 
         verificationMailService.sendVerificationCode(email);
 
-        verify(verificationCodeStorage).saveVerificationCode(eq(email), eq(code), any(), any());
+        verify(emailVerificationRegistry).register(eq(email), eq(code), any(), any());
         verify(emailSender).sendEmail(anyString(), any(), eq(email));
     }
 
@@ -48,12 +48,12 @@ class VerificationMailServiceTest {
     void validateVerificationCode1() {
         String email = "test@email.com";
         String authCode = "123456";
-        when(verificationCodeStorage.markVerificationStatusAsSuccess(eq(email), eq(authCode), any())).thenReturn(true);
+        when(emailVerificationRegistry.confirm(eq(email), eq(authCode), any())).thenReturn(true);
 
         boolean result = verificationMailService.validateVerificationCode(email, authCode);
 
         assertThat(result).isTrue();
-        verify(verificationCodeStorage).markVerificationStatusAsSuccess(eq(email), eq(authCode), any());
+        verify(emailVerificationRegistry).confirm(eq(email), eq(authCode), any());
     }
 
     @Test
@@ -61,11 +61,11 @@ class VerificationMailServiceTest {
     void validateVerificationCode2() {
         String email = "test@email.com";
         String authCode = "123456";
-        when(verificationCodeStorage.markVerificationStatusAsSuccess(eq(email), eq(authCode), any())).thenReturn(false);
+        when(emailVerificationRegistry.confirm(eq(email), eq(authCode), any())).thenReturn(false);
 
         boolean result = verificationMailService.validateVerificationCode(email, authCode);
 
         assertThat(result).isFalse();
-        verify(verificationCodeStorage).markVerificationStatusAsSuccess(eq(email), eq(authCode), any());
+        verify(emailVerificationRegistry).confirm(eq(email), eq(authCode), any());
     }
 }

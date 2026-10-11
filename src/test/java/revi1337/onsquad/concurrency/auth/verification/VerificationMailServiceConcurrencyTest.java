@@ -25,11 +25,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import revi1337.onsquad.auth.verification.application.VerificationCodeGenerator;
-import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
+import revi1337.onsquad.auth.verification.application.EmailVerificationRegistry;
 import revi1337.onsquad.auth.verification.application.VerificationMailService;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
-import revi1337.onsquad.auth.verification.infrastructure.persistence.RdbVerificationCodeStorage;
-import revi1337.onsquad.auth.verification.infrastructure.persistence.RedisVerificationCodeStorage;
+import revi1337.onsquad.auth.verification.infrastructure.persistence.RdbEmailVerificationRegistry;
+import revi1337.onsquad.auth.verification.infrastructure.persistence.RedisEmailVerificationRegistry;
 import revi1337.onsquad.common.application.mail.EmailSender;
 import revi1337.onsquad.common.config.ApplicationLayerConfiguration;
 import revi1337.onsquad.common.container.MySqlTestContainerInitializer;
@@ -48,7 +48,7 @@ class VerificationMailServiceConcurrencyTest {
     @Autowired
     private VerificationCodeGenerator verificationCodeGenerator;
 
-    private VerificationCodeStorage verificationCodeStorage;
+    private EmailVerificationRegistry emailVerificationRegistry;
 
     private VerificationMailService verificationMailService;
 
@@ -62,7 +62,7 @@ class VerificationMailServiceConcurrencyTest {
         private JdbcTemplate jdbcTemplate;
 
         @Autowired
-        private RdbVerificationCodeStorage rdbVerificationCodeStorage;
+        private RdbEmailVerificationRegistry rdbEmailVerificationRegistry;
 
         @BeforeEach
         void setUp() {
@@ -76,8 +76,8 @@ class VerificationMailServiceConcurrencyTest {
                         PRIMARY KEY (email)
                     );
                     """);
-            verificationCodeStorage = rdbVerificationCodeStorage;
-            verificationMailService = new VerificationMailService(emailSender, rdbVerificationCodeStorage, verificationCodeGenerator);
+            emailVerificationRegistry = rdbEmailVerificationRegistry;
+            verificationMailService = new VerificationMailService(emailSender, rdbEmailVerificationRegistry, verificationCodeGenerator);
         }
 
         @Test
@@ -95,7 +95,7 @@ class VerificationMailServiceConcurrencyTest {
         private StringRedisTemplate stringRedisTemplate;
 
         @Autowired
-        private RedisVerificationCodeStorage redisVerificationCodeStorage;
+        private RedisEmailVerificationRegistry redisEmailVerificationRegistry;
 
         @BeforeEach
         void setUp() {
@@ -103,8 +103,8 @@ class VerificationMailServiceConcurrencyTest {
                 connection.serverCommands().flushAll();
                 return null;
             });
-            verificationCodeStorage = redisVerificationCodeStorage;
-            verificationMailService = new VerificationMailService(emailSender, redisVerificationCodeStorage, verificationCodeGenerator);
+            emailVerificationRegistry = redisEmailVerificationRegistry;
+            verificationMailService = new VerificationMailService(emailSender, redisEmailVerificationRegistry, verificationCodeGenerator);
         }
 
         @Test
@@ -117,7 +117,7 @@ class VerificationMailServiceConcurrencyTest {
     private void invokeConcurrencyTest() {
         // given
         String authCode = "123456";
-        verificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, Duration.ofMinutes(3));
+        emailVerificationRegistry.register(email, authCode, VerificationStatus.PENDING, Duration.ofMinutes(3));
 
         // when
         int threadCount = 10;

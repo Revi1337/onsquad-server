@@ -22,16 +22,16 @@ public class VerificationMailService {
     private static final Duration JOINING_TIMEOUT = Duration.ofMinutes(5);
 
     private final EmailSender emailSender;
-    private final VerificationCodeStorage verificationCodeStorage;
+    private final EmailVerificationRegistry emailVerificationRegistry;
     private final VerificationCodeGenerator verificationCodeGenerator;
 
     public VerificationMailService(
             @Qualifier("verificationCodeEmailSender") EmailSender emailSender,
-            VerificationCodeStorage verificationCodeStorage,
+            EmailVerificationRegistry emailVerificationRegistry,
             VerificationCodeGenerator verificationCodeGenerator
     ) {
         this.emailSender = emailSender;
-        this.verificationCodeStorage = verificationCodeStorage;
+        this.emailVerificationRegistry = emailVerificationRegistry;
         this.verificationCodeGenerator = verificationCodeGenerator;
     }
 
@@ -39,7 +39,7 @@ public class VerificationMailService {
     public void sendVerificationCode(String email) {
         try {
             String authCode = verificationCodeGenerator.generate();
-            long expireMilli = verificationCodeStorage.saveVerificationCode(email, authCode, VerificationStatus.PENDING, VERIFICATION_CODE_TIMEOUT);
+            long expireMilli = emailVerificationRegistry.register(email, authCode, VerificationStatus.PENDING, VERIFICATION_CODE_TIMEOUT);
 
             emailSender.sendEmail(MAIL_SUBJECT, new VerificationCode(email, authCode, VerificationStatus.PENDING, expireMilli), email);
             log.info(SEND_VERIFICATION_CODE_SUCCESS_LOG_FORMAT, email, authCode);
@@ -49,7 +49,7 @@ public class VerificationMailService {
     }
 
     public boolean validateVerificationCode(String email, String authCode) {
-        boolean marked = verificationCodeStorage.markVerificationStatusAsSuccess(email, authCode, JOINING_TIMEOUT);
+        boolean marked = emailVerificationRegistry.confirm(email, authCode, JOINING_TIMEOUT);
         if (marked) {
             log.info(VERIFY_VERIFICATION_CODE_LOG_FORMAT, email, VerificationStatus.SUCCESS.name());
             return true;

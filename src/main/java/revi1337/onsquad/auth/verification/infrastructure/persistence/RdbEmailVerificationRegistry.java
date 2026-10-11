@@ -8,17 +8,17 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
+import revi1337.onsquad.auth.verification.application.EmailVerificationRegistry;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 
 @Component
 @RequiredArgsConstructor
-public class RdbVerificationCodeStorage implements VerificationCodeStorage {
+public class RdbEmailVerificationRegistry implements EmailVerificationRegistry {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
-    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration expireDuration) {
+    public long register(String email, String code, VerificationStatus status, Duration expireDuration) {
         long expiredAt = getExpectExpiredTime(expireDuration);
         String sql = """
                 INSERT INTO verification_code (email, code, status, expired_at) \
@@ -37,7 +37,7 @@ public class RdbVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean isValidVerificationCode(String email, String code) {
+    public boolean isCodeMatched(String email, String code) {
         String sql = "SELECT COUNT(*) FROM verification_code WHERE email = :email AND code = :code AND expired_at > :now";
 
         MapSqlParameterSource params = new MapSqlParameterSource()
@@ -50,7 +50,7 @@ public class RdbVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean markVerificationStatus(String email, VerificationStatus status, Duration expireDuration) {
+    public boolean changeStatus(String email, VerificationStatus status, Duration expireDuration) {
         String sql = "UPDATE verification_code SET status = :status, expired_at = :expiredAt WHERE email = :email";
 
         MapSqlParameterSource params = new MapSqlParameterSource()
@@ -63,7 +63,7 @@ public class RdbVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean markVerificationStatusAsSuccess(String email, String authCode, Duration expireDuration) {
+    public boolean confirm(String email, String authCode, Duration expireDuration) {
         String sql = """
                 UPDATE verification_code \
                 SET status = :successStatus, expired_at = :newExpiredAt \
@@ -82,7 +82,7 @@ public class RdbVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean isMarkedVerificationStatusWith(String email, VerificationStatus status) {
+    public boolean hasStatus(String email, VerificationStatus status) {
         String sql = "SELECT status FROM verification_code WHERE email = :email AND expired_at > :now";
 
         MapSqlParameterSource params = new MapSqlParameterSource()

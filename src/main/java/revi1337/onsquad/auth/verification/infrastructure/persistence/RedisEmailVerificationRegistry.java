@@ -8,14 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
-import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
+import revi1337.onsquad.auth.verification.application.EmailVerificationRegistry;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.constant.CacheConst;
 import revi1337.onsquad.common.constant.CacheConst.CacheFormat;
 
 @Component
 @RequiredArgsConstructor
-public class RedisVerificationCodeStorage implements VerificationCodeStorage {
+public class RedisEmailVerificationRegistry implements EmailVerificationRegistry {
 
     private static final String ATOMIC_SAVE_VERIFICATION_LUA = """
             redis.call('HMSET', KEYS[1], 'email', ARGV[1], 'code', ARGV[2], 'status', ARGV[3], 'expiredAt', ARGV[4]);
@@ -52,7 +52,7 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     private final StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public long saveVerificationCode(String email, String code, VerificationStatus status, Duration expireDuration) {
+    public long register(String email, String code, VerificationStatus status, Duration expireDuration) {
         String redisKey = getKey(email);
         long expiredTime = getExpectExpiredTime(expireDuration);
 
@@ -66,7 +66,7 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean isValidVerificationCode(String email, String code) {
+    public boolean isCodeMatched(String email, String code) {
         String redisKey = getKey(email);
         Object extractedCode = stringRedisTemplate.opsForHash().get(redisKey, "code");
 
@@ -74,7 +74,7 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean markVerificationStatus(String email, VerificationStatus status, Duration expireDuration) {
+    public boolean changeStatus(String email, VerificationStatus status, Duration expireDuration) {
         String redisKey = getKey(email);
 
         return stringRedisTemplate.execute(
@@ -86,7 +86,7 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean markVerificationStatusAsSuccess(String email, String authCode, Duration expireDuration) {
+    public boolean confirm(String email, String authCode, Duration expireDuration) {
         String redisKey = getKey(email);
         return stringRedisTemplate.execute(
                 ATOMIC_VALIDATE_AND_MARK_SCRIPT,
@@ -98,7 +98,7 @@ public class RedisVerificationCodeStorage implements VerificationCodeStorage {
     }
 
     @Override
-    public boolean isMarkedVerificationStatusWith(String email, VerificationStatus status) {
+    public boolean hasStatus(String email, VerificationStatus status) {
         String redisKey = getKey(email);
 
         return Objects.equals(stringRedisTemplate.opsForHash().get(redisKey, "status"), status.name());

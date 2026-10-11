@@ -17,7 +17,7 @@ import revi1337.onsquad.auth.verification.domain.error.VerificationException;
 class EmailVerificationValidatorTest {
 
     @Mock
-    private VerificationCodeStorage verificationCodeStorage;
+    private EmailVerificationRegistry emailVerificationRegistry;
 
     @InjectMocks
     private EmailVerificationValidator emailVerificationValidator;
@@ -26,7 +26,7 @@ class EmailVerificationValidatorTest {
     @DisplayName("이메일 인증 상태가 SUCCESS가 아니면 예외를 던진다")
     void ensureEmailVerified() {
         String email = "test@email.com";
-        doReturn(false).when(verificationCodeStorage).isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS);
+        doReturn(false).when(emailVerificationRegistry).hasStatus(email, VerificationStatus.SUCCESS);
 
         assertThatThrownBy(() -> emailVerificationValidator.ensureEmailVerified(email))
                 .isExactlyInstanceOf(VerificationException.UnAuthenticateVerificationCode.class);
@@ -36,7 +36,7 @@ class EmailVerificationValidatorTest {
     @DisplayName("이메일 인증 상태가 SUCCESS이면 예외 없이 통과한다")
     void ensureEmailVerified2() {
         String email = "test@email.com";
-        doReturn(true).when(verificationCodeStorage).isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS);
+        doReturn(true).when(emailVerificationRegistry).hasStatus(email, VerificationStatus.SUCCESS);
 
         assertThatCode(() -> emailVerificationValidator.ensureEmailVerified(email))
                 .doesNotThrowAnyException();

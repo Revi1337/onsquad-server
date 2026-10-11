@@ -10,15 +10,15 @@ import org.springframework.data.redis.RedisConnectionFailureException;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 import revi1337.onsquad.common.container.UnreachableRedis;
 
-class RedisVerificationCodeStorageFailureTest {
+class RedisEmailVerificationRegistryFailureTest {
 
-    private final RedisVerificationCodeStorage storage = new RedisVerificationCodeStorage(UnreachableRedis.stringRedisTemplate());
+    private final RedisEmailVerificationRegistry storage = new RedisEmailVerificationRegistry(UnreachableRedis.stringRedisTemplate());
     private final String email = "user@test.com";
 
     @Test
     @DisplayName("저장은 Redis 연결 실패를 변환 없이 DataAccessException 으로 전파한다")
-    void saveVerificationCode() {
-        assertThatThrownBy(() -> storage.saveVerificationCode(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5)))
+    void register() {
+        assertThatThrownBy(() -> storage.register(email, "123456", VerificationStatus.PENDING, Duration.ofMinutes(5)))
                 .isInstanceOf(DataAccessException.class)
                 .isInstanceOf(RedisConnectionFailureException.class)
                 .isNotInstanceOf(IllegalStateException.class);
@@ -26,32 +26,32 @@ class RedisVerificationCodeStorageFailureTest {
 
     @Test
     @DisplayName("코드 검증은 Redis 연결 실패를 변환 없이 DataAccessException 으로 전파한다")
-    void isValidVerificationCode() {
-        assertThatThrownBy(() -> storage.isValidVerificationCode(email, "123456"))
+    void isCodeMatched() {
+        assertThatThrownBy(() -> storage.isCodeMatched(email, "123456"))
                 .isInstanceOf(DataAccessException.class)
                 .isNotInstanceOf(IllegalStateException.class);
     }
 
     @Test
     @DisplayName("상태 마킹은 Redis 연결 실패를 변환 없이 DataAccessException 으로 전파한다")
-    void markVerificationStatus() {
-        assertThatThrownBy(() -> storage.markVerificationStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(5)))
+    void changeStatus() {
+        assertThatThrownBy(() -> storage.changeStatus(email, VerificationStatus.SUCCESS, Duration.ofMinutes(5)))
                 .isInstanceOf(DataAccessException.class)
                 .isNotInstanceOf(IllegalStateException.class);
     }
 
     @Test
     @DisplayName("인증 성공 마킹은 Redis 연결 실패를 변환 없이 DataAccessException 으로 전파한다")
-    void markVerificationStatusAsSuccess() {
-        assertThatThrownBy(() -> storage.markVerificationStatusAsSuccess(email, "123456", Duration.ofMinutes(5)))
+    void confirm() {
+        assertThatThrownBy(() -> storage.confirm(email, "123456", Duration.ofMinutes(5)))
                 .isInstanceOf(DataAccessException.class)
                 .isNotInstanceOf(IllegalStateException.class);
     }
 
     @Test
     @DisplayName("상태 확인은 Redis 연결 실패를 변환 없이 DataAccessException 으로 전파한다")
-    void isMarkedVerificationStatusWith() {
-        assertThatThrownBy(() -> storage.isMarkedVerificationStatusWith(email, VerificationStatus.SUCCESS))
+    void hasStatus() {
+        assertThatThrownBy(() -> storage.hasStatus(email, VerificationStatus.SUCCESS))
                 .isInstanceOf(DataAccessException.class)
                 .isNotInstanceOf(IllegalStateException.class);
     }

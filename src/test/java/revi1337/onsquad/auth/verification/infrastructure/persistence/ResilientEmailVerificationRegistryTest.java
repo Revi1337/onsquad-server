@@ -31,10 +31,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
-import revi1337.onsquad.auth.verification.application.VerificationCodeStorage;
+import revi1337.onsquad.auth.verification.application.EmailVerificationRegistry;
 import revi1337.onsquad.auth.verification.domain.VerificationStatus;
 
-class ResilientVerificationCodeStorageTest {
+class ResilientEmailVerificationRegistryTest {
 
     private static final String CIRCUIT_BREAKER_NAME = "redisAuthCircuitBreaker";
     private static final int MINIMUM_NUMBER_OF_CALLS = 4;
@@ -42,13 +42,13 @@ class ResilientVerificationCodeStorageTest {
     private static final String CODE = "123456";
     private static final Duration DURATION = Duration.ofMinutes(5);
 
-    private final Logger storageLogger = (Logger) LoggerFactory.getLogger(ResilientVerificationCodeStorage.class);
-    private final VerificationCodeStorage redisStorage = mock(VerificationCodeStorage.class);
-    private final VerificationCodeStorage rdbStorage = mock(VerificationCodeStorage.class);
+    private final Logger storageLogger = (Logger) LoggerFactory.getLogger(ResilientEmailVerificationRegistry.class);
+    private final EmailVerificationRegistry redisStorage = mock(EmailVerificationRegistry.class);
+    private final EmailVerificationRegistry rdbStorage = mock(EmailVerificationRegistry.class);
 
     private ListAppender<ILoggingEvent> appender;
     private CircuitBreaker circuitBreaker;
-    private ResilientVerificationCodeStorage storage;
+    private ResilientEmailVerificationRegistry storage;
 
     @BeforeEach
     void setUp() {
@@ -64,7 +64,7 @@ class ResilientVerificationCodeStorageTest {
                 .recordExceptions(DataAccessException.class)
                 .build());
         circuitBreaker = registry.circuitBreaker(CIRCUIT_BREAKER_NAME);
-        storage = new ResilientVerificationCodeStorage(redisStorage, rdbStorage, registry);
+        storage = new ResilientEmailVerificationRegistry(redisStorage, rdbStorage, registry);
     }
 
     @AfterEach
@@ -79,17 +79,17 @@ class ResilientVerificationCodeStorageTest {
         @Test
         @DisplayName("Redis 결과를 반환하고 RDB 는 호출하지 않는다")
         void returnsRedisResultWithoutTouchingRdb() {
-            when(redisStorage.saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).thenReturn(111L);
-            when(redisStorage.isValidVerificationCode(EMAIL, CODE)).thenReturn(true);
-            when(redisStorage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).thenReturn(true);
-            when(redisStorage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION)).thenReturn(true);
-            when(redisStorage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS)).thenReturn(true);
+            when(redisStorage.register(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).thenReturn(111L);
+            when(redisStorage.isCodeMatched(EMAIL, CODE)).thenReturn(true);
+            when(redisStorage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).thenReturn(true);
+            when(redisStorage.confirm(EMAIL, CODE, DURATION)).thenReturn(true);
+            when(redisStorage.hasStatus(EMAIL, VerificationStatus.SUCCESS)).thenReturn(true);
 
-            assertThat(storage.saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).isEqualTo(111L);
-            assertThat(storage.isValidVerificationCode(EMAIL, CODE)).isTrue();
-            assertThat(storage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isTrue();
-            assertThat(storage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION)).isTrue();
-            assertThat(storage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS)).isTrue();
+            assertThat(storage.register(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).isEqualTo(111L);
+            assertThat(storage.isCodeMatched(EMAIL, CODE)).isTrue();
+            assertThat(storage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isTrue();
+            assertThat(storage.confirm(EMAIL, CODE, DURATION)).isTrue();
+            assertThat(storage.hasStatus(EMAIL, VerificationStatus.SUCCESS)).isTrue();
 
             verifyNoInteractions(rdbStorage);
             assertThat(appender.list).isEmpty();
@@ -98,16 +98,16 @@ class ResilientVerificationCodeStorageTest {
         @Test
         @DisplayName("Redis 가 예외 없이 false 를 반환하면 정상 결과이므로 RDB 로 폴백하지 않는다")
         void doesNotFallBackOnNormalFalse() {
-            when(redisStorage.isValidVerificationCode(EMAIL, CODE)).thenReturn(false);
-            when(redisStorage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).thenReturn(false);
-            when(redisStorage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION)).thenReturn(false);
-            when(redisStorage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS)).thenReturn(false);
+            when(redisStorage.isCodeMatched(EMAIL, CODE)).thenReturn(false);
+            when(redisStorage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).thenReturn(false);
+            when(redisStorage.confirm(EMAIL, CODE, DURATION)).thenReturn(false);
+            when(redisStorage.hasStatus(EMAIL, VerificationStatus.SUCCESS)).thenReturn(false);
             stubRdbForAllMethods();
 
-            assertThat(storage.isValidVerificationCode(EMAIL, CODE)).isFalse();
-            assertThat(storage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isFalse();
-            assertThat(storage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION)).isFalse();
-            assertThat(storage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS)).isFalse();
+            assertThat(storage.isCodeMatched(EMAIL, CODE)).isFalse();
+            assertThat(storage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isFalse();
+            assertThat(storage.confirm(EMAIL, CODE, DURATION)).isFalse();
+            assertThat(storage.hasStatus(EMAIL, VerificationStatus.SUCCESS)).isFalse();
 
             verifyNoInteractions(rdbStorage);
         }
@@ -123,10 +123,10 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new RedisConnectionFailureException("redis down"));
             stubRdbForAllMethods();
 
-            long result = storage.saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
+            long result = storage.register(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
 
             assertThat(result).isEqualTo(777L);
-            verify(rdbStorage).saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
+            verify(rdbStorage).register(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
         }
 
         @Test
@@ -135,10 +135,10 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new RedisConnectionFailureException("redis down"));
             stubRdbForAllMethods();
 
-            boolean result = storage.isValidVerificationCode(EMAIL, CODE);
+            boolean result = storage.isCodeMatched(EMAIL, CODE);
 
             assertThat(result).isTrue();
-            verify(rdbStorage).isValidVerificationCode(EMAIL, CODE);
+            verify(rdbStorage).isCodeMatched(EMAIL, CODE);
         }
 
         @Test
@@ -147,10 +147,10 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new QueryTimeoutException("redis timeout"));
             stubRdbForAllMethods();
 
-            boolean result = storage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
+            boolean result = storage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
 
             assertThat(result).isTrue();
-            verify(rdbStorage).markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
+            verify(rdbStorage).changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
         }
 
         @Test
@@ -159,10 +159,10 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new RedisConnectionFailureException("redis down"));
             stubRdbForAllMethods();
 
-            boolean result = storage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION);
+            boolean result = storage.confirm(EMAIL, CODE, DURATION);
 
             assertThat(result).isTrue();
-            verify(rdbStorage).markVerificationStatusAsSuccess(EMAIL, CODE, DURATION);
+            verify(rdbStorage).confirm(EMAIL, CODE, DURATION);
         }
 
         @Test
@@ -171,10 +171,10 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new QueryTimeoutException("redis timeout"));
             stubRdbForAllMethods();
 
-            boolean result = storage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS);
+            boolean result = storage.hasStatus(EMAIL, VerificationStatus.SUCCESS);
 
             assertThat(result).isTrue();
-            verify(rdbStorage).isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS);
+            verify(rdbStorage).hasStatus(EMAIL, VerificationStatus.SUCCESS);
         }
 
         @Test
@@ -183,8 +183,8 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new IllegalStateException("unexpected"));
             stubRdbForAllMethods();
 
-            assertThat(storage.isValidVerificationCode(EMAIL, CODE)).isTrue();
-            verify(rdbStorage).isValidVerificationCode(EMAIL, CODE);
+            assertThat(storage.isCodeMatched(EMAIL, CODE)).isTrue();
+            verify(rdbStorage).isCodeMatched(EMAIL, CODE);
         }
 
         @Test
@@ -193,7 +193,7 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new RedisConnectionFailureException("redis down"));
             stubRdbForAllMethods();
 
-            storage.isValidVerificationCode(EMAIL, CODE);
+            storage.isCodeMatched(EMAIL, CODE);
 
             assertThat(appender.list).hasSize(1);
             ILoggingEvent event = appender.list.get(0);
@@ -209,8 +209,8 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new RedisConnectionFailureException("redis down"));
             stubRdbForAllMethods();
 
-            storage.isValidVerificationCode(EMAIL, CODE);
-            storage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS);
+            storage.isCodeMatched(EMAIL, CODE);
+            storage.hasStatus(EMAIL, VerificationStatus.SUCCESS);
 
             assertThat(circuitBreaker.getMetrics().getNumberOfFailedCalls()).isEqualTo(2);
             assertThat(circuitBreaker.getState()).isEqualTo(State.CLOSED);
@@ -226,7 +226,7 @@ class ResilientVerificationCodeStorageTest {
             failRedisForAllMethods(new RedisConnectionFailureException("redis down"));
             stubRdbForAllMethods();
             for (int i = 0; i < MINIMUM_NUMBER_OF_CALLS && circuitBreaker.getState() != State.OPEN; i++) {
-                storage.isValidVerificationCode(EMAIL, CODE);
+                storage.isCodeMatched(EMAIL, CODE);
             }
             assertThat(circuitBreaker.getState()).isEqualTo(State.OPEN);
             appender.list.clear();
@@ -236,18 +236,18 @@ class ResilientVerificationCodeStorageTest {
         @Test
         @DisplayName("5개 메서드 모두 Redis 를 호출하지 않고 RDB 결과를 반환한다")
         void doesNotTouchRedis() {
-            assertThat(storage.saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).isEqualTo(777L);
-            assertThat(storage.isValidVerificationCode(EMAIL, CODE)).isTrue();
-            assertThat(storage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isTrue();
-            assertThat(storage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION)).isTrue();
-            assertThat(storage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS)).isTrue();
+            assertThat(storage.register(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).isEqualTo(777L);
+            assertThat(storage.isCodeMatched(EMAIL, CODE)).isTrue();
+            assertThat(storage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isTrue();
+            assertThat(storage.confirm(EMAIL, CODE, DURATION)).isTrue();
+            assertThat(storage.hasStatus(EMAIL, VerificationStatus.SUCCESS)).isTrue();
 
             verifyNoInteractions(redisStorage);
-            verify(rdbStorage, times(1)).saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
-            verify(rdbStorage, times(1)).isValidVerificationCode(EMAIL, CODE);
-            verify(rdbStorage, times(1)).markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
-            verify(rdbStorage, times(1)).markVerificationStatusAsSuccess(EMAIL, CODE, DURATION);
-            verify(rdbStorage, times(1)).isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS);
+            verify(rdbStorage, times(1)).register(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
+            verify(rdbStorage, times(1)).isCodeMatched(EMAIL, CODE);
+            verify(rdbStorage, times(1)).changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
+            verify(rdbStorage, times(1)).confirm(EMAIL, CODE, DURATION);
+            verify(rdbStorage, times(1)).hasStatus(EMAIL, VerificationStatus.SUCCESS);
         }
 
         @Test
@@ -271,12 +271,12 @@ class ResilientVerificationCodeStorageTest {
         @Test
         @DisplayName("Redis 가 정상이면 RDB 오류와 무관하게 Redis 결과를 반환한다")
         void doesNotTouchRdbWhenRedisSucceeds() {
-            when(redisStorage.isValidVerificationCode(EMAIL, CODE)).thenReturn(true);
-            when(rdbStorage.isValidVerificationCode(anyString(), anyString())).thenThrow(new DataRetrievalFailureException("mysql down"));
+            when(redisStorage.isCodeMatched(EMAIL, CODE)).thenReturn(true);
+            when(rdbStorage.isCodeMatched(anyString(), anyString())).thenThrow(new DataRetrievalFailureException("mysql down"));
 
-            assertThat(storage.isValidVerificationCode(EMAIL, CODE)).isTrue();
+            assertThat(storage.isCodeMatched(EMAIL, CODE)).isTrue();
 
-            verify(rdbStorage, never()).isValidVerificationCode(anyString(), anyString());
+            verify(rdbStorage, never()).isCodeMatched(anyString(), anyString());
         }
 
         @Test
@@ -284,47 +284,47 @@ class ResilientVerificationCodeStorageTest {
         void propagatesRdbException() {
             failRedisForAllMethods(new RedisConnectionFailureException("redis down"));
             DataRetrievalFailureException rdbFailure = new DataRetrievalFailureException("mysql down");
-            when(rdbStorage.saveVerificationCode(anyString(), anyString(), any(), any())).thenThrow(rdbFailure);
-            when(rdbStorage.isValidVerificationCode(anyString(), anyString())).thenThrow(rdbFailure);
-            when(rdbStorage.markVerificationStatus(anyString(), any(), any())).thenThrow(rdbFailure);
-            when(rdbStorage.markVerificationStatusAsSuccess(anyString(), anyString(), any())).thenThrow(rdbFailure);
-            when(rdbStorage.isMarkedVerificationStatusWith(anyString(), any())).thenThrow(rdbFailure);
+            when(rdbStorage.register(anyString(), anyString(), any(), any())).thenThrow(rdbFailure);
+            when(rdbStorage.isCodeMatched(anyString(), anyString())).thenThrow(rdbFailure);
+            when(rdbStorage.changeStatus(anyString(), any(), any())).thenThrow(rdbFailure);
+            when(rdbStorage.confirm(anyString(), anyString(), any())).thenThrow(rdbFailure);
+            when(rdbStorage.hasStatus(anyString(), any())).thenThrow(rdbFailure);
 
-            assertThatThrownBy(() -> storage.saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).isSameAs(rdbFailure);
-            assertThatThrownBy(() -> storage.isValidVerificationCode(EMAIL, CODE)).isSameAs(rdbFailure);
-            assertThatThrownBy(() -> storage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isSameAs(rdbFailure);
-            assertThatThrownBy(() -> storage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION)).isSameAs(rdbFailure);
-            assertThatThrownBy(() -> storage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS)).isSameAs(rdbFailure);
+            assertThatThrownBy(() -> storage.register(EMAIL, CODE, VerificationStatus.PENDING, DURATION)).isSameAs(rdbFailure);
+            assertThatThrownBy(() -> storage.isCodeMatched(EMAIL, CODE)).isSameAs(rdbFailure);
+            assertThatThrownBy(() -> storage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION)).isSameAs(rdbFailure);
+            assertThatThrownBy(() -> storage.confirm(EMAIL, CODE, DURATION)).isSameAs(rdbFailure);
+            assertThatThrownBy(() -> storage.hasStatus(EMAIL, VerificationStatus.SUCCESS)).isSameAs(rdbFailure);
         }
 
         @Test
         @DisplayName("RDB 예외는 서킷브레이커에 실패로 집계되지 않고 Redis 호출만 집계된다")
         void rdbExceptionIsNotRecordedAsFailure() {
-            when(redisStorage.isValidVerificationCode(anyString(), anyString())).thenThrow(new RedisConnectionFailureException("redis down"));
-            when(rdbStorage.isValidVerificationCode(anyString(), anyString())).thenThrow(new DataRetrievalFailureException("mysql down"));
+            when(redisStorage.isCodeMatched(anyString(), anyString())).thenThrow(new RedisConnectionFailureException("redis down"));
+            when(rdbStorage.isCodeMatched(anyString(), anyString())).thenThrow(new DataRetrievalFailureException("mysql down"));
 
-            assertThatThrownBy(() -> storage.isValidVerificationCode(EMAIL, CODE)).isInstanceOf(DataRetrievalFailureException.class);
+            assertThatThrownBy(() -> storage.isCodeMatched(EMAIL, CODE)).isInstanceOf(DataRetrievalFailureException.class);
 
             assertThat(circuitBreaker.getMetrics().getNumberOfBufferedCalls()).isEqualTo(1);
             assertThat(circuitBreaker.getMetrics().getNumberOfFailedCalls()).isEqualTo(1);
-            verify(redisStorage, times(1)).isValidVerificationCode(EMAIL, CODE);
-            verify(rdbStorage, times(1)).isValidVerificationCode(EMAIL, CODE);
+            verify(redisStorage, times(1)).isCodeMatched(EMAIL, CODE);
+            verify(rdbStorage, times(1)).isCodeMatched(EMAIL, CODE);
         }
 
         @Test
         @DisplayName("서킷이 열린 상태에서 RDB 예외가 반복돼도 실패 집계는 늘지 않고 상태도 유지된다")
         void rdbExceptionWhileOpenDoesNotChangeMetrics() {
-            when(redisStorage.isValidVerificationCode(anyString(), anyString())).thenThrow(new RedisConnectionFailureException("redis down"));
-            when(rdbStorage.isValidVerificationCode(anyString(), anyString())).thenThrow(new DataRetrievalFailureException("mysql down"));
+            when(redisStorage.isCodeMatched(anyString(), anyString())).thenThrow(new RedisConnectionFailureException("redis down"));
+            when(rdbStorage.isCodeMatched(anyString(), anyString())).thenThrow(new DataRetrievalFailureException("mysql down"));
             for (int i = 0; i < MINIMUM_NUMBER_OF_CALLS; i++) {
-                assertThatThrownBy(() -> storage.isValidVerificationCode(EMAIL, CODE)).isInstanceOf(DataRetrievalFailureException.class);
+                assertThatThrownBy(() -> storage.isCodeMatched(EMAIL, CODE)).isInstanceOf(DataRetrievalFailureException.class);
             }
             assertThat(circuitBreaker.getState()).isEqualTo(State.OPEN);
             int failedCallsWhenOpened = circuitBreaker.getMetrics().getNumberOfFailedCalls();
             clearInvocations(redisStorage);
 
             for (int i = 0; i < MINIMUM_NUMBER_OF_CALLS; i++) {
-                assertThatThrownBy(() -> storage.isValidVerificationCode(EMAIL, CODE)).isInstanceOf(DataRetrievalFailureException.class);
+                assertThatThrownBy(() -> storage.isCodeMatched(EMAIL, CODE)).isInstanceOf(DataRetrievalFailureException.class);
             }
 
             verifyNoInteractions(redisStorage);
@@ -334,26 +334,26 @@ class ResilientVerificationCodeStorageTest {
     }
 
     private void failRedisForAllMethods(RuntimeException exception) {
-        when(redisStorage.saveVerificationCode(anyString(), anyString(), any(), any())).thenThrow(exception);
-        when(redisStorage.isValidVerificationCode(anyString(), anyString())).thenThrow(exception);
-        when(redisStorage.markVerificationStatus(anyString(), any(), any())).thenThrow(exception);
-        when(redisStorage.markVerificationStatusAsSuccess(anyString(), anyString(), any())).thenThrow(exception);
-        when(redisStorage.isMarkedVerificationStatusWith(anyString(), any())).thenThrow(exception);
+        when(redisStorage.register(anyString(), anyString(), any(), any())).thenThrow(exception);
+        when(redisStorage.isCodeMatched(anyString(), anyString())).thenThrow(exception);
+        when(redisStorage.changeStatus(anyString(), any(), any())).thenThrow(exception);
+        when(redisStorage.confirm(anyString(), anyString(), any())).thenThrow(exception);
+        when(redisStorage.hasStatus(anyString(), any())).thenThrow(exception);
     }
 
     private void stubRdbForAllMethods() {
-        when(rdbStorage.saveVerificationCode(anyString(), anyString(), any(), any())).thenReturn(777L);
-        when(rdbStorage.isValidVerificationCode(anyString(), anyString())).thenReturn(true);
-        when(rdbStorage.markVerificationStatus(anyString(), any(), any())).thenReturn(true);
-        when(rdbStorage.markVerificationStatusAsSuccess(anyString(), anyString(), any())).thenReturn(true);
-        when(rdbStorage.isMarkedVerificationStatusWith(anyString(), any())).thenReturn(true);
+        when(rdbStorage.register(anyString(), anyString(), any(), any())).thenReturn(777L);
+        when(rdbStorage.isCodeMatched(anyString(), anyString())).thenReturn(true);
+        when(rdbStorage.changeStatus(anyString(), any(), any())).thenReturn(true);
+        when(rdbStorage.confirm(anyString(), anyString(), any())).thenReturn(true);
+        when(rdbStorage.hasStatus(anyString(), any())).thenReturn(true);
     }
 
     private void invokeAllMethods() {
-        storage.saveVerificationCode(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
-        storage.isValidVerificationCode(EMAIL, CODE);
-        storage.markVerificationStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
-        storage.markVerificationStatusAsSuccess(EMAIL, CODE, DURATION);
-        storage.isMarkedVerificationStatusWith(EMAIL, VerificationStatus.SUCCESS);
+        storage.register(EMAIL, CODE, VerificationStatus.PENDING, DURATION);
+        storage.isCodeMatched(EMAIL, CODE);
+        storage.changeStatus(EMAIL, VerificationStatus.SUCCESS, DURATION);
+        storage.confirm(EMAIL, CODE, DURATION);
+        storage.hasStatus(EMAIL, VerificationStatus.SUCCESS);
     }
 }
