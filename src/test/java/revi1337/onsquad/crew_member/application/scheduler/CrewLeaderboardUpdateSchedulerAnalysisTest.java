@@ -14,9 +14,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -132,7 +132,7 @@ class CrewLeaderboardUpdateSchedulerAnalysisTest {
         }
     }
 
-    @Disabled
+    @Tag("performance")
     @Nested
     @DisplayName("리더보드 대량 갱신 성능 측정")
     class performance {

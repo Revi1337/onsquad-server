@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -44,6 +45,7 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
 @Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
+@Tag("concurrency")
 @Sql({"/h2-truncate.sql"})
 @Import({ApplicationLayerConfiguration.class})
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

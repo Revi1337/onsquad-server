@@ -10,9 +10,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +44,7 @@ import revi1337.onsquad.member.domain.repository.MemberJpaRepository;
 import revi1337.onsquad.notification.application.listener.NotificationEventListener;
 
 @Disabled("동시성 테스트는 스레드 간 격리 문제로 인해 수동 검증 시에만 단독 실행한다. (CI/CD 에서 문제 발생 가능)")
+@Tag("concurrency")
 @Sql({"/h2-truncate.sql"})
 @Import({ApplicationLayerConfiguration.class})
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
@@ -601,7 +604,7 @@ public class CrewConcurrencyScenarioTest {
         class whenOwner {
 
             @Test
-            @DisplayName("owner 위임(delegateOwner)이 먼저 락을 잡은 경우 [(owner 위임 to general(정상))  --> 기존 owner 탈퇴(예외)]")
+            @DisplayName("[비결정적] owner 위임(delegateOwner)을 먼저 시작한 경우 [(owner 위임 to general(정상)) --> 기존 owner 탈퇴(성공 또는 거절)]")
             void delegateFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
@@ -615,38 +618,36 @@ public class CrewConcurrencyScenarioTest {
                 ExecutorService executor = Executors.newFixedThreadPool(2);
                 CountDownLatch startLatch = new CountDownLatch(1);
                 CountDownLatch delegateLatch = new CountDownLatch(1);
+                AtomicReference<Exception> delegateException = new AtomicReference<>();
+                AtomicReference<Exception> leaveException = new AtomicReference<>();
                 CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
                     waitToStart(startLatch);
                     delegateLatch.countDown();
-                    crewMemberCommandServiceFacade.delegateOwner(owner.getId(), savedCrew.getId(), general.getId());
+                    try {
+                        crewMemberCommandServiceFacade.delegateOwner(owner.getId(), savedCrew.getId(), general.getId());
+                    } catch (Exception e) {
+                        delegateException.set(e);
+                    }
                 }, executor);
                 CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                     waitToStart(startLatch);
                     waitToStart(delegateLatch);
-                    assertThatThrownBy(() -> crewMemberCommandService.leaveCrew(owner.getId(), savedCrew.getId()))
-                            .as("위임이 완료되어 더 이상 방장이 아니므로 탈퇴(해체) 권한이 없다.")
-                            .isExactlyInstanceOf(CrewBusinessException.InsufficientAuthority.class);
+                    try {
+                        crewMemberCommandService.leaveCrew(owner.getId(), savedCrew.getId());
+                    } catch (Exception e) {
+                        leaveException.set(e);
+                    }
                 }, executor);
                 startLatch.countDown();
                 CompletableFuture.allOf(future1, future2).join();
                 executor.shutdown();
 
                 // then
-                assertSoftly(softly -> {
-                    softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), general.getId()).get().getRole())
-                            .as("general 은 새롭게 owner 로 임명되었다")
-                            .isSameAs(CrewRole.OWNER);
-                    softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).get().getRole())
-                            .as("기존 owner 는 general 로 강등되었다.")
-                            .isSameAs(CrewRole.GENERAL);
-                    softly.assertThat(crewRepository.findById(savedCrew.getId()).get().getCurrentSize())
-                            .as("기존 owner 는 강등된 상태로 탈퇴를 시도했지만 실패하여 인원수는 그대로 3명이다.")
-                            .isEqualTo(3);
-                });
+                assertDelegateAndOwnerLeaveOutcome(savedCrew, owner, general, delegateException.get(), leaveException.get());
             }
 
             @Test
-            @DisplayName("자진 탈퇴(Leave)가 먼저 락을 잡은 경우 [owner 탈퇴(예외) --> (owner 위임 to general)]")
+            @DisplayName("[비결정적] 자진 탈퇴(Leave)를 먼저 시작한 경우 [owner 탈퇴(성공 또는 거절) --> (owner 위임 to general)]")
             void leaveFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
@@ -660,36 +661,76 @@ public class CrewConcurrencyScenarioTest {
                 ExecutorService executor = Executors.newFixedThreadPool(2);
                 CountDownLatch startLatch = new CountDownLatch(1);
                 CountDownLatch leaveLatch = new CountDownLatch(1);
+                AtomicReference<Exception> delegateException = new AtomicReference<>();
+                AtomicReference<Exception> leaveException = new AtomicReference<>();
                 CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
                     waitToStart(startLatch);
                     leaveLatch.countDown();
-                    assertThatThrownBy(() -> crewMemberCommandService.leaveCrew(owner.getId(), savedCrew.getId()))
-                            .as("잔류 인원(manager, general)이 있어 방장은 자진 탈퇴할 수 없다.")
-                            .isExactlyInstanceOf(CrewBusinessException.InsufficientAuthority.class);
+                    try {
+                        crewMemberCommandService.leaveCrew(owner.getId(), savedCrew.getId());
+                    } catch (Exception e) {
+                        leaveException.set(e);
+                    }
                 }, executor);
                 CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
                     waitToStart(startLatch);
                     waitToStart(leaveLatch);
-                    crewMemberCommandServiceFacade.delegateOwner(owner.getId(), savedCrew.getId(), general.getId());
+                    try {
+                        crewMemberCommandServiceFacade.delegateOwner(owner.getId(), savedCrew.getId(), general.getId());
+                    } catch (Exception e) {
+                        delegateException.set(e);
+                    }
                 }, executor);
                 startLatch.countDown();
                 CompletableFuture.allOf(future1, future2).join();
                 executor.shutdown();
 
                 // then
-                assertSoftly(softly -> {
-                    softly.assertThat(crewRepository.findById(savedCrew.getId()).get().getCurrentSize())
-                            .as("owner 는 탈퇴를 시도했지만 실패하여 인원수는 그대로 3명이다.")
-                            .isEqualTo(3);
-                    softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), general.getId()).get().getRole())
-                            .as("general 은 새롭게 owner 로 임명되었다")
-                            .isSameAs(CrewRole.OWNER);
-                    softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).get().getRole())
-                            .as("기존 owner 는 general 로 강등되었다.")
-                            .isSameAs(CrewRole.GENERAL);
-                });
+                assertDelegateAndOwnerLeaveOutcome(savedCrew, owner, general, delegateException.get(), leaveException.get());
             }
         }
+    }
+
+    /**
+     * Leave 의 성패는 Delegate 가 커밋되기 전에 owner 여부를 확인했는지에 따라 갈리므로 "항상 실패" 가 아니라,
+     * 성공/실패 각각의 결과가 논리적으로 일관되는지를 검증한다.
+     */
+    private void assertDelegateAndOwnerLeaveOutcome(
+            Crew savedCrew,
+            Member owner,
+            Member general,
+            Exception delegateException,
+            Exception leaveException
+    ) {
+        assertSoftly(softly -> {
+            softly.assertThat(delegateException)
+                    .as("delegate 는 leave 의 성패와 무관하게 항상 성공해야 한다.")
+                    .isNull();
+            softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), general.getId()).get().getRole())
+                    .as("general 은 delegate 에 의해 항상 새로운 owner 로 임명되어야 한다.")
+                    .isSameAs(CrewRole.OWNER);
+
+            if (leaveException == null) {
+                // Case 1: leave 의 체크가 delegate 의 커밋보다 나중이라, 이미 general 로 강등된 뒤라 탈퇴가 성공한 경우
+                softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()))
+                        .as("탈퇴에 성공했다면 기존 owner 는 더 이상 조회되지 않아야 한다.")
+                        .isEmpty();
+                softly.assertThat(crewRepository.findById(savedCrew.getId()).get().getCurrentSize())
+                        .as("탈퇴에 성공했다면 3명 중 1명(기존 owner) 탈퇴로 2명이 남아야 한다.")
+                        .isEqualTo(2);
+            } else {
+                // Case 2: leave 의 체크가 delegate 의 커밋보다 먼저라, 아직 owner 인 상태에서 거절된 경우
+                softly.assertThat(leaveException)
+                        .as("탈퇴 실패 원인은 권한 부족(잔류 인원이 있어 owner 는 탈퇴 불가)이어야 한다.")
+                        .isExactlyInstanceOf(CrewBusinessException.InsufficientAuthority.class);
+                softly.assertThat(crewMemberRepository.findByCrewIdAndMemberId(savedCrew.getId(), owner.getId()).get().getRole())
+                        .as("탈퇴에 실패했다면 기존 owner 는 delegate 에 의해 general 로 강등된 채 남아있어야 한다.")
+                        .isSameAs(CrewRole.GENERAL);
+                softly.assertThat(crewRepository.findById(savedCrew.getId()).get().getCurrentSize())
+                        .as("탈퇴에 실패했다면 3명이 그대로 유지되어야 한다.")
+                        .isEqualTo(3);
+            }
+        });
     }
 
     private void waitToStart(CountDownLatch start) {
