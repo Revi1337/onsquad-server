@@ -92,8 +92,40 @@ test {
     maxHeapSize = '1g'
     jvmArgs(ENABLE_PREVIEW)
     systemProperty("spring.profiles.active", gradleProfile)
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'concurrency', 'performance'
+    }
     outputs.dir snippetsDir
+}
+
+tasks.register('concurrencyTest', Test) {
+    description = '동시성 테스트(@Tag("concurrency"))만 단독으로 직렬 실행한다.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    maxHeapSize = '1g'
+    maxParallelForks = 1
+    jvmArgs(ENABLE_PREVIEW)
+    systemProperty("spring.profiles.active", gradleProfile)
+    useJUnitPlatform {
+        includeTags 'concurrency'
+    }
+    shouldRunAfter test
+}
+
+tasks.register('performanceTest', Test) {
+    description = '성능 측정 테스트(@Tag("performance"))만 단독으로 실행한다.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    maxHeapSize = '4g'
+    maxParallelForks = 1
+    jvmArgs(ENABLE_PREVIEW)
+    systemProperty("spring.profiles.active", gradleProfile)
+    useJUnitPlatform {
+        includeTags 'performance'
+    }
+    shouldRunAfter test
 }
 
 asciidoctor.doFirst {
