@@ -28,7 +28,7 @@ class RequestRejectHistoryTest {
         assertSoftly(softly -> {
             softly.assertThat(history.getMemberId()).isEqualTo(context.rejecterId());
             softly.assertThat(history.getType()).isEqualTo(HistoryType.SQUAD_REJECT);
-            softly.assertThat(history.getMessage()).isEqualTo("[크루A | 스쿼드B] 태영 님의 스쿼드 합류를 거절헀습니다.");
+            softly.assertThat(history.getMessage()).isEqualTo("[크루A | 스쿼드B] 태영 님의 스쿼드 합류를 거절했습니다.");
 
             HistoryEntity entity = history.toEntity();
             softly.assertThat(entity.getType()).isEqualTo(HistoryType.SQUAD_REJECT);

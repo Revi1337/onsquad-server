@@ -24,13 +24,13 @@ class HistoryTypeTest {
                 Arguments.of(HistoryType.CREW_CREATE, new Object[]{"온스쿼드"}, "[온스쿼드] 크루를 생성했습니다."),
                 Arguments.of(HistoryType.CREW_REQUEST, new Object[]{"온스쿼드"}, "[온스쿼드] 크루 합류를 요청했습니다."),
                 Arguments.of(HistoryType.CREW_ACCEPT, new Object[]{"온스쿼드", "태영"}, "[온스쿼드] 태영 님의 크루 합류를 수락했습니다."),
-                Arguments.of(HistoryType.CREW_REJECT, new Object[]{"온스쿼드", "태영"}, "[온스쿼드] 태영 님의 크루 합류를 거절헀습니다."),
+                Arguments.of(HistoryType.CREW_REJECT, new Object[]{"온스쿼드", "태영"}, "[온스쿼드] 태영 님의 크루 합류를 거절했습니다."),
                 Arguments.of(HistoryType.CREW_CANCEL, new Object[]{"온스쿼드"}, "[온스쿼드] 크루 합류 요청을 취소했습니다."),
 
                 Arguments.of(HistoryType.SQUAD_CREATE, new Object[]{"온스쿼드", "모각코"}, "[온스쿼드 | 모각코] 스쿼드를 생성했습니다."),
                 Arguments.of(HistoryType.SQUAD_REQUEST, new Object[]{"온스쿼드", "모각코"}, "[온스쿼드 | 모각코] 스쿼드 합류를 요청했습니다."),
                 Arguments.of(HistoryType.SQUAD_ACCEPT, new Object[]{"온스쿼드", "모각코", "태영"}, "[온스쿼드 | 모각코] 태영 님의 스쿼드 합류를 수락했습니다."),
-                Arguments.of(HistoryType.SQUAD_REJECT, new Object[]{"온스쿼드", "모각코", "태영"}, "[온스쿼드 | 모각코] 태영 님의 스쿼드 합류를 거절헀습니다."),
+                Arguments.of(HistoryType.SQUAD_REJECT, new Object[]{"온스쿼드", "모각코", "태영"}, "[온스쿼드 | 모각코] 태영 님의 스쿼드 합류를 거절했습니다."),
                 Arguments.of(HistoryType.SQUAD_CANCEL, new Object[]{"온스쿼드", "모각코"}, "[온스쿼드 | 모각코] 스쿼드 합류 요청을 취소했습니다."),
                 Arguments.of(HistoryType.SQUAD_COMMENT, new Object[]{"온스쿼드", "모각코"}, "[온스쿼드 | 모각코] 스쿼드에 댓글을 남겼습니다."),
                 Arguments.of(HistoryType.SQUAD_COMMENT_REPLY, new Object[]{"온스쿼드", "모각코"}, "[온스쿼드 | 모각코] 스쿼드에 대댓글을 남겼습니다.")
