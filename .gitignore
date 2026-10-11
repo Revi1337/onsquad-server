@@ -23,6 +23,8 @@ local-monitor
 backup
 .java-version
 request/*.http
+trashcan.db
+test-file.db*
 
 # User-specific stuff
 .idea/**/workspace.xml
