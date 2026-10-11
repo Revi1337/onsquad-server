@@ -18,7 +18,7 @@ spring:
 
   sqlite-datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:temp-data.db
+    url: jdbc:sqlite:trashcan.db
     username: admin
     password: admin
 
