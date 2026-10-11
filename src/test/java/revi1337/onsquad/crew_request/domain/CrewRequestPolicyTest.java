@@ -29,7 +29,7 @@ class CrewRequestPolicyTest {
         @ParameterizedTest
         @MethodSource("ensureMatchCrewMethodSource")
         @DisplayName("크루 신청정보의 소속 크루 ID 일치 여부를 검증한다")
-        void test(CrewRequest request, Long crewId, boolean isMatch) {
+        void byCrewId(CrewRequest request, Long crewId, boolean isMatch) {
             if (isMatch) {
                 assertThatCode(() -> CrewRequestPolicy.ensureMatchCrew(request, crewId))
                         .doesNotThrowAnyException();
@@ -58,7 +58,7 @@ class CrewRequestPolicyTest {
         @ParameterizedTest
         @MethodSource("ensureReadRequestsMethodSource")
         @DisplayName("참여 신청 목록 조회는 owner 와 manager 만 가능하다.")
-        void test(CrewMember crewMember, boolean isSuccess) {
+        void byRole(CrewMember crewMember, boolean isSuccess) {
             if (isSuccess) {
                 assertThatCode(() -> CrewRequestPolicy.ensureReadRequests(crewMember))
                         .doesNotThrowAnyException();
@@ -88,7 +88,7 @@ class CrewRequestPolicyTest {
         @ParameterizedTest
         @MethodSource("ensureAcceptableMethodSource")
         @DisplayName("참여 신청 수락은 owner 와 manager 만 가능하다.")
-        void test(CrewMember crewMember, boolean isSuccess) {
+        void byRole(CrewMember crewMember, boolean isSuccess) {
             if (isSuccess) {
                 assertThatCode(() -> CrewRequestPolicy.ensureAcceptable(crewMember))
                         .doesNotThrowAnyException();
@@ -118,7 +118,7 @@ class CrewRequestPolicyTest {
         @ParameterizedTest
         @MethodSource("ensureRejectableMethodSource")
         @DisplayName("참여 신청 거절은 owner 와 manager 만 가능하다.")
-        void test(CrewMember crewMember, boolean isSuccess) {
+        void byRole(CrewMember crewMember, boolean isSuccess) {
             if (isSuccess) {
                 assertThatCode(() -> CrewRequestPolicy.ensureRejectable(crewMember))
                         .doesNotThrowAnyException();

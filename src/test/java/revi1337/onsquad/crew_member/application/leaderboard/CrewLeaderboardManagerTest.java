@@ -50,7 +50,7 @@ class CrewLeaderboardManagerTest {
 
         @Test
         @DisplayName("상위 1명 조회(rankLimit=1): 가장 높은 점수를 가진 멤버가 1위로 반환되어야 한다")
-        void test1() {
+        void returnsTopOne() {
             Long crewId = 1L;
             List<Long> memberIds = List.of(1L, 2L, 3L);
             Instant firstActivity = CompositeScore.BASE_DATE.toInstant();
@@ -73,7 +73,7 @@ class CrewLeaderboardManagerTest {
 
         @Test
         @DisplayName("다수 멤버 조회(rankLimit=2): 지정된 제한 수만큼만 점수 및 시간 순서대로 반환되어야 한다")
-        void test2() {
+        void returnsLimited() {
             Long crewId = 1L;
             List<Long> memberIds = List.of(1L, 2L, 3L);
             Instant firstActivity = CompositeScore.BASE_DATE.toInstant();
@@ -98,7 +98,7 @@ class CrewLeaderboardManagerTest {
 
         @Test
         @DisplayName("전체 인원보다 큰 제한(rankLimit=4): 존재하는 모든 멤버를 순위대로 반환하며 예외가 발생하지 않는다")
-        void test3() {
+        void returnsAllOverLimit() {
             Long crewId = 1L;
             List<Long> memberIds = List.of(1L, 2L, 3L);
             Instant firstActivity = CompositeScore.BASE_DATE.toInstant();
@@ -125,7 +125,7 @@ class CrewLeaderboardManagerTest {
 
         @Test
         @DisplayName("제한 없음(rankLimit=-1): 해당 크루의 모든 멤버를 순위별로 전체 조회한다")
-        void test4() {
+        void returnsAllWithoutLimit() {
             Long crewId = 1L;
             List<Long> memberIds = List.of(1L, 2L, 3L);
             Instant firstActivity = CompositeScore.BASE_DATE.toInstant();
@@ -152,7 +152,7 @@ class CrewLeaderboardManagerTest {
 
         @Test
         @DisplayName("데이터 부재(invalidCrewId): 활동 내역이 없는 크루 조회 시 빈 리스트를 반환한다")
-        void test5() {
+        void returnsEmpty() {
             Long invalidCrewId = 999L;
             int rankLimit = 3;
 
@@ -163,7 +163,7 @@ class CrewLeaderboardManagerTest {
 
         @Test
         @DisplayName("동일 점수 발생 시, 더 나중(최신)에 활동한 멤버가 더 높은 순위를 차지한다")
-        void test6() {
+        void ranksLatestFirst() {
             Long crewId = 1L;
             Long memberId1 = 1L;
             Long memberId2 = 2L;
@@ -193,7 +193,7 @@ class CrewLeaderboardManagerTest {
 
         @Test
         @DisplayName("동일 점수 & 최신 활동 날짜가 같을 시, 사전 편찬순으로 적용된다.")
-        void test7() {
+        void ranksByLexicographic() {
             Long crewId = 1L;
             Instant activityTime = CompositeScore.BASE_DATE.toInstant();
             CrewActivity activity = CrewActivity.SQUAD_CREATE;

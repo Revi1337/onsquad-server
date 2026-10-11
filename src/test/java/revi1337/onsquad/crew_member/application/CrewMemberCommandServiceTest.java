@@ -45,7 +45,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 owner 이고, 대상이 general 또는 manager 면 성공")
-        void test1() {
+        void successToGeneral() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -62,7 +62,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 owner 이고, 대상이 general 또는 manager 면 성공")
-        void test2() {
+        void successToManager() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -79,7 +79,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자기 자신 위임 불가")
-        void test3() {
+        void failBySelf() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -94,7 +94,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 manager 면 실패")
-        void test4() {
+        void failByManager() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -109,7 +109,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 general 이면 실패")
-        void test5() {
+        void failByGeneral() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -129,7 +129,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 manager 또는 general 일때 성공")
-        void test1() {
+        void successByManager() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());
@@ -148,7 +148,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 owner 일때, 잔류 인원이 없으면 성공")
-        void test2() {
+        void successWithoutMembers() {
             Member revi = memberRepository.save(createRevi());
             Crew crew = crewRepository.save(createCrew(revi));
             clearPersistenceContext();
@@ -162,7 +162,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 owner 일때, 잔류 인원이 있으면 실패")
-        void test3() {
+        void failWithMembers() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());
@@ -185,7 +185,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 owner 면 성공")
-        void test1() {
+        void successByOwner() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -202,7 +202,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 manager 이고, 대상이 general 이면 성공")
-        void test2() {
+        void successByManager() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());
@@ -221,7 +221,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자기 자신 추방 불가")
-        void test3() {
+        void failBySelf() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -237,7 +237,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 general 이면 실패")
-        void test4() {
+        void failByGeneral() {
             Member revi = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = createCrew(revi);
@@ -253,7 +253,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 manager 이고, 대상이 manager 면 실패")
-        void test5() {
+        void failKickManager() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());
@@ -271,7 +271,7 @@ class CrewMemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 manager 이고, 대상이 owner 면 실패")
-        void test6() {
+        void failKickOwner() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());

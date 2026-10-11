@@ -44,7 +44,7 @@ class CrewCommandServiceFacadeTest {
 
         @Test
         @DisplayName("이미지 파일이 없으면 S3 업로드 없이 크루를 생성한다.")
-        void test1() {
+        void successWithoutImage() {
             Long memberId = 1L;
             CrewCreateDto dto = mock(CrewCreateDto.class);
             MultipartFile file = mock(MultipartFile.class);
@@ -57,7 +57,7 @@ class CrewCommandServiceFacadeTest {
 
         @Test
         @DisplayName("이미지 파일이 있으면 S3 업로드 후 크루를 생성한다.")
-        void test2() {
+        void successWithImage() {
             Long memberId = 1L;
             CrewCreateDto dto = mock(CrewCreateDto.class);
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
@@ -72,7 +72,7 @@ class CrewCommandServiceFacadeTest {
 
         @Test
         @DisplayName("크루 생성 중 예외 발생 시 업로드된 S3 파일을 삭제하는 이벤트를 발행한다.")
-        void test3() {
+        void failOnBusinessException() {
             Long memberId = 1L;
             CrewCreateDto dto = mock(CrewCreateDto.class);
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
@@ -108,7 +108,7 @@ class CrewCommandServiceFacadeTest {
 
         @Test
         @DisplayName("파일이 비어있으면 아무 작업도 수행하지 않는다.")
-        void test1() {
+        void ignoresEmptyFile() {
             Long memberId = 1L;
             Long crewId = 2L;
             MultipartFile file = mock(MultipartFile.class);
@@ -121,7 +121,7 @@ class CrewCommandServiceFacadeTest {
 
         @Test
         @DisplayName("이미지 업데이트에 성공한다.")
-        void test2() {
+        void success() {
             Long memberId = 1L;
             Long crewId = 2L;
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());
@@ -136,7 +136,7 @@ class CrewCommandServiceFacadeTest {
 
         @Test
         @DisplayName("이미지 업데이트 로직 처리 중 예외 발생 시 업로드된 S3 파일을 삭제한다.")
-        void test3() {
+        void failOnBusinessException() {
             Long memberId = 1L;
             Long crewId = 2L;
             MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "data".getBytes());

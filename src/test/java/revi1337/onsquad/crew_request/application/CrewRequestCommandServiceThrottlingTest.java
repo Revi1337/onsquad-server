@@ -82,7 +82,7 @@ class CrewRequestCommandServiceThrottlingTest {
 
     @Test
     @DisplayName("같은 memberId+crewId로 연속 요청 시, 두 번째 요청은 트랜잭션 시작 전 ThrottlingAspect에서 차단되어 DB 커넥션을 점유하지 않는다")
-    void test() throws SQLException {
+    void failsFastWhenConsecutive() throws SQLException {
         Member revi = memberRepository.save(createRevi());
         Member andong = memberRepository.save(createAndong());
         Crew crew = crewRepository.save(createCrew(revi));

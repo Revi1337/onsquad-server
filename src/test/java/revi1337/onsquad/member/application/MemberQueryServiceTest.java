@@ -27,7 +27,8 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     class checkDuplicateNickname {
 
         @Test
-        void test1() {
+        @DisplayName("이미 사용 중인 닉네임이면 중복으로 응답한다.")
+        void returnsDuplicate() {
             Member andong = memberRepository.save(createAndong());
 
             DuplicateResponse response = memberQueryService.checkDuplicateNickname(andong.getNickname().getValue());
@@ -36,7 +37,8 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
         }
 
         @Test
-        void test2() {
+        @DisplayName("사용 중이지 않은 닉네임이면 중복이 아니라고 응답한다.")
+        void returnsNotDuplicate() {
             memberRepository.save(createAndong());
 
             DuplicateResponse response = memberQueryService.checkDuplicateNickname("nick-1");
@@ -50,7 +52,8 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     class checkDuplicateEmail {
 
         @Test
-        void test1() {
+        @DisplayName("이미 사용 중인 이메일이면 중복으로 응답한다.")
+        void returnsDuplicate() {
             Member andong = memberRepository.save(createAndong());
 
             DuplicateResponse response = memberQueryService.checkDuplicateEmail(andong.getEmail().getValue());
@@ -59,7 +62,8 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
         }
 
         @Test
-        void test2() {
+        @DisplayName("사용 중이지 않은 이메일이면 중복이 아니라고 응답한다.")
+        void returnsNotDuplicate() {
             memberRepository.save(createAndong());
 
             DuplicateResponse response = memberQueryService.checkDuplicateEmail("invalid-email@gmail.com");
@@ -73,7 +77,8 @@ class MemberQueryServiceTest extends ApplicationLayerTestSupport {
     class findMember {
 
         @Test
-        void test() {
+        @DisplayName("회원 ID 로 회원 정보를 조회한다.")
+        void returnsMember() {
             Member andong = memberRepository.save(createAndong());
             clearPersistenceContext();
 

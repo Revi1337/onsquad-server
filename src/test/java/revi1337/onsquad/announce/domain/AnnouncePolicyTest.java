@@ -34,7 +34,7 @@ class AnnouncePolicyTest {
         @ParameterizedTest
         @MethodSource("canWriteMethodSource")
         @DisplayName("manager 이상만 공지사항을 작성할 수 있다.")
-        void test(CrewMember crewMember, boolean expected) {
+        void byRole(CrewMember crewMember, boolean expected) {
             boolean actual = AnnouncePolicy.canWrite(crewMember);
 
             assertThat(actual).isEqualTo(expected);
@@ -59,7 +59,7 @@ class AnnouncePolicyTest {
         @ParameterizedTest
         @MethodSource("canPinMethodSource")
         @DisplayName("owner 만 공지사항을 상단에 고정할 수 있다.")
-        void test(CrewMember crewMember, boolean expected) {
+        void byRole(CrewMember crewMember, boolean expected) {
             boolean actual = AnnouncePolicy.canPin(crewMember);
 
             assertThat(actual).isEqualTo(expected);
@@ -184,7 +184,7 @@ class AnnouncePolicyTest {
         @ParameterizedTest
         @MethodSource("ensureMatchCrewMethodSource")
         @DisplayName("공지사항의 소속 크루 ID 일치 여부를 검증한다")
-        void test(Announce announce, Long crewId, boolean isMatch) {
+        void byCrewId(Announce announce, Long crewId, boolean isMatch) {
             if (isMatch) {
                 assertThatCode(() -> AnnouncePolicy.ensureMatchCrew(announce, crewId))
                         .doesNotThrowAnyException();
@@ -213,7 +213,7 @@ class AnnouncePolicyTest {
         @ParameterizedTest
         @MethodSource("ensureWritableMethodSource")
         @DisplayName("권한에 따른 공지사항 작성 가능 여부를 검증한다")
-        void test(CrewMember crewMember, boolean isSuccess) {
+        void byRole(CrewMember crewMember, boolean isSuccess) {
             if (isSuccess) {
                 assertThatCode(() -> AnnouncePolicy.ensureWritable(crewMember))
                         .doesNotThrowAnyException();
@@ -473,7 +473,7 @@ class AnnouncePolicyTest {
         @ParameterizedTest
         @MethodSource("ensurePinnableMethodSource")
         @DisplayName("공지사항 상단 고정은 owner 만 가능하다.")
-        void test(CrewMember crewMember, boolean isSuccess) {
+        void byRole(CrewMember crewMember, boolean isSuccess) {
             if (isSuccess) {
                 assertThatCode(() -> AnnouncePolicy.ensurePinnable(crewMember))
                         .doesNotThrowAnyException();

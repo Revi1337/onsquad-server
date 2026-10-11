@@ -60,7 +60,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("가입 정보가 유효하고 이메일 인증이 완료되면 가입에 성공한다")
-        void test1() {
+        void success() {
             MemberCreateDto createDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
@@ -84,7 +84,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("이메일 인증이 완료되지 않은 상태로 가입을 시도하면 실패한다")
-        void test2() {
+        void failByUnverifiedEmail() {
             MemberCreateDto createDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
                     REVI_PASSWORD_VALUE,
@@ -104,7 +104,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("이미 사용 중인 닉네임으로 가입을 시도하면 실패한다")
-        void test3() {
+        void failByDuplicateNickname() {
             memberRepository.save(MemberFixture.createRevi());
             MemberCreateDto createDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
@@ -123,7 +123,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("이미 가입된 이메일로 가입을 시도하면 실패한다")
-        void test4() {
+        void failByDuplicateEmail() {
             memberRepository.save(MemberFixture.createRevi());
             MemberCreateDto createDto = new MemberCreateDto(
                     REVI_EMAIL_VALUE,
@@ -147,7 +147,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("회원 프로필 정보 변경에 성공한다")
-        void test1() {
+        void success() {
             Member revi = memberRepository.save(MemberFixture.createRevi());
             MemberUpdateDto updateDto = new MemberUpdateDto(
                     ANDONG_NICKNAME_VALUE,
@@ -180,7 +180,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("현재 비밀번호와 일치하면 비밀번호 변경에 성공한다")
-        void test1() {
+        void success() {
             Member revi = memberRepository.save(MemberFixture.createRevi());
             MemberPasswordUpdateDto dto = new MemberPasswordUpdateDto(
                     REVI_PASSWORD_VALUE,
@@ -198,7 +198,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("현재 비밀번호와 다르면 비밀번호 변경에 실패한다")
-        void test2() {
+        void failByWrongPassword() {
             Member revi = memberRepository.save(MemberFixture.createRevi());
             MemberPasswordUpdateDto dto = new MemberPasswordUpdateDto(
                     KWANGWON_PASSWORD_VALUE,
@@ -213,7 +213,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("새 비밀번호가 규칙에 맞지 않으면 비밀번호 변경에 실패하고 기존 비밀번호가 유지된다")
-        void test3() {
+        void failByInvalidFormat() {
             Member revi = memberRepository.save(MemberFixture.createRevi());
             MemberPasswordUpdateDto dto = new MemberPasswordUpdateDto(REVI_PASSWORD_VALUE, "a", "a");
             clearPersistenceContext();
@@ -233,7 +233,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("회원 프로필 이미지변경에 성공한다 (1)")
-        void test1() {
+        void successWithImage() {
             Member revi = memberRepository.save(MemberFixture.createRevi());
             clearPersistenceContext();
 
@@ -251,7 +251,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("회원 프로필 이미지변경에 성공한다 (2)")
-        void test2() {
+        void successWithoutImage() {
             Member member = MemberFixture.createRevi();
             member.updateImage("update-image1");
             Member revi = memberRepository.save(member);
@@ -277,7 +277,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("회원 프로필 이미지 삭제에 성공한다 (1)")
-        void test1() {
+        void success() {
             Member revi = memberRepository.save(MemberFixture.createRevi());
             clearPersistenceContext();
 
@@ -291,7 +291,7 @@ class MemberCommandServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("회원 프로필 이미지 삭제에 성공한다 (2)")
-        void test2() {
+        void successExplicitImage() {
             Member member = MemberFixture.createRevi();
             member.updateImage("update-image1");
             Member revi = memberRepository.save(member);

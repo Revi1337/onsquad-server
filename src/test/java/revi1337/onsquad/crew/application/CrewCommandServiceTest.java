@@ -21,6 +21,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createAndong;
 import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,8 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     class newCrew {
 
         @Test
-        void test1() {
+        @DisplayName("크루를 생성하면 크루와 해시태그가 저장된다.")
+        void success() {
             Long memberId = memberRepository.save(createRevi()).getId();
             CrewCreateDto dto = new CrewCreateDto(
                     CREW_NAME_VALUE,
@@ -89,7 +91,8 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     class updateCrew {
 
         @Test
-        void test1() {
+        @DisplayName("크루 정보를 수정하면 이름, 소개, 상세, 해시태그, 카카오 링크가 변경된다.")
+        void success() {
             Member member = memberRepository.save(createRevi());
             Crew crew = crewRepository.save(createCrew(member));
             CrewUpdateDto dto = new CrewUpdateDto(
@@ -194,7 +197,8 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     class deleteCrew {
 
         @Test
-        void test1() {
+        @DisplayName("크루를 삭제하면 크루 컨텍스트 정리를 위임한다.")
+        void success() {
             Member member = memberRepository.save(createRevi());
             Crew crew = crewRepository.save(createCrew(member));
 
@@ -204,7 +208,8 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
         }
 
         @Test
-        void test2() {
+        @DisplayName("크루 owner 가 아니면 크루를 삭제할 수 없다.")
+        void failNotOwner() {
             Member member = memberRepository.save(createRevi());
             Member andong = memberRepository.save(createAndong());
             Crew crew = crewRepository.save(createCrew(member));

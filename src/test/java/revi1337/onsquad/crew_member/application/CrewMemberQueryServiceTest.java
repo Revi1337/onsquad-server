@@ -46,7 +46,7 @@ class CrewMemberQueryServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 owner 이면 성공 (isMe & canKick & canDelegateOwner 검사)")
-        void test1() {
+        void returnsByOwner() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());
@@ -84,7 +84,7 @@ class CrewMemberQueryServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 manager 이면 성공 (isMe & canKick & canDelegateOwner 검사)")
-        void test2() {
+        void returnsByManager() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());
@@ -124,7 +124,7 @@ class CrewMemberQueryServiceTest extends ApplicationLayerTestSupport {
 
         @Test
         @DisplayName("자신이 크루 general 이면 실패")
-        void test3() {
+        void failByGeneral() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());
@@ -147,7 +147,8 @@ class CrewMemberQueryServiceTest extends ApplicationLayerTestSupport {
     class fetchMyParticipatingCrews {
 
         @Test
-        void test() {
+        @DisplayName("참여 중인 크루 목록을 조회하면 owner 여부와 함께 반환한다")
+        void returnsMyCrews() {
             Member revi = memberRepository.save(createRevi());
             Member kwangwon = memberRepository.save(createKwangwon());
             Member andong = memberRepository.save(createAndong());

@@ -36,7 +36,7 @@ class SquadPolicyTest {
         @ParameterizedTest
         @MethodSource("provideDeletePermissionCases")
         @DisplayName("스쿼드 리더이거나 크루 삭제 권한이 있으면 스쿼드를 삭제할 수 있다.")
-        void test(SquadMember squadMember, CrewMember crewMember, boolean expected) {
+        void canDeleteByRole(SquadMember squadMember, CrewMember crewMember, boolean expected) {
             assertThat(SquadPolicy.canDelete(squadMember, crewMember)).isEqualTo(expected);
         }
 
@@ -105,7 +105,7 @@ class SquadPolicyTest {
         @ParameterizedTest
         @MethodSource("provideManageableCases")
         @DisplayName("크루 매니저 이상만 스쿼드 관리(생성/수정) 권한을 가진다.")
-        void test(CrewMember me, boolean isSuccess) {
+        void manageableByRole(CrewMember me, boolean isSuccess) {
             if (isSuccess) {
                 assertDoesNotThrow(() -> SquadPolicy.ensureManageable(me));
             } else {

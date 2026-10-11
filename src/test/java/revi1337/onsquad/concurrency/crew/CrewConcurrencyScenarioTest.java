@@ -94,7 +94,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("참여 수락(Accept)이 먼저 락을 잡은 경우 [manger1 가 general 수락(정상) --> manager2 탈퇴(정상)]")
-            void test1() {
+            void acceptFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager1 = memberRepository.save(createMember(2));
@@ -142,7 +142,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("자진 탈퇴(Leave)가 먼저 락을 잡은 경우 [manager2 탈퇴(정상) --> manger1 가 general 수락(정상)]")
-            void test2() {
+            void leaveFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager1 = memberRepository.save(createMember(2));
@@ -195,7 +195,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("참여 수락(Accept)이 먼저 락을 잡은 경우 [manger1 가 general 수락(정상) --> owner 탈퇴(예외)]")
-            void test1() {
+            void acceptFirst() {
                 Member owner = memberRepository.save(createMember(1));
                 Member manager1 = memberRepository.save(createMember(2));
                 Member manager2 = memberRepository.save(createMember(3));
@@ -245,7 +245,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("자진 탈퇴(Leave)가 먼저 락을 잡은 경우 [owner 탈퇴(예외) --> manger1 가 general 수락(정상)]")
-            void test2() {
+            void leaveFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager1 = memberRepository.save(createMember(2));
@@ -306,7 +306,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("강제 추방(Kickout)이 먼저 락을 잡은 경우 [manger 가 general 추방(정상) --> manager 탈퇴(정상)]")
-            void test1() {
+            void kickOutFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));
@@ -349,7 +349,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("자진 탈퇴(Leave)가 먼저 락을 잡은 경우 [general 탈퇴(예외) --> owner 가 manager 추방(정상)]")
-            void test2() {
+            void leaveFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));
@@ -397,7 +397,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("강제 추방(Kickout)이 먼저 락을 잡은 경우 [manger 가 general 추방(정상) --> owner 탈퇴(예외)]")
-            void test1() {
+            void kickOutFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));
@@ -446,7 +446,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("자진 탈퇴(Leave)가 먼저 락을 잡은 경우 [owner 탈퇴(예외) --> manger 가 general 추방(정상)]")
-            void test2() {
+            void leaveFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));
@@ -505,7 +505,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("owner 위임(delegateOwner)이 먼저 락을 잡은 경우 [(owner 위임 to general(정상))  --> manager 탈퇴(정상)]")
-            void test1() {
+            void delegateFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));
@@ -551,7 +551,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("자진 탈퇴(Leave)가 먼저 락을 잡은 경우 [manager 탈퇴(정상) --> (owner 위임 to general)")
-            void test2() {
+            void leaveFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));
@@ -602,7 +602,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("owner 위임(delegateOwner)이 먼저 락을 잡은 경우 [(owner 위임 to general(정상))  --> 기존 owner 탈퇴(예외)]")
-            void test1() {
+            void delegateFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));
@@ -647,7 +647,7 @@ public class CrewConcurrencyScenarioTest {
 
             @Test
             @DisplayName("자진 탈퇴(Leave)가 먼저 락을 잡은 경우 [owner 탈퇴(예외) --> (owner 위임 to general)]")
-            void test2() {
+            void leaveFirst() {
                 // given
                 Member owner = memberRepository.save(createMember(1));
                 Member manager = memberRepository.save(createMember(2));

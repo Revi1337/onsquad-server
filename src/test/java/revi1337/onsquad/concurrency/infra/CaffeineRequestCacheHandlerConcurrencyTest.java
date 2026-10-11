@@ -18,7 +18,7 @@ class CaffeineRequestCacheHandlerConcurrencyTest {
 
     @Test
     @DisplayName("같은 key로 두 요청이 동시에 들어와도 체크-저장 원자성이 보장되어 하나만 첫 요청으로 통과한다")
-    void test() {
+    void onlyOnePasses() {
         CaffeineRequestCacheHandler handler = new CaffeineRequestCacheHandler();
         String key = "duplicate-request-key";
         ExecutorService executor = Executors.newFixedThreadPool(2);
