@@ -313,7 +313,7 @@ presentation → application → domain ← infrastructure
 | 크루장 위임 | 낙관적 락                    |
 | 크루원 추방 | Atomic Update (+ 수동 버저닝) |
 
-인증코드 검증도 원자적 업데이트가 없을 때의 중복 성공 문제를 테스트로 입증한 뒤 해결했습니다. 관련 테스트는 `src/test/java/.../concurrency` 에 있습니다.
+인증코드 검증도 원자적 업데이트가 없을 때의 중복 성공 문제를 테스트로 입증한 뒤 해결했습니다. 관련 테스트는 `src/test/java/.../concurrency` 에 있고 `./gradlew concurrencyTest` 로 실행합니다.
 
 ### 2. Redis 기반 주간 리더보드
 
@@ -414,10 +414,14 @@ Redis 가 느려지거나 내려가도 서비스가 계속 동작하도록, **Re
     - `ApplicationLayerTestSupport` : Service
     - `PresentationLayerTestSupport` : Controller (+ REST Docs)
 - MySQL, Redis, LocalStack 은 **Testcontainers** 로 실제 컨테이너를 사용합니다. Docker 가 필요합니다.
-- 동시성 테스트는 스레드 간 격리 문제로 CI 에서 제외되어 있으며(`@Disabled`), 필요할 때 단독 실행합니다.
+- 동시성 테스트(`concurrency`)와 대량 데이터 성능 측정(`performance`)은 `@Tag` 로 분리해 평소 `./gradlew test` 와 CI 에서는 실행하지 않습니다.
+    - 동시성 테스트는 스레드 간 격리 문제로 `@Disabled` 상태이며, 수동 검증 시 `@Disabled` 를 해제하고 `./gradlew concurrencyTest` 로 단독 실행합니다.
+    - 성능 측정은 `./gradlew performanceTest` 로 실행합니다. (대량 데이터라 힙 4g 사용)
 
 ```bash
-./gradlew test
+./gradlew test               # 일반 테스트 (동시성/성능 제외)
+./gradlew concurrencyTest    # 동시성 테스트
+./gradlew performanceTest    # 성능 측정
 ```
 
 ---
