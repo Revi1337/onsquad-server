@@ -2,6 +2,7 @@ package revi1337.onsquad.squad_request.application.notification;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
@@ -10,6 +11,7 @@ import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestRe
 class RequestRejectNotificationTest {
 
     @Test
+    @DisplayName("스쿼드 합류 거절 컨텍스트로 알림을 생성하면 거절자가 발신자, 신청자가 수신자인 SQUAD_REJECT 알림이 만들어진다.")
     void constructor() {
         RequestRejectedContext context = new RequestRejectedContext(
                 1L,

@@ -10,6 +10,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +36,7 @@ class CrewRequestCancelHistoryRecorderTest {
     private CrewRequestCancelHistoryRecorder historyRecorder;
 
     @Test
+    @DisplayName("CrewRequestCommandService 의 cancelMyRequest 메서드 호출에 대해 기록을 지원한다")
     void supports() {
         String methodName = "cancelMyRequest";
         Method method = ReflectionUtils.findMethod(CrewRequestCommandService.class, methodName, Long.class, Long.class);
@@ -45,6 +47,7 @@ class CrewRequestCancelHistoryRecorderTest {
     }
 
     @Test
+    @DisplayName("크루 합류 요청 취소 시 인자값을 바탕으로 CREW_CANCEL 이력을 저장한다")
     void record() {
         Long memberId = 1L;
         Crew crew = createCrew(2L, createRevi(memberId), "우리 크루");
@@ -64,6 +67,7 @@ class CrewRequestCancelHistoryRecorderTest {
     }
 
     @Test
+    @DisplayName("취소된 요청이 없으면 이력을 저장하지 않는다")
     void doesNotRecord_whenNothingWasCanceled() {
         Object[] args = {1L, 2L};
         Object result = 0;

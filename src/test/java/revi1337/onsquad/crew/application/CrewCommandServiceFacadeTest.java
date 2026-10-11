@@ -40,6 +40,7 @@ class CrewCommandServiceFacadeTest {
     private CrewCommandServiceFacade facade;
 
     @Nested
+    @DisplayName("크루 생성 테스트")
     class newCrew {
 
         @Test
@@ -104,6 +105,7 @@ class CrewCommandServiceFacadeTest {
     }
 
     @Nested
+    @DisplayName("크루 이미지 변경 테스트")
     class updateImage {
 
         @Test

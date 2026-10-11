@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ class AnnounceAccessorTest {
     private AnnounceAccessor announceAccessor;
 
     @Test
+    @DisplayName("존재하는 공지사항 ID 로 조회하면 해당 공지사항을 반환한다.")
     void getById() {
         Long announceId = 1L;
         Announce mock = mock(Announce.class);
@@ -38,6 +40,7 @@ class AnnounceAccessorTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 공지사항 ID 로 조회하면 NotFound 예외가 발생한다.")
     void getById2() {
         Long announceId = 1L;
         given(announceRepository.findById(announceId)).willReturn(Optional.empty());

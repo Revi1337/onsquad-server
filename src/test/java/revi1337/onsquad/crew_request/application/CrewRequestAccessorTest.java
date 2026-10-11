@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +25,7 @@ class CrewRequestAccessorTest {
     private CrewRequestAccessor crewRequestAccessor;
 
     @Test
+    @DisplayName("신청 ID 로 조회하면 저장소에서 찾은 크루 신청을 반환한다.")
     void getById() {
         Long requestId = 1L;
         CrewRequest mock = mock(CrewRequest.class);

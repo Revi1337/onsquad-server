@@ -2,6 +2,7 @@ package revi1337.onsquad.squad_request.application.notification;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import revi1337.onsquad.notification.domain.NotificationDetail;
 import revi1337.onsquad.notification.domain.NotificationTopic;
@@ -10,6 +11,7 @@ import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestAd
 class RequestAddNotificationTest {
 
     @Test
+    @DisplayName("요청 컨텍스트로 생성하면 요청자가 발행하고 스쿼드 멤버가 수신하는 SQUAD_REQUEST 알림과 요청 메시지가 만들어진다.")
     void constructor() {
         RequestAddedContext context = new RequestAddedContext(
                 1L,

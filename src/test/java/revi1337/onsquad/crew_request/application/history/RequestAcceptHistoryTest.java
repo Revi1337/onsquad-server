@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_request.application.history;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import revi1337.onsquad.crew_request.domain.model.CrewRequestContext.RequestAcceptedContext;
 import revi1337.onsquad.history.domain.HistoryType;
@@ -9,6 +10,7 @@ import revi1337.onsquad.history.domain.HistoryType;
 class RequestAcceptHistoryTest {
 
     @Test
+    @DisplayName("참가신청 수락 컨텍스트로 생성하면 수락자 ID, 크루 ID, CREW_ACCEPT 타입, 수락 메시지가 설정된다.")
     void constructor() {
         RequestAcceptedContext context = new RequestAcceptedContext(
                 1L,

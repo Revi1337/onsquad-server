@@ -54,6 +54,7 @@ class S3StorageCleanerTest {
     }
 
     @Nested
+    @DisplayName("S3 객체 일괄 삭제")
     class deleteInBatch {
 
         @Test
@@ -77,6 +78,7 @@ class S3StorageCleanerTest {
     }
 
     @Nested
+    @DisplayName("S3 객체 일괄 삭제 (Quiet 모드)")
     class DeleteInBatchQuietlyTest {
 
         @Test

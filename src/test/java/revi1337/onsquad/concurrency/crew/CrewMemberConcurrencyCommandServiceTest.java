@@ -77,6 +77,7 @@ class CrewMemberConcurrencyCommandServiceTest {
     private CrewMemberCommandServiceFacade commandServiceFacade;
 
     @Nested
+    @DisplayName("방장 위임 동시성")
     class delegateOwner {
 
         @Test
@@ -140,6 +141,7 @@ class CrewMemberConcurrencyCommandServiceTest {
     }
 
     @Nested
+    @DisplayName("크루 탈퇴 동시성")
     class leaveCrew {
 
         @Test
@@ -281,6 +283,7 @@ class CrewMemberConcurrencyCommandServiceTest {
     }
 
     @Nested
+    @DisplayName("크루원 추방 동시성")
     class kickOutMember {
 
         @Test

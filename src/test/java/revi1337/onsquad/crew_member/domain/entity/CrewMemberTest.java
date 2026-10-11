@@ -19,6 +19,7 @@ class CrewMemberTest {
     class factoryTest {
 
         @Test
+        @DisplayName("GENERAL 팩토리로 생성하면 주어진 멤버와 크루를 가진 GENERAL 역할의 크루 멤버가 만들어진다")
         void createGeneral() {
             Member member = createRevi(1L);
             Crew crew = createCrew(2L, member);
@@ -31,6 +32,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("MANAGER 팩토리로 생성하면 주어진 멤버와 크루를 가진 MANAGER 역할의 크루 멤버가 만들어진다")
         void createManager() {
             Member member = createRevi(1L);
             Crew crew = createCrew(2L, member);
@@ -43,6 +45,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("OWNER 팩토리로 생성하면 주어진 멤버와 크루를 가진 OWNER 역할의 크루 멤버가 만들어진다")
         void createOwner() {
             Member member = createRevi(1L);
             Crew crew = createCrew(2L, member);
@@ -60,6 +63,7 @@ class CrewMemberTest {
     class DomainLogicTest {
 
         @Test
+        @DisplayName("크루를 탈퇴하면 멤버와 크루 연관관계가 끊기고 크루의 현재 인원이 1명 줄어든다")
         void leaveCrew() {
             Member member = createRevi(1L);
             Crew crew = createCrew(2L, member);
@@ -74,6 +78,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("크루 연관관계를 해제하면 크루 참조가 null 이 된다")
         void releaseCrew() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -85,6 +90,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("owner 로 승급시키면 역할이 OWNER 로 변경된다")
         void promoteToOwner() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -96,6 +102,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("owner 를 강등시키면 역할이 GENERAL 로 변경된다")
         void demoteToGeneral() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -107,6 +114,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("GENERAL 은 manager 보다 낮은 권한이다")
         void isLowerThanManager1() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -118,6 +126,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("MANAGER 는 manager 보다 낮은 권한이 아니다")
         void isLowerThanManager2() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -129,6 +138,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("OWNER 는 manager 보다 낮은 권한이 아니다")
         void isLowerThanManager3() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -140,6 +150,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("GENERAL 은 manager 이상 권한이 아니다")
         void isManagerOrHigher1() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -151,6 +162,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("MANAGER 는 manager 이상 권한이다")
         void isManagerOrHigher2() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -162,6 +174,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("OWNER 는 manager 이상 권한이다")
         void isManagerOrHigher3() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -173,6 +186,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("GENERAL 은 manager 이하 권한이다")
         void isManagerOrLower1() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -184,6 +198,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("MANAGER 는 manager 이하 권한이다")
         void isManagerOrLower2() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);
@@ -195,6 +210,7 @@ class CrewMemberTest {
         }
 
         @Test
+        @DisplayName("OWNER 는 manager 이하 권한이 아니다")
         void isManagerOrLower3() {
             Member member = createRevi(1L);
             Crew crew = createCrew(member);

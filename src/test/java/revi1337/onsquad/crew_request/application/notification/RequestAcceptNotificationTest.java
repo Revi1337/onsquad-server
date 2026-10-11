@@ -2,6 +2,7 @@ package revi1337.onsquad.crew_request.application.notification;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import revi1337.onsquad.crew_request.domain.model.CrewRequestContext.RequestAcceptedContext;
 import revi1337.onsquad.notification.domain.NotificationDetail;
@@ -10,6 +11,7 @@ import revi1337.onsquad.notification.domain.NotificationTopic;
 class RequestAcceptNotificationTest {
 
     @Test
+    @DisplayName("크루 합류 수락 컨텍스트로 알림을 생성하면 수락자가 발신자, 신청자가 수신자인 CREW_ACCEPT 알림이 만들어진다.")
     void constructor() {
         RequestAcceptedContext context = new RequestAcceptedContext(
                 1L,

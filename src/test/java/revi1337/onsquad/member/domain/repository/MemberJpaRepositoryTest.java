@@ -13,6 +13,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.REVI_NICKNAME_VALUE;
 import static revi1337.onsquad.common.fixture.MemberFixture.REVI_PASSWORD_VALUE;
 
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
@@ -26,6 +27,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     private MemberJpaRepository memberJpaRepository;
 
     @Test
+    @DisplayName("저장된 회원의 닉네임으로 조회하면 true 를 반환한다.")
     void existsByNickname() {
         memberJpaRepository.save(Member.general(
                 REVI_EMAIL_VALUE,
@@ -39,6 +41,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("저장된 회원의 이메일로 조회하면 true 를 반환한다.")
     void existsByEmail() {
         memberJpaRepository.save(Member.general(
                 REVI_EMAIL_VALUE,
@@ -52,6 +55,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("저장된 회원의 이메일로 조회하면 해당 회원을 반환한다.")
     void findByEmail() {
         memberJpaRepository.save(Member.general(
                 REVI_EMAIL_VALUE,
@@ -65,6 +69,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("여러 회원 ID 로 조회하면 해당 ID 의 회원들을 모두 반환한다.")
     void findByIdIn() {
         Member member1 = memberJpaRepository.save(Member.general(
                 REVI_EMAIL_VALUE,
@@ -85,6 +90,7 @@ class MemberJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("회원 ID 로 삭제하면 이후 해당 회원을 조회할 수 없다.")
     void deleteById() {
         Member member = memberJpaRepository.save(Member.general(
                 REVI_EMAIL_VALUE,

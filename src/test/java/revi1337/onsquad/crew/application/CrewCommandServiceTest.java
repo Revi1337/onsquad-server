@@ -65,6 +65,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     private CrewContextHandler crewContextHandler;
 
     @Nested
+    @DisplayName("크루 생성")
     class newCrew {
 
         @Test
@@ -88,6 +89,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("크루 정보 수정")
     class updateCrew {
 
         @Test
@@ -120,6 +122,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("크루 이미지 수정")
     class updateImage {
 
         @Test
@@ -158,6 +161,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("크루 이미지 삭제")
     class deleteImage {
 
         @Test
@@ -194,6 +198,7 @@ class CrewCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("크루 삭제")
     class deleteCrew {
 
         @Test

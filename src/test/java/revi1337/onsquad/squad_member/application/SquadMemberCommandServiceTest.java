@@ -129,9 +129,11 @@ class SquadMemberCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("스쿼드 멤버 추방 테스트")
     class kickOutMember {
 
         @Test
+        @DisplayName("리더가 일반 참여자를 추방하면, 참여 관계가 삭제되고 스쿼드의 현재 인원수가 감소한다.")
         void success() {
             Member member1 = memberRepository.save(createRevi());
             Member member2 = memberRepository.save(createAndong());

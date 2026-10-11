@@ -24,6 +24,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 class CrewRequestPolicyTest {
 
     @Nested
+    @DisplayName("크루 신청정보의 소속 크루 검증")
     class ensureMatchCrew {
 
         @ParameterizedTest
@@ -53,6 +54,7 @@ class CrewRequestPolicyTest {
     }
 
     @Nested
+    @DisplayName("참여 신청 목록 조회 권한 검증")
     class ensureReadRequests {
 
         @ParameterizedTest
@@ -83,6 +85,7 @@ class CrewRequestPolicyTest {
     }
 
     @Nested
+    @DisplayName("참여 신청 수락 권한 검증")
     class ensureAcceptable {
 
         @ParameterizedTest
@@ -113,6 +116,7 @@ class CrewRequestPolicyTest {
     }
 
     @Nested
+    @DisplayName("참여 신청 거절 권한 검증")
     class ensureRejectable {
 
         @ParameterizedTest

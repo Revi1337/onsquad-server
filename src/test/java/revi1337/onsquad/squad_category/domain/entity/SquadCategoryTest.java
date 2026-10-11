@@ -6,6 +6,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createMember;
 import static revi1337.onsquad.common.fixture.SquadFixture.createSquad;
 
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import revi1337.onsquad.category.domain.entity.Category;
 import revi1337.onsquad.category.domain.vo.CategoryType;
@@ -16,6 +17,7 @@ import revi1337.onsquad.squad.domain.entity.Squad;
 class SquadCategoryTest {
 
     @Test
+    @DisplayName("스쿼드와 카테고리로 스쿼드 카테고리를 생성하면 두 연관 엔티티가 설정된다.")
     void success() {
         Member member = createMember(1L);
         Crew crew = createCrew(1L, member);

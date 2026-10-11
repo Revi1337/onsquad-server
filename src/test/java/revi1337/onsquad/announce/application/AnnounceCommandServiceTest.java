@@ -50,6 +50,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
     private ApplicationEvents events;
 
     @Nested
+    @DisplayName("공지사항 작성")
     class newAnnounce {
 
         @Test
@@ -86,6 +87,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("공지사항 수정")
     class updateAnnounce {
 
         @Test
@@ -159,6 +161,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("작성자가 탈퇴한 공지사항 처리")
     class withdrawnWriter {
 
         @Test
@@ -245,6 +248,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("공지사항 삭제")
     class deleteAnnounce {
 
         @Test
@@ -313,6 +317,7 @@ class AnnounceCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("공지사항 상단 고정 상태 변경")
     class changePinState {
 
         @Test

@@ -92,6 +92,7 @@ class CrewLeaderboardUpdateSchedulerAnalysisTest {
     }
 
     @Nested
+    @DisplayName("스케줄러 갱신 중 점수 유실 검증")
     class integrity {
 
         @Test
@@ -133,6 +134,7 @@ class CrewLeaderboardUpdateSchedulerAnalysisTest {
 
     @Disabled
     @Nested
+    @DisplayName("리더보드 대량 갱신 성능 측정")
     class performance {
 
         @Test

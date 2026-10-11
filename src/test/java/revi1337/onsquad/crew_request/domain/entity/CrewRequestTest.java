@@ -6,6 +6,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import revi1337.onsquad.crew.domain.entity.Crew;
 import revi1337.onsquad.member.domain.entity.Member;
@@ -13,6 +14,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 class CrewRequestTest {
 
     @Test
+    @DisplayName("크루, 멤버, 요청 시각으로 생성하면 해당 값을 가진 크루 요청이 만들어진다.")
     void of() {
         Member revi = createRevi(1L);
         Crew crew = createCrew(2L, revi);

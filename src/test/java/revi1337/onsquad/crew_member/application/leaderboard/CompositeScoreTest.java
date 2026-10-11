@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 class CompositeScoreTest {
 
     @Nested
+    @DisplayName("점수와 시간으로 복합 점수 생성")
     class of {
 
         @Test
@@ -42,6 +43,7 @@ class CompositeScoreTest {
     }
 
     @Nested
+    @DisplayName("Redis 점수(double)로부터 복합 점수 복원")
     class from {
 
         @Test
@@ -172,6 +174,7 @@ class CompositeScoreTest {
     }
 
     @Nested
+    @DisplayName("복합 점수를 Redis 점수(double)로 변환")
     class toRedisScore {
 
         @Test
@@ -203,6 +206,7 @@ class CompositeScoreTest {
     }
 
     @Nested
+    @DisplayName("복합 점수에서 실제 점수 추출")
     class getActualScore {
 
         @Test
@@ -244,6 +248,7 @@ class CompositeScoreTest {
     }
 
     @Nested
+    @DisplayName("복합 점수에서 활동 시간 복원")
     class getActivityTime {
 
         @Test

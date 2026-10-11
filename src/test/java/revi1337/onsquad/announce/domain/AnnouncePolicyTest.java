@@ -29,6 +29,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 class AnnouncePolicyTest {
 
     @Nested
+    @DisplayName("공지사항 작성 권한 확인")
     class CanWrite {
 
         @ParameterizedTest
@@ -54,6 +55,7 @@ class AnnouncePolicyTest {
     }
 
     @Nested
+    @DisplayName("공지사항 상단 고정 권한 확인")
     class CanPin {
 
         @ParameterizedTest
@@ -79,6 +81,7 @@ class AnnouncePolicyTest {
     }
 
     @Nested
+    @DisplayName("공지사항 수정 권한 확인")
     class canModify {
 
         @Test
@@ -179,6 +182,7 @@ class AnnouncePolicyTest {
     }
 
     @Nested
+    @DisplayName("공지사항 소속 크루 일치 여부 검증")
     class ensureMatchCrew {
 
         @ParameterizedTest
@@ -208,6 +212,7 @@ class AnnouncePolicyTest {
     }
 
     @Nested
+    @DisplayName("공지사항 작성 가능 여부 검증")
     class ensureWritable {
 
         @ParameterizedTest
@@ -238,6 +243,7 @@ class AnnouncePolicyTest {
     }
 
     @Nested
+    @DisplayName("공지사항 수정 가능 여부 검증")
     class ensureModifiable {
 
         @Test
@@ -353,6 +359,7 @@ class AnnouncePolicyTest {
     }
 
     @Nested
+    @DisplayName("공지사항 삭제 가능 여부 검증")
     class ensureDeletable {
 
         @Test
@@ -468,6 +475,7 @@ class AnnouncePolicyTest {
     }
 
     @Nested
+    @DisplayName("공지사항 상단 고정 가능 여부 검증")
     class ensurePinnable {
 
         @ParameterizedTest

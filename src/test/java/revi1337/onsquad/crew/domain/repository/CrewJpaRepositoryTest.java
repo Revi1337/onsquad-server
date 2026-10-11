@@ -7,6 +7,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
@@ -29,6 +30,7 @@ class CrewJpaRepositoryTest extends PersistenceLayerTestSupport {
     private CrewJpaRepository crewJpaRepository;
 
     @Test
+    @DisplayName("저장된 크루의 이름으로 조회하면 존재 여부가 true 이다.")
     void existsByName() {
         Member member = memberJpaRepository.save(createRevi());
         Crew crew = crewJpaRepository.save(createCrew(member));
@@ -37,6 +39,7 @@ class CrewJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("멤버 ID 로 조회하면 해당 멤버가 만든 크루 4개가 모두 반환된다.")
     void findAllByMemberId() {
         Member member = memberJpaRepository.save(createRevi());
         crewJpaRepository.saveAll(List.of(
@@ -50,6 +53,7 @@ class CrewJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("크루 멤버를 먼저 삭제한 뒤 크루 ID 목록으로 삭제하면 삭제된 크루 수 3을 반환한다.")
     void deleteByIdIn() {
         Member member = memberJpaRepository.save(createRevi());
         Crew crew1 = crewJpaRepository.save(createCrew(member));
@@ -62,6 +66,7 @@ class CrewJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("멤버 ID 로 인원 감소를 실행하면 해당 멤버가 속한 크루의 현재 인원이 2에서 1로 줄어든다.")
     void decrementCountByMemberId() {
         Member revi = memberJpaRepository.save(createRevi());
         Member andong = memberJpaRepository.save(createAndong());

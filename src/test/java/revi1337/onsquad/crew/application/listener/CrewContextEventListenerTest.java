@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +37,7 @@ class CrewContextEventListenerTest {
     private CrewContextEventListener crewContextEventListener;
 
     @Test
+    @DisplayName("크루 컨텍스트 삭제 이벤트를 받으면 공지 캐시와 리더보드, 스냅샷을 정리하고 이미지 파일 삭제 이벤트를 발행한다.")
     void onContextDisposed() {
         List<Long> crewIds = List.of(1L, 2L);
         List<String> imageUrls = List.of("url1", "url2");

@@ -21,6 +21,7 @@ import revi1337.onsquad.member.domain.entity.Member;
 class CrewMemberPolicyTest {
 
     @Test
+    @DisplayName("크루를 생성하면 최초 크루 멤버는 owner 로 판별된다")
     void isOwner() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = crew.getCrewMembers().get(0);
@@ -31,6 +32,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("manager 권한의 크루 멤버는 manager 로 판별된다")
     void isManager() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createManagerCrewMember(crew, createAndong(2L));
@@ -41,6 +43,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("general 권한의 크루 멤버는 general 로 판별된다")
     void isGeneral() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createGeneralCrewMember(crew, createAndong(2L));
@@ -51,6 +54,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("manager 는 manager 이상으로 판별된다")
     void isManagerOrHigher1() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createManagerCrewMember(crew, createAndong(2L));
@@ -61,6 +65,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("general 은 manager 이상으로 판별되지 않는다")
     void isManagerOrHigher2() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createGeneralCrewMember(crew, createAndong(2L));
@@ -71,6 +76,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("owner 는 manager 이상으로 판별된다")
     void isManagerOrHigher3() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = crew.getCrewMembers().get(0);
@@ -81,6 +87,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("manager 는 manager 미만으로 판별되지 않는다")
     void isLowerThanManager1() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createManagerCrewMember(crew, createAndong(2L));
@@ -91,6 +98,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("general 은 manager 미만으로 판별된다")
     void isLowerThanManager2() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createGeneralCrewMember(crew, createAndong(2L));
@@ -101,6 +109,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("owner 는 manager 미만으로 판별되지 않는다")
     void isLowerThanManager3() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = crew.getCrewMembers().get(0);
@@ -111,6 +120,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("manager 는 manager 이하로 판별된다")
     void isManagerOrLower1() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createManagerCrewMember(crew, createAndong(2L));
@@ -121,6 +131,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("general 은 manager 이하로 판별된다")
     void isManagerOrLower2() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createGeneralCrewMember(crew, createAndong(2L));
@@ -131,6 +142,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("owner 는 manager 이하로 판별되지 않는다")
     void isManagerOrLower3() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = crew.getCrewMembers().get(0);
@@ -141,6 +153,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("general 은 owner 가 아닌 것으로 판별된다")
     void isNotOwner1() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createGeneralCrewMember(crew, createAndong(2L));
@@ -151,6 +164,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("owner 는 owner 가 아닌 것으로 판별되지 않는다")
     void isNotOwner2() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = crew.getCrewMembers().get(0);
@@ -161,6 +175,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("동일한 크루 멤버끼리 비교하면 본인으로 판별된다")
     void isMe1() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createManagerCrewMember(crew, createAndong(2L));
@@ -171,6 +186,7 @@ class CrewMemberPolicyTest {
     }
 
     @Test
+    @DisplayName("같은 manager 크루 멤버를 양쪽 인자로 넘겨도 본인으로 판별된다")
     void isMe2() {
         Crew crew = createCrew(1L, createRevi(1L));
         CrewMember me = createManagerCrewMember(crew, createAndong(2L));

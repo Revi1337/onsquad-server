@@ -9,6 +9,7 @@ import static revi1337.onsquad.common.fixture.MemberFixture.createRevi;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import revi1337.onsquad.common.PersistenceLayerTestSupport;
@@ -32,6 +33,7 @@ class CrewRequestJpaRepositoryTest extends PersistenceLayerTestSupport {
     private CrewRequestJpaRepository crewRequestRepository;
 
     @Test
+    @DisplayName("해당 크루에 해당 회원이 남긴 참가신청이 있으면 조회된다.")
     void findByCrewIdAndMemberId() {
         Member revi = memberRepository.save(createRevi());
         Crew crew = crewRepository.save(createCrew(revi));
@@ -45,6 +47,7 @@ class CrewRequestJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("회원이 여러 크루에 남긴 참가신청을 모두 삭제하고 삭제 건수를 반환한다.")
     void deleteByMemberId() {
         Member revi = memberRepository.save(createRevi());
         Member andong = memberRepository.save(createAndong());
@@ -60,6 +63,7 @@ class CrewRequestJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("특정 크루에 대한 회원의 참가신청을 삭제하고 삭제 건수를 반환한다.")
     void deleteByCrewIdAndMemberIdIn() {
         Member revi = memberRepository.save(createRevi());
         Crew crew = crewRepository.save(createCrew(revi));
@@ -73,6 +77,7 @@ class CrewRequestJpaRepositoryTest extends PersistenceLayerTestSupport {
     }
 
     @Test
+    @DisplayName("크루 ID 목록에 속한 모든 크루의 참가신청을 일괄 삭제하고 삭제 건수를 반환한다.")
     void deleteByCrewIdIn() {
         Member revi = memberRepository.save(createRevi());
         Member andong = memberRepository.save(createAndong());

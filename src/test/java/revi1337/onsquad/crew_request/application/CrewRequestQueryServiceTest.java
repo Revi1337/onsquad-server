@@ -45,6 +45,7 @@ class CrewRequestQueryServiceTest extends ApplicationLayerTestSupport {
     private CrewRequestQueryService crewRequestQueryService;
 
     @Nested
+    @DisplayName("크루 참가신청 목록 조회")
     class fetchAllRequests {
 
         @Test

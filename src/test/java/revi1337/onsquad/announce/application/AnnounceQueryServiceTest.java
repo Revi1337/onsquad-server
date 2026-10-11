@@ -44,6 +44,7 @@ class AnnounceQueryServiceTest extends ApplicationLayerTestSupport {
     private AnnounceQueryService announceQueryService;
 
     @Nested
+    @DisplayName("공지사항 단건 조회")
     class findAnnounce {
 
         @Test
@@ -117,6 +118,7 @@ class AnnounceQueryServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("공지사항 목록 조회")
     class findAnnounces {
 
         @Test

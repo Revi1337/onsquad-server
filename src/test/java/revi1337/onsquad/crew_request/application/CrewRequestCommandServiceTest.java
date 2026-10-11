@@ -48,6 +48,7 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
     private CrewRequestCommandService crewRequestCommandService;
 
     @Nested
+    @DisplayName("크루 참가신청")
     class request {
 
         @Test
@@ -95,6 +96,7 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("크루 참가신청 수락")
     class accept {
 
         @Test
@@ -150,6 +152,7 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("크루 참가신청 거절")
     class rejectRequest {
 
         @Test
@@ -205,6 +208,7 @@ class CrewRequestCommandServiceTest extends ApplicationLayerTestSupport {
     }
 
     @Nested
+    @DisplayName("내 크루 참가신청 취소")
     class cancelMyRequest {
 
         @Test

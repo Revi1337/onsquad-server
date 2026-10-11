@@ -2,6 +2,7 @@ package revi1337.onsquad.squad_request.application.history;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import revi1337.onsquad.history.domain.HistoryType;
 import revi1337.onsquad.history.domain.entity.HistoryEntity;
@@ -10,6 +11,7 @@ import revi1337.onsquad.squad_request.domain.model.SquadRequestContext.RequestRe
 class RequestRejectHistoryTest {
 
     @Test
+    @DisplayName("거절 컨텍스트로 생성하면 거절자 ID, SQUAD_REJECT 타입, 거절 메시지를 가진 이력과 엔티티가 만들어진다.")
     void constructor() {
         RequestRejectedContext context = new RequestRejectedContext(
                 1L,
