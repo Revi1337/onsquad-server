@@ -67,7 +67,9 @@ public class RedisConfig {
     public StringRedisTemplate fastStringRedisTemplate(RedisConnectionFactory connectionFactory) {
         LettuceConnectionFactory currentConnectionFactory = (LettuceConnectionFactory) connectionFactory;
         LettuceClientConfiguration fastClientConfiguration = copyLettuceClientConfigurationWithTimeout(currentConnectionFactory, Duration.ofMillis(200));
-        LettuceConnectionFactory fastLettuceConnectionFactory = replicateFactoryPreservingMode(currentConnectionFactory, fastClientConfiguration);
+        LettuceConnectionFactory fastLettuceConnectionFactory = new LettuceConnectionFactory(
+                currentConnectionFactory.getStandaloneConfiguration(), fastClientConfiguration
+        );
         fastLettuceConnectionFactory.afterPropertiesSet();
         return new StringRedisTemplate(fastLettuceConnectionFactory);
     }
@@ -87,20 +89,5 @@ public class RedisConfig {
                 .clientOptions(baseConfiguration.getClientOptions().orElseGet(ClientOptions::create))
                 .clientResources(baseConfiguration.getClientResources().orElseGet(ClientResources::create))
                 .build();
-    }
-
-    /**
-     * Creates a new {@link LettuceConnectionFactory} using the same type (Sentinel or Standalone) as the original factory, but applies a different
-     * {@link LettuceClientConfiguration}.
-     *
-     * @param originalFactory the original {@link LettuceConnectionFactory} to replicate
-     * @param newClientConfig the new {@link LettuceClientConfiguration} to apply
-     * @return a new {@link LettuceConnectionFactory} instance preserving the mode (Sentinel/Standalone)
-     */
-    private LettuceConnectionFactory replicateFactoryPreservingMode(LettuceConnectionFactory originalFactory, LettuceClientConfiguration newClientConfig) {
-        if (originalFactory.getSentinelConfiguration() != null) {
-            return new LettuceConnectionFactory(originalFactory.getSentinelConfiguration(), newClientConfig);
-        }
-        return new LettuceConnectionFactory(originalFactory.getStandaloneConfiguration(), newClientConfig);
     }
 }
