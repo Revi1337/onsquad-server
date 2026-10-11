@@ -40,7 +40,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build -i -s            # run: ./gradlew clean build -Pprofile=ci
+        run: ./gradlew clean build concurrencyTest -i -s            # run: ./gradlew clean build -Pprofile=ci
 
       - name: Delivery Executable JAR
         uses: appleboy/scp-action@v0.1.4
