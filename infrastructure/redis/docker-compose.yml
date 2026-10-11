@@ -1,96 +1,16 @@
-# Redis Sentinel (master 1, replica 2, sentinel 3) - 로컬용. 모든 노드가 host.docker.internal 로 통일해 알립니다.
-# Mac 에서는 /etc/hosts 에 "127.0.0.1 host.docker.internal" 한 줄이 필요합니다. (최초 1회)
-
 networks:
   redis-net:
     name: redis-net
 
-x-redis-node: &redis-node
-  image: redis:8.2
-  networks:
-    - redis-net
-  extra_hosts:
-    - "host.docker.internal:host-gateway"
-
 services:
-  redis-master:
-    <<: *redis-node
-    container_name: redis-master
-    command: redis-server /usr/local/etc/redis/redis.conf --replica-announce-port 6379
+  redis:
+    image: redis:8.2
+    container_name: redis
+    command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
     volumes:
-      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf:ro
-      - ./nodes/master/data:/data
-
-  redis-slave-1:
-    <<: *redis-node
-    container_name: redis-slave1
-    command: redis-server /usr/local/etc/redis/redis.conf --replica-announce-port 6380 --replicaof host.docker.internal 6379
-    ports:
-      - "6380:6379"
-    volumes:
-      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf:ro
-      - ./nodes/slave-1/data:/data
-    depends_on:
-      - redis-master
-
-  redis-slave-2:
-    <<: *redis-node
-    container_name: redis-slave2
-    command: redis-server /usr/local/etc/redis/redis.conf --replica-announce-port 6381 --replicaof host.docker.internal 6379
-    ports:
-      - "6381:6379"
-    volumes:
-      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf:ro
-      - ./nodes/slave-2/data:/data
-    depends_on:
-      - redis-master
-
-  sentinel-1:
-    <<: *redis-node
-    container_name: sentinel1
-    command: >
-      sh -c 'cp /usr/local/etc/redis/sentinel.conf /tmp/sentinel.conf
-      && echo "sentinel announce-port 5001" >> /tmp/sentinel.conf
-      && exec redis-sentinel /tmp/sentinel.conf'
-    ports:
-      - "5001:26379"
-    volumes:
-      - ./conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf:ro
-    depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
-
-  sentinel-2:
-    <<: *redis-node
-    container_name: sentinel2
-    command: >
-      sh -c 'cp /usr/local/etc/redis/sentinel.conf /tmp/sentinel.conf
-      && echo "sentinel announce-port 5002" >> /tmp/sentinel.conf
-      && exec redis-sentinel /tmp/sentinel.conf'
-    ports:
-      - "5002:26379"
-    volumes:
-      - ./conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf:ro
-    depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
-
-  sentinel-3:
-    <<: *redis-node
-    container_name: sentinel3
-    command: >
-      sh -c 'cp /usr/local/etc/redis/sentinel.conf /tmp/sentinel.conf
-      && echo "sentinel announce-port 5003" >> /tmp/sentinel.conf
-      && exec redis-sentinel /tmp/sentinel.conf'
-    ports:
-      - "5003:26379"
-    volumes:
-      - ./conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf:ro
-    depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./data:/data
+    networks:
+      - redis-net

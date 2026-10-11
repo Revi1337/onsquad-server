@@ -12,47 +12,10 @@ services:
       file: ./mysql/docker-compose.yml
       service: mysql
 
-  redis-master:
+  redis:
     extends:
       file: ./redis/docker-compose.yml
-      service: redis-master
-
-  redis-slave-1:
-    extends:
-      file: ./redis/docker-compose.yml
-      service: redis-slave-1
-
-  redis-slave-2:
-    extends:
-      file: ./redis/docker-compose.yml
-      service: redis-slave-2
-
-  sentinel-1:
-    extends:
-      file: ./redis/docker-compose.yml
-      service: sentinel-1
-    depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
-
-  sentinel-2:
-    extends:
-      file: ./redis/docker-compose.yml
-      service: sentinel-2
-    depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
-
-  sentinel-3:
-    extends:
-      file: ./redis/docker-compose.yml
-      service: sentinel-3
-    depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
+      service: redis
 
   mysql-exporter:
     extends:

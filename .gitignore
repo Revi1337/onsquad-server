@@ -11,7 +11,7 @@ infrastructure/monitor/prometheus/config/prometheus-dev.yml
 infrastructure/monitor/prometheus/config/query-log.log
 infrastructure/monitor/prometheus/prometheus-volume
 infrastructure/mysql/data
-infrastructure/redis/*/*/data
+infrastructure/redis/data
 infrastructure/aws/data
 
 src/main/resources/application-*.yml
