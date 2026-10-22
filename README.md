@@ -6,6 +6,16 @@
 
 - 개발 기간: 2024-04 ~ 현재 (중간에 조금씩 쉬어간 기간이 있습니다)
 
+### 인프라 구성도
+
+![인프라 구성도](docs/images/onsquad-infra.png)
+
+### ERD
+
+![ERD](docs/images/onsquad-erd.png)
+
+스키마 DDL 은 [`infrastructure/onsquad-schema.sql`](infrastructure/onsquad-schema.sql) 에서 확인할 수 있습니다.
+
 ### 이 프로젝트에서 중점을 둔 것
 
 - **역할 기반 권한**: 크루(`OWNER` / `MANAGER` / `GENERAL`)와 스쿼드(`LEADER` / `GENERAL`)의 권한 규칙을 도메인 Policy 로 모아 일관되게 검증합니다.
